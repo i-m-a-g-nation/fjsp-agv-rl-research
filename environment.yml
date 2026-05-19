@@ -1,0 +1,18 @@
+﻿name: fjsp-agv-rl
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - pandas
+  - matplotlib>=3.8.4,<3.10
+  - pillow>=10.4,<12
+  - pytest
+  - pydantic
+  - networkx
+  - scipy
+  - jupyterlab
+  - ipykernel
+  - pip:
+      - ortools

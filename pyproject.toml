@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fjsp-agv-rl"
+version = "0.1.0"
+description = "FJSP + AGV + RL Research Platform"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "pandas",
+    "matplotlib>=3.8.4,<3.10",
+    "pillow>=10.4,<12",
+    "pydantic",
+    "networkx",
+    "scipy",
+    "ortools",
+    "pytest",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+]

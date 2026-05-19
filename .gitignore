@@ -1,0 +1,16 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.conda-env/
+*.egg-info/
+dist/
+build/
+.python-version
+.ipynb_checkpoints/
+experiments/*_tmp*.png
+experiments/*_scratch*.png
+.opencode/node_modules/

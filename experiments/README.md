@@ -1,0 +1,68 @@
+# Experiments
+
+This directory contains Phase 1 experiment scripts and tracked outputs.
+
+## `exp_001_toy_instance.py`
+
+Runs heuristic baselines on the toy 3 jobs x 3 machines FJSP instance.
+
+Algorithms:
+
+- FIFO
+- SPT
+- EarliestFinishTime
+- Random with seeds 42, 123, and 999
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_001_toy_instance.py
+```
+
+Expected output:
+
+| Algorithm | Makespan |
+|---|---:|
+| FIFO | 14 |
+| SPT | 13 |
+| EarliestFinishTime | 13 |
+| Random(s=42) | 14 |
+| Random(s=123) | 14 |
+| Random(s=999) | 20 |
+
+Artifacts:
+
+- `exp_001_gantt_latest.png`: fixed Gantt output, overwritten on each run
+- `exp_001_gantt_*.png`: historical Gantt outputs retained for traceability
+
+Exit code: `0` when all schedules pass feasibility checking, `1` otherwise.
+
+## `exp_002_solver_check.py`
+
+Compares heuristic baselines with the OR-Tools CP-SAT baseline on the same toy instance.
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_002_solver_check.py
+```
+
+Expected output:
+
+| Algorithm | Makespan | Note |
+|---|---:|---|
+| FIFO | 14 | HEURISTIC |
+| SPT | 13 | HEURISTIC |
+| EarliestFinishTime | 13 | HEURISTIC |
+| Random(42) | 14 | HEURISTIC |
+| CP-SAT(tl=30s) | 11 | CP-SAT optimal |
+
+If CP-SAT returns `FEASIBLE` rather than `OPTIMAL`, the experiment reports it as a feasible reference solution, not as an optimum.
+
+Exit code: `0` when all algorithms pass feasibility checking and no solver errors occur, `1` otherwise.
+
+## General Requirements
+
+- Every experiment result must pass `check_feasibility()`.
+- Infeasible schedules must not be reported as valid schedules.
+- Feasibility constraints must not be weakened to make tests pass.

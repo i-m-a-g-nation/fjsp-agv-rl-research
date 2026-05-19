@@ -1,0 +1,31 @@
+﻿{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "AGENTS.md"
+  ],
+  "permission": {
+    "read": "allow",
+    "grep": "allow",
+    "glob": "allow",
+    "edit": "allow",
+    "bash": "ask",
+    "webfetch": "ask",
+    "websearch": "ask",
+    "todowrite": "allow"
+  },
+  "command": {
+    "phase1": {
+      "description": "实现或继续 Phase 1：静态 FJSP 平台、规则基线、合法性检查、甘特图输出。"
+    },
+    "review": {
+      "description": "只审查当前实现，不修改文件。重点检查调度合法性、求解器正确性、复现性。",
+      "agent": "plan"
+    },
+    "solver": {
+      "description": "添加或修复 OR-Tools CP-SAT 静态 FJSP 小规模求解器基线。"
+    },
+    "test": {
+      "description": "使用专用 Conda 环境运行 Phase 1 检查。"
+    }
+  }
+}
