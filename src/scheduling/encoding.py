@@ -16,7 +16,7 @@ class ScheduleRecord:
     processing_time: int
 
 
-@dataclass
+@dataclass  # 与 frozen=True 的 Operation/Job 不同，ScheduleResult 是可变的（可追加记录）
 class ScheduleResult:
     records: List[ScheduleRecord] = field(default_factory=list)
     makespan: int = 0

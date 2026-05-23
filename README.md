@@ -89,3 +89,7 @@ CP-SAT currently proves makespan 11 on the toy instance.
 - `experiments/exp_001_gantt_latest.png` is the fixed Gantt output and is tracked.
 - Historical Gantt PNG files are retained for traceability.
 - A low-priority pytest cache warning may appear on some Windows paths; it does not affect the test results.
+
+## Code Walkthrough
+
+For a guided tour of the Phase 1 code, see [docs/code_walkthrough_phase1.md](docs/code_walkthrough_phase1.md).

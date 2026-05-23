@@ -4,10 +4,10 @@ from dataclasses import dataclass, field
 from typing import List, Tuple
 
 
-MachineOption = Tuple[int, int]
+MachineOption = Tuple[int, int]  # (机器编号, 加工时间)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True)  # frozen=True: 创建后不可修改，保证实例数据安全
 class Operation:
     op_id: int
     machine_options: Tuple[MachineOption, ...]
@@ -18,7 +18,7 @@ class Job:
     job_id: int
     operations: Tuple[Operation, ...]
 
-    @property
+    @property  # 可以像属性一样访问 obj.num_ops，不需要加括号
     def num_ops(self) -> int:
         return len(self.operations)
 
@@ -27,7 +27,7 @@ class Job:
 class FJSPInstance:
     num_jobs: int
     num_machines: int
-    jobs: List[Job] = field(default_factory=list)
+    jobs: List[Job] = field(default_factory=list)  # 可变默认值必须用 default_factory，不能直接写 []
 
     @property
     def total_ops(self) -> int:
@@ -74,6 +74,8 @@ class FJSPInstance:
 
 
 def create_toy_instance() -> FJSPInstance:
+    # jobs_array 三层结构: jobs[job_id][op_id] = [(machine_id, processing_time), ...]
+    # 下例: Job0 有 2 道工序，Op0 可在 M0(3时间) 或 M1(5时间) 上加工
     jobs_array: List[List[List[MachineOption]]] = [
         [
             [(0, 3), (1, 5)],
