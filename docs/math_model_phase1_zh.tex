@@ -1,0 +1,204 @@
+\documentclass[UTF8,fontset=windows,11pt]{ctexart}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,booktabs}
+\usepackage[hidelinks]{hyperref}
+
+\title{Phase 1 静态 FJSP 数学建模}
+\author{FJSP-AGV-RL Research Platform}
+\date{\today}
+
+\begin{document}
+\sloppy
+\maketitle
+
+\section{范围说明}
+
+本文档描述当前仓库在 Phase 1 中实现的静态柔性作业车间调度
+（Flexible Job Shop Scheduling Problem, FJSP）数学模型。当前阶段只关注
+静态 FJSP，不包含 AGV 运输、路径规划、动态事件、强化学习或图神经网络。
+
+\section{集合与下标}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+符号 & 含义 \\
+\midrule
+$J$ & 工件集合，下标为 $j$ \\
+$O_j$ & 工件 $j$ 的有序工序集合，下标为 $o$ \\
+$M$ & 机器集合，下标为 $m$ \\
+$A_{jo}$ & 工序 $(j,o)$ 的可选机器集合 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+对于每个工件 $j$，工序必须满足工艺路线顺序：
+$(j,o)$ 必须先于 $(j,o+1)$ 加工。
+
+\section{参数}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+符号 & 含义 \\
+\midrule
+$p_{jom}$ & 工序 $(j,o)$ 在机器 $m$ 上的加工时间 \\
+$H$ & 保守的时间上界 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+当前 CP-SAT baseline 使用如下保守 horizon：
+\[
+H = \sum_{j \in J} \sum_{o \in O_j} \max_{m \in A_{jo}} p_{jom}.
+\]
+这个上界不一定紧，但对当前小规模 baseline 是安全的。
+
+\section{决策变量}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+符号 & 含义 \\
+\midrule
+$x_{jom} \in \{0,1\}$ & 若工序 $(j,o)$ 分配到机器 $m$，则取 1 \\
+$S_{jo} \ge 0$ & 工序 $(j,o)$ 的开始时间 \\
+$C_{jo} \ge 0$ & 工序 $(j,o)$ 的完成时间 \\
+$C_{\max} \ge 0$ & 最大完工时间，也就是 makespan \\
+$y_{abm} \in \{0,1\}$ & 同一机器上两个工序 $a,b$ 的先后顺序变量 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+这里 $a,b$ 表示类似 $(j,o)$ 的工序编号。经典 MIP 写法可以显式使用
+$y$ 变量；当前 OR-Tools 实现则使用 optional interval 和
+\texttt{NoOverlap} 表达机器容量约束。
+
+\section{目标函数}
+
+目标是最小化 makespan：
+\[
+\min C_{\max}.
+\]
+
+\section{约束}
+
+\subsection{机器选择约束}
+
+每道工序必须且只能选择一台可行机器：
+\[
+\sum_{m \in A_{jo}} x_{jom} = 1,
+\qquad \forall j \in J,\; o \in O_j.
+\]
+
+不在 $A_{jo}$ 中的机器不是合法选择，代码中不会为这些机器生成候选分配。
+
+\subsection{加工时间连接约束}
+
+如果工序 $(j,o)$ 选择机器 $m$，则完成时间必须等于开始时间加加工时间：
+\[
+C_{jo} \ge S_{jo} + p_{jom} - H(1 - x_{jom}),
+\qquad \forall j,o,\; m \in A_{jo}.
+\]
+
+\subsection{工序顺序约束}
+
+同一工件内部必须满足工艺路线顺序：
+\[
+C_{jo} \le S_{j,o+1},
+\qquad \forall j \in J,\; o,o+1 \in O_j.
+\]
+
+\subsection{机器容量约束}
+
+每台机器同一时刻最多只能加工一道工序。对任意两个不同工序
+$a=(j,o)$ 和 $b=(k,q)$，若二者都可以选择机器 $m$，则需要满足：
+\[
+S_a + p_{am} \le S_b + H(1 - y_{abm}) + H(2 - x_{am} - x_{bm}),
+\]
+\[
+S_b + p_{bm} \le S_a + Hy_{abm} + H(2 - x_{am} - x_{bm}).
+\]
+
+当两个工序都分配到机器 $m$ 时，上述约束会强制二者不重叠。当前
+CP-SAT 代码中，这部分由每台机器上的 \texttt{NoOverlap} 约束完成。
+
+\subsection{Makespan 定义}
+
+makespan 必须不小于每个工件最后一道工序的完成时间：
+\[
+C_{\max} \ge C_{j,last(j)}, \qquad \forall j \in J.
+\]
+
+\section{Feasibility Checker 对应关系}
+
+代码中的 feasibility checker 会独立验证：
+
+\begin{itemize}
+  \item 每道工序恰好出现一次；
+  \item 工件编号和工序编号不越界；
+  \item 每道工序选择的机器属于可选机器集合；
+  \item 调度记录中的加工时间与实例数据一致；
+  \item 同一工件内部满足工序顺序；
+  \item 同一机器上的工序时间区间不重叠；
+  \item 记录的 makespan 等于所有工序完成时间的最大值。
+\end{itemize}
+
+\section{Dispatching Rule}
+
+严格 dispatching rule 共享候选元组：
+\[
+(j,o,m,r_{jo},s_{jom},f_{jom},p_{jom}),
+\]
+其中 $r_{jo}$ 是工件 ready time，$s_{jom}$ 是在机器 $m$ 上的最早可行
+开始时间，$f_{jom}=s_{jom}+p_{jom}$ 是候选完成时间。
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\toprule
+规则 & 工序选择 & 机器选择 \\
+\midrule
+FIFO & 最小 $(r_{jo},j,o)$ & 最早完成机器 \\
+SPT & 最小 $p_{jom}$ 的 ready pair & 与 pair 同时确定 \\
+EFT & 最小 $f_{jom}$ 的 ready pair & 与 pair 同时确定 \\
+MWKR & 剩余路线工作量最大 & 最早完成机器 \\
+Random & 随机 ready pair & 与 pair 同时确定 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+MWKR 的剩余路线工作量定义为：
+\[
+W_{jo} = \sum_{q=o}^{last(j)} \min_{m \in A_{jq}} p_{jqm}.
+\]
+
+\section{实验结果记录格式}
+
+Phase 1 实验脚本会在 \texttt{experiments/results/} 下输出标准 CSV。
+每一行表示一个算法在一个实例上的一次运行：
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+字段 & 含义 \\
+\midrule
+\texttt{experiment\_id} & 实验编号 \\
+\texttt{instance\_name} & 实例名称 \\
+\texttt{algorithm} & 算法或求解器名称 \\
+\texttt{makespan} & 目标值；若未返回调度则为空 \\
+\texttt{feasible} & feasibility checker 的结果，PASS 或 FAIL \\
+\texttt{runtime\_s} & 运行时间，单位为秒 \\
+\texttt{note} & 求解器状态、错误信息或验证说明 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+CSV 记录层只负责保存实验事实，不改变算法行为，也不改变可行性定义。
+
+\end{document}

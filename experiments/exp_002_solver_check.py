@@ -14,15 +14,16 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from experiments.common import ExperimentRecord, write_results_csv
 from src.data.instance import create_toy_instance
-from src.scheduling.feasibility import check_feasibility, Violation
+from src.scheduling.feasibility import check_feasibility
 from src.solvers.heuristics import (
     fifo_solve,
     spt_solve,
     earliest_finish_time_solve,
     random_solve,
 )
-from src.solvers.ortools_solver import ortools_solve, OrtoolsSolverError
+from src.solvers.ortools_solver import ortools_solve
 
 
 def run_solver(name: str, fn, instance):
@@ -38,6 +39,9 @@ def run_solver(name: str, fn, instance):
 
 
 def main() -> None:
+    root = Path(__file__).parent.parent
+    experiment_id = "exp_002_solver_check"
+    instance_name = "toy_3x3"
     instance = create_toy_instance()
     print(f"Instance: {instance.num_jobs} jobs x {instance.num_machines} machines, {instance.total_ops} ops")
     print()
@@ -58,7 +62,7 @@ def main() -> None:
     print(header)
     print("-" * len(header))
 
-    rows: list[dict] = []
+    records: list[ExperimentRecord] = []
     failures: list[str] = []
 
     for name, fn in solvers:
@@ -89,6 +93,15 @@ def main() -> None:
             note = "HEURISTIC"
 
         print(f"{algo:30s} {mk_str:>8s}  {status:>8s}  {elapsed:>10.4f}  {note:>20s}")
+        records.append(ExperimentRecord(
+            experiment_id=experiment_id,
+            instance_name=instance_name,
+            algorithm=algo,
+            makespan=mk,
+            feasible=feasible,
+            runtime_s=elapsed,
+            note=note,
+        ))
 
         if violations:
             for v in violations[:3]:
@@ -98,9 +111,12 @@ def main() -> None:
 
         if is_failure:
             failures.append(failure_reason)
-        else:
-            rows.append({"algorithm": algo, "makespan": mk, "runtime_s": elapsed, "status": note})
 
+    print()
+
+    csv_path = root / "experiments" / "results" / f"{experiment_id}.csv"
+    write_results_csv(csv_path, records)
+    print(f"CSV results written to: {csv_path}")
     print()
 
     if failures:

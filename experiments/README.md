@@ -34,6 +34,7 @@ Artifacts:
 
 - `exp_001_gantt_latest.png`: fixed Gantt output, overwritten on each run
 - `exp_001_gantt_*.png`: historical Gantt outputs retained for traceability
+- `results/exp_001_toy_instance.csv`: normalized experiment records
 
 Exit code: `0` when all schedules pass feasibility checking, `1` otherwise.
 
@@ -58,6 +59,10 @@ Expected output:
 | CP-SAT(tl=30s) | 11 | CP-SAT optimal |
 
 If CP-SAT returns `FEASIBLE` rather than `OPTIMAL`, the experiment reports it as a feasible reference solution, not as an optimum.
+
+CSV artifact:
+
+- `results/exp_002_solver_check.csv`
 
 Exit code: `0` when all algorithms pass feasibility checking and no solver errors occur, `1` otherwise.
 

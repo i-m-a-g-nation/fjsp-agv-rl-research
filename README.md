@@ -1,5 +1,7 @@
 # FJSP-AGV-RL Research
 
+Chinese version: [README.zh-CN.md](README.zh-CN.md)
+
 Phase 1: a static flexible job shop scheduling (FJSP) research platform.
 
 This repository currently focuses on correctness, reproducibility, and a small verified experimental baseline. AGV scheduling, transportation time, dynamic events, reinforcement learning, and GNN models are intentionally out of scope for Phase 1.
@@ -124,5 +126,9 @@ For a guided tour of the Phase 1 code, see [docs/code_walkthrough_phase1.md](doc
 ## Mathematical Model
 
 The Phase 1 static FJSP formulation is documented in
-[docs/math_model_phase1.tex](docs/math_model_phase1.tex). A compiled PDF is
-available at [docs/math_model_phase1.pdf](docs/math_model_phase1.pdf).
+[docs/math_model_phase1.tex](docs/math_model_phase1.tex). A compiled refreshed
+PDF is available at [docs/math_model_phase1_en.pdf](docs/math_model_phase1_en.pdf).
+
+Chinese versions are also available:
+[docs/math_model_phase1_zh.tex](docs/math_model_phase1_zh.tex) and
+[docs/math_model_phase1_zh.pdf](docs/math_model_phase1_zh.pdf).

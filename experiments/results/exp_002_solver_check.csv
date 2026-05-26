@@ -1,0 +1,7 @@
+experiment_id,instance_name,algorithm,makespan,feasible,runtime_s,note
+exp_002_solver_check,toy_3x3,FIFO,14,PASS,0.000085,HEURISTIC
+exp_002_solver_check,toy_3x3,SPT,13,PASS,0.000046,HEURISTIC
+exp_002_solver_check,toy_3x3,EarliestFinishTime,13,PASS,0.000059,HEURISTIC
+exp_002_solver_check,toy_3x3,Random(42),14,PASS,0.000057,HEURISTIC
+exp_002_solver_check,toy_3x3,CP-SAT(tl=30s),11,PASS,0.026932,CP-SAT optimal
+exp_002_solver_check,toy_3x3,CP-SAT(tl=60s),11,PASS,0.015268,CP-SAT optimal

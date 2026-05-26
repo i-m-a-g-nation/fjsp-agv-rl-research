@@ -11,10 +11,12 @@ Phase 1 toy instance experiment:
 from __future__ import annotations
 
 import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from experiments.common import ExperimentRecord, write_results_csv
 from src.data.instance import create_toy_instance
 from src.scheduling.feasibility import check_feasibility
 from src.solvers.heuristics import (
@@ -27,12 +29,16 @@ from src.vis.gantt import plot_gantt
 
 
 def main() -> None:
+    root = Path(__file__).parent.parent
+    experiment_id = "exp_001_toy_instance"
+    instance_name = "toy_3x3"
     instance = create_toy_instance()
     print(f"Instance: {instance.num_jobs} jobs x {instance.num_machines} machines, {instance.total_ops} ops")
     print()
 
     results: dict[str, int] = {}
     all_results: list = []
+    records: list[ExperimentRecord] = []
 
     methods = [
         ("FIFO", lambda: fifo_solve(instance)),
@@ -43,13 +49,24 @@ def main() -> None:
         methods.append((f"Random(s={seed})", lambda s=seed: random_solve(instance, seed=s)))
 
     for name, solver_fn in methods:
+        start = time.perf_counter()
         result = solver_fn()
+        elapsed = time.perf_counter() - start
         feasible, violations = check_feasibility(result)
         status = "PASS" if feasible else "FAIL"
         print(f"  {name:25s}  makespan={result.makespan:3d}  feasible={status}")
         if not feasible:
             for v in violations:
                 print(f"    VIOLATION: {v}")
+        records.append(ExperimentRecord(
+            experiment_id=experiment_id,
+            instance_name=instance_name,
+            algorithm=name,
+            makespan=result.makespan,
+            feasible=feasible,
+            runtime_s=elapsed,
+            note="PASS" if feasible else f"violations={violations}",
+        ))
         results[name] = result.makespan
         all_results.append((name, result, feasible))
 
@@ -65,12 +82,15 @@ def main() -> None:
     else:
         print("All schedules passed feasibility check.")
 
-    from datetime import datetime
     output_dir = Path(__file__).parent
     save_path = output_dir / "exp_001_gantt_latest.png"
     plot_gantt(best_result, title=f"Best Schedule: {best_name} (makespan={best_result.makespan})",
                save_path=str(save_path))
     print(f"Gantt chart saved to: {save_path}")
+
+    csv_path = root / "experiments" / "results" / f"{experiment_id}.csv"
+    write_results_csv(csv_path, records)
+    print(f"CSV results written to: {csv_path}")
 
 
 if __name__ == "__main__":

@@ -183,4 +183,29 @@ For MWKR, remaining route work is estimated as
 W_{jo} = \sum_{q=o}^{last(j)} \min_{m \in A_{jq}} p_{jqm}.
 \]
 
+\section{Experiment Result Schema}
+
+Phase 1 experiment scripts write normalized CSV files under
+\texttt{experiments/results/}. Each row has the following fields:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+Field & Meaning \\
+\midrule
+\texttt{experiment\_id} & stable experiment identifier \\
+\texttt{instance\_name} & benchmark or toy instance name \\
+\texttt{algorithm} & solver or dispatching rule name \\
+\texttt{makespan} & objective value, empty if no schedule was returned \\
+\texttt{feasible} & \texttt{PASS} or \texttt{FAIL} after feasibility checking \\
+\texttt{runtime\_s} & measured wall-clock runtime in seconds \\
+\texttt{note} & solver status, error, or validation note \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The CSV layer is intentionally simple. It records what happened in each
+experiment without changing solver behavior or feasibility definitions.
+
 \end{document}

@@ -4,6 +4,8 @@ This directory stores normalized CSV outputs produced by Phase 1 experiment scri
 
 Current generated files:
 
+- `exp_001_toy_instance.csv`
+- `exp_002_solver_check.csv`
 - `exp_003_dispatching_rules.csv`
 - `exp_004_benchmark_smoke.csv`
 

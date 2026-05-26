@@ -1,0 +1,7 @@
+experiment_id,instance_name,algorithm,makespan,feasible,runtime_s,note
+exp_001_toy_instance,toy_3x3,FIFO,14,PASS,0.000065,PASS
+exp_001_toy_instance,toy_3x3,SPT,13,PASS,0.000041,PASS
+exp_001_toy_instance,toy_3x3,EarliestFinishTime,13,PASS,0.000052,PASS
+exp_001_toy_instance,toy_3x3,Random(s=42),14,PASS,0.000050,PASS
+exp_001_toy_instance,toy_3x3,Random(s=123),14,PASS,0.000044,PASS
+exp_001_toy_instance,toy_3x3,Random(s=999),20,PASS,0.000040,PASS
