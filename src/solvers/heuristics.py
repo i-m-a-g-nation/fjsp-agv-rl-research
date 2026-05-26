@@ -1,10 +1,64 @@
 from __future__ import annotations
 
 import random
-from typing import Dict, List, Tuple
+from typing import Callable, Dict, List, Tuple
 
 from src.data.instance import FJSPInstance
 from src.scheduling.encoding import ScheduleResult
+
+# candidate 格式: (job_id, op_id, machine_id, start, finish, processing_time)
+_Candidate = Tuple[int, int, int, int, int, int]
+
+
+def _dispatch_solve(
+    instance: FJSPInstance,
+    select_fn: Callable[[List[_Candidate], FJSPInstance], _Candidate],
+    rng: random.Random | None = None,
+) -> ScheduleResult:
+    """统一 dispatching rule 求解框架.
+
+    维护 job_ready_time / machine_ready_time / job_next_op,
+    每轮构建 ready candidates, 调用 select_fn 选择一个 pair.
+    """
+    from src.scheduling.decoding import decode_schedule
+    from src.scheduling.feasibility import check_feasibility
+
+    job_ready_time: Dict[int, int] = {j: 0 for j in range(instance.num_jobs)}
+    machine_ready_time: Dict[int, int] = {m: 0 for m in range(instance.num_machines)}
+    job_next_op: Dict[int, int] = {j: 0 for j in range(instance.num_jobs)}
+    assignment: List[Tuple[int, int, int]] = []
+
+    while any(
+        job_next_op[j] < instance.jobs[j].num_ops
+        for j in range(instance.num_jobs)
+    ):
+        # 构建 ready candidates
+        candidates: List[_Candidate] = []
+        for j_id in range(instance.num_jobs):
+            o_id = job_next_op[j_id]
+            if o_id >= instance.jobs[j_id].num_ops:
+                continue
+            for m_id, pt in instance.jobs[j_id].operations[o_id].machine_options:
+                start = max(job_ready_time[j_id], machine_ready_time[m_id])
+                finish = start + pt
+                candidates.append((j_id, o_id, m_id, start, finish, pt))
+
+        if not candidates:
+            break
+
+        selected = select_fn(candidates, instance, rng)
+        j_id, o_id, m_id, start, finish, pt = selected
+        assignment.append((j_id, o_id, m_id))
+        job_ready_time[j_id] = finish
+        machine_ready_time[m_id] = finish
+        job_next_op[j_id] += 1
+
+    result = decode_schedule(assignment, instance)
+    feasible, violations = check_feasibility(result)
+    if not feasible:
+        raise RuntimeError(f"dispatching rule produced infeasible schedule: {violations}")
+    result.compute_makespan()
+    return result
 
 
 def fifo_solve(instance: FJSPInstance) -> ScheduleResult:
@@ -189,3 +243,60 @@ def random_solve(instance: FJSPInstance, seed: int = 42) -> ScheduleResult:
 
     result.compute_makespan()
     return result
+
+
+# ============================================================
+# 严格 dispatching rule 版本
+# ============================================================
+
+
+def dispatch_fifo_solve(instance: FJSPInstance) -> ScheduleResult:
+    """严格 FIFO dispatching rule.
+
+    在 ready operations 中选择最早入队的工序 (ready_time, job_id, op_id).
+    机器选择使用 earliest finish machine（同一工序的可选机器中 finish 最早的）.
+
+    tie-breaker: (ready_time, job_id, op_id)
+    """
+    def _fifo_select(candidates: List[_Candidate], _inst: FJSPInstance, _rng: random.Random) -> _Candidate:
+        return min(candidates, key=lambda c: (c[3], c[0], c[1], c[4]))
+
+    return _dispatch_solve(instance, _fifo_select)
+
+
+def dispatch_spt_solve(instance: FJSPInstance) -> ScheduleResult:
+    """严格 SPT dispatching rule.
+
+    在 ready operation-machine pairs 中选择 processing_time 最短的 pair.
+    如果多个 pair 的 pt 相同，按 (pt, finish, job_id, op_id, machine_id) 排序.
+    """
+    def _spt_select(candidates: List[_Candidate], _inst: FJSPInstance, _rng: random.Random) -> _Candidate:
+        return min(candidates, key=lambda c: (c[5], c[4], c[0], c[1], c[2]))
+
+    return _dispatch_solve(instance, _spt_select)
+
+
+def dispatch_eft_solve(instance: FJSPInstance) -> ScheduleResult:
+    """严格 EFT dispatching rule.
+
+    在 ready operation-machine pairs 中选择 finish time 最早的 pair.
+    如果多个 pair 的 finish 相同，按 (finish, pt, job_id, op_id, machine_id) 排序.
+    """
+    def _eft_select(candidates: List[_Candidate], _inst: FJSPInstance, _rng: random.Random) -> _Candidate:
+        return min(candidates, key=lambda c: (c[4], c[5], c[0], c[1], c[2]))
+
+    return _dispatch_solve(instance, _eft_select)
+
+
+def dispatch_random_solve(instance: FJSPInstance, seed: int = 42) -> ScheduleResult:
+    """严格 Random dispatching rule.
+
+    在每一步，从 ready operation-machine pairs 中随机选择一个 pair.
+    seed 保证结果可复现.
+    """
+    rng = random.Random(seed)
+
+    def _random_select(candidates: List[_Candidate], _inst: FJSPInstance, _rng: random.Random) -> _Candidate:
+        return _rng.choice(candidates)
+
+    return _dispatch_solve(instance, _random_select, rng=rng)
