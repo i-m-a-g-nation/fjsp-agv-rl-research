@@ -17,11 +17,8 @@ def _dispatch_solve(
     select_fn: _SelectFn,
     rng: random.Random | None = None,
 ) -> ScheduleResult:
-    """统一 dispatching rule 求解框架.
+    """Shared strict dispatching-rule framework."""
 
-    维护 job_ready_time / machine_ready_time / job_next_op,
-    每轮构建 ready candidates, 调用 select_fn 选择一个 pair.
-    """
     from src.scheduling.decoding import decode_schedule
     from src.scheduling.feasibility import check_feasibility
 
@@ -34,7 +31,6 @@ def _dispatch_solve(
         job_next_op[j] < instance.jobs[j].num_ops
         for j in range(instance.num_jobs)
     ):
-        # 构建 ready candidates
         candidates: List[_Candidate] = []
         for j_id in range(instance.num_jobs):
             o_id = job_next_op[j_id]
@@ -65,32 +61,18 @@ def _dispatch_solve(
 
 
 def fifo_solve(instance: FJSPInstance) -> ScheduleResult:
-    """使用 FIFO 规则构造一个基础调度结果.
+    """Simple baseline: job order plus first eligible machine."""
 
-    Args:
-        instance: 待求解的 FJSP 问题实例.
+    from src.scheduling.decoding import decode_schedule
+    from src.scheduling.feasibility import check_feasibility
 
-    Returns:
-        由 FIFO 规则生成的可行调度结果.
-
-    Raises:
-        RuntimeError: 当生成的调度结果不可行时抛出.
-
-    Notes:
-        该规则按工件编号和工序编号顺序生成 assignment.
-        每道工序始终选择第一个可选机器, 不比较加工时间.
-    """
-    # FIFO：每道工序始终选择第一个可选机器（不比较加工时间）
     assignment: List[Tuple[int, int, int]] = []
     for job_id in range(instance.num_jobs):
         for op_id in range(instance.jobs[job_id].num_ops):
             first_machine, _ = instance.jobs[job_id].operations[op_id].machine_options[0]
             assignment.append((job_id, op_id, first_machine))
 
-    from src.scheduling.decoding import decode_schedule
     result = decode_schedule(assignment, instance)
-
-    from src.scheduling.feasibility import check_feasibility
     feasible, violations = check_feasibility(result)
     if not feasible:
         raise RuntimeError(f"fifo_solve produced infeasible schedule: {violations}")
@@ -100,24 +82,10 @@ def fifo_solve(instance: FJSPInstance) -> ScheduleResult:
 
 
 def spt_solve(instance: FJSPInstance) -> ScheduleResult:
-    """使用 SPT 规则构造一个基础调度结果.
+    """Simple baseline: job order plus shortest processing-time machine."""
 
-    Args:
-        instance: 待求解的 FJSP 问题实例.
-
-    Returns:
-        由 SPT 规则生成的可行调度结果.
-
-    Raises:
-        RuntimeError: 当生成的调度结果不可行时抛出.
-
-    Notes:
-        SPT 表示 shortest processing time.
-        该规则按工件编号和工序编号顺序生成 assignment.
-        每道工序选择加工时间最短的可选机器.
-    """
-    # SPT：每道工序选择加工时间最短的机器
     from src.scheduling.decoding import decode_schedule
+    from src.scheduling.feasibility import check_feasibility
 
     assignment: List[Tuple[int, int, int]] = []
     for job_id in range(instance.num_jobs):
@@ -127,8 +95,6 @@ def spt_solve(instance: FJSPInstance) -> ScheduleResult:
             assignment.append((job_id, op_id, best_machine))
 
     result = decode_schedule(assignment, instance)
-
-    from src.scheduling.feasibility import check_feasibility
     feasible, violations = check_feasibility(result)
     if not feasible:
         raise RuntimeError(f"spt_solve produced infeasible schedule: {violations}")
@@ -138,24 +104,10 @@ def spt_solve(instance: FJSPInstance) -> ScheduleResult:
 
 
 def earliest_finish_time_solve(instance: FJSPInstance) -> ScheduleResult:
-    """使用最早完工时间贪心规则构造调度结果.
+    """Greedy earliest-finish-time baseline over ready operations."""
 
-    Args:
-        instance: 待求解的 FJSP 问题实例.
-
-    Returns:
-        由最早完工时间规则生成的可行调度结果.
-
-    Raises:
-        RuntimeError: 当生成的调度结果不可行时抛出.
-
-    Notes:
-        每轮只考虑每个工件当前待调度的下一道工序.
-        在所有候选 (job_id, op_id, machine_id) 组合中,
-        选择预计完成时间最早的组合加入 assignment.
-    """
-    # 贪心：每次选择所有待调度工序中最早能完成的 (job, op, machine) 组合
     from src.scheduling.decoding import decode_schedule
+    from src.scheduling.feasibility import check_feasibility
 
     assignment: List[Tuple[int, int, int]] = []
     job_next_start: Dict[int, int] = {j: 0 for j in range(instance.num_jobs)}
@@ -198,8 +150,6 @@ def earliest_finish_time_solve(instance: FJSPInstance) -> ScheduleResult:
         unscheduled -= 1
 
     result = decode_schedule(assignment, instance)
-
-    from src.scheduling.feasibility import check_feasibility
     feasible, violations = check_feasibility(result)
     if not feasible:
         raise RuntimeError(f"earliest_finish_time_solve produced infeasible schedule: {violations}")
@@ -209,27 +159,12 @@ def earliest_finish_time_solve(instance: FJSPInstance) -> ScheduleResult:
 
 
 def random_solve(instance: FJSPInstance, seed: int = 42) -> ScheduleResult:
-    """使用随机机器选择规则构造调度结果.
-
-    Args:
-        instance: 待求解的 FJSP 问题实例.
-        seed: 随机种子, 用于保证结果可复现.
-
-    Returns:
-        由随机规则生成的可行调度结果.
-
-    Raises:
-        RuntimeError: 当生成的调度结果不可行时抛出.
-
-    Notes:
-        该规则按工件编号和工序编号顺序生成 assignment.
-        每道工序从其可选机器集合中随机选择一台机器.
-    """
-    # Random：每道工序随机选择一个可选机器，种子保证可复现
-    rng = random.Random(seed)
+    """Simple baseline: job order plus random eligible machine."""
 
     from src.scheduling.decoding import decode_schedule
+    from src.scheduling.feasibility import check_feasibility
 
+    rng = random.Random(seed)
     assignment: List[Tuple[int, int, int]] = []
     for job_id in range(instance.num_jobs):
         for op_id in range(instance.jobs[job_id].num_ops):
@@ -238,8 +173,6 @@ def random_solve(instance: FJSPInstance, seed: int = 42) -> ScheduleResult:
             assignment.append((job_id, op_id, m_id))
 
     result = decode_schedule(assignment, instance)
-
-    from src.scheduling.feasibility import check_feasibility
     feasible, violations = check_feasibility(result)
     if not feasible:
         raise RuntimeError(f"random_solve produced infeasible schedule: {violations}")
@@ -248,19 +181,14 @@ def random_solve(instance: FJSPInstance, seed: int = 42) -> ScheduleResult:
     return result
 
 
-# ============================================================
-# 严格 dispatching rule 版本
-# ============================================================
-
-
 def dispatch_fifo_solve(instance: FJSPInstance) -> ScheduleResult:
-    """严格 FIFO dispatching rule.
+    """Strict FIFO dispatching rule.
 
-    在 ready operations 中选择最早入队的工序 (ready_time, job_id, op_id).
-    机器选择使用 earliest finish machine（同一工序的可选机器中 finish 最早的）.
-
-    tie-breaker: (ready_time, job_id, op_id)
+    Select the ready operation with the earliest ready time, using job and
+    operation ids as deterministic tie-breakers. Then choose that operation's
+    earliest-finish machine.
     """
+
     def _fifo_select(
         candidates: List[_Candidate],
         _inst: FJSPInstance,
@@ -280,11 +208,8 @@ def dispatch_fifo_solve(instance: FJSPInstance) -> ScheduleResult:
 
 
 def dispatch_spt_solve(instance: FJSPInstance) -> ScheduleResult:
-    """严格 SPT dispatching rule.
+    """Strict SPT rule over ready operation-machine pairs."""
 
-    在 ready operation-machine pairs 中选择 processing_time 最短的 pair.
-    如果多个 pair 的 pt 相同，按 (pt, finish, job_id, op_id, machine_id) 排序.
-    """
     def _spt_select(
         candidates: List[_Candidate],
         _inst: FJSPInstance,
@@ -296,11 +221,8 @@ def dispatch_spt_solve(instance: FJSPInstance) -> ScheduleResult:
 
 
 def dispatch_eft_solve(instance: FJSPInstance) -> ScheduleResult:
-    """严格 EFT dispatching rule.
+    """Strict earliest-finish-time rule over ready operation-machine pairs."""
 
-    在 ready operation-machine pairs 中选择 finish time 最早的 pair.
-    如果多个 pair 的 finish 相同，按 (finish, pt, job_id, op_id, machine_id) 排序.
-    """
     def _eft_select(
         candidates: List[_Candidate],
         _inst: FJSPInstance,
@@ -312,11 +234,8 @@ def dispatch_eft_solve(instance: FJSPInstance) -> ScheduleResult:
 
 
 def dispatch_random_solve(instance: FJSPInstance, seed: int = 42) -> ScheduleResult:
-    """严格 Random dispatching rule.
+    """Strict random dispatching rule over ready operation-machine pairs."""
 
-    在每一步，从 ready operation-machine pairs 中随机选择一个 pair.
-    seed 保证结果可复现.
-    """
     rng = random.Random(seed)
 
     def _random_select(

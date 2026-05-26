@@ -1,42 +1,23 @@
 from __future__ import annotations
 
-from typing import List
-
 from src.data.instance import FJSPInstance
 from src.scheduling.encoding import ScheduleRecord, ScheduleResult
 
 
 class Violation:
-    """表示一条调度可行性违规信息.
+    """One feasibility violation found in a schedule."""
 
-    Attributes:
-        code: 违规类型编码.
-        message: 违规的具体说明.
-
-    Examples:
-        Violation("INVALID_JOB_ID", "Job ID 3 out of range [0, 2]")
-    """
     def __init__(self, code: str, message: str) -> None:
         self.code = code
         self.message = message
 
     def __repr__(self) -> str:
-        """返回违规信息的调试字符串表示."""
         return f"Violation({self.code}: {self.message})"
 
 
 def _record_is_ident_valid(rec, instance: FJSPInstance, violations: list[Violation]) -> bool:
-    """校验调度记录中的工件编号和工序编号是否合法.
+    """Validate job and operation identifiers before indexed access."""
 
-    Args:
-        rec: 待校验的调度记录.
-        instance: 调度结果对应的 FJSP 实例.
-        violations: 用于收集违规信息的列表.
-
-    Returns:
-        若 job_id 和 op_id 均在实例范围内, 返回 True, 否则返回 False.
-    """
-    # 校验 job_id / op_id 是否在实例范围内，越界则记录违规并返回 False
     valid = True
     if rec.job_id < 0 or rec.job_id >= instance.num_jobs:
         violations.append(Violation(
@@ -55,17 +36,8 @@ def _record_is_ident_valid(rec, instance: FJSPInstance, violations: list[Violati
 
 
 def _validate_record_values(rec, violations: list[Violation]) -> None:
-    """校验调度记录中的时间字段是否合法.
+    """Validate schedule time fields."""
 
-    Args:
-        rec: 待校验的调度记录.
-        violations: 用于收集违规信息的列表.
-
-    Notes:
-        校验内容包括 start 非负, processing_time 为正数, end 不早于 start,
-        以及 end - start 是否等于 processing_time.
-    """
-    # 时间合法性：start 非负、processing_time 正数、end >= start、时间一致性
     if rec.start < 0:
         violations.append(Violation(
             "INVALID_TIME",
@@ -90,18 +62,8 @@ def _validate_record_values(rec, violations: list[Violation]) -> None:
 
 
 def _validate_record_machine(rec, instance: FJSPInstance, violations: list[Violation]) -> None:
-    """校验调度记录中的机器选择是否合法.
+    """Validate machine id, eligibility, and processing time consistency."""
 
-    Args:
-        rec: 待校验的调度记录.
-        instance: 调度结果对应的 FJSP 实例.
-        violations: 用于收集违规信息的列表.
-
-    Notes:
-        校验内容包括 machine_id 是否在机器范围内, 机器是否属于该工序的可选机器集合,
-        以及记录中的 processing_time 是否与实例数据一致.
-    """
-    # 机器合法性：machine_id 范围、是否属于该工序可选机器、processing_time 是否匹配实例
     if rec.machine_id < 0 or rec.machine_id >= instance.num_machines:
         violations.append(Violation(
             "INVALID_MACHINE_ID",
@@ -133,26 +95,8 @@ def _validate_record_machine(rec, instance: FJSPInstance, violations: list[Viola
 
 
 def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
-    """检查调度结果是否满足 FJSP 基本可行性约束.
+    """Check the core static FJSP feasibility constraints."""
 
-    Args:
-        result: 待检查的调度结果.
-
-    Returns:
-        一个二元组 (is_feasible, violations).
-        is_feasible 表示调度结果是否可行.
-        violations 表示所有检测到的违规信息.
-
-    Notes:
-        当前函数主要检查以下约束:
-        1. 调度结果必须关联 FJSP 实例.
-        2. 调度记录不能为空.
-        3. 每条记录的时间, 工件编号, 工序编号, 机器编号必须合法.
-        4. 每道工序必须恰好出现一次.
-        5. 同一工件内部必须满足工序先后约束.
-        6. 同一机器上的工序时间区间不能重叠.
-        7. makespan 必须等于所有工序 end 的最大值.
-    """
     violations: list[Violation] = []
     instance = result.instance
 
@@ -164,7 +108,6 @@ def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
         violations.append(Violation("NO_RECORDS", "ScheduleResult has no records"))
         return False, violations
 
-    # 逐条记录：时间合法性 + 标识合法性 + 机器合法性
     for rec in result.records:
         _validate_record_values(rec, violations)
         _record_is_ident_valid(rec, instance, violations)
@@ -178,7 +121,6 @@ def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
             f"Expected {expected_ops} operations, got {actual_ops}",
         ))
 
-    # 约束1：每道工序恰好出现一次（无重复、无遗漏）
     ops_scheduled: set[tuple[int, int]] = set()
     for rec in result.records:
         key = (rec.job_id, rec.op_id)
@@ -197,7 +139,6 @@ def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
                     f"Job {j_id} Op {o_id} not scheduled",
                 ))
 
-    # 约束2：同一工件内工序顺序满足先后约束（op_i.end <= op_{i+1}.start）
     job_ops: dict[int, list[ScheduleRecord]] = {}
     for rec in result.records:
         job_ops.setdefault(rec.job_id, []).append(rec)
@@ -219,7 +160,6 @@ def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
                     f"but Op {next_op.op_id} starts at {next_op.start}",
                 ))
 
-    # 约束3：同一机器上的工序无时间重叠
     machine_ops: dict[int, list[ScheduleRecord]] = {}
     for rec in result.records:
         machine_ops.setdefault(rec.machine_id, []).append(rec)
@@ -237,7 +177,6 @@ def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
                     f"Op (J{next_op.job_id} O{next_op.op_id}) starts at {next_op.start}",
                 ))
 
-    # 约束4：makespan 等于所有工序 end 的最大值
     computed_makespan = max(r.end for r in result.records) if result.records else 0
     if result.makespan != computed_makespan:
         violations.append(Violation(
