@@ -28,18 +28,18 @@ from src.solvers.heuristics import (
 )
 
 
-def run_solver(name: str, solver_fn: Callable[[], ScheduleResult]) -> tuple[str, int | None, bool, float, str]:
+def run_solver(name: str, solver_fn: Callable[[], ScheduleResult]) -> tuple[str, ScheduleResult | None, int | None, bool, float, str]:
     start = time.perf_counter()
     try:
         result = solver_fn()
         elapsed = time.perf_counter() - start
         feasible, violations = check_feasibility(result)
         if not feasible:
-            return name, result.makespan, False, elapsed, f"violations={violations}"
-        return name, result.makespan, True, elapsed, "PASS"
+            return name, result, result.makespan, False, elapsed, f"violations={violations}"
+        return name, result, result.makespan, True, elapsed, "PASS"
     except Exception as exc:
         elapsed = time.perf_counter() - start
-        return name, None, False, elapsed, f"ERROR: {exc}"
+        return name, None, None, False, elapsed, f"ERROR: {exc}"
 
 
 def main() -> None:
@@ -65,7 +65,7 @@ def main() -> None:
     failures: list[str] = []
     records: list[ExperimentRecord] = []
     for name, solver_fn in solvers:
-        algo, makespan, feasible, elapsed, note = run_solver(name, solver_fn)
+        algo, result, makespan, feasible, elapsed, note = run_solver(name, solver_fn)
         records.append(ExperimentRecord(
             experiment_id=experiment_id,
             instance_name=instance_name,
@@ -74,6 +74,9 @@ def main() -> None:
             feasible=feasible,
             runtime_s=elapsed,
             note=note,
+            objective_bound=None if result is None else result.solver_objective_bound,
+            gap=None if result is None else result.solver_gap,
+            solver_wall_time=None if result is None else result.solver_wall_time,
         ))
         mk_str = str(makespan) if makespan is not None else "N/A"
         status = "PASS" if feasible else "FAIL"

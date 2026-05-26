@@ -18,3 +18,6 @@ Each row records:
 - feasibility status
 - runtime in seconds
 - status note
+- objective bound, when reported by the solver
+- relative optimality gap, when reported by the solver
+- solver internal wall time, when reported by the solver

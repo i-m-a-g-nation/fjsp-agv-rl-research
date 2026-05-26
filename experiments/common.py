@@ -16,6 +16,9 @@ class ExperimentRecord:
     feasible: bool
     runtime_s: float
     note: str
+    objective_bound: float | None = None
+    gap: float | None = None
+    solver_wall_time: float | None = None
 
     def to_csv_row(self) -> dict[str, str]:
         """Convert the record to stable text values for CSV output."""
@@ -28,6 +31,9 @@ class ExperimentRecord:
             "feasible": "PASS" if self.feasible else "FAIL",
             "runtime_s": f"{self.runtime_s:.6f}",
             "note": self.note,
+            "objective_bound": "" if self.objective_bound is None else f"{self.objective_bound:.6f}",
+            "gap": "" if self.gap is None else f"{self.gap:.6f}",
+            "solver_wall_time": "" if self.solver_wall_time is None else f"{self.solver_wall_time:.6f}",
         }
 
 
@@ -45,6 +51,9 @@ def write_results_csv(path: str | Path, records: list[ExperimentRecord]) -> None
         "feasible",
         "runtime_s",
         "note",
+        "objective_bound",
+        "gap",
+        "solver_wall_time",
     ]
     with output_path.open("w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)

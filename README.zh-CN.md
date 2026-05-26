@@ -17,6 +17,7 @@ Phase 1 已覆盖：
 - 简单启发式 baseline：FIFO、SPT、Earliest Finish Time、Random
 - 严格 dispatching rule：DispatchFIFO、DispatchSPT、DispatchEFT、DispatchMWKR、DispatchRandom
 - OR-Tools CP-SAT baseline：可选区间变量、ExactlyOne、Precedence、NoOverlap、最小化 makespan
+- CP-SAT 求解诊断：solver status、objective bound、relative gap、solver wall time
 - Benchmark smoke loader：支持小型 0-based / 1-based FJSP 格式文件
 - Matplotlib Gantt 图输出
 - 统一实验 CSV 记录
@@ -88,6 +89,8 @@ Toy 3x3 实例上的主要结果：
 - `experiments/results/exp_002_solver_check.csv`
 - `experiments/results/exp_003_dispatching_rules.csv`
 - `experiments/results/exp_004_benchmark_smoke.csv`
+
+CSV 中会记录算法、实例、makespan、feasibility 状态、运行时间和说明。对 CP-SAT 结果，还会额外记录 objective bound、relative gap 和 solver wall time。
 
 ## 数学建模文档
 

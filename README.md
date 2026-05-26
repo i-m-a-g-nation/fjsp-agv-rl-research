@@ -17,6 +17,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - Benchmark-format loader smoke tests for small 0-based and 1-based FJSP files
 - Normalized CSV experiment result recording under `experiments/results/`
 - OR-Tools CP-SAT baseline with optional intervals, exactly-one machine assignment, precedence constraints, and machine `NoOverlap`
+- CP-SAT diagnostics: solver status, objective bound, relative gap, and solver wall time
 - Matplotlib Gantt chart output using a non-interactive backend
 - Toy-instance experiments and pytest coverage
 

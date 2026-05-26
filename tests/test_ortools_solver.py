@@ -63,6 +63,16 @@ class TestOrtoolsSolver:
         assert result.solver_status in ("OPTIMAL", "FEASIBLE"), \
             f"Expected OPTIMAL or FEASIBLE, got {result.solver_status}"
 
+    def test_solver_metadata_set(self):
+        instance = create_toy_instance()
+        result = ortools_solve(instance, time_limit=30.0)
+        assert result.solver_objective_bound is not None
+        assert result.solver_objective_bound <= result.makespan
+        assert result.solver_gap is not None
+        assert result.solver_gap >= 0
+        assert result.solver_wall_time is not None
+        assert result.solver_wall_time >= 0
+
     def test_solver_status_feasible_after_check(self):
         instance = create_toy_instance()
         result = ortools_solve(instance, time_limit=30.0)
@@ -119,6 +129,9 @@ class TestSolverStatusDoesNotBreakHeuristics:
         from src.scheduling.encoding import ScheduleResult
         result = ScheduleResult(instance=toy())
         assert result.solver_status is None
+        assert result.solver_objective_bound is None
+        assert result.solver_gap is None
+        assert result.solver_wall_time is None
 
     def test_fifo_result_has_status_none(self):
         from src.data.instance import create_toy_instance as toy

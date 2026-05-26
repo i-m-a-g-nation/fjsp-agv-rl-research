@@ -195,10 +195,26 @@ Phase 1 实验脚本会在 \texttt{experiments/results/} 下输出标准 CSV。
 \texttt{feasible} & feasibility checker 的结果，PASS 或 FAIL \\
 \texttt{runtime\_s} & 运行时间，单位为秒 \\
 \texttt{note} & 求解器状态、错误信息或验证说明 \\
+\texttt{objective\_bound} & CP-SAT 给出的目标下界，若可用 \\
+\texttt{gap} & 相对 gap，定义见下节，若可用 \\
+\texttt{solver\_wall\_time} & CP-SAT 内部 wall time，若可用 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 CSV 记录层只负责保存实验事实，不改变算法行为，也不改变可行性定义。
+
+\section{CP-SAT 诊断信息}
+
+对于 CP-SAT 结果，代码会在通用的 \texttt{ScheduleResult} 对象中保存三个
+可选诊断字段：
+\[
+LB = \text{BestObjectiveBound},
+\qquad
+gap = \frac{C_{\max}-LB}{\max(1,C_{\max})}.
+\]
+此外还会记录求解器内部的 wall time。对于 toy instance 上已证明最优的解，
+下界等于 makespan，因此 gap 为 0。启发式算法没有这些求解器诊断信息，
+对应 CSV 字段保持为空。
 
 \end{document}

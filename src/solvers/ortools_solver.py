@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from typing import Tuple
 
 from ortools.sat.python import cp_model
@@ -143,7 +144,12 @@ def _extract_result(
     """Extract and validate a ScheduleResult from a CP-SAT solution."""
 
     solver_status = "OPTIMAL" if status_name == "OPTIMAL" else "FEASIBLE"
-    result = ScheduleResult(instance=instance, solver_status=solver_status)
+    result = ScheduleResult(
+        instance=instance,
+        solver_status=solver_status,
+        solver_objective_bound=float(solver.BestObjectiveBound()),
+        solver_wall_time=float(solver.WallTime()),
+    )
 
     # Extract exactly the active interval for each operation and convert it to
     # the common ScheduleResult representation used by all solvers.
@@ -168,6 +174,9 @@ def _extract_result(
                 )
 
     result.compute_makespan()
+    if result.solver_objective_bound is not None and math.isfinite(result.solver_objective_bound):
+        gap = (float(result.makespan) - result.solver_objective_bound) / max(1.0, abs(float(result.makespan)))
+        result.solver_gap = max(0.0, gap)
 
     # CP-SAT constraints and the independent feasibility checker should agree.
     # Keeping both checks makes model mistakes visible during development.

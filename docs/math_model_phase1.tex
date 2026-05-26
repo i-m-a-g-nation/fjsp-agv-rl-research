@@ -201,11 +201,27 @@ Field & Meaning \\
 \texttt{feasible} & \texttt{PASS} or \texttt{FAIL} after feasibility checking \\
 \texttt{runtime\_s} & measured wall-clock runtime in seconds \\
 \texttt{note} & solver status, error, or validation note \\
+\texttt{objective\_bound} & CP-SAT best objective bound, when available \\
+\texttt{gap} & relative gap $(C_{\max}-LB)/\max(1,C_{\max})$, when available \\
+\texttt{solver\_wall\_time} & CP-SAT internal wall time, when available \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 The CSV layer is intentionally simple. It records what happened in each
 experiment without changing solver behavior or feasibility definitions.
+
+\section{CP-SAT Diagnostics}
+
+For CP-SAT results, the implementation stores three optional diagnostics in
+the common \texttt{ScheduleResult} object:
+\[
+LB = \text{BestObjectiveBound},
+\qquad
+gap = \frac{C_{\max}-LB}{\max(1,C_{\max})},
+\]
+and the solver-reported wall time. For an optimal solution on the toy instance,
+the bound equals the makespan and the reported gap is zero. Heuristic results
+leave these fields empty.
 
 \end{document}

@@ -66,6 +66,9 @@ def main() -> None:
             feasible=feasible,
             runtime_s=elapsed,
             note="PASS" if feasible else f"violations={violations}",
+            objective_bound=result.solver_objective_bound,
+            gap=result.solver_gap,
+            solver_wall_time=result.solver_wall_time,
         ))
         results[name] = result.makespan
         all_results.append((name, result, feasible))

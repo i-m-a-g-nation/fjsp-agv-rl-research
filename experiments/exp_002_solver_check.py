@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from experiments.common import ExperimentRecord, write_results_csv
 from src.data.instance import create_toy_instance
+from src.scheduling.encoding import ScheduleResult
 from src.scheduling.feasibility import check_feasibility
 from src.solvers.heuristics import (
     fifo_solve,
@@ -32,10 +33,10 @@ def run_solver(name: str, fn, instance):
         result = fn()
         elapsed = time.perf_counter() - start
         feasible, violations = check_feasibility(result)
-        return name, result.makespan, feasible, violations, elapsed, None, result.solver_status
+        return name, result, result.makespan, feasible, violations, elapsed, None, result.solver_status
     except Exception as e:
         elapsed = time.perf_counter() - start
-        return name, None, False, [], elapsed, str(e), None
+        return name, None, None, False, [], elapsed, str(e), None
 
 
 def main() -> None:
@@ -66,7 +67,7 @@ def main() -> None:
     failures: list[str] = []
 
     for name, fn in solvers:
-        algo, mk, feasible, violations, elapsed, error, solver_status = run_solver(name, fn, instance)
+        algo, result, mk, feasible, violations, elapsed, error, solver_status = run_solver(name, fn, instance)
         mk_str = str(mk) if mk is not None else "N/A"
         status = "PASS" if feasible else "FAIL"
         note = ""
@@ -93,6 +94,7 @@ def main() -> None:
             note = "HEURISTIC"
 
         print(f"{algo:30s} {mk_str:>8s}  {status:>8s}  {elapsed:>10.4f}  {note:>20s}")
+        result_obj: ScheduleResult | None = result
         records.append(ExperimentRecord(
             experiment_id=experiment_id,
             instance_name=instance_name,
@@ -101,6 +103,9 @@ def main() -> None:
             feasible=feasible,
             runtime_s=elapsed,
             note=note,
+            objective_bound=None if result_obj is None else result_obj.solver_objective_bound,
+            gap=None if result_obj is None else result_obj.solver_gap,
+            solver_wall_time=None if result_obj is None else result_obj.solver_wall_time,
         ))
 
         if violations:

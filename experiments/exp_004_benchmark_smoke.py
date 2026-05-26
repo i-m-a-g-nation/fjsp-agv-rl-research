@@ -34,19 +34,19 @@ def run_solver(
     instance: FJSPInstance,
     name: str,
     solver_fn: Callable[[FJSPInstance], ScheduleResult],
-) -> tuple[str, int | None, bool, float, str]:
+) -> tuple[str, ScheduleResult | None, int | None, bool, float, str]:
     start = time.perf_counter()
     try:
         result = solver_fn(instance)
         elapsed = time.perf_counter() - start
         feasible, violations = check_feasibility(result)
         if not feasible:
-            return name, result.makespan, False, elapsed, f"violations={violations}"
+            return name, result, result.makespan, False, elapsed, f"violations={violations}"
         note = result.solver_status or "PASS"
-        return name, result.makespan, True, elapsed, note
+        return name, result, result.makespan, True, elapsed, note
     except Exception as exc:
         elapsed = time.perf_counter() - start
-        return name, None, False, elapsed, f"ERROR: {exc}"
+        return name, None, None, False, elapsed, f"ERROR: {exc}"
 
 
 def main() -> None:
@@ -76,7 +76,7 @@ def main() -> None:
         print("-" * len(header))
 
         for name, solver_fn in solvers:
-            algo, makespan, feasible, elapsed, note = run_solver(instance, name, solver_fn)
+            algo, result, makespan, feasible, elapsed, note = run_solver(instance, name, solver_fn)
             records.append(ExperimentRecord(
                 experiment_id=experiment_id,
                 instance_name=path.name,
@@ -85,6 +85,9 @@ def main() -> None:
                 feasible=feasible,
                 runtime_s=elapsed,
                 note=note,
+                objective_bound=None if result is None else result.solver_objective_bound,
+                gap=None if result is None else result.solver_gap,
+                solver_wall_time=None if result is None else result.solver_wall_time,
             ))
             mk_str = str(makespan) if makespan is not None else "N/A"
             status = "PASS" if feasible else "FAIL"

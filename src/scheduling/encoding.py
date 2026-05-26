@@ -28,6 +28,9 @@ class ScheduleResult:
     makespan: int = 0
     instance: FJSPInstance | None = None
     solver_status: str | None = None
+    solver_objective_bound: float | None = None
+    solver_gap: float | None = None
+    solver_wall_time: float | None = None
 
     def add_record(
         self,
