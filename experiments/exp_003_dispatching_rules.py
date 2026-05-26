@@ -15,6 +15,7 @@ from typing import Callable
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from experiments.common import ExperimentRecord, write_results_csv
 from src.data.instance import create_toy_instance
 from src.scheduling.encoding import ScheduleResult
 from src.scheduling.feasibility import check_feasibility
@@ -42,6 +43,9 @@ def run_solver(name: str, solver_fn: Callable[[], ScheduleResult]) -> tuple[str,
 
 
 def main() -> None:
+    root = Path(__file__).parent.parent
+    experiment_id = "exp_003_dispatching_rules"
+    instance_name = "toy_3x3"
     instance = create_toy_instance()
     print(f"Instance: {instance.num_jobs} jobs x {instance.num_machines} machines, {instance.total_ops} ops")
     print()
@@ -59,13 +63,28 @@ def main() -> None:
     print("-" * len(header))
 
     failures: list[str] = []
+    records: list[ExperimentRecord] = []
     for name, solver_fn in solvers:
         algo, makespan, feasible, elapsed, note = run_solver(name, solver_fn)
+        records.append(ExperimentRecord(
+            experiment_id=experiment_id,
+            instance_name=instance_name,
+            algorithm=algo,
+            makespan=makespan,
+            feasible=feasible,
+            runtime_s=elapsed,
+            note=note,
+        ))
         mk_str = str(makespan) if makespan is not None else "N/A"
         status = "PASS" if feasible else "FAIL"
         print(f"{algo:24s} {mk_str:>8s}  {status:>8s}  {elapsed:>10.4f}  {note}")
         if not feasible:
             failures.append(f"{algo}: {note}")
+
+    output_path = root / "experiments" / "results" / f"{experiment_id}.csv"
+    write_results_csv(output_path, records)
+    print()
+    print(f"CSV results written to: {output_path}")
 
     if failures:
         print()

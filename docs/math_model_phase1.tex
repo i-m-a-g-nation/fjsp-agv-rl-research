@@ -1,0 +1,186 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,booktabs}
+\usepackage[hidelinks]{hyperref}
+
+\title{Phase 1 Static FJSP Mathematical Model}
+\author{FJSP-AGV-RL Research Platform}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Scope}
+
+This document describes the Phase 1 static flexible job shop scheduling
+problem (FJSP) model implemented by the repository. Transportation time,
+AGV routing, dynamic job arrivals, reinforcement learning, and graph neural
+network components are outside the Phase 1 scope.
+
+\section{Sets and Indices}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+Symbol & Meaning \\
+\midrule
+$J$ & set of jobs, indexed by $j$ \\
+$O_j$ & ordered set of operations for job $j$, indexed by $o$ \\
+$M$ & set of machines, indexed by $m$ \\
+$A_{jo}$ & eligible machines for operation $(j,o)$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Operation $(j,o)$ must precede $(j,o+1)$ for every job $j$ and operation
+position $o$ where $o+1 \in O_j$.
+
+\section{Parameters}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+Symbol & Meaning \\
+\midrule
+$p_{jom}$ & processing time of operation $(j,o)$ on machine $m$ \\
+$H$ & conservative scheduling horizon \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The implementation uses a conservative horizon
+\[
+H = \sum_{j \in J} \sum_{o \in O_j} \max_{m \in A_{jo}} p_{jom}.
+\]
+This upper bound is not necessarily tight, but it is safe for the small
+CP-SAT baseline model.
+
+\section{Decision Variables}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+Symbol & Meaning \\
+\midrule
+$x_{jom} \in \{0,1\}$ & 1 if operation $(j,o)$ is assigned to machine $m$ \\
+$S_{jo} \ge 0$ & start time of operation $(j,o)$ \\
+$C_{jo} \ge 0$ & completion time of operation $(j,o)$ \\
+$C_{\max} \ge 0$ & makespan \\
+$y_{abm} \in \{0,1\}$ & order variable for two operations $a,b$ on machine $m$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Here $a$ and $b$ denote operation identifiers such as $(j,o)$. The explicit
+$y$ variables are useful for a classical mixed-integer programming statement.
+The current OR-Tools implementation uses optional interval variables and
+\texttt{NoOverlap} instead of manually creating all $y$ variables.
+
+\section{Objective}
+
+The objective is to minimize the makespan:
+\[
+\min C_{\max}.
+\]
+
+\section{Constraints}
+
+\subsection{Machine Assignment}
+
+Each operation must be assigned to exactly one eligible machine:
+\[
+\sum_{m \in A_{jo}} x_{jom} = 1,
+\qquad \forall j \in J,\; o \in O_j.
+\]
+
+Machines outside $A_{jo}$ are not valid choices and are never created as
+candidate assignments in the implementation.
+
+\subsection{Processing Time Link}
+
+If operation $(j,o)$ is assigned to machine $m$, then its completion time must
+match its start time plus the selected processing time:
+\[
+C_{jo} \ge S_{jo} + p_{jom} - H(1 - x_{jom}),
+\qquad \forall j,o,\; m \in A_{jo}.
+\]
+
+\subsection{Job Precedence}
+
+Operations within the same job must follow the given route order:
+\[
+C_{jo} \le S_{j,o+1},
+\qquad \forall j \in J,\; o,o+1 \in O_j.
+\]
+
+\subsection{Machine Capacity}
+
+A machine can process at most one operation at a time. For any two distinct
+operations $a=(j,o)$ and $b=(k,q)$ that are both eligible for machine $m$,
+the disjunctive ordering is:
+\[
+S_a + p_{am} \le S_b + H(1 - y_{abm}) + H(2 - x_{am} - x_{bm}),
+\]
+\[
+S_b + p_{bm} \le S_a + Hy_{abm} + H(2 - x_{am} - x_{bm}).
+\]
+
+These constraints are active only when both operations are assigned to machine
+$m$. In the CP-SAT implementation, this logic is represented by optional
+intervals and a per-machine \texttt{NoOverlap} constraint.
+
+\subsection{Makespan Definition}
+
+The makespan must be no smaller than every final operation completion time:
+\[
+C_{\max} \ge C_{j,last(j)}, \qquad \forall j \in J.
+\]
+
+\section{Feasibility Checker Mapping}
+
+The repository's feasibility checker validates the following model conditions:
+
+\begin{itemize}
+  \item every operation appears exactly once;
+  \item all job and operation ids are inside the instance range;
+  \item every selected machine is eligible for the operation;
+  \item recorded processing time matches the instance data;
+  \item job precedence constraints are satisfied;
+  \item no two operations overlap on the same machine;
+  \item stored makespan equals the maximum recorded completion time.
+\end{itemize}
+
+\section{Dispatching Rules}
+
+The strict dispatching rules use a common candidate tuple
+\[
+(j,o,m,r_{jo},s_{jom},f_{jom},p_{jom}),
+\]
+where $r_{jo}$ is the job ready time, $s_{jom}$ is the earliest feasible start
+time on machine $m$, and $f_{jom}=s_{jom}+p_{jom}$ is the tentative finish time.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\toprule
+Rule & Operation selection & Machine selection \\
+\midrule
+FIFO & smallest $(r_{jo},j,o)$ & earliest finish \\
+SPT & smallest $p_{jom}$ pair & selected with pair \\
+EFT & smallest $f_{jom}$ pair & selected with pair \\
+MWKR & largest remaining route work & earliest finish \\
+Random & random ready pair & selected with pair \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For MWKR, remaining route work is estimated as
+\[
+W_{jo} = \sum_{q=o}^{last(j)} \min_{m \in A_{jq}} p_{jqm}.
+\]
+
+\end{document}

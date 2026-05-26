@@ -13,6 +13,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - Heuristic baselines: FIFO, SPT, Earliest Finish Time, and seeded Random
 - Strict dispatching-rule variants: DispatchFIFO, DispatchSPT, DispatchEFT, DispatchMWKR, and DispatchRandom
 - Benchmark-format loader smoke tests for small 0-based and 1-based FJSP files
+- Normalized CSV experiment result recording under `experiments/results/`
 - OR-Tools CP-SAT baseline with optional intervals, exactly-one machine assignment, precedence constraints, and machine `NoOverlap`
 - Matplotlib Gantt chart output using a non-interactive backend
 - Toy-instance experiments and pytest coverage
@@ -119,3 +120,9 @@ small so the experiment stays fast and deterministic.
 ## Code Walkthrough
 
 For a guided tour of the Phase 1 code, see [docs/code_walkthrough_phase1.md](docs/code_walkthrough_phase1.md).
+
+## Mathematical Model
+
+The Phase 1 static FJSP formulation is documented in
+[docs/math_model_phase1.tex](docs/math_model_phase1.tex). A compiled PDF is
+available at [docs/math_model_phase1.pdf](docs/math_model_phase1.pdf).

@@ -1,0 +1,6 @@
+experiment_id,instance_name,algorithm,makespan,feasible,runtime_s,note
+exp_003_dispatching_rules,toy_3x3,DispatchFIFO,11,PASS,0.000106,PASS
+exp_003_dispatching_rules,toy_3x3,DispatchSPT,13,PASS,0.000063,PASS
+exp_003_dispatching_rules,toy_3x3,DispatchEFT,13,PASS,0.000053,PASS
+exp_003_dispatching_rules,toy_3x3,DispatchMWKR,12,PASS,0.000172,PASS
+exp_003_dispatching_rules,toy_3x3,DispatchRandom(42),14,PASS,0.000067,PASS

@@ -15,6 +15,7 @@ from typing import Callable
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from experiments.common import ExperimentRecord, write_results_csv
 from src.data.instance import FJSPInstance
 from src.data.loader import load_benchmark_file
 from src.scheduling.encoding import ScheduleResult
@@ -50,6 +51,7 @@ def run_solver(
 
 def main() -> None:
     root = Path(__file__).parent.parent
+    experiment_id = "exp_004_benchmark_smoke"
     benchmark_files = [
         root / "instances" / "toy_3x3_0based.fjs",
         root / "instances" / "tiny_2x2_1based.fjs",
@@ -65,6 +67,7 @@ def main() -> None:
     ]
 
     failures: list[str] = []
+    records: list[ExperimentRecord] = []
     for path in benchmark_files:
         instance = load_benchmark_file(path)
         print(f"Instance: {path.name} ({instance.num_jobs} jobs x {instance.num_machines} machines, {instance.total_ops} ops)")
@@ -74,12 +77,25 @@ def main() -> None:
 
         for name, solver_fn in solvers:
             algo, makespan, feasible, elapsed, note = run_solver(instance, name, solver_fn)
+            records.append(ExperimentRecord(
+                experiment_id=experiment_id,
+                instance_name=path.name,
+                algorithm=algo,
+                makespan=makespan,
+                feasible=feasible,
+                runtime_s=elapsed,
+                note=note,
+            ))
             mk_str = str(makespan) if makespan is not None else "N/A"
             status = "PASS" if feasible else "FAIL"
             print(f"{algo:18s} {mk_str:>8s}  {status:>8s}  {elapsed:>10.4f}  {note}")
             if not feasible:
                 failures.append(f"{path.name} / {algo}: {note}")
         print()
+
+    output_path = root / "experiments" / "results" / f"{experiment_id}.csv"
+    write_results_csv(output_path, records)
+    print(f"CSV results written to: {output_path}")
 
     if failures:
         print("FAILURES:")

@@ -89,6 +89,10 @@ Expected output:
 | DispatchMWKR | PASS |
 | DispatchRandom(42) | PASS |
 
+CSV artifact:
+
+- `results/exp_003_dispatching_rules.csv`
+
 Exit code: `0` when all strict dispatching rules pass feasibility checking, `1` otherwise.
 
 ## `exp_004_benchmark_smoke.py`
@@ -113,6 +117,10 @@ Expected behavior:
 - 1-based machine ids are normalized to 0-based ids
 - every algorithm result passes `check_feasibility()`
 - CP-SAT reports `OPTIMAL` or `FEASIBLE` through `ScheduleResult.solver_status`
+
+CSV artifact:
+
+- `results/exp_004_benchmark_smoke.csv`
 
 Exit code: `0` when all benchmark smoke schedules pass feasibility checking, `1` otherwise.
 
