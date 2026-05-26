@@ -18,6 +18,8 @@ class Violation:
 def _record_is_ident_valid(rec, instance: FJSPInstance, violations: list[Violation]) -> bool:
     """Validate job and operation identifiers before indexed access."""
 
+    # Return False when ids are invalid so later checks can avoid unsafe
+    # instance.jobs[job_id] indexing.
     valid = True
     if rec.job_id < 0 or rec.job_id >= instance.num_jobs:
         violations.append(Violation(
@@ -38,6 +40,8 @@ def _record_is_ident_valid(rec, instance: FJSPInstance, violations: list[Violati
 def _validate_record_values(rec, violations: list[Violation]) -> None:
     """Validate schedule time fields."""
 
+    # These checks are independent of the instance, so they can run even when
+    # job or machine ids are invalid.
     if rec.start < 0:
         violations.append(Violation(
             "INVALID_TIME",
@@ -64,6 +68,8 @@ def _validate_record_values(rec, violations: list[Violation]) -> None:
 def _validate_record_machine(rec, instance: FJSPInstance, violations: list[Violation]) -> None:
     """Validate machine id, eligibility, and processing time consistency."""
 
+    # Machine range must be checked before asking the instance whether the
+    # machine is eligible.
     if rec.machine_id < 0 or rec.machine_id >= instance.num_machines:
         violations.append(Violation(
             "INVALID_MACHINE_ID",
@@ -77,6 +83,8 @@ def _validate_record_machine(rec, instance: FJSPInstance, violations: list[Viola
     if not (0 <= rec.op_id < instance.jobs[rec.job_id].num_ops):
         return
 
+    # Eligibility and processing-time checks connect the schedule back to the
+    # immutable benchmark data.
     eligible = instance.is_machine_eligible(rec.job_id, rec.op_id, rec.machine_id)
     if not eligible:
         violations.append(Violation(
@@ -100,6 +108,8 @@ def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
     violations: list[Violation] = []
     instance = result.instance
 
+    # A schedule without an instance cannot be validated against operation
+    # counts, eligible machines, or processing times.
     if instance is None:
         violations.append(Violation("NO_INSTANCE", "ScheduleResult has no instance reference"))
         return False, violations
@@ -108,6 +118,8 @@ def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
         violations.append(Violation("NO_RECORDS", "ScheduleResult has no records"))
         return False, violations
 
+    # First pass: local record sanity. This collects as many issues as possible
+    # instead of failing fast on the first bad record.
     for rec in result.records:
         _validate_record_values(rec, violations)
         _record_is_ident_valid(rec, instance, violations)
@@ -121,6 +133,7 @@ def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
             f"Expected {expected_ops} operations, got {actual_ops}",
         ))
 
+    # Each operation must appear exactly once.
     ops_scheduled: set[tuple[int, int]] = set()
     for rec in result.records:
         key = (rec.job_id, rec.op_id)
@@ -139,6 +152,8 @@ def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
                     f"Job {j_id} Op {o_id} not scheduled",
                 ))
 
+    # Precedence is checked per job after sorting by operation id, not by the
+    # insertion order of records.
     job_ops: dict[int, list[ScheduleRecord]] = {}
     for rec in result.records:
         job_ops.setdefault(rec.job_id, []).append(rec)
@@ -160,6 +175,7 @@ def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
                     f"but Op {next_op.op_id} starts at {next_op.start}",
                 ))
 
+    # Machine capacity is checked per machine after sorting by start time.
     machine_ops: dict[int, list[ScheduleRecord]] = {}
     for rec in result.records:
         machine_ops.setdefault(rec.machine_id, []).append(rec)
@@ -177,6 +193,7 @@ def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
                     f"Op (J{next_op.job_id} O{next_op.op_id}) starts at {next_op.start}",
                 ))
 
+    # Keep the stored makespan honest; experiments and comparisons depend on it.
     computed_makespan = max(r.end for r in result.records) if result.records else 0
     if result.makespan != computed_makespan:
         violations.append(Violation(

@@ -3,7 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import List, Tuple
 
-# A feasible machine option for one operation: (machine_id, processing_time).
+# A feasible machine option for one operation.
+# All internal algorithms assume machine_id is already normalized to 0-based.
 MachineOption = Tuple[int, int]
 
 
@@ -53,6 +54,8 @@ class FJSPInstance:
 
         num_jobs = len(jobs_array)
         if num_machines is None:
+            # Infer the machine count from the largest id when a benchmark
+            # parser or test fixture does not provide it explicitly.
             machine_ids: set[int] = set()
             for job_ops in jobs_array:
                 for op_options in job_ops:
@@ -60,6 +63,8 @@ class FJSPInstance:
                         machine_ids.add(m_id)
             num_machines = max(machine_ids) + 1 if machine_ids else 0
 
+        # Freeze jobs and operations so solver code cannot accidentally mutate
+        # the instance data while building a schedule.
         jobs: list[Job] = []
         for j_idx, job_ops in enumerate(jobs_array):
             ops: list[Operation] = []
@@ -94,6 +99,8 @@ class FJSPInstance:
 def create_toy_instance() -> FJSPInstance:
     """Create a small 3-job, 3-machine instance for tests and examples."""
 
+    # This fixture is intentionally tiny but still flexible: several operations
+    # have more than one eligible machine, so heuristics can make real choices.
     jobs_array: List[List[List[MachineOption]]] = [
         [
             [(0, 3), (1, 5)],

@@ -18,6 +18,8 @@ class OrtoolsSolverError(Exception):
 def _compute_horizon(instance: FJSPInstance) -> int:
     """Compute a conservative time horizon for the CP-SAT model."""
 
+    # Sum of worst eligible processing times is a safe upper bound for all
+    # start/end variables because a serial schedule can always fit inside it.
     total = 0
     for job in instance.jobs:
         for op in job.operations:
@@ -40,6 +42,8 @@ def ortools_solve(
     interval_vars: dict[Tuple[int, int, int], cp_model.IntervalVar] = {}
     presence_vars: dict[Tuple[int, int, int], cp_model.IntVar] = {}
 
+    # Optional intervals represent the machine choice for each operation.
+    # If presence is false, the interval is ignored by precedence and NoOverlap.
     for j_id, job in enumerate(instance.jobs):
         for o_id, op in enumerate(job.operations):
             for m_id, pt in op.machine_options:
@@ -57,6 +61,7 @@ def ortools_solve(
 
     for j_id, job in enumerate(instance.jobs):
         for o_id, op in enumerate(job.operations):
+            # Exactly one eligible machine must be selected for every operation.
             machine_presences = [
                 presence_vars[(j_id, o_id, m_id)]
                 for m_id, _pt in op.machine_options
@@ -64,6 +69,8 @@ def ortools_solve(
             model.AddExactlyOne(machine_presences)
 
         for o_id in range(job.num_ops - 1):
+            # Precedence is conditional because each operation has multiple
+            # optional machine intervals, but only one is active in a solution.
             cur_machines = job.operations[o_id].machine_options
             next_machines = job.operations[o_id + 1].machine_options
             for m_cur, _ptc in cur_machines:
@@ -75,6 +82,7 @@ def ortools_solve(
                     model.Add(end_cur <= start_next).OnlyEnforceIf([p_cur, p_next])
 
     for m_id in range(instance.num_machines):
+        # NoOverlap enforces single capacity for each physical machine.
         machine_intervals: list[cp_model.IntervalVar] = []
         for j_id, job in enumerate(instance.jobs):
             for o_id, op in enumerate(job.operations):
@@ -86,6 +94,7 @@ def ortools_solve(
         if machine_intervals:
             model.AddNoOverlap(machine_intervals)
 
+    # Makespan is the maximum completion time of each job's final operation.
     makespan_var = model.NewIntVar(0, horizon, "makespan")
     for j_id, job in enumerate(instance.jobs):
         last_o = job.num_ops - 1
@@ -105,6 +114,8 @@ def ortools_solve(
     status = solver.Solve(model)
     status_name = solver.StatusName(status)
 
+    # Only OPTIMAL and FEASIBLE contain extractable schedules. Other statuses
+    # are treated as errors so callers cannot mistake them for valid results.
     if status == cp_model.INFEASIBLE:
         raise OrtoolsSolverError("CP-SAT returned INFEASIBLE")
 
@@ -134,6 +145,8 @@ def _extract_result(
     solver_status = "OPTIMAL" if status_name == "OPTIMAL" else "FEASIBLE"
     result = ScheduleResult(instance=instance, solver_status=solver_status)
 
+    # Extract exactly the active interval for each operation and convert it to
+    # the common ScheduleResult representation used by all solvers.
     for j_id, job in enumerate(instance.jobs):
         for o_id, op in enumerate(job.operations):
             assigned = False
@@ -156,6 +169,8 @@ def _extract_result(
 
     result.compute_makespan()
 
+    # CP-SAT constraints and the independent feasibility checker should agree.
+    # Keeping both checks makes model mistakes visible during development.
     feasible, violations = check_feasibility(result)
     if not feasible:
         raise OrtoolsSolverError(

@@ -16,6 +16,8 @@ class ParsedInstance:
 
 
 def _clean_benchmark_text(text: str) -> str:
+    """Drop comments/blank lines and flatten benchmark text into token order."""
+
     lines = text.strip().splitlines()
     clean_lines = [
         line.strip()
@@ -30,6 +32,8 @@ def _normalize_machine_options(
     num_machines: int,
     machine_index_base: int | str,
 ) -> List[List[List[MachineOption]]]:
+    """Normalize benchmark machine ids to the internal 0-based convention."""
+
     machine_ids = [
         m_id
         for job_ops in jobs
@@ -41,6 +45,8 @@ def _normalize_machine_options(
         raise ValueError("Benchmark instance contains no machine options")
 
     if machine_index_base == "auto":
+        # Many FJSP datasets use 1-based machines, while local toy instances
+        # use 0-based ids. The minimum id is enough for the supported formats.
         if min(machine_ids) == 0:
             offset = 0
         elif min(machine_ids) == 1:
@@ -80,6 +86,8 @@ def parse_brandimarte_line(
     line: str,
     machine_index_base: int | str = "auto",
 ) -> Tuple[List[List[MachineOption]], int, float]:
+    """Parse one flattened Brandimarte/FJSPLib-style instance."""
+
     parts = line.strip().split()
     if not parts:
         raise ValueError("Empty line")
@@ -113,6 +121,7 @@ def parse_brandimarte_line(
                 raise ValueError(f"Job {job_id} op {op_id} has no machine options")
             options: List[MachineOption] = []
             for _ in range(num_options):
+                # Each option is stored as a machine-processing_time pair.
                 if idx + 1 >= len(parts):
                     raise ValueError(f"Incomplete machine option for job {job_id} op {op_id}")
                 m_id = int(parts[idx])
@@ -133,6 +142,8 @@ def parse_fjsplib_text(
     text: str,
     machine_index_base: int | str = "auto",
 ) -> ParsedInstance:
+    """Parse a possibly multi-line benchmark text block."""
+
     single_line = _clean_benchmark_text(text)
     jobs_list, num_machines, mean = parse_brandimarte_line(
         single_line,
@@ -150,6 +161,8 @@ def load_benchmark_instance(
     text: str,
     machine_index_base: int | str = "auto",
 ) -> FJSPInstance:
+    """Parse benchmark text and build the internal immutable instance model."""
+
     parsed = parse_fjsplib_text(text, machine_index_base=machine_index_base)
     return FJSPInstance.from_jobs_array(parsed.jobs, parsed.num_machines)
 
@@ -159,6 +172,8 @@ def load_benchmark_file(
     machine_index_base: int | str = "auto",
     encoding: str = "utf-8",
 ) -> FJSPInstance:
+    """Load a benchmark file with explicit encoding and parse it."""
+
     text = Path(path).read_text(encoding=encoding)
     return load_benchmark_instance(text, machine_index_base=machine_index_base)
 

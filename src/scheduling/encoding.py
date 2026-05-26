@@ -22,6 +22,8 @@ class ScheduleRecord:
 class ScheduleResult:
     """Mutable schedule container built by decoders or solvers."""
 
+    # records preserve the order in which the decoder or solver inserted them.
+    # Use sorted_records() when job-route order is needed for display or checks.
     records: List[ScheduleRecord] = field(default_factory=list)
     makespan: int = 0
     instance: FJSPInstance | None = None
@@ -37,6 +39,8 @@ class ScheduleResult:
     ) -> ScheduleRecord:
         """Append one scheduled operation and return the new record."""
 
+        # Store end explicitly so downstream checks do not have to recompute it
+        # from start and processing_time every time.
         rec = ScheduleRecord(
             job_id=job_id,
             op_id=op_id,
@@ -51,6 +55,8 @@ class ScheduleResult:
     def compute_makespan(self) -> int:
         """Recompute and store the maximum operation end time."""
 
+        # An empty result is useful while constructing tests, but it is not a
+        # feasible schedule; feasibility.py rejects it separately.
         if not self.records:
             self.makespan = 0
             return 0
