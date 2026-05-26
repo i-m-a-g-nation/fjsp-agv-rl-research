@@ -89,6 +89,31 @@ Expected output:
 
 Exit code: `0` when all strict dispatching rules pass feasibility checking, `1` otherwise.
 
+## `exp_004_benchmark_smoke.py`
+
+Loads small benchmark-format instances from `instances/` and runs selected
+simple baselines, strict dispatching rules, and CP-SAT.
+
+Input files:
+
+- `instances/toy_3x3_0based.fjs`
+- `instances/tiny_2x2_1based.fjs`
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_004_benchmark_smoke.py
+```
+
+Expected behavior:
+
+- both files load successfully
+- 1-based machine ids are normalized to 0-based ids
+- every algorithm result passes `check_feasibility()`
+- CP-SAT reports `OPTIMAL` or `FEASIBLE` through `ScheduleResult.solver_status`
+
+Exit code: `0` when all benchmark smoke schedules pass feasibility checking, `1` otherwise.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.

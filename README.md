@@ -12,6 +12,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - Feasibility checker for operation coverage, precedence, machine capacity, machine eligibility, processing times, and makespan consistency
 - Heuristic baselines: FIFO, SPT, Earliest Finish Time, and seeded Random
 - Strict dispatching-rule variants: DispatchFIFO, DispatchSPT, DispatchEFT, and DispatchRandom
+- Benchmark-format loader smoke tests for small 0-based and 1-based FJSP files
 - OR-Tools CP-SAT baseline with optional intervals, exactly-one machine assignment, precedence constraints, and machine `NoOverlap`
 - Matplotlib Gantt chart output using a non-interactive backend
 - Toy-instance experiments and pytest coverage
@@ -54,6 +55,7 @@ Do not use the Conda `base` environment for project checks.
 .\.conda-env\python.exe experiments\exp_001_toy_instance.py
 .\.conda-env\python.exe experiments\exp_002_solver_check.py
 .\.conda-env\python.exe experiments\exp_003_dispatching_rules.py
+.\.conda-env\python.exe experiments\exp_004_benchmark_smoke.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -98,6 +100,12 @@ CP-SAT currently proves makespan 11 on the toy instance.
 The original heuristic functions remain as simple baselines. The `dispatch_*`
 functions are the stricter dispatching-rule implementations intended for
 definition-sensitive comparisons.
+
+### Experiment 004: Benchmark Loader Smoke
+
+Loads small benchmark-format files from `instances/` and runs selected baselines,
+strict dispatching rules, and CP-SAT. The included smoke files are intentionally
+small so the experiment stays fast and deterministic.
 
 ## Known Notes
 

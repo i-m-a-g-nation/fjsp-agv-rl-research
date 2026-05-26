@@ -9,7 +9,9 @@ from src.data.instance import (
 )
 from src.data.loader import (
     parse_brandimarte_line,
+    parse_fjsplib_text,
     load_benchmark_instance,
+    load_benchmark_file,
     TOY_INSTANCES,
 )
 
@@ -77,3 +79,47 @@ class TestLoader:
         assert instance.num_jobs == 3
         assert instance.num_machines == 3
         assert instance.total_ops == 7
+
+    def test_parse_fjsplib_text_with_comments(self):
+        text = """
+        # tiny 0-based FJSP instance
+        2 2 1.5
+        1 2 0 3 1 5
+        1 1 1 4
+        """
+        parsed = parse_fjsplib_text(text)
+        assert parsed.num_jobs == 2
+        assert parsed.num_machines == 2
+        assert parsed.mean_machines_per_op == 1.5
+        assert parsed.jobs == [[[(0, 3), (1, 5)]], [[(1, 4)]]]
+
+    def test_parse_one_based_machine_ids_are_normalized(self):
+        text = "2 2 1.5 1 2 1 3 2 5 1 1 2 4"
+        instance = load_benchmark_instance(text)
+        assert instance.is_machine_eligible(0, 0, 0)
+        assert instance.is_machine_eligible(0, 0, 1)
+        assert instance.is_machine_eligible(1, 0, 1)
+        assert instance.get_processing_time(1, 0, 1) == 4
+
+    def test_parse_rejects_trailing_tokens(self):
+        text = "1 1 1.0 1 1 0 3 999"
+        with pytest.raises(ValueError, match="Unexpected trailing tokens"):
+            load_benchmark_instance(text, machine_index_base=0)
+
+    def test_parse_rejects_incomplete_machine_option(self):
+        text = "1 1 1.0 1 1 0"
+        with pytest.raises(ValueError, match="Incomplete machine option"):
+            load_benchmark_instance(text, machine_index_base=0)
+
+    def test_parse_rejects_non_positive_processing_time(self):
+        text = "1 1 1.0 1 1 0 0"
+        with pytest.raises(ValueError, match="Processing time must be positive"):
+            load_benchmark_instance(text, machine_index_base=0)
+
+    def test_load_benchmark_file(self, tmp_path):
+        path = tmp_path / "tiny.fjs"
+        path.write_text("1 1 1.0\n1 1 0 3\n", encoding="utf-8")
+        instance = load_benchmark_file(path, machine_index_base=0)
+        assert instance.num_jobs == 1
+        assert instance.num_machines == 1
+        assert instance.total_ops == 1

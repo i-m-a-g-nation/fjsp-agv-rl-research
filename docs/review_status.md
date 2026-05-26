@@ -6,11 +6,11 @@ Last updated: 2026-05-19
 
 | Item | Value |
 |---|---|
-| Latest reviewed commit | `6accd10` |
+| Latest reviewed commit | `3723cce` |
 | Python environment | Dedicated Conda environment: `.conda-env` or `FJSP_CONDA_ENV` |
 | matplotlib | 3.8.4 |
 | Pillow | 10.4.0 |
-| pytest | 75 passed, 0 failed |
+| pytest | 81 passed, 0 failed |
 | Known warning | Low-priority `.pytest_cache` warning on some Windows paths |
 
 ## Verified Commands
@@ -20,7 +20,8 @@ Last updated: 2026-05-19
 | `experiments/exp_001_toy_instance.py` | 0 | All heuristic schedules feasible, best makespan 13 |
 | `experiments/exp_002_solver_check.py` | 0 | CP-SAT optimal makespan 11 |
 | `experiments/exp_003_dispatching_rules.py` | 0 | Strict dispatching rules feasible |
-| `pytest` | 0 | 75 passed |
+| `experiments/exp_004_benchmark_smoke.py` | 0 | Benchmark-format smoke instances feasible |
+| `pytest` | 0 | 81 passed |
 | `git status --short` | 0 | Clean |
 
 ## Module Status
@@ -28,6 +29,7 @@ Last updated: 2026-05-19
 | Module | Status | Notes |
 |---|---|---|
 | `FJSPInstance` | Done | `from_jobs_array`, `get_processing_time`, `is_machine_eligible` |
+| Benchmark loader | Done | Small Brandimarte/FJSPLib-style text and file loading smoke coverage |
 | `encoding` | Done | `ScheduleRecord`, `ScheduleResult`, `solver_status` |
 | `decoding` | Done | Semi-active `decode_schedule` |
 | `feasibility` | Done | Core constraints plus robustness checks |
