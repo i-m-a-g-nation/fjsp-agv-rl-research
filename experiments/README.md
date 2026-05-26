@@ -61,6 +61,34 @@ If CP-SAT returns `FEASIBLE` rather than `OPTIMAL`, the experiment reports it as
 
 Exit code: `0` when all algorithms pass feasibility checking and no solver errors occur, `1` otherwise.
 
+## `exp_003_dispatching_rules.py`
+
+Runs the strict dispatching-rule variants on the same toy instance.
+
+Algorithms:
+
+- DispatchFIFO: choose the earliest ready operation, then choose its earliest-finish eligible machine
+- DispatchSPT: choose the ready operation-machine pair with the shortest processing time
+- DispatchEFT: choose the ready operation-machine pair with the earliest finish time
+- DispatchRandom(42): choose a ready operation-machine pair with a reproducible random seed
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_003_dispatching_rules.py
+```
+
+Expected output:
+
+| Algorithm | Feasible |
+|---|---|
+| DispatchFIFO | PASS |
+| DispatchSPT | PASS |
+| DispatchEFT | PASS |
+| DispatchRandom(42) | PASS |
+
+Exit code: `0` when all strict dispatching rules pass feasibility checking, `1` otherwise.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.

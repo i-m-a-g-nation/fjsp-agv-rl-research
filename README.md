@@ -11,6 +11,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - Semi-active decoding from `(job_id, op_id, machine_id)` assignments to timed schedules
 - Feasibility checker for operation coverage, precedence, machine capacity, machine eligibility, processing times, and makespan consistency
 - Heuristic baselines: FIFO, SPT, Earliest Finish Time, and seeded Random
+- Strict dispatching-rule variants: DispatchFIFO, DispatchSPT, DispatchEFT, and DispatchRandom
 - OR-Tools CP-SAT baseline with optional intervals, exactly-one machine assignment, precedence constraints, and machine `NoOverlap`
 - Matplotlib Gantt chart output using a non-interactive backend
 - Toy-instance experiments and pytest coverage
@@ -52,6 +53,7 @@ Do not use the Conda `base` environment for project checks.
 .\.conda-env\python.exe -c "import sys; print(sys.executable)"
 .\.conda-env\python.exe experiments\exp_001_toy_instance.py
 .\.conda-env\python.exe experiments\exp_002_solver_check.py
+.\.conda-env\python.exe experiments\exp_003_dispatching_rules.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -83,6 +85,19 @@ Best heuristic result on the toy instance: makespan 13.
 | CP-SAT(tl=30s) | 11 | CP-SAT optimal |
 
 CP-SAT currently proves makespan 11 on the toy instance.
+
+### Experiment 003: Strict Dispatching Rules
+
+| Algorithm | Definition | Feasible |
+|---|---|---|
+| DispatchFIFO | earliest ready operation, then earliest-finish machine | PASS |
+| DispatchSPT | shortest processing-time ready operation-machine pair | PASS |
+| DispatchEFT | earliest-finish ready operation-machine pair | PASS |
+| DispatchRandom(42) | seeded random ready operation-machine pair | PASS |
+
+The original heuristic functions remain as simple baselines. The `dispatch_*`
+functions are the stricter dispatching-rule implementations intended for
+definition-sensitive comparisons.
 
 ## Known Notes
 

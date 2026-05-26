@@ -96,19 +96,21 @@ class TestDispatchFIFO:
 
     def test_dispatch_fifo_ready_order(self):
         """FIFO 选择 ready queue 中最早入队的工序"""
-        # 构造实例：Job0-Op0 和 Job1-Op0 都在 t=0 就绪
-        # FIFO 应先选 Job0-Op0（job_id 更小）
+        # Job0O1 becomes ready at t=10, while Job1O0 has been ready since t=0.
+        # Both can only start at t=10 on the single shared machine, so this
+        # catches implementations that incorrectly sort FIFO by machine start.
         jobs = [
-            [[(0, 5), (1, 10)]],   # Job0: Op0
-            [[(0, 3), (1, 2)]],    # Job1: Op0
+            [[(0, 10)], [(0, 1)]],
+            [[(0, 1)]],
         ]
-        instance = FJSPInstance.from_jobs_array(jobs, num_machines=2)
+        instance = FJSPInstance.from_jobs_array(jobs, num_machines=1)
         result = dispatch_fifo_solve(instance)
 
-        # Job0-Op0 应该先被调度（start 时间更小或相等）
-        j0_op0 = [r for r in result.records if r.job_id == 0 and r.op_id == 0][0]
-        j1_op0 = [r for r in result.records if r.job_id == 1 and r.op_id == 0][0]
-        assert j0_op0.start <= j1_op0.start
+        assert [(r.job_id, r.op_id) for r in result.records[:3]] == [
+            (0, 0),
+            (1, 0),
+            (0, 1),
+        ]
 
     def test_dispatch_fifo_makespan_range(self):
         """makespan 在合理范围内"""
@@ -141,10 +143,8 @@ class TestDispatchSPT:
         instance = FJSPInstance.from_jobs_array(jobs, num_machines=2)
         result = dispatch_spt_solve(instance)
 
-        # Job1-Op0 应该先被调度（因为它有最短 pt=1）
-        j0_op0 = [r for r in result.records if r.job_id == 0 and r.op_id == 0][0]
-        j1_op0 = [r for r in result.records if r.job_id == 1 and r.op_id == 0][0]
-        assert j1_op0.start <= j0_op0.start
+        first = result.records[0]
+        assert (first.job_id, first.op_id, first.machine_id, first.processing_time) == (1, 0, 0, 1)
 
     def test_dispatch_spt_makespan_range(self):
         """makespan 在合理范围内"""
@@ -177,10 +177,8 @@ class TestDispatchEFT:
         instance = FJSPInstance.from_jobs_array(jobs, num_machines=2)
         result = dispatch_eft_solve(instance)
 
-        # Job1-Op0 应该先被调度（finish time 最早）
-        j0_op0 = [r for r in result.records if r.job_id == 0 and r.op_id == 0][0]
-        j1_op0 = [r for r in result.records if r.job_id == 1 and r.op_id == 0][0]
-        assert j1_op0.start <= j0_op0.start
+        first = result.records[0]
+        assert (first.job_id, first.op_id, first.machine_id, first.end) == (1, 0, 0, 1)
 
     def test_dispatch_eft_considers_machine_availability(self):
         """EFT 考虑机器空闲时间"""

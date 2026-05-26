@@ -6,13 +6,15 @@ from typing import Callable, Dict, List, Tuple
 from src.data.instance import FJSPInstance
 from src.scheduling.encoding import ScheduleResult
 
-# candidate 格式: (job_id, op_id, machine_id, start, finish, processing_time)
-_Candidate = Tuple[int, int, int, int, int, int]
+# Candidate format:
+# (job_id, op_id, machine_id, job_ready_time, start, finish, processing_time)
+_Candidate = Tuple[int, int, int, int, int, int, int]
+_SelectFn = Callable[[List[_Candidate], FJSPInstance, random.Random | None], _Candidate]
 
 
 def _dispatch_solve(
     instance: FJSPInstance,
-    select_fn: Callable[[List[_Candidate], FJSPInstance], _Candidate],
+    select_fn: _SelectFn,
     rng: random.Random | None = None,
 ) -> ScheduleResult:
     """统一 dispatching rule 求解框架.
@@ -39,15 +41,16 @@ def _dispatch_solve(
             if o_id >= instance.jobs[j_id].num_ops:
                 continue
             for m_id, pt in instance.jobs[j_id].operations[o_id].machine_options:
-                start = max(job_ready_time[j_id], machine_ready_time[m_id])
+                ready_time = job_ready_time[j_id]
+                start = max(ready_time, machine_ready_time[m_id])
                 finish = start + pt
-                candidates.append((j_id, o_id, m_id, start, finish, pt))
+                candidates.append((j_id, o_id, m_id, ready_time, start, finish, pt))
 
         if not candidates:
             break
 
         selected = select_fn(candidates, instance, rng)
-        j_id, o_id, m_id, start, finish, pt = selected
+        j_id, o_id, m_id, _ready_time, _start, finish, _pt = selected
         assignment.append((j_id, o_id, m_id))
         job_ready_time[j_id] = finish
         machine_ready_time[m_id] = finish
@@ -258,8 +261,20 @@ def dispatch_fifo_solve(instance: FJSPInstance) -> ScheduleResult:
 
     tie-breaker: (ready_time, job_id, op_id)
     """
-    def _fifo_select(candidates: List[_Candidate], _inst: FJSPInstance, _rng: random.Random) -> _Candidate:
-        return min(candidates, key=lambda c: (c[3], c[0], c[1], c[4]))
+    def _fifo_select(
+        candidates: List[_Candidate],
+        _inst: FJSPInstance,
+        _rng: random.Random | None,
+    ) -> _Candidate:
+        ready_time, job_id, op_id = min(
+            (c[3], c[0], c[1])
+            for c in candidates
+        )
+        op_candidates = [
+            c for c in candidates
+            if (c[3], c[0], c[1]) == (ready_time, job_id, op_id)
+        ]
+        return min(op_candidates, key=lambda c: (c[5], c[6], c[2]))
 
     return _dispatch_solve(instance, _fifo_select)
 
@@ -270,8 +285,12 @@ def dispatch_spt_solve(instance: FJSPInstance) -> ScheduleResult:
     在 ready operation-machine pairs 中选择 processing_time 最短的 pair.
     如果多个 pair 的 pt 相同，按 (pt, finish, job_id, op_id, machine_id) 排序.
     """
-    def _spt_select(candidates: List[_Candidate], _inst: FJSPInstance, _rng: random.Random) -> _Candidate:
-        return min(candidates, key=lambda c: (c[5], c[4], c[0], c[1], c[2]))
+    def _spt_select(
+        candidates: List[_Candidate],
+        _inst: FJSPInstance,
+        _rng: random.Random | None,
+    ) -> _Candidate:
+        return min(candidates, key=lambda c: (c[6], c[5], c[0], c[1], c[2]))
 
     return _dispatch_solve(instance, _spt_select)
 
@@ -282,8 +301,12 @@ def dispatch_eft_solve(instance: FJSPInstance) -> ScheduleResult:
     在 ready operation-machine pairs 中选择 finish time 最早的 pair.
     如果多个 pair 的 finish 相同，按 (finish, pt, job_id, op_id, machine_id) 排序.
     """
-    def _eft_select(candidates: List[_Candidate], _inst: FJSPInstance, _rng: random.Random) -> _Candidate:
-        return min(candidates, key=lambda c: (c[4], c[5], c[0], c[1], c[2]))
+    def _eft_select(
+        candidates: List[_Candidate],
+        _inst: FJSPInstance,
+        _rng: random.Random | None,
+    ) -> _Candidate:
+        return min(candidates, key=lambda c: (c[5], c[6], c[0], c[1], c[2]))
 
     return _dispatch_solve(instance, _eft_select)
 
@@ -296,7 +319,13 @@ def dispatch_random_solve(instance: FJSPInstance, seed: int = 42) -> ScheduleRes
     """
     rng = random.Random(seed)
 
-    def _random_select(candidates: List[_Candidate], _inst: FJSPInstance, _rng: random.Random) -> _Candidate:
+    def _random_select(
+        candidates: List[_Candidate],
+        _inst: FJSPInstance,
+        _rng: random.Random | None,
+    ) -> _Candidate:
+        if _rng is None:
+            raise RuntimeError("dispatch_random_solve requires a random generator")
         return _rng.choice(candidates)
 
     return _dispatch_solve(instance, _random_select, rng=rng)
