@@ -11,7 +11,23 @@ def decode_schedule(
     assignment: List[Tuple[int, int, int]],
     instance: FJSPInstance,
 ) -> ScheduleResult:
-    # 半主动解码：按 assignment 顺序逐个放置工序，取最早可行开始时间
+    """将工序-机器分配序列解码为具体调度结果.
+
+    Args:
+        assignment: 工序分配序列, 每个元素为 (job_id, op_id, machine_id).
+        instance: 待解码的 FJSP 问题实例.
+
+    Returns:
+        包含调度记录和最大完工时间的 ScheduleResult.
+
+    Notes:
+        该函数采用半主动解码方式.
+        解码时按 assignment 给定顺序逐个放置工序.
+        每道工序被安排在满足工件前序约束和机器可用约束的最早开始时间.
+
+        当前实现默认 assignment 中同一工件的工序顺序已经合法.
+        若 assignment 中出现 Op 1 早于 Op 0 的情况, 该函数不会主动检查.
+    """
     result = ScheduleResult(instance=instance)
 
     job_next_start: Dict[int, int] = {j: 0 for j in range(instance.num_jobs)}
