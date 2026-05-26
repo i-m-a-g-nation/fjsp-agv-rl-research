@@ -11,7 +11,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - Semi-active decoding from `(job_id, op_id, machine_id)` assignments to timed schedules
 - Feasibility checker for operation coverage, precedence, machine capacity, machine eligibility, processing times, and makespan consistency
 - Heuristic baselines: FIFO, SPT, Earliest Finish Time, and seeded Random
-- Strict dispatching-rule variants: DispatchFIFO, DispatchSPT, DispatchEFT, and DispatchRandom
+- Strict dispatching-rule variants: DispatchFIFO, DispatchSPT, DispatchEFT, DispatchMWKR, and DispatchRandom
 - Benchmark-format loader smoke tests for small 0-based and 1-based FJSP files
 - OR-Tools CP-SAT baseline with optional intervals, exactly-one machine assignment, precedence constraints, and machine `NoOverlap`
 - Matplotlib Gantt chart output using a non-interactive backend
@@ -95,11 +95,14 @@ CP-SAT currently proves makespan 11 on the toy instance.
 | DispatchFIFO | earliest ready operation, then earliest-finish machine | PASS |
 | DispatchSPT | shortest processing-time ready operation-machine pair | PASS |
 | DispatchEFT | earliest-finish ready operation-machine pair | PASS |
+| DispatchMWKR | most remaining route work, then earliest-finish machine | PASS |
 | DispatchRandom(42) | seeded random ready operation-machine pair | PASS |
 
 The original heuristic functions remain as simple baselines. The `dispatch_*`
 functions are the stricter dispatching-rule implementations intended for
 definition-sensitive comparisons.
+
+On the toy instance, DispatchMWKR currently produces makespan 12.
 
 ### Experiment 004: Benchmark Loader Smoke
 

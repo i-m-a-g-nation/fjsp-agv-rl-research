@@ -70,6 +70,7 @@ Algorithms:
 - DispatchFIFO: choose the earliest ready operation, then choose its earliest-finish eligible machine
 - DispatchSPT: choose the ready operation-machine pair with the shortest processing time
 - DispatchEFT: choose the ready operation-machine pair with the earliest finish time
+- DispatchMWKR: choose the ready job with most remaining route work, then choose its earliest-finish eligible machine
 - DispatchRandom(42): choose a ready operation-machine pair with a reproducible random seed
 
 Run:
@@ -85,6 +86,7 @@ Expected output:
 | DispatchFIFO | PASS |
 | DispatchSPT | PASS |
 | DispatchEFT | PASS |
+| DispatchMWKR | PASS |
 | DispatchRandom(42) | PASS |
 
 Exit code: `0` when all strict dispatching rules pass feasibility checking, `1` otherwise.

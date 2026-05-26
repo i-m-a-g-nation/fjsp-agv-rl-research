@@ -21,6 +21,7 @@ from src.scheduling.encoding import ScheduleResult
 from src.scheduling.feasibility import check_feasibility
 from src.solvers.heuristics import (
     dispatch_eft_solve,
+    dispatch_mwkr_solve,
     dispatch_spt_solve,
     fifo_solve,
     spt_solve,
@@ -59,6 +60,7 @@ def main() -> None:
         ("SPT", spt_solve),
         ("DispatchSPT", dispatch_spt_solve),
         ("DispatchEFT", dispatch_eft_solve),
+        ("DispatchMWKR", dispatch_mwkr_solve),
         ("CP-SAT(tl=10s)", lambda inst: ortools_solve(inst, time_limit=10.0)),
     ]
 

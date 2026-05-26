@@ -257,6 +257,45 @@ def dispatch_eft_solve(instance: FJSPInstance) -> ScheduleResult:
     return _dispatch_solve(instance, _eft_select)
 
 
+def _remaining_min_work(instance: FJSPInstance, job_id: int, op_id: int) -> int:
+    """Return remaining route work using each operation's fastest machine."""
+
+    remaining_work = 0
+    for operation in instance.jobs[job_id].operations[op_id:]:
+        remaining_work += min(pt for _m_id, pt in operation.machine_options)
+    return remaining_work
+
+
+def dispatch_mwkr_solve(instance: FJSPInstance) -> ScheduleResult:
+    """Strict MWKR dispatching rule over ready operations.
+
+    MWKR means most work remaining. For FJSP, remaining work is estimated as
+    the sum of the minimum eligible processing time for the current and future
+    operations in the same job. After the job/operation is selected, the machine
+    tie-breaker chooses the earliest-finish machine.
+    """
+
+    def _mwkr_select(
+        candidates: List[_Candidate],
+        inst: FJSPInstance,
+        _rng: random.Random | None,
+    ) -> _Candidate:
+        # Rank the ready operation by remaining job work first. The remaining
+        # work estimate is independent of the candidate machine, so MWKR does
+        # not accidentally prefer a slower machine just to inflate the score.
+        best_work = max(
+            _remaining_min_work(inst, c[0], c[1])
+            for c in candidates
+        )
+        best_work_candidates = [
+            c for c in candidates
+            if _remaining_min_work(inst, c[0], c[1]) == best_work
+        ]
+        return min(best_work_candidates, key=lambda c: (c[5], c[6], c[0], c[1], c[2]))
+
+    return _dispatch_solve(instance, _mwkr_select)
+
+
 def dispatch_random_solve(instance: FJSPInstance, seed: int = 42) -> ScheduleResult:
     """Strict random dispatching rule over ready operation-machine pairs."""
 

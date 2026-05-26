@@ -6,6 +6,7 @@ from src.solvers.heuristics import (
     earliest_finish_time_solve,
     random_solve,
     dispatch_fifo_solve,
+    dispatch_mwkr_solve,
     dispatch_spt_solve,
     dispatch_eft_solve,
     dispatch_random_solve,
@@ -197,6 +198,51 @@ class TestDispatchEFT:
         """Makespan stays in a reasonable range."""
         instance = create_toy_instance()
         result = dispatch_eft_solve(instance)
+        assert 1 <= result.makespan <= 50
+
+
+class TestDispatchMWKR:
+
+    def test_dispatch_mwkr_feasible(self):
+        """Strict MWKR must pass the feasibility checker."""
+        instance = create_toy_instance()
+        result = dispatch_mwkr_solve(instance)
+        feasible, violations = check_feasibility(result)
+        assert feasible, f"Violations: {violations}"
+        assert result.makespan > 0
+        assert len(result.records) == instance.total_ops
+
+    def test_dispatch_mwkr_chooses_most_work_remaining_job(self):
+        """MWKR first selects the ready job with most remaining route work."""
+        # Job0 has remaining work 1 + 20 = 21.
+        # Job1 has remaining work 10.
+        # MWKR should first select Job0 even though Job1 has a longer first op.
+        jobs = [
+            [[(0, 1)], [(0, 20)]],
+            [[(0, 10)]],
+        ]
+        instance = FJSPInstance.from_jobs_array(jobs, num_machines=1)
+        result = dispatch_mwkr_solve(instance)
+
+        first = result.records[0]
+        assert (first.job_id, first.op_id, first.machine_id) == (0, 0, 0)
+
+    def test_dispatch_mwkr_machine_choice_uses_earliest_finish(self):
+        """MWKR chooses an earliest-finish machine after selecting the job."""
+        jobs = [
+            [[(0, 10), (1, 1)], [(0, 20)]],
+            [[(0, 5)]],
+        ]
+        instance = FJSPInstance.from_jobs_array(jobs, num_machines=2)
+        result = dispatch_mwkr_solve(instance)
+
+        first = result.records[0]
+        assert (first.job_id, first.op_id, first.machine_id, first.processing_time) == (0, 0, 1, 1)
+
+    def test_dispatch_mwkr_makespan_range(self):
+        """Makespan stays in a reasonable range."""
+        instance = create_toy_instance()
+        result = dispatch_mwkr_solve(instance)
         assert 1 <= result.makespan <= 50
 
 

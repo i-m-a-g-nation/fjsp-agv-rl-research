@@ -2,7 +2,7 @@
 exp_003_dispatching_rules.py
 
 Phase 1 strict dispatching-rule experiment:
-- Run strict FIFO, SPT, EFT, and Random dispatching rules on the toy instance
+- Run strict FIFO, SPT, EFT, MWKR, and Random dispatching rules on the toy instance
 - Validate every result through feasibility checker
 - Report makespan and runtime
 """
@@ -21,6 +21,7 @@ from src.scheduling.feasibility import check_feasibility
 from src.solvers.heuristics import (
     dispatch_eft_solve,
     dispatch_fifo_solve,
+    dispatch_mwkr_solve,
     dispatch_random_solve,
     dispatch_spt_solve,
 )
@@ -49,6 +50,7 @@ def main() -> None:
         ("DispatchFIFO", lambda: dispatch_fifo_solve(instance)),
         ("DispatchSPT", lambda: dispatch_spt_solve(instance)),
         ("DispatchEFT", lambda: dispatch_eft_solve(instance)),
+        ("DispatchMWKR", lambda: dispatch_mwkr_solve(instance)),
         ("DispatchRandom(42)", lambda: dispatch_random_solve(instance, seed=42)),
     ]
 
