@@ -11,11 +11,35 @@ from src.solvers.heuristics import (
     dispatch_eft_solve,
     dispatch_random_solve,
 )
+from src.solvers import dispatch_mwkr_solve as package_dispatch_mwkr_solve
+from src.solvers.baselines import fifo_solve as direct_fifo_solve
+from src.solvers.dispatching import dispatch_fifo_solve as direct_dispatch_fifo_solve
 
 
 # ============================================================
 # Legacy baseline tests
 # ============================================================
+
+class TestSolverModuleCompatibility:
+
+    def test_package_exports_mwkr(self):
+        instance = create_toy_instance()
+        result = package_dispatch_mwkr_solve(instance)
+        feasible, violations = check_feasibility(result)
+        assert feasible, f"Violations: {violations}"
+
+    def test_direct_baseline_module_import(self):
+        instance = create_toy_instance()
+        result = direct_fifo_solve(instance)
+        feasible, violations = check_feasibility(result)
+        assert feasible, f"Violations: {violations}"
+
+    def test_direct_dispatching_module_import(self):
+        instance = create_toy_instance()
+        result = direct_dispatch_fifo_solve(instance)
+        feasible, violations = check_feasibility(result)
+        assert feasible, f"Violations: {violations}"
+
 
 class TestFIFO:
 

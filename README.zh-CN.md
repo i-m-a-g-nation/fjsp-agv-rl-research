@@ -37,7 +37,7 @@ Phase 1 明确不做：
 src/
   data/          FJSP 实例结构和 benchmark loader
   scheduling/    编码、解码、合法性检查
-  solvers/       启发式算法和 OR-Tools CP-SAT
+  solvers/       baseline、dispatching rule、兼容门面和 OR-Tools CP-SAT
   vis/           Gantt 图绘制
 tests/           pytest 测试
 experiments/     实验脚本、CSV 结果和图像产物
@@ -111,7 +111,7 @@ CSV 中会记录算法、实例、makespan、feasibility 状态、运行时间�
 当前代码还不需要推倒重构。后续应继续小步开发：
 
 - 先完善真实 benchmark 批量加载
-- 再补 CP-SAT gap / bound / wall time 记录
+- 再测试更大静态 FJSP 实例上的 OR-Tools 行为
 - 再加入少量 Phase 1 范围内的启发式算法
 - 暂时不要引入 AGV/RL/GNN，避免复杂度过早失控
 

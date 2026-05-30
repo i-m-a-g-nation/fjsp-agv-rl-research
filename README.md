@@ -27,7 +27,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 src/
   data/          FJSP instance data structures and loaders
   scheduling/    encoding, decoding, and feasibility checking
-  solvers/       heuristics and OR-Tools CP-SAT solver
+  solvers/       baselines, dispatching rules, compatibility facade, and CP-SAT
   vis/           Gantt chart rendering
 tests/           pytest suite
 experiments/     experiment scripts and tracked artifacts

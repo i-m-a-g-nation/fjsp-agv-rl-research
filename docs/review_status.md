@@ -36,7 +36,7 @@ Last updated: 2026-05-27
 | `encoding` | Done | `ScheduleRecord`, `ScheduleResult`, solver status/bound/gap/wall-time metadata |
 | `decoding` | Done | Semi-active `decode_schedule` |
 | `feasibility` | Done | Core constraints plus robustness checks |
-| Heuristics | Done | Simple baselines plus strict FIFO/SPT/EFT/MWKR/Random dispatching rules |
+| Heuristics | Done | Split into `baselines.py`, `dispatching.py`, and compatibility facade `heuristics.py` |
 | CP-SAT | Done | Optional intervals, `NoOverlap`, precedence, end-time validation, bound/gap reporting |
 | Gantt | Done | Agg backend, fixed `exp_001_gantt_latest.png` output |
 | Math model | Done | Static FJSP formulation in English and Chinese LaTeX plus compiled PDFs |
