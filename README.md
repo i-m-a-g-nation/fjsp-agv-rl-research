@@ -23,6 +23,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - CP-SAT diagnostics: solver status, objective bound, relative gap, and solver wall time
 - CP-SAT time-limit sweep on tracked `mk03` with a fixed single worker
 - CP-SAT worker-count sweep on tracked `mk03` with a fixed 10-second limit
+- Repeated CP-SAT worker-count aggregation with per-run and summary CSV artifacts
 - Matplotlib Gantt chart output using a non-interactive backend
 - Toy-instance experiments and pytest coverage
 
@@ -68,6 +69,7 @@ Do not use the Conda `base` environment for project checks.
 .\.conda-env\python.exe experiments\exp_005_benchmark_batch.py
 .\.conda-env\python.exe experiments\exp_006_cpsat_time_limit_sweep.py
 .\.conda-env\python.exe experiments\exp_007_cpsat_worker_sweep.py
+.\.conda-env\python.exe experiments\exp_008_cpsat_worker_repeats.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -176,6 +178,24 @@ Every row passed the independent feasibility checker. This is one observed
 timed run, not a stable worker-performance ranking: parallel CP-SAT search can
 vary between runs. The auto configuration produced the strongest bound in
 this observation, while 2 and 4 workers produced slightly better incumbents.
+
+### Experiment 008: Repeated CP-SAT Worker Observations
+
+Repeats every tracked worker configuration three times on Brandimarte `mk03`
+with the same 10-second limit. Raw runs and aggregate statistics are recorded
+separately.
+
+| Workers | Feasible runs | Best makespan | Mean makespan | Std. dev. | Best bound | Best gap |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 3 / 3 | 220 | 220.000000 | 0.000000 | 20 | 0.909091 |
+| 2 | 3 / 3 | 204 | 204.000000 | 0.000000 | 20 | 0.901961 |
+| 4 | 3 / 3 | 204 | 204.000000 | 0.000000 | 21 | 0.897059 |
+| auto | 3 / 3 | 204 | 204.000000 | 0.000000 | 88 | 0.568627 |
+
+All 12 schedules passed the independent feasibility checker. In this
+three-repeat observation, 2, 4, and automatic workers consistently reached
+the upstream BKS of 204. CP-SAT still reported `FEASIBLE`, so these remain
+time-limited feasible reference schedules rather than locally proven optima.
 
 ## Known Notes
 

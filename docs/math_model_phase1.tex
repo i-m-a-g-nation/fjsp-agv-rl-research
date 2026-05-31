@@ -319,4 +319,30 @@ search can vary between runs. In this observation, the automatic
 configuration produced the strongest bound, while two and four workers
 produced slightly better incumbents.
 
+\subsection{Repeated CP-SAT Worker Observations}
+
+The repeated experiment keeps the same \texttt{mk03} instance and 10-second
+limit, then runs each worker configuration three times. It stores every raw
+feasibility-checked run and a separate aggregate CSV. The reported standard
+deviation is the population standard deviation of the observed makespans.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{rrrrrrr}
+\toprule
+Workers & Pass & Best & Mean & Std. dev. & Best bound & Best gap \\
+\midrule
+1 & 3/3 & 220 & 220.000000 & 0.000000 & 20 & 0.909091 \\
+2 & 3/3 & 204 & 204.000000 & 0.000000 & 20 & 0.901961 \\
+4 & 3/3 & 204 & 204.000000 & 0.000000 & 21 & 0.897059 \\
+\texttt{auto} & 3/3 & 204 & 204.000000 & 0.000000 & 88 & 0.568627 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All 12 schedules passed the independent feasibility checker. Two, four, and
+automatic workers consistently reached the upstream BKS of 204 in this small
+sample. Because CP-SAT still reported \texttt{FEASIBLE}, these schedules remain
+time-limited feasible references rather than locally proven optima.
+
 \end{document}

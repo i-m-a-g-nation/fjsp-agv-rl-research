@@ -1,0 +1,13 @@
+experiment_id,instance_name,algorithm,makespan,feasible,runtime_s,note,objective_bound,gap,solver_wall_time
+exp_008_cpsat_worker_repeats,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=1,tl=10s,run=1/3)",220,PASS,10.046281,FEASIBLE,20.000000,0.909091,10.010926
+exp_008_cpsat_worker_repeats,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=1,tl=10s,run=2/3)",220,PASS,10.042822,FEASIBLE,20.000000,0.909091,10.002905
+exp_008_cpsat_worker_repeats,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=1,tl=10s,run=3/3)",220,PASS,10.044915,FEASIBLE,20.000000,0.909091,10.001814
+exp_008_cpsat_worker_repeats,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=2,tl=10s,run=1/3)",204,PASS,10.028231,FEASIBLE,20.000000,0.901961,10.014509
+exp_008_cpsat_worker_repeats,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=2,tl=10s,run=2/3)",204,PASS,10.020414,FEASIBLE,20.000000,0.901961,10.006820
+exp_008_cpsat_worker_repeats,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=2,tl=10s,run=3/3)",204,PASS,10.026326,FEASIBLE,20.000000,0.901961,10.011800
+exp_008_cpsat_worker_repeats,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=4,tl=10s,run=1/3)",204,PASS,10.031917,FEASIBLE,21.000000,0.897059,10.016968
+exp_008_cpsat_worker_repeats,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=4,tl=10s,run=2/3)",204,PASS,10.029796,FEASIBLE,20.000000,0.901961,10.015925
+exp_008_cpsat_worker_repeats,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=4,tl=10s,run=3/3)",204,PASS,10.044510,FEASIBLE,21.000000,0.897059,10.030938
+exp_008_cpsat_worker_repeats,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=auto,tl=10s,run=1/3)",204,PASS,10.091928,FEASIBLE,87.000000,0.573529,10.071692
+exp_008_cpsat_worker_repeats,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=auto,tl=10s,run=2/3)",204,PASS,10.201283,FEASIBLE,88.000000,0.568627,10.179517
+exp_008_cpsat_worker_repeats,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=auto,tl=10s,run=3/3)",204,PASS,10.124902,FEASIBLE,84.000000,0.588235,10.074949

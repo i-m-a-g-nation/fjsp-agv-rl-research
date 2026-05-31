@@ -20,6 +20,7 @@ Phase 1 已覆盖：
 - CP-SAT 求解诊断：solver status、objective bound、relative gap、solver wall time
 - CP-SAT 时限 sweep：对 tracked `mk03` 使用固定单 worker 进行对比
 - CP-SAT worker 数量 sweep：对 tracked `mk03` 使用固定 10 秒时限进行对比
+- CP-SAT worker 重复实验聚合：同时保留逐次记录和汇总 CSV
 - Benchmark smoke loader：支持小型 0-based / 1-based FJSP 格式文件
 - 有来源说明的 FJSPLib 子集：覆盖 Brandimarte、Hurink 和 Fattahi 三类实例
 - Matplotlib Gantt 图输出
@@ -70,6 +71,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 .\.conda-env\python.exe experiments\exp_005_benchmark_batch.py
 .\.conda-env\python.exe experiments\exp_006_cpsat_time_limit_sweep.py
 .\.conda-env\python.exe experiments\exp_007_cpsat_worker_sweep.py
+.\.conda-env\python.exe experiments\exp_008_cpsat_worker_repeats.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -101,6 +103,8 @@ Toy 3x3 实例上的主要结果：
 - `experiments/results/exp_005_benchmark_batch.csv`
 - `experiments/results/exp_006_cpsat_time_limit_sweep.csv`
 - `experiments/results/exp_007_cpsat_worker_sweep.csv`
+- `experiments/results/exp_008_cpsat_worker_repeats_runs.csv`
+- `experiments/results/exp_008_cpsat_worker_repeats_summary.csv`
 
 CSV 中会记录算法、实例、makespan、feasibility 状态、运行时间和说明。对 CP-SAT 结果，还会额外记录 objective bound、relative gap 和 solver wall time。
 
@@ -150,6 +154,22 @@ benchmark 集合，可使用 `--max-files`、`--skip-cp-sat` 和
 稳定的 worker 性能排名：并行 CP-SAT 搜索可能在不同运行之间产生变化。本次
 观测中，auto 配置给出了更强的 bound，而 2 和 4 workers 给出了略好的
 incumbent。
+
+### 实验 008：CP-SAT worker 重复观测
+
+对 tracked Brandimarte `mk03` 保持相同的 10 秒时限，每种 worker 配置重复运行
+3 次。逐次结果和聚合统计分别记录。
+
+| Workers | 可行运行数 | 最佳 makespan | 平均 makespan | 标准差 | 最佳 bound | 最佳 gap |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 3 / 3 | 220 | 220.000000 | 0.000000 | 20 | 0.909091 |
+| 2 | 3 / 3 | 204 | 204.000000 | 0.000000 | 20 | 0.901961 |
+| 4 | 3 / 3 | 204 | 204.000000 | 0.000000 | 21 | 0.897059 |
+| auto | 3 / 3 | 204 | 204.000000 | 0.000000 | 88 | 0.568627 |
+
+全部 12 个调度均通过独立 feasibility checker。在本次三次重复观测中，
+2、4 和 auto workers 都稳定达到上游 BKS `204`。但是 CP-SAT 状态仍然是
+`FEASIBLE`，所以这些结果仍然只是限时可行参考解，不是本地已证明最优解。
 
 ## 数学建模文档
 

@@ -11,6 +11,8 @@ Current generated files:
 - `exp_005_benchmark_batch.csv`
 - `exp_006_cpsat_time_limit_sweep.csv`
 - `exp_007_cpsat_worker_sweep.csv`
+- `exp_008_cpsat_worker_repeats_runs.csv`
+- `exp_008_cpsat_worker_repeats_summary.csv`
 
 Each row records:
 

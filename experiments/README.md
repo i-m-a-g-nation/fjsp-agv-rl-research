@@ -246,6 +246,42 @@ CSV artifact:
 Every returned schedule must pass feasibility checking. These values are one
 timed observation, not a stable ranking of worker configurations.
 
+## `exp_008_cpsat_worker_repeats.py`
+
+Repeats each tracked `mk03` worker-count configuration under the same
+10-second limit. Every raw schedule is independently feasibility checked
+before the script reports aggregate statistics.
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_008_cpsat_worker_repeats.py
+```
+
+Useful controls:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_008_cpsat_worker_repeats.py --repeats 5
+.\.conda-env\python.exe experiments\exp_008_cpsat_worker_repeats.py --time-limit 30 --worker-counts 1 4 0
+```
+
+Tracked default aggregate result:
+
+| Workers | Feasible runs | Best makespan | Mean makespan | Population std. dev. | Best bound | Best gap |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 3 / 3 | 220 | 220.000000 | 0.000000 | 20 | 0.909091 |
+| 2 | 3 / 3 | 204 | 204.000000 | 0.000000 | 20 | 0.901961 |
+| 4 | 3 / 3 | 204 | 204.000000 | 0.000000 | 21 | 0.897059 |
+| auto | 3 / 3 | 204 | 204.000000 | 0.000000 | 88 | 0.568627 |
+
+CSV artifacts:
+
+- `results/exp_008_cpsat_worker_repeats_runs.csv`
+- `results/exp_008_cpsat_worker_repeats_summary.csv`
+
+All 12 tracked schedules passed feasibility checking. Matching the FJSPLib BKS
+does not become a local optimality proof while CP-SAT reports `FEASIBLE`.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.

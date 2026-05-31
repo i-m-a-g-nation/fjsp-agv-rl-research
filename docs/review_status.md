@@ -1,6 +1,6 @@
 # Phase 1 Review Status
 
-Last updated: 2026-05-31
+Last updated: 2026-06-01
 
 ## Current Status
 
@@ -10,7 +10,7 @@ Last updated: 2026-05-31
 | Python environment | Dedicated Conda environment: `.conda-env` or `FJSP_CONDA_ENV` |
 | matplotlib | 3.8.4 |
 | Pillow | 10.4.0 |
-| pytest | 120 passed, 0 failed |
+| pytest | 126 passed, 0 failed |
 | Known warning | Low-priority `.pytest_cache` warning on some Windows paths |
 
 ## Verified Commands
@@ -24,9 +24,10 @@ Last updated: 2026-05-31
 | `experiments/exp_005_benchmark_batch.py` | 0 | Recursive batch feasible; `mk03` records time-limited CP-SAT `FEASIBLE` correctly |
 | `experiments/exp_006_cpsat_time_limit_sweep.py` | 0 | Single-worker `mk03` sweep records status, bound, gap, and solver wall time |
 | `experiments/exp_007_cpsat_worker_sweep.py` | 0 | Fixed-limit `mk03` sweep records worker-count observations without claiming a stable ranking |
+| `experiments/exp_008_cpsat_worker_repeats.py` | 0 | 12/12 repeated `mk03` schedules feasible; raw runs and aggregate statistics recorded separately |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
-| `pytest` | 0 | 120 passed |
+| `pytest` | 0 | 126 passed |
 | `git status --short` | 0 | Clean |
 
 ## Module Status
@@ -36,10 +37,11 @@ Last updated: 2026-05-31
 | `FJSPInstance` | Done | `from_jobs_array`, `get_processing_time`, `is_machine_eligible` |
 | Benchmark loader | Done | Smoke coverage plus four tracked Brandimarte, Hurink edata, and Fattahi FJSPLib files |
 | Benchmark provenance | Done | `instances/README.md` records upstream repository, license, families, and BKS values |
-| Experiment records | Done | Shared runner plus normalized CSV output for `exp_001` through `exp_007` |
+| Experiment records | Done | Shared runner plus normalized CSV output for `exp_001` through `exp_008` |
 | Benchmark batch entry | Done | Recursive discovery, stable order, loader failure records, optional CP-SAT controls |
 | CP-SAT sweep | Done | Fixed-worker `mk03` time-limit comparison with bound/gap diagnostics |
 | CP-SAT worker sweep | Done | Fixed-limit `mk03` worker-count comparison with cautious timed-run interpretation |
+| CP-SAT worker repeats | Done | Raw and aggregate CSV artifacts; 2, 4, and auto workers reached BKS 204 in all three tracked runs |
 | `encoding` | Done | `ScheduleRecord`, `ScheduleResult`, solver status/bound/gap/wall-time metadata |
 | `decoding` | Done | Semi-active `decode_schedule` |
 | `feasibility` | Done | Core constraints plus robustness checks |
@@ -52,4 +54,4 @@ Last updated: 2026-05-31
 
 1. Expand the FJSPLib subset in controlled batches beyond `mk03`.
 2. Compare heuristic behavior on larger static benchmark subsets before adding more rules.
-3. Add repeated-run aggregation before drawing stronger CP-SAT worker-performance conclusions.
+3. Extend repeated-run comparisons to additional tracked static benchmarks before drawing broader conclusions.
