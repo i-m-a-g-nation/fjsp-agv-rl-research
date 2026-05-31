@@ -18,6 +18,7 @@ __all__ = [
     "dispatch_spt_solve",
     "dispatch_eft_solve",
     "dispatch_mwkr_solve",
+    "dispatch_mopnr_solve",
     "dispatch_random_solve",
 ]
 
@@ -174,6 +175,32 @@ def dispatch_mwkr_solve(instance: FJSPInstance) -> ScheduleResult:
         return min(best_work_candidates, key=lambda c: (c[5], c[6], c[0], c[1], c[2]))
 
     return _dispatch_solve(instance, _mwkr_select)
+
+
+def dispatch_mopnr_solve(instance: FJSPInstance) -> ScheduleResult:
+    """Strict MOPNR dispatching rule over ready operations.
+
+    MOPNR means most operations remaining. Rank each ready job by the number of
+    operations from its current operation through the end of its route. After
+    the job/operation is selected, choose its earliest-finish eligible machine.
+    """
+
+    def _mopnr_select(
+        candidates: List[_Candidate],
+        inst: FJSPInstance,
+        _rng: random.Random | None,
+    ) -> _Candidate:
+        best_count = max(
+            inst.jobs[c[0]].num_ops - c[1]
+            for c in candidates
+        )
+        best_count_candidates = [
+            c for c in candidates
+            if inst.jobs[c[0]].num_ops - c[1] == best_count
+        ]
+        return min(best_count_candidates, key=lambda c: (c[5], c[6], c[0], c[1], c[2]))
+
+    return _dispatch_solve(instance, _mopnr_select)
 
 
 def dispatch_random_solve(instance: FJSPInstance, seed: int = 42) -> ScheduleResult:

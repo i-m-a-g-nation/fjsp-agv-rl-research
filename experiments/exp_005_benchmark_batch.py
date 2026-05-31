@@ -29,6 +29,7 @@ from src.scheduling.encoding import ScheduleResult  # noqa: E402
 from src.solvers.heuristics import (  # noqa: E402
     dispatch_eft_solve,
     dispatch_fifo_solve,
+    dispatch_mopnr_solve,
     dispatch_mwkr_solve,
     dispatch_spt_solve,
     fifo_solve,
@@ -75,6 +76,7 @@ def build_solver_specs(
         ("DispatchSPT", dispatch_spt_solve),
         ("DispatchEFT", dispatch_eft_solve),
         ("DispatchMWKR", dispatch_mwkr_solve),
+        ("DispatchMOPNR", dispatch_mopnr_solve),
     ]
     if include_cp_sat:
         solvers.append(

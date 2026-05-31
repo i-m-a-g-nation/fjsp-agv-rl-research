@@ -10,7 +10,7 @@ Last updated: 2026-05-31
 | Python environment | Dedicated Conda environment: `.conda-env` or `FJSP_CONDA_ENV` |
 | matplotlib | 3.8.4 |
 | Pillow | 10.4.0 |
-| pytest | 101 passed, 0 failed |
+| pytest | 104 passed, 0 failed |
 | Known warning | Low-priority `.pytest_cache` warning on some Windows paths |
 
 ## Verified Commands
@@ -19,12 +19,12 @@ Last updated: 2026-05-31
 |---|---:|---|
 | `experiments/exp_001_toy_instance.py` | 0 | All heuristic schedules feasible, best makespan 13 |
 | `experiments/exp_002_solver_check.py` | 0 | CP-SAT optimal makespan 11 with bound/gap metadata |
-| `experiments/exp_003_dispatching_rules.py` | 0 | Strict dispatching rules feasible, including MWKR |
-| `experiments/exp_004_benchmark_smoke.py` | 0 | Benchmark-format smoke instances feasible, including MWKR |
+| `experiments/exp_003_dispatching_rules.py` | 0 | Strict dispatching rules feasible, including MWKR and MOPNR |
+| `experiments/exp_004_benchmark_smoke.py` | 0 | Benchmark-format smoke instances feasible, including MWKR and MOPNR |
 | `experiments/exp_005_benchmark_batch.py` | 0 | Recursive benchmark batch feasible, including CP-SAT metadata |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
-| `pytest` | 0 | 101 passed |
+| `pytest` | 0 | 104 passed |
 | `git status --short` | 0 | Clean |
 
 ## Module Status
@@ -38,7 +38,7 @@ Last updated: 2026-05-31
 | `encoding` | Done | `ScheduleRecord`, `ScheduleResult`, solver status/bound/gap/wall-time metadata |
 | `decoding` | Done | Semi-active `decode_schedule` |
 | `feasibility` | Done | Core constraints plus robustness checks |
-| Heuristics | Done | Split into `baselines.py`, `dispatching.py`, and compatibility facade `heuristics.py` |
+| Heuristics | Done | Split into `baselines.py`, `dispatching.py`, and compatibility facade `heuristics.py`; includes MWKR and MOPNR |
 | CP-SAT | Done | Optional intervals, `NoOverlap`, precedence, end-time validation, bound/gap reporting |
 | Gantt | Done | Agg backend, fixed `exp_001_gantt_latest.png` output |
 | Math model | Done | Static FJSP formulation in English and Chinese LaTeX plus compiled PDFs |
@@ -46,5 +46,5 @@ Last updated: 2026-05-31
 ## Next Review Targets
 
 1. Add tracked real benchmark subsets from FJSPLib, Brandimarte, and Hurink collections.
-2. Add more static FJSP heuristic baselines such as MOPNR.
+2. Compare heuristic behavior on larger static benchmark subsets before adding more rules.
 3. Test OR-Tools behavior on larger instances before moving to later phases.

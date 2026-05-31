@@ -173,6 +173,7 @@ FIFO & smallest $(r_{jo},j,o)$ & earliest finish \\
 SPT & smallest $p_{jom}$ pair & selected with pair \\
 EFT & smallest $f_{jom}$ pair & selected with pair \\
 MWKR & largest remaining route work & earliest finish \\
+MOPNR & largest remaining operation count & earliest finish \\
 Random & random ready pair & selected with pair \\
 \bottomrule
 \end{tabular}
@@ -181,6 +182,10 @@ Random & random ready pair & selected with pair \\
 For MWKR, remaining route work is estimated as
 \[
 W_{jo} = \sum_{q=o}^{last(j)} \min_{m \in A_{jq}} p_{jqm}.
+\]
+For MOPNR, the ready job priority is its number of remaining operations:
+\[
+N_{jo} = last(j) - o + 1.
 \]
 
 \section{Experiment Result Schema}

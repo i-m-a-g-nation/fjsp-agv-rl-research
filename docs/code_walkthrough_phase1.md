@@ -28,7 +28,7 @@
 | `src/scheduling/decoding.py` | 使用半主动解码，把 `(job, op, machine)` 序列变成带时间的调度表 |
 | `src/scheduling/feasibility.py` | 独立检查工序覆盖、工序顺序、机器容量、机器可行性、加工时间和 makespan |
 | `src/solvers/baselines.py` | FIFO、SPT、EarliestFinishTime、Random 等简单 baseline |
-| `src/solvers/dispatching.py` | DispatchFIFO、DispatchSPT、DispatchEFT、DispatchMWKR、DispatchRandom |
+| `src/solvers/dispatching.py` | DispatchFIFO、DispatchSPT、DispatchEFT、DispatchMWKR、DispatchMOPNR、DispatchRandom |
 | `src/solvers/heuristics.py` | 保持旧导入路径不变的兼容门面 |
 | `src/solvers/ortools_solver.py` | CP-SAT baseline，包含 optional intervals、ExactlyOne、NoOverlap 和诊断信息 |
 | `src/vis/gantt.py` | Gantt 图绘制 |
@@ -74,6 +74,7 @@ ExperimentRecord / Gantt / CSV
 | DispatchSPT | processing time 最短的 ready operation-machine pair |
 | DispatchEFT | finish time 最早的 ready operation-machine pair |
 | DispatchMWKR | 剩余路线工作量最大的 ready job，然后选 earliest-finish 机器 |
+| DispatchMOPNR | 剩余工序数最多的 ready job，然后选 earliest-finish 机器 |
 | DispatchRandom | 从 ready operation-machine pairs 中按 seed 随机选 |
 
 ## Feasibility Checker 为什么重要

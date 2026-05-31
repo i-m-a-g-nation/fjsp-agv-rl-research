@@ -8,6 +8,7 @@ from src.solvers.dispatching import (
     dispatch_fifo_solve,
     dispatch_spt_solve,
     dispatch_eft_solve,
+    dispatch_mopnr_solve,
     dispatch_mwkr_solve,
     dispatch_random_solve,
 )
@@ -21,5 +22,6 @@ __all__ = [
     "dispatch_spt_solve",
     "dispatch_eft_solve",
     "dispatch_mwkr_solve",
+    "dispatch_mopnr_solve",
     "dispatch_random_solve",
 ]

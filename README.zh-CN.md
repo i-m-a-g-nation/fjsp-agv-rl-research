@@ -15,7 +15,7 @@ Phase 1 已覆盖：
 - 半主动解码：从 `(job_id, op_id, machine_id)` 编码生成带时间的调度表
 - Feasibility Checker：检查工序覆盖、工序顺序、机器容量、机器可行性、加工时间和 makespan 一致性
 - 简单启发式 baseline：FIFO、SPT、Earliest Finish Time、Random
-- 严格 dispatching rule：DispatchFIFO、DispatchSPT、DispatchEFT、DispatchMWKR、DispatchRandom
+- 严格 dispatching rule：DispatchFIFO、DispatchSPT、DispatchEFT、DispatchMWKR、DispatchMOPNR、DispatchRandom
 - OR-Tools CP-SAT baseline：可选区间变量、ExactlyOne、Precedence、NoOverlap、最小化 makespan
 - CP-SAT 求解诊断：solver status、objective bound、relative gap、solver wall time
 - Benchmark smoke loader：支持小型 0-based / 1-based FJSP 格式文件
@@ -83,6 +83,7 @@ Toy 3x3 实例上的主要结果：
 | DispatchSPT | 13 | PASS |
 | DispatchEFT | 13 | PASS |
 | DispatchMWKR | 12 | PASS |
+| DispatchMOPNR | 12 | PASS |
 | DispatchRandom(42) | 14 | PASS |
 | CP-SAT | 11 | PASS / OPTIMAL |
 

@@ -6,6 +6,7 @@ from src.solvers.heuristics import (
     earliest_finish_time_solve,
     random_solve,
     dispatch_fifo_solve,
+    dispatch_mopnr_solve,
     dispatch_mwkr_solve,
     dispatch_spt_solve,
     dispatch_eft_solve,
@@ -268,6 +269,44 @@ class TestDispatchMWKR:
         instance = create_toy_instance()
         result = dispatch_mwkr_solve(instance)
         assert 1 <= result.makespan <= 50
+
+
+class TestDispatchMOPNR:
+
+    def test_dispatch_mopnr_feasible(self):
+        """Strict MOPNR must pass the feasibility checker."""
+        instance = create_toy_instance()
+        result = dispatch_mopnr_solve(instance)
+        feasible, violations = check_feasibility(result)
+        assert feasible, f"Violations: {violations}"
+        assert result.makespan > 0
+        assert len(result.records) == instance.total_ops
+
+    def test_dispatch_mopnr_chooses_job_with_most_operations_remaining(self):
+        """MOPNR prioritizes route length rather than processing time."""
+        # Job0 has three remaining operations; Job1 has one longer operation.
+        # MOPNR should choose Job0 first even though its first operation is short.
+        jobs = [
+            [[(0, 1)], [(0, 1)], [(0, 1)]],
+            [[(0, 10)]],
+        ]
+        instance = FJSPInstance.from_jobs_array(jobs, num_machines=1)
+        result = dispatch_mopnr_solve(instance)
+
+        first = result.records[0]
+        assert (first.job_id, first.op_id, first.machine_id) == (0, 0, 0)
+
+    def test_dispatch_mopnr_machine_choice_uses_earliest_finish(self):
+        """MOPNR chooses an earliest-finish machine after selecting the job."""
+        jobs = [
+            [[(0, 10), (1, 1)], [(0, 1)]],
+            [[(0, 5)]],
+        ]
+        instance = FJSPInstance.from_jobs_array(jobs, num_machines=2)
+        result = dispatch_mopnr_solve(instance)
+
+        first = result.records[0]
+        assert (first.job_id, first.op_id, first.machine_id, first.processing_time) == (0, 0, 1, 1)
 
 
 class TestDispatchRandom:

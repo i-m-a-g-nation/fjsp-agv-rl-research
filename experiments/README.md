@@ -76,6 +76,7 @@ Algorithms:
 - DispatchSPT: choose the ready operation-machine pair with the shortest processing time
 - DispatchEFT: choose the ready operation-machine pair with the earliest finish time
 - DispatchMWKR: choose the ready job with most remaining route work, then choose its earliest-finish eligible machine
+- DispatchMOPNR: choose the ready job with most operations remaining, then choose its earliest-finish eligible machine
 - DispatchRandom(42): choose a ready operation-machine pair with a reproducible random seed
 
 Run:
@@ -92,6 +93,7 @@ Expected output:
 | DispatchSPT | PASS |
 | DispatchEFT | PASS |
 | DispatchMWKR | PASS |
+| DispatchMOPNR | PASS |
 | DispatchRandom(42) | PASS |
 
 CSV artifact:
@@ -153,7 +155,7 @@ Behavior:
 
 - recursively discovers `*.fjs` files in stable path order
 - records loader failures as `LOAD` rows instead of silently dropping files
-- runs FIFO, SPT, DispatchFIFO, DispatchSPT, DispatchEFT, and DispatchMWKR
+- runs FIFO, SPT, DispatchFIFO, DispatchSPT, DispatchEFT, DispatchMWKR, and DispatchMOPNR
 - runs CP-SAT by default with a configurable per-instance time limit
 - writes `results/exp_005_benchmark_batch.csv`
 

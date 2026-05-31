@@ -16,6 +16,7 @@ from src.solvers.baselines import (
 from src.solvers.dispatching import (
     dispatch_eft_solve,
     dispatch_fifo_solve,
+    dispatch_mopnr_solve,
     dispatch_mwkr_solve,
     dispatch_random_solve,
     dispatch_spt_solve,
@@ -30,5 +31,6 @@ __all__ = [
     "dispatch_spt_solve",
     "dispatch_eft_solve",
     "dispatch_mwkr_solve",
+    "dispatch_mopnr_solve",
     "dispatch_random_solve",
 ]

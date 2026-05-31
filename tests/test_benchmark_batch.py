@@ -70,4 +70,5 @@ def test_build_solver_specs_can_skip_cp_sat():
         "DispatchSPT",
         "DispatchEFT",
         "DispatchMWKR",
+        "DispatchMOPNR",
     ]

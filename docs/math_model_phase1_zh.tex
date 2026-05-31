@@ -167,6 +167,7 @@ FIFO & 最小 $(r_{jo},j,o)$ & 最早完成机器 \\
 SPT & 最小 $p_{jom}$ 的 ready pair & 与 pair 同时确定 \\
 EFT & 最小 $f_{jom}$ 的 ready pair & 与 pair 同时确定 \\
 MWKR & 剩余路线工作量最大 & 最早完成机器 \\
+MOPNR & 剩余工序数最大 & 最早完成机器 \\
 Random & 随机 ready pair & 与 pair 同时确定 \\
 \bottomrule
 \end{tabular}
@@ -175,6 +176,10 @@ Random & 随机 ready pair & 与 pair 同时确定 \\
 MWKR 的剩余路线工作量定义为：
 \[
 W_{jo} = \sum_{q=o}^{last(j)} \min_{m \in A_{jq}} p_{jqm}.
+\]
+MOPNR 使用剩余工序数作为 ready job 的优先级：
+\[
+N_{jo} = last(j) - o + 1.
 \]
 
 \section{实验结果记录格式}

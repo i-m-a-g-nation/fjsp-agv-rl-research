@@ -25,6 +25,7 @@ from src.data.loader import load_benchmark_file
 from src.scheduling.encoding import ScheduleResult
 from src.solvers.heuristics import (
     dispatch_eft_solve,
+    dispatch_mopnr_solve,
     dispatch_mwkr_solve,
     dispatch_spt_solve,
     fifo_solve,
@@ -47,6 +48,7 @@ def main() -> None:
         ("DispatchSPT", dispatch_spt_solve),
         ("DispatchEFT", dispatch_eft_solve),
         ("DispatchMWKR", dispatch_mwkr_solve),
+        ("DispatchMOPNR", dispatch_mopnr_solve),
         ("CP-SAT(tl=10s)", lambda inst: ortools_solve(inst, time_limit=10.0)),
     ]
 
