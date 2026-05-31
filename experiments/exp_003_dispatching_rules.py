@@ -9,16 +9,19 @@ Phase 1 strict dispatching-rule experiment:
 from __future__ import annotations
 
 import sys
-import time
 from pathlib import Path
 from typing import Callable
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from experiments.common import ExperimentRecord, write_results_csv
+from experiments.common import (
+    print_solver_runs,
+    record_from_run,
+    run_solver_suite,
+    write_results_csv,
+)
 from src.data.instance import create_toy_instance
 from src.scheduling.encoding import ScheduleResult
-from src.scheduling.feasibility import check_feasibility
 from src.solvers.heuristics import (
     dispatch_eft_solve,
     dispatch_fifo_solve,
@@ -26,20 +29,6 @@ from src.solvers.heuristics import (
     dispatch_random_solve,
     dispatch_spt_solve,
 )
-
-
-def run_solver(name: str, solver_fn: Callable[[], ScheduleResult]) -> tuple[str, ScheduleResult | None, int | None, bool, float, str]:
-    start = time.perf_counter()
-    try:
-        result = solver_fn()
-        elapsed = time.perf_counter() - start
-        feasible, violations = check_feasibility(result)
-        if not feasible:
-            return name, result, result.makespan, False, elapsed, f"violations={violations}"
-        return name, result, result.makespan, True, elapsed, "PASS"
-    except Exception as exc:
-        elapsed = time.perf_counter() - start
-        return name, None, None, False, elapsed, f"ERROR: {exc}"
 
 
 def main() -> None:
@@ -58,31 +47,14 @@ def main() -> None:
         ("DispatchRandom(42)", lambda: dispatch_random_solve(instance, seed=42)),
     ]
 
-    header = f"{'Algorithm':24s} {'makespan':>8s}  {'feasible':>8s}  {'runtime_s':>10s}  note"
-    print(header)
-    print("-" * len(header))
+    runs = run_solver_suite(solvers)
+    print_solver_runs(runs, algorithm_width=24)
 
-    failures: list[str] = []
-    records: list[ExperimentRecord] = []
-    for name, solver_fn in solvers:
-        algo, result, makespan, feasible, elapsed, note = run_solver(name, solver_fn)
-        records.append(ExperimentRecord(
-            experiment_id=experiment_id,
-            instance_name=instance_name,
-            algorithm=algo,
-            makespan=makespan,
-            feasible=feasible,
-            runtime_s=elapsed,
-            note=note,
-            objective_bound=None if result is None else result.solver_objective_bound,
-            gap=None if result is None else result.solver_gap,
-            solver_wall_time=None if result is None else result.solver_wall_time,
-        ))
-        mk_str = str(makespan) if makespan is not None else "N/A"
-        status = "PASS" if feasible else "FAIL"
-        print(f"{algo:24s} {mk_str:>8s}  {status:>8s}  {elapsed:>10.4f}  {note}")
-        if not feasible:
-            failures.append(f"{algo}: {note}")
+    failures = [f"{run.algorithm}: {run.note}" for run in runs if not run.feasible]
+    records = [
+        record_from_run(experiment_id, instance_name, run)
+        for run in runs
+    ]
 
     output_path = root / "experiments" / "results" / f"{experiment_id}.csv"
     write_results_csv(output_path, records)

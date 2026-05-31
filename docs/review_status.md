@@ -10,7 +10,7 @@ Last updated: 2026-05-27
 | Python environment | Dedicated Conda environment: `.conda-env` or `FJSP_CONDA_ENV` |
 | matplotlib | 3.8.4 |
 | Pillow | 10.4.0 |
-| pytest | 88 passed, 0 failed |
+| pytest | 97 passed, 0 failed |
 | Known warning | Low-priority `.pytest_cache` warning on some Windows paths |
 
 ## Verified Commands
@@ -23,7 +23,7 @@ Last updated: 2026-05-27
 | `experiments/exp_004_benchmark_smoke.py` | 0 | Benchmark-format smoke instances feasible, including MWKR |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
-| `pytest` | 0 | 88 passed |
+| `pytest` | 0 | 97 passed |
 | `git status --short` | 0 | Clean |
 
 ## Module Status
@@ -32,7 +32,7 @@ Last updated: 2026-05-27
 |---|---|---|
 | `FJSPInstance` | Done | `from_jobs_array`, `get_processing_time`, `is_machine_eligible` |
 | Benchmark loader | Done | Small Brandimarte/FJSPLib-style text and file loading smoke coverage |
-| Experiment records | Done | Normalized CSV output for `exp_001` through `exp_004` |
+| Experiment records | Done | Shared runner plus normalized CSV output for `exp_001` through `exp_004` |
 | `encoding` | Done | `ScheduleRecord`, `ScheduleResult`, solver status/bound/gap/wall-time metadata |
 | `decoding` | Done | Semi-active `decode_schedule` |
 | `feasibility` | Done | Core constraints plus robustness checks |

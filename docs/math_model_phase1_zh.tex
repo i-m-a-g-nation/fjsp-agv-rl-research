@@ -203,6 +203,9 @@ Phase 1 实验脚本会在 \texttt{experiments/results/} 下输出标准 CSV。
 \end{table}
 
 CSV 记录层只负责保存实验事实，不改变算法行为，也不改变可行性定义。
+Phase 1 实验脚本使用共用 runner helper，由 helper 统一负责计时、
+调用求解器、运行独立 feasibility checker、收集失败信息，并将可选的
+solver metadata 写入 CSV 记录。
 
 \section{CP-SAT 诊断信息}
 

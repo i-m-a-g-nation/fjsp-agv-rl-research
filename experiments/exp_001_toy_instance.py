@@ -11,14 +11,12 @@ Phase 1 toy instance experiment:
 from __future__ import annotations
 
 import sys
-import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from experiments.common import ExperimentRecord, write_results_csv
+from experiments.common import record_from_run, run_solver_once, write_results_csv
 from src.data.instance import create_toy_instance
-from src.scheduling.feasibility import check_feasibility
 from src.solvers.heuristics import (
     fifo_solve,
     spt_solve,
@@ -38,7 +36,7 @@ def main() -> None:
 
     results: dict[str, int] = {}
     all_results: list = []
-    records: list[ExperimentRecord] = []
+    records = []
 
     methods = [
         ("FIFO", lambda: fifo_solve(instance)),
@@ -49,51 +47,43 @@ def main() -> None:
         methods.append((f"Random(s={seed})", lambda s=seed: random_solve(instance, seed=s)))
 
     for name, solver_fn in methods:
-        start = time.perf_counter()
-        result = solver_fn()
-        elapsed = time.perf_counter() - start
-        feasible, violations = check_feasibility(result)
-        status = "PASS" if feasible else "FAIL"
+        run = run_solver_once(name, solver_fn)
+        if run.result is None:
+            print(f"  {name:25s}  makespan=N/A  feasible=FAIL")
+            records.append(record_from_run(experiment_id, instance_name, run))
+            all_results.append((name, None, False))
+            continue
+        result = run.result
+        status = "PASS" if run.feasible else "FAIL"
         print(f"  {name:25s}  makespan={result.makespan:3d}  feasible={status}")
-        if not feasible:
-            for v in violations:
-                print(f"    VIOLATION: {v}")
-        records.append(ExperimentRecord(
-            experiment_id=experiment_id,
-            instance_name=instance_name,
-            algorithm=name,
-            makespan=result.makespan,
-            feasible=feasible,
-            runtime_s=elapsed,
-            note="PASS" if feasible else f"violations={violations}",
-            objective_bound=result.solver_objective_bound,
-            gap=result.solver_gap,
-            solver_wall_time=result.solver_wall_time,
-        ))
+        if not run.feasible:
+            print(f"    {run.note}")
+        records.append(record_from_run(experiment_id, instance_name, run))
         results[name] = result.makespan
-        all_results.append((name, result, feasible))
+        all_results.append((name, result, run.feasible))
 
     print()
-    best_name, best_result, _ = min(all_results, key=lambda x: x[1].makespan)
-    print(f"Best: {best_name} with makespan = {best_result.makespan}")
-    print()
-
+    successful_results = [item for item in all_results if item[1] is not None and item[2]]
     failed = [name for name, _, f in all_results if not f]
+
+    csv_path = root / "experiments" / "results" / f"{experiment_id}.csv"
+    write_results_csv(csv_path, records)
+    print(f"CSV results written to: {csv_path}")
+
     if failed:
         print(f"FAILED: {failed}")
         sys.exit(1)
-    else:
-        print("All schedules passed feasibility check.")
+
+    best_name, best_result, _ = min(successful_results, key=lambda x: x[1].makespan)
+    print(f"Best: {best_name} with makespan = {best_result.makespan}")
+    print()
+    print("All schedules passed feasibility check.")
 
     output_dir = Path(__file__).parent
     save_path = output_dir / "exp_001_gantt_latest.png"
     plot_gantt(best_result, title=f"Best Schedule: {best_name} (makespan={best_result.makespan})",
                save_path=str(save_path))
     print(f"Gantt chart saved to: {save_path}")
-
-    csv_path = root / "experiments" / "results" / f"{experiment_id}.csv"
-    write_results_csv(csv_path, records)
-    print(f"CSV results written to: {csv_path}")
 
 
 if __name__ == "__main__":

@@ -210,6 +210,9 @@ Field & Meaning \\
 
 The CSV layer is intentionally simple. It records what happened in each
 experiment without changing solver behavior or feasibility definitions.
+All Phase 1 experiment scripts use shared runner helpers that perform timing,
+call the solver, run the independent feasibility checker, collect failures,
+and copy optional solver metadata into the CSV record.
 
 \section{CP-SAT Diagnostics}
 

@@ -21,6 +21,7 @@ Phase 1 已覆盖：
 - Benchmark smoke loader：支持小型 0-based / 1-based FJSP 格式文件
 - Matplotlib Gantt 图输出
 - 统一实验 CSV 记录
+- 统一实验 runner：负责计时、feasibility 校验、失败记录和 solver metadata 提取
 - Phase 1 数学建模 LaTeX 文档
 
 Phase 1 明确不做：

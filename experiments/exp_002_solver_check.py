@@ -9,15 +9,12 @@ Phase 1 solver comparison experiment:
 from __future__ import annotations
 
 import sys
-import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from experiments.common import ExperimentRecord, write_results_csv
+from experiments.common import record_from_run, run_solver_once, write_results_csv
 from src.data.instance import create_toy_instance
-from src.scheduling.encoding import ScheduleResult
-from src.scheduling.feasibility import check_feasibility
 from src.solvers.heuristics import (
     fifo_solve,
     spt_solve,
@@ -25,18 +22,6 @@ from src.solvers.heuristics import (
     random_solve,
 )
 from src.solvers.ortools_solver import ortools_solve
-
-
-def run_solver(name: str, fn, instance):
-    start = time.perf_counter()
-    try:
-        result = fn()
-        elapsed = time.perf_counter() - start
-        feasible, violations = check_feasibility(result)
-        return name, result, result.makespan, feasible, violations, elapsed, None, result.solver_status
-    except Exception as e:
-        elapsed = time.perf_counter() - start
-        return name, None, None, False, [], elapsed, str(e), None
 
 
 def main() -> None:
@@ -63,59 +48,29 @@ def main() -> None:
     print(header)
     print("-" * len(header))
 
-    records: list[ExperimentRecord] = []
+    records = []
     failures: list[str] = []
 
     for name, fn in solvers:
-        algo, result, mk, feasible, violations, elapsed, error, solver_status = run_solver(name, fn, instance)
-        mk_str = str(mk) if mk is not None else "N/A"
-        status = "PASS" if feasible else "FAIL"
-        note = ""
-        is_failure = False
-        failure_reason = ""
-
-        if error:
-            note = f"ERROR: {error[:40]}"
-            is_failure = True
-            failure_reason = f"{algo}: {error}"
-        elif not feasible:
-            is_failure = True
-            failure_reason = f"{algo}: infeasible"
-        elif solver_status:
-            if solver_status == "OPTIMAL":
-                note = "CP-SAT optimal"
-            elif solver_status == "FEASIBLE":
-                note = "CP-SAT feasible ref"
-            else:
-                note = solver_status
+        run = run_solver_once(name, fn)
+        note = "HEURISTIC"
+        if run.error:
+            note = f"ERROR: {run.error[:40]}"
+            failures.append(f"{run.algorithm}: {run.error}")
+        elif not run.feasible:
+            note = run.note
+            failures.append(f"{run.algorithm}: infeasible")
+        elif run.result is not None and run.result.solver_status == "OPTIMAL":
+            note = "CP-SAT optimal"
+        elif run.result is not None and run.result.solver_status == "FEASIBLE":
+            note = "CP-SAT feasible ref"
         elif "CP-SAT" in name:
             note = "CP-SAT (no status)"
-        else:
-            note = "HEURISTIC"
 
-        print(f"{algo:30s} {mk_str:>8s}  {status:>8s}  {elapsed:>10.4f}  {note:>20s}")
-        result_obj: ScheduleResult | None = result
-        records.append(ExperimentRecord(
-            experiment_id=experiment_id,
-            instance_name=instance_name,
-            algorithm=algo,
-            makespan=mk,
-            feasible=feasible,
-            runtime_s=elapsed,
-            note=note,
-            objective_bound=None if result_obj is None else result_obj.solver_objective_bound,
-            gap=None if result_obj is None else result_obj.solver_gap,
-            solver_wall_time=None if result_obj is None else result_obj.solver_wall_time,
-        ))
-
-        if violations:
-            for v in violations[:3]:
-                print(f"  -> {v}")
-            if len(violations) > 3:
-                print(f"  ... and {len(violations) - 3} more violations")
-
-        if is_failure:
-            failures.append(failure_reason)
+        mk_str = str(run.makespan) if run.makespan is not None else "N/A"
+        status = "PASS" if run.feasible else "FAIL"
+        print(f"{run.algorithm:30s} {mk_str:>8s}  {status:>8s}  {run.runtime_s:>10.4f}  {note:>20s}")
+        records.append(record_from_run(experiment_id, instance_name, run, note=note))
 
     print()
 
