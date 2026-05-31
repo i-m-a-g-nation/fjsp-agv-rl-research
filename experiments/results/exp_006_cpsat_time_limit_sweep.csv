@@ -1,0 +1,4 @@
+experiment_id,instance_name,algorithm,makespan,feasible,runtime_s,note,objective_bound,gap,solver_wall_time
+exp_006_cpsat_time_limit_sweep,fjsplib/Brandimarte1993/mk03.fjs,CP-SAT(tl=1s),417,PASS,1.025390,FEASIBLE,20.000000,0.952038,1.001779
+exp_006_cpsat_time_limit_sweep,fjsplib/Brandimarte1993/mk03.fjs,CP-SAT(tl=3s),285,PASS,3.016301,FEASIBLE,20.000000,0.929825,3.001535
+exp_006_cpsat_time_limit_sweep,fjsplib/Brandimarte1993/mk03.fjs,CP-SAT(tl=10s),220,PASS,10.017890,FEASIBLE,20.000000,0.909091,10.002439

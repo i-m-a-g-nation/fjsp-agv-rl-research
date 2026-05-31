@@ -177,6 +177,40 @@ Exit code: `0` when all files load and all schedules pass feasibility checking,
 `1` when a loader or solver run fails, and `2` for invalid configuration or an
 empty discovery result.
 
+## `exp_006_cpsat_time_limit_sweep.py`
+
+Runs tracked Brandimarte `mk03` under several CP-SAT time limits and records
+status, objective bound, relative gap, and solver wall time. The sweep defaults
+to one worker to reduce parallel-search noise during comparisons.
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_006_cpsat_time_limit_sweep.py
+```
+
+Useful controls:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_006_cpsat_time_limit_sweep.py --time-limits 1 5 30
+.\.conda-env\python.exe experiments\exp_006_cpsat_time_limit_sweep.py --num-workers 4
+```
+
+Tracked default result:
+
+| Time limit | Makespan | Status | Bound | Relative gap |
+|---:|---:|---|---:|---:|
+| 1s | 417 | `FEASIBLE` | 20 | 0.952038 |
+| 3s | 285 | `FEASIBLE` | 20 | 0.929825 |
+| 10s | 220 | `FEASIBLE` | 20 | 0.909091 |
+
+CSV artifact:
+
+- `results/exp_006_cpsat_time_limit_sweep.csv`
+
+Exit code: `0` when every returned schedule passes feasibility checking, `1`
+for solver or schedule failures, and `2` for invalid configuration.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.

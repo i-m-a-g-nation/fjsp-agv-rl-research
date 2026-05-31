@@ -261,4 +261,26 @@ gap = \frac{C_{\max}-LB}{\max(1,C_{\max})}.
 下界等于 makespan，因此 gap 为 0。启发式算法没有这些求解器诊断信息，
 对应 CSV 字段保持为空。
 
+\subsection{CP-SAT 时限 sweep}
+
+tracked \texttt{mk03} sweep 将 CP-SAT worker 数固定为 1，只改变 time limit。
+固定 worker 数可以减少并行搜索噪声，使对比更容易解释。
+
+\begin{table}[h]
+\centering
+\begin{tabular}{rrrrr}
+\toprule
+时限（秒） & Makespan & 状态 & Bound & Gap \\
+\midrule
+1 & 417 & \texttt{FEASIBLE} & 20 & 0.952038 \\
+3 & 285 & \texttt{FEASIBLE} & 20 & 0.929825 \\
+10 & 220 & \texttt{FEASIBLE} & 20 & 0.909091 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+在本次运行中，更长时限改善了可行调度，但没有任何一行证明最优性。默认
+benchmark 批量实验使用求解器默认 worker 配置，并单独记录。worker 数属于
+实验配置的一部分，比较时不能隐藏。
+
 \end{document}

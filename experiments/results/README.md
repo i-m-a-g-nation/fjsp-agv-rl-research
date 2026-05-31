@@ -9,6 +9,7 @@ Current generated files:
 - `exp_003_dispatching_rules.csv`
 - `exp_004_benchmark_smoke.csv`
 - `exp_005_benchmark_batch.csv`
+- `exp_006_cpsat_time_limit_sweep.csv`
 
 Each row records:
 

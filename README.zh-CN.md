@@ -18,6 +18,7 @@ Phase 1 已覆盖：
 - 严格 dispatching rule：DispatchFIFO、DispatchSPT、DispatchEFT、DispatchMWKR、DispatchMOPNR、DispatchRandom
 - OR-Tools CP-SAT baseline：可选区间变量、ExactlyOne、Precedence、NoOverlap、最小化 makespan
 - CP-SAT 求解诊断：solver status、objective bound、relative gap、solver wall time
+- CP-SAT 时限 sweep：对 tracked `mk03` 使用固定单 worker 进行对比
 - Benchmark smoke loader：支持小型 0-based / 1-based FJSP 格式文件
 - 有来源说明的 FJSPLib 子集：覆盖 Brandimarte、Hurink 和 Fattahi 三类实例
 - Matplotlib Gantt 图输出
@@ -66,6 +67,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 .\.conda-env\python.exe experiments\exp_003_dispatching_rules.py
 .\.conda-env\python.exe experiments\exp_004_benchmark_smoke.py
 .\.conda-env\python.exe experiments\exp_005_benchmark_batch.py
+.\.conda-env\python.exe experiments\exp_006_cpsat_time_limit_sweep.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -103,7 +105,7 @@ CSV 中会记录算法、实例、makespan、feasibility 状态、运行时间�
 benchmark 集合，可使用 `--max-files`、`--skip-cp-sat` 和
 `--cp-sat-time-limit` 控制实验规模。
 
-真实子集的来源说明位于 [instances/README.md](instances/README.md)。三份上游
+真实子集的来源说明位于 [instances/README.md](instances/README.md)。四份上游
 文件来自 ScheduleOpt 官方 FJSPLib 仓库，并保留 CC-BY-SA-4.0 归属说明。
 
 | FJSPLib 实例 | 规模 | 当前启发式最佳值 | CP-SAT | FJSPLib BKS |
@@ -115,6 +117,19 @@ benchmark 集合，可使用 `--max-files`、`--skip-cp-sat` 和
 
 对于 `mk03`，本地 CP-SAT 的结果等于上游 BKS，但求解器没有在 10 秒时限内
 证明最优性。因此这里只将其报告为限时可行参考调度。
+
+### 实验 006：CP-SAT 时限 sweep
+
+对 tracked Brandimarte `mk03` 使用固定单 worker，减少并行搜索噪声：
+
+| 时限 | Makespan | 状态 | Bound | 相对 gap |
+|---:|---:|---|---:|---:|
+| 1s | 417 | `FEASIBLE` | 20 | 0.952038 |
+| 3s | 285 | `FEASIBLE` | 20 | 0.929825 |
+| 10s | 220 | `FEASIBLE` | 20 | 0.909091 |
+
+固定 worker 的 sweep 与默认批量实验分开记录。默认批量实验允许 CP-SAT 使用
+默认 worker 配置。求解器配置属于实验结果的一部分，比较时必须明确区分。
 
 ## 数学建模文档
 

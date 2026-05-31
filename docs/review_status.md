@@ -10,7 +10,7 @@ Last updated: 2026-05-31
 | Python environment | Dedicated Conda environment: `.conda-env` or `FJSP_CONDA_ENV` |
 | matplotlib | 3.8.4 |
 | Pillow | 10.4.0 |
-| pytest | 108 passed, 0 failed |
+| pytest | 114 passed, 0 failed |
 | Known warning | Low-priority `.pytest_cache` warning on some Windows paths |
 
 ## Verified Commands
@@ -22,9 +22,10 @@ Last updated: 2026-05-31
 | `experiments/exp_003_dispatching_rules.py` | 0 | Strict dispatching rules feasible, including MWKR and MOPNR |
 | `experiments/exp_004_benchmark_smoke.py` | 0 | Benchmark-format smoke instances feasible, including MWKR and MOPNR |
 | `experiments/exp_005_benchmark_batch.py` | 0 | Recursive batch feasible; `mk03` records time-limited CP-SAT `FEASIBLE` correctly |
+| `experiments/exp_006_cpsat_time_limit_sweep.py` | 0 | Single-worker `mk03` sweep records status, bound, gap, and solver wall time |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
-| `pytest` | 0 | 108 passed |
+| `pytest` | 0 | 114 passed |
 | `git status --short` | 0 | Clean |
 
 ## Module Status
@@ -34,8 +35,9 @@ Last updated: 2026-05-31
 | `FJSPInstance` | Done | `from_jobs_array`, `get_processing_time`, `is_machine_eligible` |
 | Benchmark loader | Done | Smoke coverage plus four tracked Brandimarte, Hurink edata, and Fattahi FJSPLib files |
 | Benchmark provenance | Done | `instances/README.md` records upstream repository, license, families, and BKS values |
-| Experiment records | Done | Shared runner plus normalized CSV output for `exp_001` through `exp_005` |
+| Experiment records | Done | Shared runner plus normalized CSV output for `exp_001` through `exp_006` |
 | Benchmark batch entry | Done | Recursive discovery, stable order, loader failure records, optional CP-SAT controls |
+| CP-SAT sweep | Done | Fixed-worker `mk03` time-limit comparison with bound/gap diagnostics |
 | `encoding` | Done | `ScheduleRecord`, `ScheduleResult`, solver status/bound/gap/wall-time metadata |
 | `decoding` | Done | Semi-active `decode_schedule` |
 | `feasibility` | Done | Core constraints plus robustness checks |
@@ -48,4 +50,4 @@ Last updated: 2026-05-31
 
 1. Expand the FJSPLib subset in controlled batches beyond `mk03`.
 2. Compare heuristic behavior on larger static benchmark subsets before adding more rules.
-3. Compare longer CP-SAT limits on `mk03` without mislabeling unproven results.
+3. Compare longer CP-SAT limits and worker counts on `mk03` without mislabeling unproven results.

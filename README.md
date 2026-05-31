@@ -21,6 +21,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - Recursive benchmark batch experiment with stable discovery order and auditable loader failures
 - OR-Tools CP-SAT baseline with optional intervals, exactly-one machine assignment, precedence constraints, and machine `NoOverlap`
 - CP-SAT diagnostics: solver status, objective bound, relative gap, and solver wall time
+- CP-SAT time-limit sweep on tracked `mk03` with a fixed single worker
 - Matplotlib Gantt chart output using a non-interactive backend
 - Toy-instance experiments and pytest coverage
 
@@ -64,6 +65,7 @@ Do not use the Conda `base` environment for project checks.
 .\.conda-env\python.exe experiments\exp_003_dispatching_rules.py
 .\.conda-env\python.exe experiments\exp_004_benchmark_smoke.py
 .\.conda-env\python.exe experiments\exp_005_benchmark_batch.py
+.\.conda-env\python.exe experiments\exp_006_cpsat_time_limit_sweep.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -127,7 +129,7 @@ silently dropping malformed files. Use `--max-files`, `--skip-cp-sat`, and
 `--cp-sat-time-limit` to control runs on larger tracked collections.
 
 The tracked real subset is documented in [instances/README.md](instances/README.md).
-Its three upstream files are copied from the official ScheduleOpt FJSPLib
+Its four upstream files are copied from the official ScheduleOpt FJSPLib
 repository and retain CC-BY-SA-4.0 attribution.
 
 | FJSPLib instance | Size | Best heuristic in current suite | CP-SAT | FJSPLib BKS |
@@ -140,6 +142,21 @@ repository and retain CC-BY-SA-4.0 attribution.
 For `mk03`, the local CP-SAT value matches the upstream BKS, but the solver did
 not prove optimality within the 10-second limit. The result is therefore
 reported only as a feasible reference schedule.
+
+### Experiment 006: CP-SAT Time-Limit Sweep
+
+Runs tracked Brandimarte `mk03` with a fixed single CP-SAT worker so that
+time-limit comparisons have less parallel-search noise.
+
+| Time limit | Makespan | Status | Bound | Relative gap |
+|---:|---:|---|---:|---:|
+| 1s | 417 | `FEASIBLE` | 20 | 0.952038 |
+| 3s | 285 | `FEASIBLE` | 20 | 0.929825 |
+| 10s | 220 | `FEASIBLE` | 20 | 0.909091 |
+
+The fixed-worker sweep is intentionally separate from the default batch run,
+which allows CP-SAT to use its default worker configuration. Solver settings
+are part of an experiment result and must be compared explicitly.
 
 ## Known Notes
 

@@ -269,4 +269,28 @@ and the solver-reported wall time. For an optimal solution on the toy instance,
 the bound equals the makespan and the reported gap is zero. Heuristic results
 leave these fields empty.
 
+\subsection{CP-SAT Time-Limit Sweep}
+
+The tracked \texttt{mk03} sweep fixes the CP-SAT worker count to one and varies
+only the time limit. Fixing the worker count reduces parallel-search noise and
+makes the comparison easier to interpret.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{rrrrr}
+\toprule
+Limit (s) & Makespan & Status & Bound & Gap \\
+\midrule
+1 & 417 & \texttt{FEASIBLE} & 20 & 0.952038 \\
+3 & 285 & \texttt{FEASIBLE} & 20 & 0.929825 \\
+10 & 220 & \texttt{FEASIBLE} & 20 & 0.909091 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Longer limits improve the feasible schedule in this run, but no row proves
+optimality. The default benchmark batch uses the solver's default worker
+configuration and is recorded separately. Worker count is part of the
+experimental configuration and must not be hidden during comparisons.
+
 \end{document}
