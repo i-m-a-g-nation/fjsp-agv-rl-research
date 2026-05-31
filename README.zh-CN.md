@@ -21,6 +21,7 @@ Phase 1 已覆盖：
 - CP-SAT 时限 sweep：对 tracked `mk03` 使用固定单 worker 进行对比
 - CP-SAT worker 数量 sweep：对 tracked `mk03` 使用固定 10 秒时限进行对比
 - CP-SAT worker 重复实验聚合：同时保留逐次记录和汇总 CSV
+- tracked 静态 FJSPLib 子集上的受控 CP-SAT 重复实验矩阵
 - Benchmark smoke loader：支持小型 0-based / 1-based FJSP 格式文件
 - 有来源说明的 FJSPLib 子集：覆盖 Brandimarte、Hurink 和 Fattahi 三类实例
 - Matplotlib Gantt 图输出
@@ -72,6 +73,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 .\.conda-env\python.exe experiments\exp_006_cpsat_time_limit_sweep.py
 .\.conda-env\python.exe experiments\exp_007_cpsat_worker_sweep.py
 .\.conda-env\python.exe experiments\exp_008_cpsat_worker_repeats.py
+.\.conda-env\python.exe experiments\exp_009_cpsat_benchmark_matrix.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -105,6 +107,8 @@ Toy 3x3 实例上的主要结果：
 - `experiments/results/exp_007_cpsat_worker_sweep.csv`
 - `experiments/results/exp_008_cpsat_worker_repeats_runs.csv`
 - `experiments/results/exp_008_cpsat_worker_repeats_summary.csv`
+- `experiments/results/exp_009_cpsat_benchmark_matrix_runs.csv`
+- `experiments/results/exp_009_cpsat_benchmark_matrix_summary.csv`
 
 CSV 中会记录算法、实例、makespan、feasibility 状态、运行时间和说明。对 CP-SAT 结果，还会额外记录 objective bound、relative gap 和 solver wall time。
 
@@ -170,6 +174,24 @@ incumbent。
 全部 12 个调度均通过独立 feasibility checker。在本次三次重复观测中，
 2、4 和 auto workers 都稳定达到上游 BKS `204`。但是 CP-SAT 状态仍然是
 `FEASIBLE`，所以这些结果仍然只是限时可行参考解，不是本地已证明最优解。
+
+### 实验 009：CP-SAT benchmark 重复矩阵
+
+递归扫描 tracked 静态 FJSPLib 子集。每个实例在相同的 3 秒时限下，使用单
+worker 重复 2 次，再使用 auto worker 配置重复 2 次。
+
+| 实例 | Workers | 可行运行数 | 最佳 makespan | 平均 makespan | 状态 | 最佳 bound |
+|---|---:|---:|---:|---:|---|---:|
+| `mk01` | 1 | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
+| `mk01` | auto | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
+| `mk03` | 1 | 2 / 2 | 286 | 286.000000 | `FEASIBLE` | 20 |
+| `mk03` | auto | 2 / 2 | 236 | 238.500000 | `FEASIBLE` | 82 |
+| `fattahi1` | 1 / auto | 4 / 4 | 66 | 66.000000 | `OPTIMAL` | 66 |
+| edata `ft06` | 1 / auto | 4 / 4 | 55 | 55.000000 | `OPTIMAL` | 55 |
+
+全部 16 个调度均通过独立 feasibility checker。较小的 tracked 实例在时限内
+证明了最优性。对于 `mk03`，auto workers 改善了本次观测中的 incumbent 和
+bound，但两种配置都没有在 3 秒内证明最优性。
 
 ## 数学建模文档
 

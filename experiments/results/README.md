@@ -13,6 +13,8 @@ Current generated files:
 - `exp_007_cpsat_worker_sweep.csv`
 - `exp_008_cpsat_worker_repeats_runs.csv`
 - `exp_008_cpsat_worker_repeats_summary.csv`
+- `exp_009_cpsat_benchmark_matrix_runs.csv`
+- `exp_009_cpsat_benchmark_matrix_summary.csv`
 
 Each row records:
 

@@ -345,4 +345,32 @@ automatic workers consistently reached the upstream BKS of 204 in this small
 sample. Because CP-SAT still reported \texttt{FEASIBLE}, these schedules remain
 time-limited feasible references rather than locally proven optima.
 
+\subsection{Repeated CP-SAT Benchmark Matrix}
+
+The controlled matrix recursively scans the tracked static FJSPLib subset.
+Every instance is evaluated twice with one worker and twice with the automatic
+worker configuration under a 3-second limit. Raw rows and per-instance
+aggregates are stored separately.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrrlr}
+\toprule
+Instance & Workers & Pass & Best & Mean & Status & Bound \\
+\midrule
+\texttt{mk01} & 1 & 2/2 & 40 & 40.000000 & \texttt{OPTIMAL} & 40 \\
+\texttt{mk01} & \texttt{auto} & 2/2 & 40 & 40.000000 & \texttt{OPTIMAL} & 40 \\
+\texttt{mk03} & 1 & 2/2 & 286 & 286.000000 & \texttt{FEASIBLE} & 20 \\
+\texttt{mk03} & \texttt{auto} & 2/2 & 236 & 238.500000 & \texttt{FEASIBLE} & 82 \\
+\texttt{fattahi1} & 1/\texttt{auto} & 4/4 & 66 & 66.000000 & \texttt{OPTIMAL} & 66 \\
+\texttt{ft06} & 1/\texttt{auto} & 4/4 & 55 & 55.000000 & \texttt{OPTIMAL} & 55 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All 16 schedules passed the independent feasibility checker. The smaller
+tracked instances were solved optimally within the limit. On \texttt{mk03},
+automatic workers improved the observed incumbents and bounds, but neither
+configuration proved optimality within 3 seconds.
+
 \end{document}

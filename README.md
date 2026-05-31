@@ -24,6 +24,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - CP-SAT time-limit sweep on tracked `mk03` with a fixed single worker
 - CP-SAT worker-count sweep on tracked `mk03` with a fixed 10-second limit
 - Repeated CP-SAT worker-count aggregation with per-run and summary CSV artifacts
+- Controlled repeated CP-SAT matrix across the tracked static FJSPLib subset
 - Matplotlib Gantt chart output using a non-interactive backend
 - Toy-instance experiments and pytest coverage
 
@@ -70,6 +71,7 @@ Do not use the Conda `base` environment for project checks.
 .\.conda-env\python.exe experiments\exp_006_cpsat_time_limit_sweep.py
 .\.conda-env\python.exe experiments\exp_007_cpsat_worker_sweep.py
 .\.conda-env\python.exe experiments\exp_008_cpsat_worker_repeats.py
+.\.conda-env\python.exe experiments\exp_009_cpsat_benchmark_matrix.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -196,6 +198,26 @@ All 12 schedules passed the independent feasibility checker. In this
 three-repeat observation, 2, 4, and automatic workers consistently reached
 the upstream BKS of 204. CP-SAT still reported `FEASIBLE`, so these remain
 time-limited feasible reference schedules rather than locally proven optima.
+
+### Experiment 009: Repeated CP-SAT Benchmark Matrix
+
+Scans the tracked static FJSPLib subset recursively. Each instance is evaluated
+twice with one worker and twice with the automatic worker configuration under
+the same 3-second limit.
+
+| Instance | Workers | Feasible runs | Best makespan | Mean makespan | Status | Best bound |
+|---|---:|---:|---:|---:|---|---:|
+| `mk01` | 1 | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
+| `mk01` | auto | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
+| `mk03` | 1 | 2 / 2 | 286 | 286.000000 | `FEASIBLE` | 20 |
+| `mk03` | auto | 2 / 2 | 236 | 238.500000 | `FEASIBLE` | 82 |
+| `fattahi1` | 1 / auto | 4 / 4 | 66 | 66.000000 | `OPTIMAL` | 66 |
+| edata `ft06` | 1 / auto | 4 / 4 | 55 | 55.000000 | `OPTIMAL` | 55 |
+
+All 16 schedules passed the independent feasibility checker. The smaller
+tracked instances were solved optimally within the limit. For `mk03`, automatic
+workers improved the observed incumbents and bounds, but neither configuration
+proved optimality within 3 seconds.
 
 ## Known Notes
 

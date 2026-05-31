@@ -37,6 +37,7 @@
 | `experiments/exp_006_cpsat_time_limit_sweep.py` | 固定 worker，对比 CP-SAT 时限、bound 和 gap |
 | `experiments/exp_007_cpsat_worker_sweep.py` | 固定时限，对比 CP-SAT worker 数量、bound 和 gap |
 | `experiments/exp_008_cpsat_worker_repeats.py` | 重复 worker 对比，保留逐次结果并聚合统计 |
+| `experiments/exp_009_cpsat_benchmark_matrix.py` | 对 tracked FJSPLib 子集运行受控重复 CP-SAT 矩阵 |
 
 ## 核心数据流
 

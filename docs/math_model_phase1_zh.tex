@@ -332,4 +332,30 @@ Workers & 通过数 & 最佳值 & 平均值 & 标准差 & 最佳 bound & 最佳 
 \texttt{FEASIBLE}，所以这些结果仍然只是限时可行参考解，不是本地已证明
 最优解。
 
+\subsection{CP-SAT benchmark 重复矩阵}
+
+受控矩阵递归扫描 tracked 静态 FJSPLib 子集。每个实例在 3 秒时限下使用单
+worker 运行 2 次，再使用 auto worker 配置运行 2 次。逐次原始记录和按实例
+聚合的统计记录分别保存。
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrrlr}
+\toprule
+实例 & Workers & 通过数 & 最佳值 & 平均值 & 状态 & Bound \\
+\midrule
+\texttt{mk01} & 1 & 2/2 & 40 & 40.000000 & \texttt{OPTIMAL} & 40 \\
+\texttt{mk01} & \texttt{auto} & 2/2 & 40 & 40.000000 & \texttt{OPTIMAL} & 40 \\
+\texttt{mk03} & 1 & 2/2 & 286 & 286.000000 & \texttt{FEASIBLE} & 20 \\
+\texttt{mk03} & \texttt{auto} & 2/2 & 236 & 238.500000 & \texttt{FEASIBLE} & 82 \\
+\texttt{fattahi1} & 1/\texttt{auto} & 4/4 & 66 & 66.000000 & \texttt{OPTIMAL} & 66 \\
+\texttt{ft06} & 1/\texttt{auto} & 4/4 & 55 & 55.000000 & \texttt{OPTIMAL} & 55 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+全部 16 个调度均通过独立 feasibility checker。较小的 tracked 实例在时限内
+证明了最优性。对于 \texttt{mk03}，auto workers 改善了本次观测中的
+incumbent 和 bound，但两种配置都没有在 3 秒内证明最优性。
+
 \end{document}

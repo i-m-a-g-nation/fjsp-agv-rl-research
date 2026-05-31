@@ -282,6 +282,45 @@ CSV artifacts:
 All 12 tracked schedules passed feasibility checking. Matching the FJSPLib BKS
 does not become a local optimality proof while CP-SAT reports `FEASIBLE`.
 
+## `exp_009_cpsat_benchmark_matrix.py`
+
+Recursively discovers the tracked static FJSPLib subset and runs a controlled
+repeated CP-SAT matrix. The defaults compare one worker with the solver's
+automatic configuration, repeat each configuration twice, and use a 3-second
+per-run limit.
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_009_cpsat_benchmark_matrix.py
+```
+
+Useful controls:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_009_cpsat_benchmark_matrix.py --max-files 2
+.\.conda-env\python.exe experiments\exp_009_cpsat_benchmark_matrix.py --repeats 3 --time-limit 10 --worker-counts 1 4 0
+```
+
+Tracked default aggregate result:
+
+| Instance | Workers | Feasible runs | Best makespan | Mean makespan | Status | Best bound |
+|---|---:|---:|---:|---:|---|---:|
+| `mk01` | 1 | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
+| `mk01` | auto | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
+| `mk03` | 1 | 2 / 2 | 286 | 286.000000 | `FEASIBLE` | 20 |
+| `mk03` | auto | 2 / 2 | 236 | 238.500000 | `FEASIBLE` | 82 |
+| `fattahi1` | 1 / auto | 4 / 4 | 66 | 66.000000 | `OPTIMAL` | 66 |
+| edata `ft06` | 1 / auto | 4 / 4 | 55 | 55.000000 | `OPTIMAL` | 55 |
+
+CSV artifacts:
+
+- `results/exp_009_cpsat_benchmark_matrix_runs.csv`
+- `results/exp_009_cpsat_benchmark_matrix_summary.csv`
+
+All 16 schedules passed feasibility checking. Loader failures and solver
+failures remain visible in the raw CSV and process exit code.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.
