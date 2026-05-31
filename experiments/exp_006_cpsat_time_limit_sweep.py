@@ -66,11 +66,14 @@ def build_cpsat_solvers(
     ]
 
 
-def print_sweep_runs(runs: Sequence[SolverRun]) -> None:
+def print_sweep_runs(
+    runs: Sequence[SolverRun],
+    algorithm_width: int = 18,
+) -> None:
     """Print CP-SAT diagnostics in a stable compact table."""
 
     header = (
-        f"{'Algorithm':18s} {'makespan':>8s}  {'status':>8s}  "
+        f"{'Algorithm':{algorithm_width}s} {'makespan':>8s}  {'status':>8s}  "
         f"{'bound':>10s}  {'gap':>10s}  {'solver_s':>10s}"
     )
     print(header)
@@ -82,7 +85,7 @@ def print_sweep_runs(runs: Sequence[SolverRun]) -> None:
         gap = None if result is None else result.solver_gap
         wall_time = None if result is None else result.solver_wall_time
         print(
-            f"{run.algorithm:18s} {mk_str:>8s}  {run.note:>8s}  "
+            f"{run.algorithm:{algorithm_width}s} {mk_str:>8s}  {run.note:>8s}  "
             f"{_format_optional(bound):>10s}  {_format_optional(gap):>10s}  "
             f"{_format_optional(wall_time):>10s}"
         )

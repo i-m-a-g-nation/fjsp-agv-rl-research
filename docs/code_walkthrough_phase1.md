@@ -35,6 +35,7 @@
 | `experiments/common.py` | 标准化实验结果，并写入 CSV |
 | `experiments/exp_005_benchmark_batch.py` | 批量运行 tracked benchmark，记录启发式和 CP-SAT 结果 |
 | `experiments/exp_006_cpsat_time_limit_sweep.py` | 固定 worker，对比 CP-SAT 时限、bound 和 gap |
+| `experiments/exp_007_cpsat_worker_sweep.py` | 固定时限，对比 CP-SAT worker 数量、bound 和 gap |
 
 ## 核心数据流
 

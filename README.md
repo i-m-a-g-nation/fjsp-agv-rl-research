@@ -22,6 +22,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - OR-Tools CP-SAT baseline with optional intervals, exactly-one machine assignment, precedence constraints, and machine `NoOverlap`
 - CP-SAT diagnostics: solver status, objective bound, relative gap, and solver wall time
 - CP-SAT time-limit sweep on tracked `mk03` with a fixed single worker
+- CP-SAT worker-count sweep on tracked `mk03` with a fixed 10-second limit
 - Matplotlib Gantt chart output using a non-interactive backend
 - Toy-instance experiments and pytest coverage
 
@@ -66,6 +67,7 @@ Do not use the Conda `base` environment for project checks.
 .\.conda-env\python.exe experiments\exp_004_benchmark_smoke.py
 .\.conda-env\python.exe experiments\exp_005_benchmark_batch.py
 .\.conda-env\python.exe experiments\exp_006_cpsat_time_limit_sweep.py
+.\.conda-env\python.exe experiments\exp_007_cpsat_worker_sweep.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -157,6 +159,23 @@ time-limit comparisons have less parallel-search noise.
 The fixed-worker sweep is intentionally separate from the default batch run,
 which allows CP-SAT to use its default worker configuration. Solver settings
 are part of an experiment result and must be compared explicitly.
+
+### Experiment 007: CP-SAT Worker-Count Sweep
+
+Runs tracked Brandimarte `mk03` with a fixed 10-second limit while varying the
+CP-SAT worker configuration.
+
+| Workers | Makespan | Status | Bound | Relative gap |
+|---:|---:|---|---:|---:|
+| 1 | 220 | `FEASIBLE` | 20 | 0.909091 |
+| 2 | 207 | `FEASIBLE` | 20 | 0.903382 |
+| 4 | 207 | `FEASIBLE` | 20 | 0.903382 |
+| auto | 209 | `FEASIBLE` | 75 | 0.641148 |
+
+Every row passed the independent feasibility checker. This is one observed
+timed run, not a stable worker-performance ranking: parallel CP-SAT search can
+vary between runs. The auto configuration produced the strongest bound in
+this observation, while 2 and 4 workers produced slightly better incumbents.
 
 ## Known Notes
 

@@ -10,6 +10,7 @@ Current generated files:
 - `exp_004_benchmark_smoke.csv`
 - `exp_005_benchmark_batch.csv`
 - `exp_006_cpsat_time_limit_sweep.csv`
+- `exp_007_cpsat_worker_sweep.csv`
 
 Each row records:
 

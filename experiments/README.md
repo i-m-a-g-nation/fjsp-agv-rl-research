@@ -211,6 +211,41 @@ CSV artifact:
 Exit code: `0` when every returned schedule passes feasibility checking, `1`
 for solver or schedule failures, and `2` for invalid configuration.
 
+## `exp_007_cpsat_worker_sweep.py`
+
+Runs tracked Brandimarte `mk03` with a fixed 10-second time limit and varies the
+CP-SAT worker configuration. Worker count `0` means the solver's automatic
+configuration.
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_007_cpsat_worker_sweep.py
+```
+
+Useful controls:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_007_cpsat_worker_sweep.py --worker-counts 1 2 4 0
+.\.conda-env\python.exe experiments\exp_007_cpsat_worker_sweep.py --time-limit 30
+```
+
+Tracked default result:
+
+| Workers | Makespan | Status | Bound | Relative gap |
+|---:|---:|---|---:|---:|
+| 1 | 220 | `FEASIBLE` | 20 | 0.909091 |
+| 2 | 207 | `FEASIBLE` | 20 | 0.903382 |
+| 4 | 207 | `FEASIBLE` | 20 | 0.903382 |
+| auto | 209 | `FEASIBLE` | 75 | 0.641148 |
+
+CSV artifact:
+
+- `results/exp_007_cpsat_worker_sweep.csv`
+
+Every returned schedule must pass feasibility checking. These values are one
+timed observation, not a stable ranking of worker configurations.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.

@@ -283,4 +283,28 @@ tracked \texttt{mk03} sweep 将 CP-SAT worker 数固定为 1，只改变 time li
 benchmark 批量实验使用求解器默认 worker 配置，并单独记录。worker 数属于
 实验配置的一部分，比较时不能隐藏。
 
+\subsection{CP-SAT worker 数量 sweep}
+
+tracked \texttt{mk03} worker sweep 将时限固定为 10 秒，只改变 CP-SAT worker
+配置。\texttt{auto} 表示保留求解器的默认 worker 选择。
+
+\begin{table}[h]
+\centering
+\begin{tabular}{rrrrr}
+\toprule
+Workers & Makespan & 状态 & Bound & Gap \\
+\midrule
+1 & 220 & \texttt{FEASIBLE} & 20 & 0.909091 \\
+2 & 207 & \texttt{FEASIBLE} & 20 & 0.903382 \\
+4 & 207 & \texttt{FEASIBLE} & 20 & 0.903382 \\
+\texttt{auto} & 209 & \texttt{FEASIBLE} & 75 & 0.641148 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+每一行均通过独立 feasibility checker。该表只是一次限时运行的观测结果，
+不是稳定的 worker 性能排名：并行 CP-SAT 搜索可能在不同运行之间产生变化。
+本次观测中，自动配置给出了更强的 bound，而 2 和 4 workers 给出了略好的
+incumbent。
+
 \end{document}

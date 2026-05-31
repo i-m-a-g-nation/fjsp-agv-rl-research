@@ -19,6 +19,7 @@ Phase 1 已覆盖：
 - OR-Tools CP-SAT baseline：可选区间变量、ExactlyOne、Precedence、NoOverlap、最小化 makespan
 - CP-SAT 求解诊断：solver status、objective bound、relative gap、solver wall time
 - CP-SAT 时限 sweep：对 tracked `mk03` 使用固定单 worker 进行对比
+- CP-SAT worker 数量 sweep：对 tracked `mk03` 使用固定 10 秒时限进行对比
 - Benchmark smoke loader：支持小型 0-based / 1-based FJSP 格式文件
 - 有来源说明的 FJSPLib 子集：覆盖 Brandimarte、Hurink 和 Fattahi 三类实例
 - Matplotlib Gantt 图输出
@@ -68,6 +69,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 .\.conda-env\python.exe experiments\exp_004_benchmark_smoke.py
 .\.conda-env\python.exe experiments\exp_005_benchmark_batch.py
 .\.conda-env\python.exe experiments\exp_006_cpsat_time_limit_sweep.py
+.\.conda-env\python.exe experiments\exp_007_cpsat_worker_sweep.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -97,6 +99,8 @@ Toy 3x3 实例上的主要结果：
 - `experiments/results/exp_003_dispatching_rules.csv`
 - `experiments/results/exp_004_benchmark_smoke.csv`
 - `experiments/results/exp_005_benchmark_batch.csv`
+- `experiments/results/exp_006_cpsat_time_limit_sweep.csv`
+- `experiments/results/exp_007_cpsat_worker_sweep.csv`
 
 CSV 中会记录算法、实例、makespan、feasibility 状态、运行时间和说明。对 CP-SAT 结果，还会额外记录 objective bound、relative gap 和 solver wall time。
 
@@ -130,6 +134,22 @@ benchmark 集合，可使用 `--max-files`、`--skip-cp-sat` 和
 
 固定 worker 的 sweep 与默认批量实验分开记录。默认批量实验允许 CP-SAT 使用
 默认 worker 配置。求解器配置属于实验结果的一部分，比较时必须明确区分。
+
+### 实验 007：CP-SAT worker 数量 sweep
+
+对 tracked Brandimarte `mk03` 使用固定 10 秒时限，只改变 CP-SAT worker 配置：
+
+| Workers | Makespan | 状态 | Bound | 相对 gap |
+|---:|---:|---|---:|---:|
+| 1 | 220 | `FEASIBLE` | 20 | 0.909091 |
+| 2 | 207 | `FEASIBLE` | 20 | 0.903382 |
+| 4 | 207 | `FEASIBLE` | 20 | 0.903382 |
+| auto | 209 | `FEASIBLE` | 75 | 0.641148 |
+
+每一行均通过独立 feasibility checker。这只是一次限时运行的观测结果，不是
+稳定的 worker 性能排名：并行 CP-SAT 搜索可能在不同运行之间产生变化。本次
+观测中，auto 配置给出了更强的 bound，而 2 和 4 workers 给出了略好的
+incumbent。
 
 ## 数学建模文档
 

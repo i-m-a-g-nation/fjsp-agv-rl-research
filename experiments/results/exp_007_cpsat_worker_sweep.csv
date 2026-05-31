@@ -1,0 +1,5 @@
+experiment_id,instance_name,algorithm,makespan,feasible,runtime_s,note,objective_bound,gap,solver_wall_time
+exp_007_cpsat_worker_sweep,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=1,tl=10s)",220,PASS,10.033961,FEASIBLE,20.000000,0.909091,10.005456
+exp_007_cpsat_worker_sweep,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=2,tl=10s)",207,PASS,10.052070,FEASIBLE,20.000000,0.903382,10.019377
+exp_007_cpsat_worker_sweep,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=4,tl=10s)",207,PASS,10.075544,FEASIBLE,20.000000,0.903382,10.031016
+exp_007_cpsat_worker_sweep,fjsplib/Brandimarte1993/mk03.fjs,"CP-SAT(workers=auto,tl=10s)",209,PASS,10.147406,FEASIBLE,75.000000,0.641148,10.107530
