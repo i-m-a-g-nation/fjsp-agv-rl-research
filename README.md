@@ -15,6 +15,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - Heuristic baselines: FIFO, SPT, Earliest Finish Time, and seeded Random
 - Strict dispatching-rule variants: DispatchFIFO, DispatchSPT, DispatchEFT, DispatchMWKR, DispatchMOPNR, and DispatchRandom
 - Benchmark-format loader smoke tests for small 0-based and 1-based FJSP files
+- Provenance-documented FJSPLib subset from Brandimarte, Hurink, and Fattahi families
 - Normalized CSV experiment result recording under `experiments/results/`
 - Shared experiment runner utilities for timing, feasibility validation, failures, and solver metadata
 - Recursive benchmark batch experiment with stable discovery order and auditable loader failures
@@ -33,7 +34,7 @@ src/
   vis/           Gantt chart rendering
 tests/           pytest suite
 experiments/     experiment scripts and tracked artifacts
-instances/       benchmark instances, to be expanded
+instances/       local smoke files and a tracked real FJSPLib subset
 notes/           literature notes and review material
 papers/          paper category indexes
 scripts/         environment helper scripts
@@ -124,6 +125,16 @@ Recursively discovers `*.fjs` files under `instances/`, evaluates each static
 FJSP instance in stable path order, and records loader failures rather than
 silently dropping malformed files. Use `--max-files`, `--skip-cp-sat`, and
 `--cp-sat-time-limit` to control runs on larger tracked collections.
+
+The tracked real subset is documented in [instances/README.md](instances/README.md).
+Its three upstream files are copied from the official ScheduleOpt FJSPLib
+repository and retain CC-BY-SA-4.0 attribution.
+
+| FJSPLib instance | Size | Best heuristic in current suite | CP-SAT | FJSPLib BKS |
+|---|---:|---:|---:|---:|
+| `fattahi1` | 2 x 2 | 66 | 66 `OPTIMAL` | 66 |
+| Hurink edata `ft06` | 6 x 6 | 55 | 55 `OPTIMAL` | 55 |
+| Brandimarte `mk01` | 10 x 6 | 44 | 40 `OPTIMAL` | 40 |
 
 ## Known Notes
 

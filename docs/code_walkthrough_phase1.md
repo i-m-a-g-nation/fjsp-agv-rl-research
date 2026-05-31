@@ -23,7 +23,7 @@
 | 模块 | 职责 |
 |---|---|
 | `src/data/instance.py` | 定义 `FJSPInstance`、`Job`、`Operation` 和 `MachineOption` |
-| `src/data/loader.py` | 解析小型 Brandimarte/FJSPLib 风格 benchmark 文本和文件 |
+| `src/data/loader.py` | 解析 Brandimarte/FJSPLib 风格 benchmark 文本和文件，已覆盖真实 FJSPLib 子集 |
 | `src/scheduling/encoding.py` | 定义 `ScheduleRecord` 和 `ScheduleResult` |
 | `src/scheduling/decoding.py` | 使用半主动解码，把 `(job, op, machine)` 序列变成带时间的调度表 |
 | `src/scheduling/feasibility.py` | 独立检查工序覆盖、工序顺序、机器容量、机器可行性、加工时间和 makespan |
@@ -139,7 +139,7 @@ experiments/results/
 
 当前项目不需要大重构。接下来应保持小步开发：
 
-1. benchmark loader 扩展到真实 Brandimarte / Hurink / Fattahi 文件。
-2. 实验 runner 可以继续抽象，减少各实验脚本重复打印和 failure 收集逻辑。
+1. 分批扩展 FJSPLib 子集并保存来源说明。
+2. 比较更大静态实例上的 OR-Tools 限时行为。
 3. 若继续增加启发式规则，可在 `dispatching.py` 内再拆 rule selector。
 4. 在进入 AGV/RL/GNN 前，继续保持 feasibility checker 独立且严格。

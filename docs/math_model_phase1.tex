@@ -228,6 +228,30 @@ per-instance time limit bounds CP-SAT work on larger collections. Loader
 failures are retained as \texttt{LOAD} rows with \texttt{FAIL} status so that a
 malformed file cannot disappear silently from an experiment report.
 
+\subsection{Tracked FJSPLib Subset}
+
+The repository tracks a small real-data subset copied from the official
+ScheduleOpt FJSPLib repository under its CC-BY-SA-4.0 license:
+\url{https://scheduleopt.github.io/benchmarks/fjsplib}.
+The subset spans three source families and increasing instance sizes.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+Instance & Jobs & Machines & FJSPLib BKS & Local CP-SAT \\
+\midrule
+\texttt{fattahi1} & 2 & 2 & 66 & 66 \\
+Hurink edata \texttt{ft06} & 6 & 6 & 55 & 55 \\
+Brandimarte \texttt{mk01} & 10 & 6 & 40 & 40 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The local CP-SAT values above were independently validated by the feasibility
+checker and reported as \texttt{OPTIMAL}. The FJSPLib BKS column is upstream
+reference data, not a value inferred by this repository.
+
 \section{CP-SAT Diagnostics}
 
 For CP-SAT results, the implementation stores three optional diagnostics in

@@ -159,6 +159,15 @@ Behavior:
 - runs CP-SAT by default with a configurable per-instance time limit
 - writes `results/exp_005_benchmark_batch.csv`
 
+The default batch currently includes the repository-local smoke files and the
+tracked FJSPLib subset documented in `instances/README.md`:
+
+| Upstream instance | Size | CP-SAT result | FJSPLib BKS |
+|---|---:|---:|---:|
+| Fattahi `fattahi1` | 2 x 2 | 66 `OPTIMAL` | 66 |
+| Hurink edata `ft06` | 6 x 6 | 55 `OPTIMAL` | 55 |
+| Brandimarte `mk01` | 10 x 6 | 40 `OPTIMAL` | 40 |
+
 Exit code: `0` when all files load and all schedules pass feasibility checking,
 `1` when a loader or solver run fails, and `2` for invalid configuration or an
 empty discovery result.

@@ -19,6 +19,7 @@ Phase 1 已覆盖：
 - OR-Tools CP-SAT baseline：可选区间变量、ExactlyOne、Precedence、NoOverlap、最小化 makespan
 - CP-SAT 求解诊断：solver status、objective bound、relative gap、solver wall time
 - Benchmark smoke loader：支持小型 0-based / 1-based FJSP 格式文件
+- 有来源说明的 FJSPLib 子集：覆盖 Brandimarte、Hurink 和 Fattahi 三类实例
 - Matplotlib Gantt 图输出
 - 统一实验 CSV 记录
 - 统一实验 runner：负责计时、feasibility 校验、失败记录和 solver metadata 提取
@@ -43,7 +44,7 @@ src/
   vis/           Gantt 图绘制
 tests/           pytest 测试
 experiments/     实验脚本、CSV 结果和图像产物
-instances/       小型 benchmark/smoke 实例
+instances/       本地 smoke 文件和真实 FJSPLib 子集
 docs/            代码说明、审查状态、数学模型
 notes/           开发笔记和方案讨论
 papers/          文献索引
@@ -102,6 +103,15 @@ CSV 中会记录算法、实例、makespan、feasibility 状态、运行时间�
 benchmark 集合，可使用 `--max-files`、`--skip-cp-sat` 和
 `--cp-sat-time-limit` 控制实验规模。
 
+真实子集的来源说明位于 [instances/README.md](instances/README.md)。三份上游
+文件来自 ScheduleOpt 官方 FJSPLib 仓库，并保留 CC-BY-SA-4.0 归属说明。
+
+| FJSPLib 实例 | 规模 | 当前启发式最佳值 | CP-SAT | FJSPLib BKS |
+|---|---:|---:|---:|---:|
+| `fattahi1` | 2 x 2 | 66 | 66 `OPTIMAL` | 66 |
+| Hurink edata `ft06` | 6 x 6 | 55 | 55 `OPTIMAL` | 55 |
+| Brandimarte `mk01` | 10 x 6 | 44 | 40 `OPTIMAL` | 40 |
+
 ## 数学建模文档
 
 英文版：
@@ -120,7 +130,7 @@ benchmark 集合，可使用 `--max-files`、`--skip-cp-sat` 和
 
 当前代码还不需要推倒重构。后续应继续小步开发：
 
-- 向 `instances/` 增加真实 benchmark 文件，并用批量入口分组验证
+- 分批扩展 FJSPLib 子集，并比较更大静态实例上的求解行为
 - 再测试更大静态 FJSP 实例上的 OR-Tools 行为
 - 再加入少量 Phase 1 范围内的启发式算法
 - 暂时不要引入 AGV/RL/GNN，避免复杂度过早失控

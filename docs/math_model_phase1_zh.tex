@@ -221,6 +221,29 @@ solver metadata 写入 CSV 记录。
 \texttt{LOAD} 算法、\texttt{FAIL} 状态的记录，避免损坏文件从实验报告中
 静默消失。
 
+\subsection{已跟踪的 FJSPLib 子集}
+
+仓库会跟踪一个较小的真实数据子集。文件来自 ScheduleOpt 官方 FJSPLib
+仓库，并按照其 CC-BY-SA-4.0 许可证保留来源说明：
+\url{https://scheduleopt.github.io/benchmarks/fjsplib}。
+该子集覆盖三个来源系列和逐步增大的实例规模。
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+实例 & 工件数 & 机器数 & FJSPLib BKS & 本地 CP-SAT \\
+\midrule
+\texttt{fattahi1} & 2 & 2 & 66 & 66 \\
+Hurink edata \texttt{ft06} & 6 & 6 & 55 & 55 \\
+Brandimarte \texttt{mk01} & 10 & 6 & 40 & 40 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+上表中的本地 CP-SAT 结果均通过独立 feasibility checker，并由求解器报告为
+\texttt{OPTIMAL}。FJSPLib BKS 列来自上游参考数据，不是本仓库自行推断的值。
+
 \section{CP-SAT 诊断信息}
 
 对于 CP-SAT 结果，代码会在通用的 \texttt{ScheduleResult} 对象中保存三个

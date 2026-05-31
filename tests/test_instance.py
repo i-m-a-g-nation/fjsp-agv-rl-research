@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from src.data.instance import (
@@ -123,3 +125,31 @@ class TestLoader:
         assert instance.num_jobs == 1
         assert instance.num_machines == 1
         assert instance.total_ops == 1
+
+    @pytest.mark.parametrize(
+        ("relative_path", "num_jobs", "num_machines", "total_ops"),
+        [
+            ("FattahiMehrabadJolai2007/fattahi1.fjs", 2, 2, 4),
+            ("HurinkJurischThole1994/edata/ft06.fjs", 6, 6, 36),
+            ("Brandimarte1993/mk01.fjs", 10, 6, 55),
+        ],
+    )
+    def test_load_tracked_fjsplib_subset(
+        self,
+        relative_path,
+        num_jobs,
+        num_machines,
+        total_ops,
+    ):
+        path = (
+            Path(__file__).parent.parent
+            / "instances"
+            / "fjsplib"
+            / relative_path
+        )
+
+        instance = load_benchmark_file(path)
+
+        assert instance.num_jobs == num_jobs
+        assert instance.num_machines == num_machines
+        assert instance.total_ops == total_ops
