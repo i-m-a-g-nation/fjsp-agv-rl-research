@@ -15,6 +15,8 @@ Current generated files:
 - `exp_008_cpsat_worker_repeats_summary.csv`
 - `exp_009_cpsat_benchmark_matrix_runs.csv`
 - `exp_009_cpsat_benchmark_matrix_summary.csv`
+- `exp_010_heuristic_benchmark_matrix_runs.csv`
+- `exp_010_heuristic_benchmark_matrix_summary.csv`
 
 Each row records:
 

@@ -373,4 +373,32 @@ tracked instances were solved optimally within the limit. On \texttt{mk03},
 automatic workers improved the observed incumbents and bounds, but neither
 configuration proved optimality within 3 seconds.
 
+\subsection{Heuristic Benchmark Matrix}
+
+The heuristic matrix evaluates every deterministic Phase 1 rule once on each
+tracked FJSPLib instance. The two random families use fixed seeds 42, 123, and
+999. Their ranges therefore describe reproducible observations rather than an
+uncontrolled stochastic sample.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llrr}
+\toprule
+Instance & Best deterministic rule & Random range & DispatchRandom range \\
+\midrule
+\texttt{mk01} & \texttt{DispatchMWKR} (44) & 148--165 & 92--125 \\
+\texttt{mk03} & \texttt{DispatchFIFO/MWKR} (204) & 1086--1206 & 488--563 \\
+\texttt{fattahi1} & \texttt{DispatchMWKR} (66) & 86--135 & 86--135 \\
+\texttt{ft06} & \texttt{DispatchFIFO} (55) & 146--152 & 71--112 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All 56 schedules passed the independent feasibility checker. No single rule
+dominates every instance: MWKR is strongest on \texttt{mk01} and
+\texttt{fattahi1}, while FIFO is strongest on \texttt{ft06} and ties MWKR on
+\texttt{mk03}. Ready-operation random dispatching is consistently better than
+the simple job-order random baseline in this tracked subset, but remains
+seed-sensitive.
+
 \end{document}

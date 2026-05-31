@@ -321,6 +321,43 @@ CSV artifacts:
 All 16 schedules passed feasibility checking. Loader failures and solver
 failures remain visible in the raw CSV and process exit code.
 
+## `exp_010_heuristic_benchmark_matrix.py`
+
+Recursively discovers the tracked static FJSPLib subset and evaluates Phase 1
+heuristics. Deterministic rules run once per instance. `Random` and
+`DispatchRandom` use fixed seeds `42`, `123`, and `999`, so their spread is
+reproducible and auditable.
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_010_heuristic_benchmark_matrix.py
+```
+
+Useful controls:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_010_heuristic_benchmark_matrix.py --max-files 2
+.\.conda-env\python.exe experiments\exp_010_heuristic_benchmark_matrix.py --seeds 7 42 123
+```
+
+Tracked default summary:
+
+| Instance | Best deterministic rule | Makespan | Random range | DispatchRandom range |
+|---|---|---:|---:|---:|
+| `mk01` | DispatchMWKR | 44 | 148-165 | 92-125 |
+| `mk03` | DispatchFIFO / DispatchMWKR | 204 | 1086-1206 | 488-563 |
+| `fattahi1` | DispatchMWKR | 66 | 86-135 | 86-135 |
+| edata `ft06` | DispatchFIFO | 55 | 146-152 | 71-112 |
+
+CSV artifacts:
+
+- `results/exp_010_heuristic_benchmark_matrix_runs.csv`
+- `results/exp_010_heuristic_benchmark_matrix_summary.csv`
+
+All 56 schedules passed feasibility checking. Loader and solver failures remain
+visible in the raw CSV and process exit code.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.

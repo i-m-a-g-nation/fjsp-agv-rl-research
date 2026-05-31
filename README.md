@@ -25,6 +25,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - CP-SAT worker-count sweep on tracked `mk03` with a fixed 10-second limit
 - Repeated CP-SAT worker-count aggregation with per-run and summary CSV artifacts
 - Controlled repeated CP-SAT matrix across the tracked static FJSPLib subset
+- Heuristic matrix with deterministic rules and reproducibly seeded random families
 - Matplotlib Gantt chart output using a non-interactive backend
 - Toy-instance experiments and pytest coverage
 
@@ -72,6 +73,7 @@ Do not use the Conda `base` environment for project checks.
 .\.conda-env\python.exe experiments\exp_007_cpsat_worker_sweep.py
 .\.conda-env\python.exe experiments\exp_008_cpsat_worker_repeats.py
 .\.conda-env\python.exe experiments\exp_009_cpsat_benchmark_matrix.py
+.\.conda-env\python.exe experiments\exp_010_heuristic_benchmark_matrix.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -218,6 +220,25 @@ All 16 schedules passed the independent feasibility checker. The smaller
 tracked instances were solved optimally within the limit. For `mk03`, automatic
 workers improved the observed incumbents and bounds, but neither configuration
 proved optimality within 3 seconds.
+
+### Experiment 010: Heuristic Benchmark Matrix
+
+Runs deterministic baselines and strict dispatching rules once on each tracked
+FJSPLib instance. `Random` and `DispatchRandom` are aggregated across fixed
+seeds `42`, `123`, and `999`.
+
+| Instance | Best deterministic rule | Makespan | Random range | DispatchRandom range |
+|---|---|---:|---:|---:|
+| `mk01` | DispatchMWKR | 44 | 148-165 | 92-125 |
+| `mk03` | DispatchFIFO / DispatchMWKR | 204 | 1086-1206 | 488-563 |
+| `fattahi1` | DispatchMWKR | 66 | 86-135 | 86-135 |
+| edata `ft06` | DispatchFIFO | 55 | 146-152 | 71-112 |
+
+All 56 schedules passed the independent feasibility checker. No single
+dispatching rule dominates every instance: MWKR is strongest on `mk01` and
+`fattahi1`, while FIFO is strongest on `ft06` and ties MWKR on `mk03`.
+Ready-operation random dispatching is consistently better than the simple
+job-order random baseline in this tracked subset, but remains seed-sensitive.
 
 ## Known Notes
 

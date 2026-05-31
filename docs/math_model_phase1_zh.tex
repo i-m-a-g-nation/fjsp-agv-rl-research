@@ -358,4 +358,30 @@ worker 运行 2 次，再使用 auto worker 配置运行 2 次。逐次原始记
 证明了最优性。对于 \texttt{mk03}，auto workers 改善了本次观测中的
 incumbent 和 bound，但两种配置都没有在 3 秒内证明最优性。
 
+\subsection{启发式 benchmark 矩阵}
+
+启发式矩阵在每个 tracked FJSPLib 实例上运行一次确定性 Phase 1 规则。两类
+随机算法使用固定 seed 42、123 和 999。因此，表中的范围是可复现观测，而
+不是没有控制的随机样本。
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llrr}
+\toprule
+实例 & 最佳确定性规则 & Random 范围 & DispatchRandom 范围 \\
+\midrule
+\texttt{mk01} & \texttt{DispatchMWKR} (44) & 148--165 & 92--125 \\
+\texttt{mk03} & \texttt{DispatchFIFO/MWKR} (204) & 1086--1206 & 488--563 \\
+\texttt{fattahi1} & \texttt{DispatchMWKR} (66) & 86--135 & 86--135 \\
+\texttt{ft06} & \texttt{DispatchFIFO} (55) & 146--152 & 71--112 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+全部 56 个调度均通过独立 feasibility checker。没有一个规则在所有实例上
+占优：MWKR 在 \texttt{mk01} 和 \texttt{fattahi1} 上最好，FIFO 在
+\texttt{ft06} 上最好，并在 \texttt{mk03} 上与 MWKR 并列。ready-operation
+随机 dispatching 在当前 tracked 子集上持续优于简单 job-order 随机
+baseline，但仍然受 seed 影响。
+
 \end{document}

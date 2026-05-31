@@ -22,6 +22,7 @@ Phase 1 已覆盖：
 - CP-SAT worker 数量 sweep：对 tracked `mk03` 使用固定 10 秒时限进行对比
 - CP-SAT worker 重复实验聚合：同时保留逐次记录和汇总 CSV
 - tracked 静态 FJSPLib 子集上的受控 CP-SAT 重复实验矩阵
+- 包含确定性规则和可复现随机 seed 的启发式 benchmark 矩阵
 - Benchmark smoke loader：支持小型 0-based / 1-based FJSP 格式文件
 - 有来源说明的 FJSPLib 子集：覆盖 Brandimarte、Hurink 和 Fattahi 三类实例
 - Matplotlib Gantt 图输出
@@ -74,6 +75,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 .\.conda-env\python.exe experiments\exp_007_cpsat_worker_sweep.py
 .\.conda-env\python.exe experiments\exp_008_cpsat_worker_repeats.py
 .\.conda-env\python.exe experiments\exp_009_cpsat_benchmark_matrix.py
+.\.conda-env\python.exe experiments\exp_010_heuristic_benchmark_matrix.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -109,6 +111,8 @@ Toy 3x3 实例上的主要结果：
 - `experiments/results/exp_008_cpsat_worker_repeats_summary.csv`
 - `experiments/results/exp_009_cpsat_benchmark_matrix_runs.csv`
 - `experiments/results/exp_009_cpsat_benchmark_matrix_summary.csv`
+- `experiments/results/exp_010_heuristic_benchmark_matrix_runs.csv`
+- `experiments/results/exp_010_heuristic_benchmark_matrix_summary.csv`
 
 CSV 中会记录算法、实例、makespan、feasibility 状态、运行时间和说明。对 CP-SAT 结果，还会额外记录 objective bound、relative gap 和 solver wall time。
 
@@ -192,6 +196,25 @@ worker 重复 2 次，再使用 auto worker 配置重复 2 次。
 全部 16 个调度均通过独立 feasibility checker。较小的 tracked 实例在时限内
 证明了最优性。对于 `mk03`，auto workers 改善了本次观测中的 incumbent 和
 bound，但两种配置都没有在 3 秒内证明最优性。
+
+### 实验 010：启发式 benchmark 矩阵
+
+在每个 tracked FJSPLib 实例上运行一次确定性 baseline 和严格 dispatching
+rule。`Random` 与 `DispatchRandom` 使用固定 seed `42`、`123` 和 `999`
+进行聚合。
+
+| 实例 | 最佳确定性规则 | Makespan | Random 范围 | DispatchRandom 范围 |
+|---|---|---:|---:|---:|
+| `mk01` | DispatchMWKR | 44 | 148-165 | 92-125 |
+| `mk03` | DispatchFIFO / DispatchMWKR | 204 | 1086-1206 | 488-563 |
+| `fattahi1` | DispatchMWKR | 66 | 86-135 | 86-135 |
+| edata `ft06` | DispatchFIFO | 55 | 146-152 | 71-112 |
+
+全部 56 个调度均通过独立 feasibility checker。没有一个 dispatching rule
+在所有实例上占优：MWKR 在 `mk01` 和 `fattahi1` 上最好，FIFO 在 `ft06`
+上最好，并在 `mk03` 上与 MWKR 并列。ready-operation 随机 dispatching 在
+当前 tracked 子集上持续优于简单 job-order 随机 baseline，但仍然受 seed
+影响。
 
 ## 数学建模文档
 
