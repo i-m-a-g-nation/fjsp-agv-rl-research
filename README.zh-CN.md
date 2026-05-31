@@ -22,6 +22,7 @@ Phase 1 已覆盖：
 - Matplotlib Gantt 图输出
 - 统一实验 CSV 记录
 - 统一实验 runner：负责计时、feasibility 校验、失败记录和 solver metadata 提取
+- 递归 benchmark 批量实验入口：稳定排序，并记录可审计的 loader 失败信息
 - Phase 1 数学建模 LaTeX 文档
 
 Phase 1 明确不做：
@@ -63,6 +64,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 .\.conda-env\python.exe experiments\exp_002_solver_check.py
 .\.conda-env\python.exe experiments\exp_003_dispatching_rules.py
 .\.conda-env\python.exe experiments\exp_004_benchmark_smoke.py
+.\.conda-env\python.exe experiments\exp_005_benchmark_batch.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -90,8 +92,14 @@ Toy 3x3 实例上的主要结果：
 - `experiments/results/exp_002_solver_check.csv`
 - `experiments/results/exp_003_dispatching_rules.csv`
 - `experiments/results/exp_004_benchmark_smoke.csv`
+- `experiments/results/exp_005_benchmark_batch.csv`
 
 CSV 中会记录算法、实例、makespan、feasibility 状态、运行时间和说明。对 CP-SAT 结果，还会额外记录 objective bound、relative gap 和 solver wall time。
+
+`experiments/exp_005_benchmark_batch.py` 是可扩展的批量入口。它会递归扫描
+`instances/` 下的 `*.fjs` 文件，稳定排序并记录 loader 失败。对更大的静态
+benchmark 集合，可使用 `--max-files`、`--skip-cp-sat` 和
+`--cp-sat-time-limit` 控制实验规模。
 
 ## 数学建模文档
 
@@ -111,7 +119,7 @@ CSV 中会记录算法、实例、makespan、feasibility 状态、运行时间�
 
 当前代码还不需要推倒重构。后续应继续小步开发：
 
-- 先完善真实 benchmark 批量加载
+- 向 `instances/` 增加真实 benchmark 文件，并用批量入口分组验证
 - 再测试更大静态 FJSP 实例上的 OR-Tools 行为
 - 再加入少量 Phase 1 范围内的启发式算法
 - 暂时不要引入 AGV/RL/GNN，避免复杂度过早失控

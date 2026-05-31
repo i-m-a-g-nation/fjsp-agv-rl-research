@@ -8,6 +8,7 @@ Current generated files:
 - `exp_002_solver_check.csv`
 - `exp_003_dispatching_rules.csv`
 - `exp_004_benchmark_smoke.csv`
+- `exp_005_benchmark_batch.csv`
 
 Each row records:
 

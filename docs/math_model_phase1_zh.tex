@@ -207,6 +207,15 @@ Phase 1 实验脚本使用共用 runner helper，由 helper 统一负责计时�
 调用求解器、运行独立 feasibility checker、收集失败信息，并将可选的
 solver metadata 写入 CSV 记录。
 
+\subsection{Benchmark 批量实验入口}
+
+批量实验入口会按照稳定路径顺序递归发现 \texttt{*.fjs} 文件。对于每个
+成功加载的静态 FJSP 实例，入口会运行所选的 Phase 1 启发式算法，并默认
+运行 CP-SAT 参考求解器。CP-SAT 的单实例 time limit 可以配置，从而限制
+较大 benchmark 集合上的计算时间。若文件格式错误，入口会保留一条
+\texttt{LOAD} 算法、\texttt{FAIL} 状态的记录，避免损坏文件从实验报告中
+静默消失。
+
 \section{CP-SAT 诊断信息}
 
 对于 CP-SAT 结果，代码会在通用的 \texttt{ScheduleResult} 对象中保存三个

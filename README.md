@@ -17,6 +17,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - Benchmark-format loader smoke tests for small 0-based and 1-based FJSP files
 - Normalized CSV experiment result recording under `experiments/results/`
 - Shared experiment runner utilities for timing, feasibility validation, failures, and solver metadata
+- Recursive benchmark batch experiment with stable discovery order and auditable loader failures
 - OR-Tools CP-SAT baseline with optional intervals, exactly-one machine assignment, precedence constraints, and machine `NoOverlap`
 - CP-SAT diagnostics: solver status, objective bound, relative gap, and solver wall time
 - Matplotlib Gantt chart output using a non-interactive backend
@@ -61,6 +62,7 @@ Do not use the Conda `base` environment for project checks.
 .\.conda-env\python.exe experiments\exp_002_solver_check.py
 .\.conda-env\python.exe experiments\exp_003_dispatching_rules.py
 .\.conda-env\python.exe experiments\exp_004_benchmark_smoke.py
+.\.conda-env\python.exe experiments\exp_005_benchmark_batch.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -114,6 +116,13 @@ On the toy instance, DispatchMWKR currently produces makespan 12.
 Loads small benchmark-format files from `instances/` and runs selected baselines,
 strict dispatching rules, and CP-SAT. The included smoke files are intentionally
 small so the experiment stays fast and deterministic.
+
+### Experiment 005: Benchmark Batch
+
+Recursively discovers `*.fjs` files under `instances/`, evaluates each static
+FJSP instance in stable path order, and records loader failures rather than
+silently dropping malformed files. Use `--max-files`, `--skip-cp-sat`, and
+`--cp-sat-time-limit` to control runs on larger tracked collections.
 
 ## Known Notes
 

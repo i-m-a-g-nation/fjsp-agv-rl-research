@@ -129,6 +129,38 @@ CSV artifact:
 
 Exit code: `0` when all benchmark smoke schedules pass feasibility checking, `1` otherwise.
 
+## `exp_005_benchmark_batch.py`
+
+Recursively discovers benchmark files and runs the Phase 1 static FJSP suite.
+Unlike the fixed smoke experiment, this entry point is intended to scale to
+tracked benchmark collections with nested directories.
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_005_benchmark_batch.py
+```
+
+Useful controls:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_005_benchmark_batch.py --max-files 10
+.\.conda-env\python.exe experiments\exp_005_benchmark_batch.py --skip-cp-sat
+.\.conda-env\python.exe experiments\exp_005_benchmark_batch.py --cp-sat-time-limit 30
+```
+
+Behavior:
+
+- recursively discovers `*.fjs` files in stable path order
+- records loader failures as `LOAD` rows instead of silently dropping files
+- runs FIFO, SPT, DispatchFIFO, DispatchSPT, DispatchEFT, and DispatchMWKR
+- runs CP-SAT by default with a configurable per-instance time limit
+- writes `results/exp_005_benchmark_batch.csv`
+
+Exit code: `0` when all files load and all schedules pass feasibility checking,
+`1` when a loader or solver run fails, and `2` for invalid configuration or an
+empty discovery result.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.

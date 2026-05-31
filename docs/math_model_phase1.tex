@@ -214,6 +214,15 @@ All Phase 1 experiment scripts use shared runner helpers that perform timing,
 call the solver, run the independent feasibility checker, collect failures,
 and copy optional solver metadata into the CSV record.
 
+\subsection{Batch Benchmark Entry Point}
+
+The batch experiment recursively discovers \texttt{*.fjs} files in stable path
+order. Each loaded static FJSP instance is evaluated with the selected Phase 1
+heuristics and, by default, the CP-SAT reference solver. A configurable
+per-instance time limit bounds CP-SAT work on larger collections. Loader
+failures are retained as \texttt{LOAD} rows with \texttt{FAIL} status so that a
+malformed file cannot disappear silently from an experiment report.
+
 \section{CP-SAT Diagnostics}
 
 For CP-SAT results, the implementation stores three optional diagnostics in
