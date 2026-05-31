@@ -167,6 +167,11 @@ tracked FJSPLib subset documented in `instances/README.md`:
 | Fattahi `fattahi1` | 2 x 2 | 66 `OPTIMAL` | 66 |
 | Hurink edata `ft06` | 6 x 6 | 55 `OPTIMAL` | 55 |
 | Brandimarte `mk01` | 10 x 6 | 40 `OPTIMAL` | 40 |
+| Brandimarte `mk03` | 15 x 8 | 204 `FEASIBLE` | 204 |
+
+`mk03` intentionally exercises time-limited solver semantics: matching the
+upstream BKS does not become a local optimality proof unless CP-SAT reports
+`OPTIMAL`.
 
 Exit code: `0` when all files load and all schedules pass feasibility checking,
 `1` when a loader or solver run fails, and `2` for invalid configuration or an

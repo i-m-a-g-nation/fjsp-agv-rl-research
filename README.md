@@ -135,6 +135,11 @@ repository and retain CC-BY-SA-4.0 attribution.
 | `fattahi1` | 2 x 2 | 66 | 66 `OPTIMAL` | 66 |
 | Hurink edata `ft06` | 6 x 6 | 55 | 55 `OPTIMAL` | 55 |
 | Brandimarte `mk01` | 10 x 6 | 44 | 40 `OPTIMAL` | 40 |
+| Brandimarte `mk03` | 15 x 8 | 204 | 204 `FEASIBLE` | 204 |
+
+For `mk03`, the local CP-SAT value matches the upstream BKS, but the solver did
+not prove optimality within the 10-second limit. The result is therefore
+reported only as a feasible reference schedule.
 
 ## Known Notes
 

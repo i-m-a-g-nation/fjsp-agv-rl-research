@@ -111,6 +111,10 @@ benchmark 集合，可使用 `--max-files`、`--skip-cp-sat` 和
 | `fattahi1` | 2 x 2 | 66 | 66 `OPTIMAL` | 66 |
 | Hurink edata `ft06` | 6 x 6 | 55 | 55 `OPTIMAL` | 55 |
 | Brandimarte `mk01` | 10 x 6 | 44 | 40 `OPTIMAL` | 40 |
+| Brandimarte `mk03` | 15 x 8 | 204 | 204 `FEASIBLE` | 204 |
+
+对于 `mk03`，本地 CP-SAT 的结果等于上游 BKS，但求解器没有在 10 秒时限内
+证明最优性。因此这里只将其报告为限时可行参考调度。
 
 ## 数学建模文档
 

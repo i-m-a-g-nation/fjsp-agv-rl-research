@@ -244,6 +244,7 @@ Instance & Jobs & Machines & FJSPLib BKS & Local CP-SAT \\
 \texttt{fattahi1} & 2 & 2 & 66 & 66 \\
 Hurink edata \texttt{ft06} & 6 & 6 & 55 & 55 \\
 Brandimarte \texttt{mk01} & 10 & 6 & 40 & 40 \\
+Brandimarte \texttt{mk03} & 15 & 8 & 204 & 204 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -251,6 +252,9 @@ Brandimarte \texttt{mk01} & 10 & 6 & 40 & 40 \\
 The local CP-SAT values above were independently validated by the feasibility
 checker and reported as \texttt{OPTIMAL}. The FJSPLib BKS column is upstream
 reference data, not a value inferred by this repository.
+For \texttt{mk03}, the local value matches the upstream BKS but CP-SAT reports
+\texttt{FEASIBLE} under the 10-second limit. The batch therefore records a
+time-limited feasible reference schedule, not a locally proven optimum.
 
 \section{CP-SAT Diagnostics}
 

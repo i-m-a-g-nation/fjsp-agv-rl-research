@@ -132,6 +132,7 @@ class TestLoader:
             ("FattahiMehrabadJolai2007/fattahi1.fjs", 2, 2, 4),
             ("HurinkJurischThole1994/edata/ft06.fjs", 6, 6, 36),
             ("Brandimarte1993/mk01.fjs", 10, 6, 55),
+            ("Brandimarte1993/mk03.fjs", 15, 8, 150),
         ],
     )
     def test_load_tracked_fjsplib_subset(

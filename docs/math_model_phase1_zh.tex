@@ -237,12 +237,16 @@ solver metadata 写入 CSV 记录。
 \texttt{fattahi1} & 2 & 2 & 66 & 66 \\
 Hurink edata \texttt{ft06} & 6 & 6 & 55 & 55 \\
 Brandimarte \texttt{mk01} & 10 & 6 & 40 & 40 \\
+Brandimarte \texttt{mk03} & 15 & 8 & 204 & 204 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 上表中的本地 CP-SAT 结果均通过独立 feasibility checker，并由求解器报告为
 \texttt{OPTIMAL}。FJSPLib BKS 列来自上游参考数据，不是本仓库自行推断的值。
+对于 \texttt{mk03}，本地结果等于上游 BKS，但 CP-SAT 在 10 秒时限内报告
+\texttt{FEASIBLE}。因此批量实验只记录限时可行参考调度，不声称本地运行
+证明了最优性。
 
 \section{CP-SAT 诊断信息}
 

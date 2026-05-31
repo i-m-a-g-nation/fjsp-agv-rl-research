@@ -23,7 +23,7 @@
 
 ## 当前落地情况
 - 已接入官方 ScheduleOpt 仓库中的旧格式文本文件。
-- 已跟踪 `fattahi1`、Hurink edata `ft06` 和 Brandimarte `mk01`。
+- 已跟踪 `fattahi1`、Hurink edata `ft06`、Brandimarte `mk01` 和 `mk03`。
 - 文件来源、许可证和 BKS 对照记录在 `instances/README.md`。
 - `experiments/exp_005_benchmark_batch.py` 已对这些实例执行启发式和 CP-SAT 对比。
 

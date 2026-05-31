@@ -26,10 +26,12 @@ Tracked subset:
 | `fjsplib/FattahiMehrabadJolai2007/fattahi1.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi1` | 2 x 2 | 66 | 66 |
 | `fjsplib/HurinkJurischThole1994/edata/ft06.fjs` | Hurink, Jurisch and Thole (1994), edata | `ft06` | 6 x 6 | 55 | 55 |
 | `fjsplib/Brandimarte1993/mk01.fjs` | Brandimarte (1993) | `mk01` | 10 x 6 | 40 | 40 |
+| `fjsplib/Brandimarte1993/mk03.fjs` | Brandimarte (1993) | `mk03` | 15 x 8 | 204 | 204 |
 
-The subset intentionally spans three source families and increasing sizes. It
-is small enough for a Phase 1 regression batch while exposing the loader and
-CP-SAT interface to real benchmark structure.
+The subset intentionally spans three source families and increasing sizes.
+`mk03` is also large enough to exercise a time-limited `FEASIBLE` CP-SAT result
+under the default 10-second batch limit. It may match the upstream BKS without
+proving optimality during that local run.
 
 ## Format
 

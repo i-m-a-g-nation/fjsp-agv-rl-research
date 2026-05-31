@@ -10,7 +10,7 @@ Last updated: 2026-05-31
 | Python environment | Dedicated Conda environment: `.conda-env` or `FJSP_CONDA_ENV` |
 | matplotlib | 3.8.4 |
 | Pillow | 10.4.0 |
-| pytest | 107 passed, 0 failed |
+| pytest | 108 passed, 0 failed |
 | Known warning | Low-priority `.pytest_cache` warning on some Windows paths |
 
 ## Verified Commands
@@ -21,10 +21,10 @@ Last updated: 2026-05-31
 | `experiments/exp_002_solver_check.py` | 0 | CP-SAT optimal makespan 11 with bound/gap metadata |
 | `experiments/exp_003_dispatching_rules.py` | 0 | Strict dispatching rules feasible, including MWKR and MOPNR |
 | `experiments/exp_004_benchmark_smoke.py` | 0 | Benchmark-format smoke instances feasible, including MWKR and MOPNR |
-| `experiments/exp_005_benchmark_batch.py` | 0 | Recursive batch feasible for smoke files and three tracked FJSPLib instances |
+| `experiments/exp_005_benchmark_batch.py` | 0 | Recursive batch feasible; `mk03` records time-limited CP-SAT `FEASIBLE` correctly |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
-| `pytest` | 0 | 107 passed |
+| `pytest` | 0 | 108 passed |
 | `git status --short` | 0 | Clean |
 
 ## Module Status
@@ -32,7 +32,7 @@ Last updated: 2026-05-31
 | Module | Status | Notes |
 |---|---|---|
 | `FJSPInstance` | Done | `from_jobs_array`, `get_processing_time`, `is_machine_eligible` |
-| Benchmark loader | Done | Smoke coverage plus tracked Brandimarte, Hurink edata, and Fattahi FJSPLib files |
+| Benchmark loader | Done | Smoke coverage plus four tracked Brandimarte, Hurink edata, and Fattahi FJSPLib files |
 | Benchmark provenance | Done | `instances/README.md` records upstream repository, license, families, and BKS values |
 | Experiment records | Done | Shared runner plus normalized CSV output for `exp_001` through `exp_005` |
 | Benchmark batch entry | Done | Recursive discovery, stable order, loader failure records, optional CP-SAT controls |
@@ -46,6 +46,6 @@ Last updated: 2026-05-31
 
 ## Next Review Targets
 
-1. Expand the FJSPLib subset in controlled batches beyond `mk01`.
+1. Expand the FJSPLib subset in controlled batches beyond `mk03`.
 2. Compare heuristic behavior on larger static benchmark subsets before adding more rules.
-3. Record CP-SAT `FEASIBLE` time-limited cases when larger instances stop proving optimality quickly.
+3. Compare longer CP-SAT limits on `mk03` without mislabeling unproven results.
