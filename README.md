@@ -15,7 +15,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - Heuristic baselines: FIFO, SPT, Earliest Finish Time, and seeded Random
 - Strict dispatching-rule variants: DispatchFIFO, DispatchSPT, DispatchEFT, DispatchMWKR, DispatchMOPNR, and DispatchRandom
 - Benchmark-format loader smoke tests for small 0-based and 1-based FJSP files
-- Provenance-documented FJSPLib subset from Brandimarte, Hurink, and Fattahi families
+- Provenance-documented FJSPLib subset from Brandimarte, Hurink, Fattahi, and Kacem families
 - Normalized CSV experiment result recording under `experiments/results/`
 - Shared experiment runner utilities for timing, feasibility validation, failures, and solver metadata
 - Recursive benchmark batch experiment with stable discovery order and auditable loader failures
@@ -141,19 +141,22 @@ silently dropping malformed files. Use `--max-files`, `--skip-cp-sat`, and
 `--cp-sat-time-limit` to control runs on larger tracked collections.
 
 The tracked real subset is documented in [instances/README.md](instances/README.md).
-Its four upstream files are copied from the official ScheduleOpt FJSPLib
+Its seven upstream files are copied from the official ScheduleOpt FJSPLib
 repository and retain CC-BY-SA-4.0 attribution.
 
 | FJSPLib instance | Size | Best heuristic in current suite | CP-SAT | FJSPLib BKS |
 |---|---:|---:|---:|---:|
 | `fattahi1` | 2 x 2 | 66 | 66 `OPTIMAL` | 66 |
+| `fattahi2` | 2 x 2 | 107 | 107 `OPTIMAL` | 107 |
+| `kacem1` | 4 x 5 | 11 | 11 `OPTIMAL` | 11 |
 | Hurink edata `ft06` | 6 x 6 | 55 | 55 `OPTIMAL` | 55 |
 | Brandimarte `mk01` | 10 x 6 | 44 | 40 `OPTIMAL` | 40 |
-| Brandimarte `mk03` | 15 x 8 | 204 | 204 `FEASIBLE` | 204 |
+| Brandimarte `mk02` | 10 x 6 | 30 | 29 `FEASIBLE` | 26 |
+| Brandimarte `mk03` | 15 x 8 | 204 | 211 `FEASIBLE` | 204 |
 
-For `mk03`, the local CP-SAT value matches the upstream BKS, but the solver did
-not prove optimality within the 10-second limit. The result is therefore
-reported only as a feasible reference schedule.
+For `mk02` and `mk03`, the local CP-SAT values are time-limited feasible
+reference schedules, not locally proven optima. Timed CP-SAT runs can vary
+between observations.
 
 ### Experiment 006: CP-SAT Time-Limit Sweep
 
@@ -213,17 +216,21 @@ the same 3-second limit.
 
 | Instance | Workers | Feasible runs | Best makespan | Mean makespan | Status | Best bound |
 |---|---:|---:|---:|---:|---|---:|
-| `mk01` | 1 | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
+| `mk01` | 1 | 2 / 2 | 40 | 40.000000 | `FEASIBLE` / `OPTIMAL` | 40 |
 | `mk01` | auto | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
-| `mk03` | 1 | 2 / 2 | 286 | 286.000000 | `FEASIBLE` | 20 |
-| `mk03` | auto | 2 / 2 | 236 | 238.500000 | `FEASIBLE` | 82 |
+| `mk02` | 1 | 2 / 2 | 31 | 31.000000 | `FEASIBLE` | 3 |
+| `mk02` | auto | 2 / 2 | 29 | 29.500000 | `FEASIBLE` | 21 |
+| `mk03` | 1 | 2 / 2 | 280 | 282.500000 | `FEASIBLE` | 20 |
+| `mk03` | auto | 2 / 2 | 218 | 218.500000 | `FEASIBLE` | 83 |
 | `fattahi1` | 1 / auto | 4 / 4 | 66 | 66.000000 | `OPTIMAL` | 66 |
+| `fattahi2` | 1 / auto | 4 / 4 | 107 | 107.000000 | `OPTIMAL` | 107 |
 | edata `ft06` | 1 / auto | 4 / 4 | 55 | 55.000000 | `OPTIMAL` | 55 |
+| `kacem1` | 1 / auto | 4 / 4 | 11 | 11.000000 | `OPTIMAL` | 11 |
 
-All 16 schedules passed the independent feasibility checker. The smaller
-tracked instances were solved optimally within the limit. For `mk03`, automatic
-workers improved the observed incumbents and bounds, but neither configuration
-proved optimality within 3 seconds.
+All 28 schedules passed the independent feasibility checker. The smaller
+tracked instances except `mk02` were solved optimally within the limit. For
+`mk02` and `mk03`, automatic workers improved the observed incumbents and
+bounds, but neither configuration proved optimality within 3 seconds.
 
 ### Experiment 010: Heuristic Benchmark Matrix
 
@@ -234,13 +241,17 @@ seeds `42`, `123`, and `999`.
 | Instance | Best deterministic rule | Makespan | Random range | DispatchRandom range |
 |---|---|---:|---:|---:|
 | `mk01` | DispatchMWKR | 44 | 148-165 | 92-125 |
+| `mk02` | DispatchMWKR | 30 | 134-169 | 86-113 |
 | `mk03` | DispatchFIFO / DispatchMWKR | 204 | 1086-1206 | 488-563 |
 | `fattahi1` | DispatchMWKR | 66 | 86-135 | 86-135 |
+| `fattahi2` | DispatchFIFO / DispatchMWKR | 107 | 107-192 | 107-149 |
 | edata `ft06` | DispatchFIFO | 55 | 146-152 | 71-112 |
+| `kacem1` | DispatchFIFO | 11 | 27-82 | 26-44 |
 
-All 56 schedules passed the independent feasibility checker. No single
-dispatching rule dominates every instance: MWKR is strongest on `mk01` and
-`fattahi1`, while FIFO is strongest on `ft06` and ties MWKR on `mk03`.
+All 98 schedules passed the independent feasibility checker. No single
+dispatching rule dominates every instance: MWKR is strongest on `mk01`, `mk02`,
+and `fattahi1`, while FIFO is strongest on `ft06` and `kacem1`, and ties MWKR
+on `mk03` and `fattahi2`.
 Ready-operation random dispatching is consistently better than the simple
 job-order random baseline in this tracked subset, but remains seed-sensitive.
 
@@ -258,18 +269,18 @@ comparison references, not local optimality proofs.
 
 | Algorithm family | Mean best gap | Maximum best gap |
 |---|---:|---:|
-| FIFO | 2.780838 | 5.196078 |
-| SPT | 1.601660 | 2.289216 |
-| EarliestFinishTime | 0.475434 | 0.563636 |
-| DispatchFIFO | 0.113258 | 0.303030 |
-| DispatchSPT | 0.880437 | 1.465686 |
-| DispatchEFT | 0.480214 | 0.578431 |
-| DispatchMWKR | 0.047727 | 0.100000 |
-| DispatchMOPNR | 0.159748 | 0.303030 |
-| Random | 2.245276 | 4.323529 |
-| DispatchRandom | 0.821524 | 1.392157 |
+| FIFO | 2.706465 | 5.196078 |
+| SPT | 1.592590 | 2.961538 |
+| EarliestFinishTime | 0.510503 | 1.384615 |
+| DispatchFIFO | 0.092191 | 0.303030 |
+| DispatchSPT | 0.910265 | 1.653846 |
+| DispatchEFT | 0.513235 | 1.384615 |
+| DispatchMWKR | 0.062238 | 0.153846 |
+| DispatchMOPNR | 0.165276 | 0.303030 |
+| Random | 2.084214 | 4.323529 |
+| DispatchRandom | 0.993918 | 2.307692 |
 
-On the current four-instance subset, DispatchMWKR has the strongest
+On the current seven-instance subset, DispatchMWKR has the strongest
 cross-instance mean best gap. The subset remains intentionally small, so the
 next step is broader benchmark coverage before adding more rules.
 
@@ -277,7 +288,7 @@ next step is broader benchmark coverage before adding more rules.
 
 Recursively discovers tracked FJSPLib files, matches them one-to-one with
 `instances/fjsplib_bks.csv`, and verifies that every tracked file still loads.
-All four current rows pass the file, BKS, and loader checks. The script returns
+All seven current rows pass the file, BKS, and loader checks. The script returns
 a failing exit code when a file, metadata row, or loadable instance is missing.
 
 ## Known Notes

@@ -306,19 +306,23 @@ Tracked default aggregate result:
 
 | Instance | Workers | Feasible runs | Best makespan | Mean makespan | Status | Best bound |
 |---|---:|---:|---:|---:|---|---:|
-| `mk01` | 1 | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
+| `mk01` | 1 | 2 / 2 | 40 | 40.000000 | `FEASIBLE` / `OPTIMAL` | 40 |
 | `mk01` | auto | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
-| `mk03` | 1 | 2 / 2 | 286 | 286.000000 | `FEASIBLE` | 20 |
-| `mk03` | auto | 2 / 2 | 236 | 238.500000 | `FEASIBLE` | 82 |
+| `mk02` | 1 | 2 / 2 | 31 | 31.000000 | `FEASIBLE` | 3 |
+| `mk02` | auto | 2 / 2 | 29 | 29.500000 | `FEASIBLE` | 21 |
+| `mk03` | 1 | 2 / 2 | 280 | 282.500000 | `FEASIBLE` | 20 |
+| `mk03` | auto | 2 / 2 | 218 | 218.500000 | `FEASIBLE` | 83 |
 | `fattahi1` | 1 / auto | 4 / 4 | 66 | 66.000000 | `OPTIMAL` | 66 |
+| `fattahi2` | 1 / auto | 4 / 4 | 107 | 107.000000 | `OPTIMAL` | 107 |
 | edata `ft06` | 1 / auto | 4 / 4 | 55 | 55.000000 | `OPTIMAL` | 55 |
+| `kacem1` | 1 / auto | 4 / 4 | 11 | 11.000000 | `OPTIMAL` | 11 |
 
 CSV artifacts:
 
 - `results/exp_009_cpsat_benchmark_matrix_runs.csv`
 - `results/exp_009_cpsat_benchmark_matrix_summary.csv`
 
-All 16 schedules passed feasibility checking. Loader failures and solver
+All 28 schedules passed feasibility checking. Loader failures and solver
 failures remain visible in the raw CSV and process exit code.
 
 ## `exp_010_heuristic_benchmark_matrix.py`
@@ -346,16 +350,19 @@ Tracked default summary:
 | Instance | Best deterministic rule | Makespan | Random range | DispatchRandom range |
 |---|---|---:|---:|---:|
 | `mk01` | DispatchMWKR | 44 | 148-165 | 92-125 |
+| `mk02` | DispatchMWKR | 30 | 134-169 | 86-113 |
 | `mk03` | DispatchFIFO / DispatchMWKR | 204 | 1086-1206 | 488-563 |
 | `fattahi1` | DispatchMWKR | 66 | 86-135 | 86-135 |
+| `fattahi2` | DispatchFIFO / DispatchMWKR | 107 | 107-192 | 107-149 |
 | edata `ft06` | DispatchFIFO | 55 | 146-152 | 71-112 |
+| `kacem1` | DispatchFIFO | 11 | 27-82 | 26-44 |
 
 CSV artifacts:
 
 - `results/exp_010_heuristic_benchmark_matrix_runs.csv`
 - `results/exp_010_heuristic_benchmark_matrix_summary.csv`
 
-All 56 schedules passed feasibility checking. Loader and solver failures remain
+All 98 schedules passed feasibility checking. Loader and solver failures remain
 visible in the raw CSV and process exit code.
 
 ## `exp_011_heuristic_quality_report.py`
@@ -377,11 +384,11 @@ Tracked family summary:
 
 | Algorithm family | Mean best gap | Maximum best gap |
 |---|---:|---:|
-| DispatchMWKR | 0.047727 | 0.100000 |
-| DispatchFIFO | 0.113258 | 0.303030 |
-| DispatchMOPNR | 0.159748 | 0.303030 |
-| EarliestFinishTime | 0.475434 | 0.563636 |
-| DispatchEFT | 0.480214 | 0.578431 |
+| DispatchMWKR | 0.062238 | 0.153846 |
+| DispatchFIFO | 0.092191 | 0.303030 |
+| DispatchMOPNR | 0.165276 | 0.303030 |
+| EarliestFinishTime | 0.510503 | 1.384615 |
+| DispatchEFT | 0.513235 | 1.384615 |
 
 CSV artifacts:
 
@@ -407,7 +414,7 @@ CSV artifact:
 - `results/exp_012_benchmark_metadata_audit.csv`
 
 The script returns exit code `1` when any tracked file, BKS metadata row, or
-loadable instance is missing. All four current tracked rows pass.
+loadable instance is missing. All seven current tracked rows pass.
 
 ## General Requirements
 
