@@ -417,4 +417,13 @@ DispatchRandom & 0.821524 & 1.392157 \\
 在当前四实例子集上，DispatchMWKR 的平均最佳 gap 最小。当前样本仍然较小，
 应优先扩展 benchmark 覆盖，再决定是否增加新规则。
 
+\clearpage
+\subsection{Tracked benchmark 元数据审计}
+
+在扩展 benchmark 子集之前，元数据审计会递归发现 tracked FJSPLib 文件，将
+其与 \texttt{instances/fjsplib\_bks.csv} 逐项匹配，并加载每个发现的文件。
+只有 tracked 文件存在、上游参考记录存在、loader 接受该实例时，一行记录才
+会通过。当前四行均通过。这个门禁可以避免遗漏文件或过期元数据悄悄进入质量
+比较。
+
 \end{document}

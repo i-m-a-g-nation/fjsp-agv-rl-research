@@ -436,4 +436,15 @@ DispatchMWKR has the lowest mean best gap on the current four-instance subset.
 The sample remains deliberately small, so broader benchmark coverage should
 precede additional dispatching rules.
 
+\clearpage
+\subsection{Tracked Benchmark Metadata Audit}
+
+Before expanding the benchmark subset, the metadata audit recursively
+discovers tracked FJSPLib files, matches them one-to-one with
+\texttt{instances/fjsplib\_bks.csv}, and loads every discovered file. A row
+passes only if the tracked file exists, its upstream reference row exists, and
+the loader accepts the instance. All four currently tracked rows pass. This
+gate prevents silently omitted files and stale metadata from entering quality
+comparisons.
+
 \end{document}

@@ -391,6 +391,24 @@ CSV artifacts:
 The report rejects missing reference rows and missing summarized instances.
 Upstream BKS values are comparison references, not local optimality proofs.
 
+## `exp_012_benchmark_metadata_audit.py`
+
+Recursively discovers tracked static FJSPLib files, matches them one-to-one
+with `instances/fjsplib_bks.csv`, and loads every discovered instance.
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_012_benchmark_metadata_audit.py
+```
+
+CSV artifact:
+
+- `results/exp_012_benchmark_metadata_audit.csv`
+
+The script returns exit code `1` when any tracked file, BKS metadata row, or
+loadable instance is missing. All four current tracked rows pass.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.

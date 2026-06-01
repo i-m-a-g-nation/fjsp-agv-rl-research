@@ -27,6 +27,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - Controlled repeated CP-SAT matrix across the tracked static FJSPLib subset
 - Heuristic matrix with deterministic rules and reproducibly seeded random families
 - BKS-aware heuristic quality ratios from structured upstream references
+- Metadata audit tying tracked FJSPLib files to BKS rows and loader checks
 - Matplotlib Gantt chart output using a non-interactive backend
 - Toy-instance experiments and pytest coverage
 
@@ -76,6 +77,7 @@ Do not use the Conda `base` environment for project checks.
 .\.conda-env\python.exe experiments\exp_009_cpsat_benchmark_matrix.py
 .\.conda-env\python.exe experiments\exp_010_heuristic_benchmark_matrix.py
 .\.conda-env\python.exe experiments\exp_011_heuristic_quality_report.py
+.\.conda-env\python.exe experiments\exp_012_benchmark_metadata_audit.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -270,6 +272,13 @@ comparison references, not local optimality proofs.
 On the current four-instance subset, DispatchMWKR has the strongest
 cross-instance mean best gap. The subset remains intentionally small, so the
 next step is broader benchmark coverage before adding more rules.
+
+### Experiment 012: Benchmark Metadata Audit
+
+Recursively discovers tracked FJSPLib files, matches them one-to-one with
+`instances/fjsplib_bks.csv`, and verifies that every tracked file still loads.
+All four current rows pass the file, BKS, and loader checks. The script returns
+a failing exit code when a file, metadata row, or loadable instance is missing.
 
 ## Known Notes
 

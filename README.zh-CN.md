@@ -24,6 +24,7 @@ Phase 1 已覆盖：
 - tracked 静态 FJSPLib 子集上的受控 CP-SAT 重复实验矩阵
 - 包含确定性规则和可复现随机 seed 的启发式 benchmark 矩阵
 - 基于结构化上游参考值的启发式 BKS 相对质量指标
+- 将 tracked FJSPLib 文件、BKS 记录和 loader 校验关联起来的元数据审计
 - Benchmark smoke loader：支持小型 0-based / 1-based FJSP 格式文件
 - 有来源说明的 FJSPLib 子集：覆盖 Brandimarte、Hurink 和 Fattahi 三类实例
 - Matplotlib Gantt 图输出
@@ -78,6 +79,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 .\.conda-env\python.exe experiments\exp_009_cpsat_benchmark_matrix.py
 .\.conda-env\python.exe experiments\exp_010_heuristic_benchmark_matrix.py
 .\.conda-env\python.exe experiments\exp_011_heuristic_quality_report.py
+.\.conda-env\python.exe experiments\exp_012_benchmark_metadata_audit.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -117,6 +119,7 @@ Toy 3x3 实例上的主要结果：
 - `experiments/results/exp_010_heuristic_benchmark_matrix_summary.csv`
 - `experiments/results/exp_011_heuristic_quality_rows.csv`
 - `experiments/results/exp_011_heuristic_quality_families.csv`
+- `experiments/results/exp_012_benchmark_metadata_audit.csv`
 
 CSV 中会记录算法、实例、makespan、feasibility 状态、运行时间和说明。对 CP-SAT 结果，还会额外记录 objective bound、relative gap 和 solver wall time。
 
@@ -246,6 +249,12 @@ gap_BKS = (makespan - BKS) / BKS
 
 在当前四实例子集上，DispatchMWKR 的跨实例平均最佳 gap 最小。当前样本仍然
 较小，下一步应优先扩展 benchmark 覆盖，再决定是否增加新规则。
+
+### 实验 012：Benchmark 元数据审计
+
+递归发现 tracked FJSPLib 文件，将文件与 `instances/fjsplib_bks.csv` 逐项匹配，
+并验证每个 tracked 文件仍可被 loader 加载。当前四行全部通过文件、BKS 和
+loader 检查。若缺少文件、元数据记录或可加载实例，脚本会返回失败退出码。
 
 ## 数学建模文档
 

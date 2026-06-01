@@ -31,7 +31,8 @@ Tracked subset:
 The machine-readable mirror [fjsplib_bks.csv](fjsplib_bks.csv) records these
 upstream bounds for quality-report scripts. Every currently tracked row has
 matching LB and UB values. These are upstream references, not values inferred
-from local solver runs.
+from local solver runs. Run `experiments/exp_012_benchmark_metadata_audit.py`
+to verify one-to-one tracked-file, metadata-row, and loader consistency.
 
 The subset intentionally spans three source families and increasing sizes.
 `mk03` is also large enough to exercise a time-limited `FEASIBLE` CP-SAT result

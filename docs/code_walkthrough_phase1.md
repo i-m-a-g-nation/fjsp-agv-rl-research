@@ -41,6 +41,7 @@
 | `experiments/exp_010_heuristic_benchmark_matrix.py` | 对 tracked FJSPLib 子集运行确定性和固定 seed 启发式矩阵 |
 | `instances/fjsplib_bks.csv` | 结构化保存上游 FJSPLib LB / UB 参考值 |
 | `experiments/exp_011_heuristic_quality_report.py` | 计算启发式相对上游 BKS 的质量 gap |
+| `experiments/exp_012_benchmark_metadata_audit.py` | 检查 tracked 文件、BKS 记录和 loader 的一致性 |
 
 ## 核心数据流
 
