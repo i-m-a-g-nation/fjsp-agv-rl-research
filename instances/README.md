@@ -25,11 +25,14 @@ Tracked subset:
 |---|---|---|---:|---:|---:|
 | `fjsplib/FattahiMehrabadJolai2007/fattahi1.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi1` | 2 x 2 | 66 | 66 |
 | `fjsplib/FattahiMehrabadJolai2007/fattahi2.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi2` | 2 x 2 | 107 | 107 |
+| `fjsplib/FattahiMehrabadJolai2007/fattahi3.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi3` | 3 x 2 | 221 | 221 |
 | `fjsplib/HurinkJurischThole1994/edata/ft06.fjs` | Hurink, Jurisch and Thole (1994), edata | `ft06` | 6 x 6 | 55 | 55 |
 | `fjsplib/KacemHammadiBorne2002/kacem1.fjs` | Kacem, Hammadi and Borne (2002) | `kacem1` | 4 x 5 | 11 | 11 |
+| `fjsplib/KacemHammadiBorne2002/kacem2.fjs` | Kacem, Hammadi and Borne (2002) | `kacem2` | 10 x 7 | 11 | 11 |
 | `fjsplib/Brandimarte1993/mk01.fjs` | Brandimarte (1993) | `mk01` | 10 x 6 | 40 | 40 |
 | `fjsplib/Brandimarte1993/mk02.fjs` | Brandimarte (1993) | `mk02` | 10 x 6 | 26 | 26 |
 | `fjsplib/Brandimarte1993/mk03.fjs` | Brandimarte (1993) | `mk03` | 15 x 8 | 204 | 204 |
+| `fjsplib/Brandimarte1993/mk04.fjs` | Brandimarte (1993) | `mk04` | 15 x 8 | 60 | 60 |
 
 The machine-readable mirror [fjsplib_bks.csv](fjsplib_bks.csv) records these
 upstream bounds for quality-report scripts. Every currently tracked row has

@@ -128,20 +128,23 @@ CSV 中会记录算法、实例、makespan、feasibility 状态、运行时间�
 benchmark 集合，可使用 `--max-files`、`--skip-cp-sat` 和
 `--cp-sat-time-limit` 控制实验规模。
 
-真实子集的来源说明位于 [instances/README.md](instances/README.md)。七份上游
+真实子集的来源说明位于 [instances/README.md](instances/README.md)。十份上游
 文件来自 ScheduleOpt 官方 FJSPLib 仓库，并保留 CC-BY-SA-4.0 归属说明。
 
 | FJSPLib 实例 | 规模 | 当前启发式最佳值 | CP-SAT | FJSPLib BKS |
 |---|---:|---:|---:|---:|
 | `fattahi1` | 2 x 2 | 66 | 66 `OPTIMAL` | 66 |
 | `fattahi2` | 2 x 2 | 107 | 107 `OPTIMAL` | 107 |
+| `fattahi3` | 3 x 2 | 221 | 221 `OPTIMAL` | 221 |
 | `kacem1` | 4 x 5 | 11 | 11 `OPTIMAL` | 11 |
+| `kacem2` | 10 x 7 | 12 | 11 `OPTIMAL` | 11 |
 | Hurink edata `ft06` | 6 x 6 | 55 | 55 `OPTIMAL` | 55 |
 | Brandimarte `mk01` | 10 x 6 | 44 | 40 `OPTIMAL` | 40 |
-| Brandimarte `mk02` | 10 x 6 | 30 | 29 `FEASIBLE` | 26 |
-| Brandimarte `mk03` | 15 x 8 | 204 | 211 `FEASIBLE` | 204 |
+| Brandimarte `mk02` | 10 x 6 | 30 | 28 `FEASIBLE` | 26 |
+| Brandimarte `mk03` | 15 x 8 | 204 | 206 `FEASIBLE` | 204 |
+| Brandimarte `mk04` | 15 x 8 | 77 | 61 `FEASIBLE` | 60 |
 
-对于 `mk02` 和 `mk03`，本地 CP-SAT 结果是 10 秒时限内得到的可行调度，
+对于 `mk02`、`mk03` 和 `mk04`，本地 CP-SAT 结果是 10 秒时限内得到的可行调度，
 求解器没有证明最优性。因此这里只将其报告为限时可行参考调度。
 
 ### 实验 006：CP-SAT 时限 sweep
@@ -196,19 +199,23 @@ worker 重复 2 次，再使用 auto worker 配置重复 2 次。
 
 | 实例 | Workers | 可行运行数 | 最佳 makespan | 平均 makespan | 状态 | 最佳 bound |
 |---|---:|---:|---:|---:|---|---:|
-| `mk01` | 1 | 2 / 2 | 40 | 40.000000 | `FEASIBLE` / `OPTIMAL` | 40 |
+| `mk01` | 1 | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
 | `mk01` | auto | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
 | `mk02` | 1 | 2 / 2 | 31 | 31.000000 | `FEASIBLE` | 3 |
-| `mk02` | auto | 2 / 2 | 29 | 29.500000 | `FEASIBLE` | 21 |
-| `mk03` | 1 | 2 / 2 | 280 | 282.500000 | `FEASIBLE` | 20 |
-| `mk03` | auto | 2 / 2 | 218 | 218.500000 | `FEASIBLE` | 83 |
+| `mk02` | auto | 2 / 2 | 30 | 30.000000 | `FEASIBLE` | 20 |
+| `mk03` | 1 | 2 / 2 | 344 | 348.000000 | `FEASIBLE` | 20 |
+| `mk03` | auto | 2 / 2 | 230 | 230.500000 | `FEASIBLE` | 60 |
+| `mk04` | 1 | 2 / 2 | 68 | 68.000000 | `FEASIBLE` | 14 |
+| `mk04` | auto | 2 / 2 | 62 | 63.000000 | `FEASIBLE` | 41 |
 | `fattahi1` | 1 / auto | 4 / 4 | 66 | 66.000000 | `OPTIMAL` | 66 |
 | `fattahi2` | 1 / auto | 4 / 4 | 107 | 107.000000 | `OPTIMAL` | 107 |
+| `fattahi3` | 1 / auto | 4 / 4 | 221 | 221.000000 | `OPTIMAL` | 221 |
 | edata `ft06` | 1 / auto | 4 / 4 | 55 | 55.000000 | `OPTIMAL` | 55 |
 | `kacem1` | 1 / auto | 4 / 4 | 11 | 11.000000 | `OPTIMAL` | 11 |
+| `kacem2` | 1 / auto | 4 / 4 | 11 | 11.000000 | `OPTIMAL` | 11 |
 
-全部 28 个调度均通过独立 feasibility checker。除 `mk02` 外，较小的 tracked
-实例在时限内证明了最优性。对于 `mk02` 和 `mk03`，auto workers 改善了本次
+全部 40 个调度均通过独立 feasibility checker。除 `mk02` 外，较小的 tracked
+实例在时限内证明了最优性。对于 `mk02`、`mk03` 和 `mk04`，auto workers 改善了本次
 观测中的 incumbent 和 bound，但两种配置都没有在 3 秒内证明最优性。
 
 ### 实验 010：启发式 benchmark 矩阵
@@ -222,14 +229,18 @@ rule。`Random` 与 `DispatchRandom` 使用固定 seed `42`、`123` 和 `999`
 | `mk01` | DispatchMWKR | 44 | 148-165 | 92-125 |
 | `mk02` | DispatchMWKR | 30 | 134-169 | 86-113 |
 | `mk03` | DispatchFIFO / DispatchMWKR | 204 | 1086-1206 | 488-563 |
+| `mk04` | DispatchFIFO | 77 | 279-292 | 143-177 |
 | `fattahi1` | DispatchMWKR | 66 | 86-135 | 86-135 |
 | `fattahi2` | DispatchFIFO / DispatchMWKR | 107 | 107-192 | 107-149 |
+| `fattahi3` | DispatchFIFO / DispatchMOPNR | 221 | 298-442 | 221-361 |
 | edata `ft06` | DispatchFIFO | 55 | 146-152 | 71-112 |
 | `kacem1` | DispatchFIFO | 11 | 27-82 | 26-44 |
+| `kacem2` | DispatchMWKR | 12 | 62-102 | 50-88 |
 
-全部 98 个调度均通过独立 feasibility checker。没有一个 dispatching rule
-在所有实例上占优：MWKR 在 `mk01`、`mk02` 和 `fattahi1` 上最好，FIFO 在
-`ft06` 和 `kacem1` 上最好，并在 `mk03` 和 `fattahi2` 上与 MWKR 并列。
+全部 140 个调度均通过独立 feasibility checker。没有一个 dispatching rule
+在所有实例上占优：MWKR 在 `mk01`、`mk02`、`fattahi1` 和 `kacem2` 上最好，
+FIFO 在 `mk04`、`ft06` 和 `kacem1` 上最好，在 `mk03` 和 `fattahi2` 上与
+MWKR 并列，并在 `fattahi3` 上与 MOPNR 并列。
 ready-operation 随机 dispatching 在当前 tracked 子集上持续优于简单
 job-order 随机 baseline，但仍然受 seed 影响。
 
@@ -246,24 +257,24 @@ gap_BKS = (makespan - BKS) / BKS
 
 | 算法族 | 平均最佳 gap | 最大最佳 gap |
 |---|---:|---:|
-| FIFO | 2.706465 | 5.196078 |
-| SPT | 1.592590 | 2.961538 |
-| EarliestFinishTime | 0.510503 | 1.384615 |
-| DispatchFIFO | 0.092191 | 0.303030 |
-| DispatchSPT | 0.910265 | 1.653846 |
-| DispatchEFT | 0.513235 | 1.384615 |
-| DispatchMWKR | 0.062238 | 0.153846 |
-| DispatchMOPNR | 0.165276 | 0.303030 |
-| Random | 2.084214 | 4.323529 |
-| DispatchRandom | 0.993918 | 2.307692 |
+| FIFO | 3.856359 | 14.818182 |
+| SPT | 1.713594 | 3.366667 |
+| EarliestFinishTime | 0.498406 | 1.384615 |
+| DispatchFIFO | 0.120140 | 0.303030 |
+| DispatchSPT | 0.978694 | 2.066667 |
+| DispatchEFT | 0.500318 | 1.384615 |
+| DispatchMWKR | 0.099709 | 0.316667 |
+| DispatchMOPNR | 0.189633 | 0.466667 |
+| Random | 2.322428 | 4.636364 |
+| DispatchRandom | 1.188621 | 3.545455 |
 
-在当前七实例子集上，DispatchMWKR 的跨实例平均最佳 gap 最小。当前样本仍然
+在当前十实例子集上，DispatchMWKR 的跨实例平均最佳 gap 最小。当前样本仍然
 较小，下一步应优先扩展 benchmark 覆盖，再决定是否增加新规则。
 
 ### 实验 012：Benchmark 元数据审计
 
 递归发现 tracked FJSPLib 文件，将文件与 `instances/fjsplib_bks.csv` 逐项匹配，
-并验证每个 tracked 文件仍可被 loader 加载。当前七行全部通过文件、BKS 和
+并验证每个 tracked 文件仍可被 loader 加载。当前十行全部通过文件、BKS 和
 loader 检查。若缺少文件、元数据记录或可加载实例，脚本会返回失败退出码。
 
 ## 数学建模文档
