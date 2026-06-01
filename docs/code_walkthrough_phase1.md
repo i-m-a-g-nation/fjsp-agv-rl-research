@@ -39,6 +39,8 @@
 | `experiments/exp_008_cpsat_worker_repeats.py` | 重复 worker 对比，保留逐次结果并聚合统计 |
 | `experiments/exp_009_cpsat_benchmark_matrix.py` | 对 tracked FJSPLib 子集运行受控重复 CP-SAT 矩阵 |
 | `experiments/exp_010_heuristic_benchmark_matrix.py` | 对 tracked FJSPLib 子集运行确定性和固定 seed 启发式矩阵 |
+| `instances/fjsplib_bks.csv` | 结构化保存上游 FJSPLib LB / UB 参考值 |
+| `experiments/exp_011_heuristic_quality_report.py` | 计算启发式相对上游 BKS 的质量 gap |
 
 ## 核心数据流
 

@@ -358,6 +358,39 @@ CSV artifacts:
 All 56 schedules passed feasibility checking. Loader and solver failures remain
 visible in the raw CSV and process exit code.
 
+## `exp_011_heuristic_quality_report.py`
+
+Reads the Experiment 010 family summary and the structured upstream references
+in `instances/fjsplib_bks.csv`. For every family and instance, it computes:
+
+```text
+gap_BKS = (makespan - BKS) / BKS
+```
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_011_heuristic_quality_report.py
+```
+
+Tracked family summary:
+
+| Algorithm family | Mean best gap | Maximum best gap |
+|---|---:|---:|
+| DispatchMWKR | 0.047727 | 0.100000 |
+| DispatchFIFO | 0.113258 | 0.303030 |
+| DispatchMOPNR | 0.159748 | 0.303030 |
+| EarliestFinishTime | 0.475434 | 0.563636 |
+| DispatchEFT | 0.480214 | 0.578431 |
+
+CSV artifacts:
+
+- `results/exp_011_heuristic_quality_rows.csv`
+- `results/exp_011_heuristic_quality_families.csv`
+
+The report rejects missing reference rows and missing summarized instances.
+Upstream BKS values are comparison references, not local optimality proofs.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.

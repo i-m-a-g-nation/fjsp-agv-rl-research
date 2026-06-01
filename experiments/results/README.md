@@ -17,6 +17,8 @@ Current generated files:
 - `exp_009_cpsat_benchmark_matrix_summary.csv`
 - `exp_010_heuristic_benchmark_matrix_runs.csv`
 - `exp_010_heuristic_benchmark_matrix_summary.csv`
+- `exp_011_heuristic_quality_rows.csv`
+- `exp_011_heuristic_quality_families.csv`
 
 Each row records:
 
@@ -30,3 +32,7 @@ Each row records:
 - objective bound, when reported by the solver
 - relative optimality gap, when reported by the solver
 - solver internal wall time, when reported by the solver
+
+Experiment 011 adds BKS-relative heuristic quality ratios. Its per-instance
+rows and cross-instance family summaries use the structured upstream
+references in `instances/fjsplib_bks.csv`.

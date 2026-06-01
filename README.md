@@ -26,6 +26,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - Repeated CP-SAT worker-count aggregation with per-run and summary CSV artifacts
 - Controlled repeated CP-SAT matrix across the tracked static FJSPLib subset
 - Heuristic matrix with deterministic rules and reproducibly seeded random families
+- BKS-aware heuristic quality ratios from structured upstream references
 - Matplotlib Gantt chart output using a non-interactive backend
 - Toy-instance experiments and pytest coverage
 
@@ -74,6 +75,7 @@ Do not use the Conda `base` environment for project checks.
 .\.conda-env\python.exe experiments\exp_008_cpsat_worker_repeats.py
 .\.conda-env\python.exe experiments\exp_009_cpsat_benchmark_matrix.py
 .\.conda-env\python.exe experiments\exp_010_heuristic_benchmark_matrix.py
+.\.conda-env\python.exe experiments\exp_011_heuristic_quality_report.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -239,6 +241,35 @@ dispatching rule dominates every instance: MWKR is strongest on `mk01` and
 `fattahi1`, while FIFO is strongest on `ft06` and ties MWKR on `mk03`.
 Ready-operation random dispatching is consistently better than the simple
 job-order random baseline in this tracked subset, but remains seed-sensitive.
+
+### Experiment 011: BKS-Aware Heuristic Quality Report
+
+Reads the structured upstream references in `instances/fjsplib_bks.csv` and
+computes
+
+```text
+gap_BKS = (makespan - BKS) / BKS
+```
+
+for every Experiment 010 family and instance. The upstream BKS values are
+comparison references, not local optimality proofs.
+
+| Algorithm family | Mean best gap | Maximum best gap |
+|---|---:|---:|
+| FIFO | 2.780838 | 5.196078 |
+| SPT | 1.601660 | 2.289216 |
+| EarliestFinishTime | 0.475434 | 0.563636 |
+| DispatchFIFO | 0.113258 | 0.303030 |
+| DispatchSPT | 0.880437 | 1.465686 |
+| DispatchEFT | 0.480214 | 0.578431 |
+| DispatchMWKR | 0.047727 | 0.100000 |
+| DispatchMOPNR | 0.159748 | 0.303030 |
+| Random | 2.245276 | 4.323529 |
+| DispatchRandom | 0.821524 | 1.392157 |
+
+On the current four-instance subset, DispatchMWKR has the strongest
+cross-instance mean best gap. The subset remains intentionally small, so the
+next step is broader benchmark coverage before adding more rules.
 
 ## Known Notes
 

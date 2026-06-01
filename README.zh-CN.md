@@ -23,6 +23,7 @@ Phase 1 已覆盖：
 - CP-SAT worker 重复实验聚合：同时保留逐次记录和汇总 CSV
 - tracked 静态 FJSPLib 子集上的受控 CP-SAT 重复实验矩阵
 - 包含确定性规则和可复现随机 seed 的启发式 benchmark 矩阵
+- 基于结构化上游参考值的启发式 BKS 相对质量指标
 - Benchmark smoke loader：支持小型 0-based / 1-based FJSP 格式文件
 - 有来源说明的 FJSPLib 子集：覆盖 Brandimarte、Hurink 和 Fattahi 三类实例
 - Matplotlib Gantt 图输出
@@ -76,6 +77,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 .\.conda-env\python.exe experiments\exp_008_cpsat_worker_repeats.py
 .\.conda-env\python.exe experiments\exp_009_cpsat_benchmark_matrix.py
 .\.conda-env\python.exe experiments\exp_010_heuristic_benchmark_matrix.py
+.\.conda-env\python.exe experiments\exp_011_heuristic_quality_report.py
 .\.conda-env\python.exe -m pytest
 ```
 
@@ -113,6 +115,8 @@ Toy 3x3 实例上的主要结果：
 - `experiments/results/exp_009_cpsat_benchmark_matrix_summary.csv`
 - `experiments/results/exp_010_heuristic_benchmark_matrix_runs.csv`
 - `experiments/results/exp_010_heuristic_benchmark_matrix_summary.csv`
+- `experiments/results/exp_011_heuristic_quality_rows.csv`
+- `experiments/results/exp_011_heuristic_quality_families.csv`
 
 CSV 中会记录算法、实例、makespan、feasibility 状态、运行时间和说明。对 CP-SAT 结果，还会额外记录 objective bound、relative gap 和 solver wall time。
 
@@ -215,6 +219,33 @@ rule。`Random` 与 `DispatchRandom` 使用固定 seed `42`、`123` 和 `999`
 上最好，并在 `mk03` 上与 MWKR 并列。ready-operation 随机 dispatching 在
 当前 tracked 子集上持续优于简单 job-order 随机 baseline，但仍然受 seed
 影响。
+
+### 实验 011：基于 BKS 的启发式质量报告
+
+读取 `instances/fjsplib_bks.csv` 中的结构化上游参考值，并为实验 010 中每个
+算法族和实例计算：
+
+```text
+gap_BKS = (makespan - BKS) / BKS
+```
+
+上游 BKS 用于比较，不等于本地求解器已经证明最优性。
+
+| 算法族 | 平均最佳 gap | 最大最佳 gap |
+|---|---:|---:|
+| FIFO | 2.780838 | 5.196078 |
+| SPT | 1.601660 | 2.289216 |
+| EarliestFinishTime | 0.475434 | 0.563636 |
+| DispatchFIFO | 0.113258 | 0.303030 |
+| DispatchSPT | 0.880437 | 1.465686 |
+| DispatchEFT | 0.480214 | 0.578431 |
+| DispatchMWKR | 0.047727 | 0.100000 |
+| DispatchMOPNR | 0.159748 | 0.303030 |
+| Random | 2.245276 | 4.323529 |
+| DispatchRandom | 0.821524 | 1.392157 |
+
+在当前四实例子集上，DispatchMWKR 的跨实例平均最佳 gap 最小。当前样本仍然
+较小，下一步应优先扩展 benchmark 覆盖，再决定是否增加新规则。
 
 ## 数学建模文档
 

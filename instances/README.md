@@ -28,6 +28,11 @@ Tracked subset:
 | `fjsplib/Brandimarte1993/mk01.fjs` | Brandimarte (1993) | `mk01` | 10 x 6 | 40 | 40 |
 | `fjsplib/Brandimarte1993/mk03.fjs` | Brandimarte (1993) | `mk03` | 15 x 8 | 204 | 204 |
 
+The machine-readable mirror [fjsplib_bks.csv](fjsplib_bks.csv) records these
+upstream bounds for quality-report scripts. Every currently tracked row has
+matching LB and UB values. These are upstream references, not values inferred
+from local solver runs.
+
 The subset intentionally spans three source families and increasing sizes.
 `mk03` is also large enough to exercise a time-limited `FEASIBLE` CP-SAT result
 under the default 10-second batch limit. It may match the upstream BKS without
