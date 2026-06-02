@@ -226,7 +226,7 @@ solver metadata 写入 CSV 记录。
 仓库会跟踪一个较小的真实数据子集。文件来自 ScheduleOpt 官方 FJSPLib
 仓库，并按照其 CC-BY-SA-4.0 许可证保留来源说明：
 \url{https://scheduleopt.github.io/benchmarks/fjsplib}。
-该子集覆盖四个来源系列和逐步增大的实例规模。
+该子集覆盖六个来源系列和逐步增大的实例规模。
 
 \begin{table}[h]
 \centering
@@ -237,20 +237,24 @@ solver metadata 写入 CSV 记录。
 \texttt{fattahi1} & 2 & 2 & 66 & 66 \\
 \texttt{fattahi2} & 2 & 2 & 107 & 107 \\
 \texttt{fattahi3} & 3 & 2 & 221 & 221 \\
+\texttt{mt10c1} & 10 & 11 & 927 & 927 \\
+\texttt{01a} & 10 & 5 & 2505 & 2565 \\
 \texttt{kacem1} & 4 & 5 & 11 & 11 \\
 \texttt{kacem2} & 10 & 7 & 11 & 11 \\
+\texttt{kacem3} & 10 & 10 & 7 & 7 \\
 Hurink edata \texttt{ft06} & 6 & 6 & 55 & 55 \\
 Brandimarte \texttt{mk01} & 10 & 6 & 40 & 40 \\
 Brandimarte \texttt{mk02} & 10 & 6 & 26 & 28 \\
-Brandimarte \texttt{mk03} & 15 & 8 & 204 & 206 \\
-Brandimarte \texttt{mk04} & 15 & 8 & 60 & 61 \\
+Brandimarte \texttt{mk03} & 15 & 8 & 204 & 204 \\
+Brandimarte \texttt{mk04} & 15 & 8 & 60 & 60 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 上表中的本地 CP-SAT 结果均通过独立 feasibility checker。FJSPLib BKS 列来自
-上游参考数据，不是本仓库自行推断的值。对于 \texttt{mk02}、\texttt{mk03}
-和 \texttt{mk04}，CP-SAT 在 10 秒时限内报告 \texttt{FEASIBLE}。因此批量实验
+上游参考数据，不是本仓库自行推断的值。对于 \texttt{mk02}、\texttt{mk03}、
+\texttt{mk04}、\texttt{mt10c1} 和 \texttt{01a}，CP-SAT 在 10 秒时限内报告
+\texttt{FEASIBLE}。因此批量实验
 只记录限时可行参考调度，不声称本地运行证明了最优性。
 
 官方 benchmark 网页将 \texttt{kacem1} 标为 $4 \times 6$，但官方旧格式文件
@@ -355,25 +359,30 @@ worker 运行 2 次，再使用 auto worker 配置运行 2 次。逐次原始记
 \midrule
 \texttt{mk01} & 1 & 2/2 & 40 & 40.000000 & \texttt{OPTIMAL} & 40 \\
 \texttt{mk01} & \texttt{auto} & 2/2 & 40 & 40.000000 & \texttt{OPTIMAL} & 40 \\
-\texttt{mk02} & 1 & 2/2 & 31 & 31.000000 & \texttt{FEASIBLE} & 3 \\
-\texttt{mk02} & \texttt{auto} & 2/2 & 30 & 30.000000 & \texttt{FEASIBLE} & 20 \\
-\texttt{mk03} & 1 & 2/2 & 344 & 348.000000 & \texttt{FEASIBLE} & 20 \\
-\texttt{mk03} & \texttt{auto} & 2/2 & 230 & 230.500000 & \texttt{FEASIBLE} & 60 \\
+\texttt{mk02} & 1 & 2/2 & 30 & 30.000000 & \texttt{FEASIBLE} & 3 \\
+\texttt{mk02} & \texttt{auto} & 2/2 & 28 & 28.000000 & \texttt{FEASIBLE} & 22 \\
+\texttt{mk03} & 1 & 2/2 & 272 & 274.000000 & \texttt{FEASIBLE} & 20 \\
+\texttt{mk03} & \texttt{auto} & 2/2 & 215 & 218.000000 & \texttt{FEASIBLE} & 84 \\
 \texttt{mk04} & 1 & 2/2 & 68 & 68.000000 & \texttt{FEASIBLE} & 14 \\
-\texttt{mk04} & \texttt{auto} & 2/2 & 62 & 63.000000 & \texttt{FEASIBLE} & 41 \\
+\texttt{mk04} & \texttt{auto} & 2/2 & 61 & 62.000000 & \texttt{FEASIBLE} & 43 \\
+\texttt{mt10c1} & 1 & 2/2 & 933 & 940.500000 & \texttt{FEASIBLE} & 759 \\
+\texttt{mt10c1} & \texttt{auto} & 2/2 & 927 & 927.000000 & \texttt{FEASIBLE} & 876 \\
+\texttt{01a} & 1 & 2/2 & 2697 & 2697.000000 & \texttt{FEASIBLE} & 1395 \\
+\texttt{01a} & \texttt{auto} & 2/2 & 2621 & 2625.500000 & \texttt{FEASIBLE} & 2505 \\
 \texttt{fattahi1} & 1/\texttt{auto} & 4/4 & 66 & 66.000000 & \texttt{OPTIMAL} & 66 \\
 \texttt{fattahi2} & 1/\texttt{auto} & 4/4 & 107 & 107.000000 & \texttt{OPTIMAL} & 107 \\
 \texttt{fattahi3} & 1/\texttt{auto} & 4/4 & 221 & 221.000000 & \texttt{OPTIMAL} & 221 \\
 \texttt{ft06} & 1/\texttt{auto} & 4/4 & 55 & 55.000000 & \texttt{OPTIMAL} & 55 \\
 \texttt{kacem1} & 1/\texttt{auto} & 4/4 & 11 & 11.000000 & \texttt{OPTIMAL} & 11 \\
 \texttt{kacem2} & 1/\texttt{auto} & 4/4 & 11 & 11.000000 & \texttt{OPTIMAL} & 11 \\
+\texttt{kacem3} & 1/\texttt{auto} & 4/4 & 7 & 7.000000 & \texttt{OPTIMAL} & 7 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-全部 40 个调度均通过独立 feasibility checker。除 \texttt{mk02} 外，较小的
-tracked 实例在时限内证明了最优性。对于 \texttt{mk02}、\texttt{mk03} 和
-\texttt{mk04}，
+全部 52 个调度均通过独立 feasibility checker。除 \texttt{mk02} 外，较小的
+tracked 实例在时限内证明了最优性。对于 \texttt{mk02}、\texttt{mk03}、
+\texttt{mk04}、\texttt{mt10c1} 和 \texttt{01a}，
 auto workers 改善了本次观测中的 incumbent 和 bound，但两种配置都没有在
 3 秒内证明最优性。
 
@@ -393,21 +402,26 @@ auto workers 改善了本次观测中的 incumbent 和 bound，但两种配置�
 \texttt{mk02} & \texttt{DispatchMWKR} (30) & 134--169 & 86--113 \\
 \texttt{mk03} & \texttt{DispatchFIFO/MWKR} (204) & 1086--1206 & 488--563 \\
 \texttt{mk04} & \texttt{DispatchFIFO} (77) & 279--292 & 143--177 \\
+\texttt{mt10c1} & \texttt{DispatchMOPNR} (1225) & 3348--3394 & 1446--1728 \\
+\texttt{01a} & \texttt{DispatchFIFO} (3056) & 10212--10398 & 4132--4525 \\
 \texttt{fattahi1} & \texttt{DispatchMWKR} (66) & 86--135 & 86--135 \\
 \texttt{fattahi2} & \texttt{DispatchFIFO/MWKR} (107) & 107--192 & 107--149 \\
 \texttt{fattahi3} & \texttt{DispatchFIFO/MOPNR} (221) & 298--442 & 221--361 \\
 \texttt{ft06} & \texttt{DispatchFIFO} (55) & 146--152 & 71--112 \\
 \texttt{kacem1} & \texttt{DispatchFIFO} (11) & 27--82 & 26--44 \\
 \texttt{kacem2} & \texttt{DispatchMWKR} (12) & 62--102 & 50--88 \\
+\texttt{kacem3} & \texttt{DispatchFIFO/MWKR/MOPNR} (8) & 42--77 & 50--72 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-全部 140 个调度均通过独立 feasibility checker。没有一个规则在所有实例上
+全部 182 个调度均通过独立 feasibility checker。没有一个规则在所有实例上
 占优：MWKR 在 \texttt{mk01}、\texttt{mk02}、\texttt{fattahi1} 和
 \texttt{kacem2} 上最好；FIFO 在 \texttt{mk04}、\texttt{ft06} 和
 \texttt{kacem1} 上最好，在 \texttt{mk03} 和 \texttt{fattahi2} 上与 MWKR
-并列，并在 \texttt{fattahi3} 上与 MOPNR 并列。ready-operation 随机 dispatching 在当前
+并列，并在 \texttt{fattahi3} 上与 MOPNR 并列。MOPNR 在 \texttt{mt10c1}
+上最好；FIFO 在 \texttt{01a} 上最好；FIFO、MWKR 和 MOPNR 在
+\texttt{kacem3} 上并列。ready-operation 随机 dispatching 在当前
 tracked 子集上持续优于简单 job-order 随机 baseline，但仍然受 seed 影响。
 
 \clearpage
@@ -427,21 +441,21 @@ gap_{\mathrm{BKS}}(h,i)
 \toprule
 算法族 & 平均最佳 gap & 最大最佳 gap \\
 \midrule
-FIFO & 3.856359 & 14.818182 \\
-SPT & 1.713594 & 3.366667 \\
-EarliestFinishTime & 0.498406 & 1.384615 \\
-DispatchFIFO & 0.120140 & 0.303030 \\
-DispatchSPT & 0.978694 & 2.066667 \\
-DispatchEFT & 0.500318 & 1.384615 \\
-DispatchMWKR & 0.099709 & 0.316667 \\
-DispatchMOPNR & 0.189633 & 0.466667 \\
-Random & 2.322428 & 4.636364 \\
-DispatchRandom & 1.188621 & 3.545455 \\
+FIFO & 5.046584 & 21.285714 \\
+SPT & 1.870830 & 3.366667 \\
+EarliestFinishTime & 0.459417 & 1.384615 \\
+DispatchFIFO & 0.145799 & 0.331176 \\
+DispatchSPT & 1.109732 & 2.259082 \\
+DispatchEFT & 0.461686 & 1.384615 \\
+DispatchMWKR & 0.140666 & 0.350593 \\
+DispatchMOPNR & 0.202347 & 0.466667 \\
+Random & 2.608660 & 5.000000 \\
+DispatchRandom & 1.479880 & 6.142857 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-在当前十实例子集上，DispatchMWKR 的平均最佳 gap 最小。当前样本仍然较小，
+在当前十三实例子集上，DispatchMWKR 的平均最佳 gap 最小。当前样本仍然较小，
 应优先扩展 benchmark 覆盖，再决定是否增加新规则。
 
 \clearpage
@@ -450,7 +464,7 @@ DispatchRandom & 1.188621 & 3.545455 \\
 在扩展 benchmark 子集之前，元数据审计会递归发现 tracked FJSPLib 文件，将
 其与 \texttt{instances/fjsplib\_bks.csv} 逐项匹配，并加载每个发现的文件。
 只有 tracked 文件存在、上游参考记录存在、loader 接受该实例时，一行记录才
-会通过。当前十行均通过。这个门禁可以避免遗漏文件或过期元数据悄悄进入质量
+会通过。当前十三行均通过。这个门禁可以避免遗漏文件或过期元数据悄悄进入质量
 比较。
 
 \end{document}

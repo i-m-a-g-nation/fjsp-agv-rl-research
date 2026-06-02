@@ -26,9 +26,12 @@ Tracked subset:
 | `fjsplib/FattahiMehrabadJolai2007/fattahi1.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi1` | 2 x 2 | 66 | 66 |
 | `fjsplib/FattahiMehrabadJolai2007/fattahi2.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi2` | 2 x 2 | 107 | 107 |
 | `fjsplib/FattahiMehrabadJolai2007/fattahi3.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi3` | 3 x 2 | 221 | 221 |
+| `fjsplib/ChambersBarnes1996/mt10c1.fjs` | Chambers and Barnes (1996) | `mt10c1` | 10 x 11 | 927 | 927 |
+| `fjsplib/DauzerePeresPaulli1994/01a.fjs` | Dauzère-Pérès and Paulli (1994) | `01a` | 10 x 5 | 2505 | 2505 |
 | `fjsplib/HurinkJurischThole1994/edata/ft06.fjs` | Hurink, Jurisch and Thole (1994), edata | `ft06` | 6 x 6 | 55 | 55 |
 | `fjsplib/KacemHammadiBorne2002/kacem1.fjs` | Kacem, Hammadi and Borne (2002) | `kacem1` | 4 x 5 | 11 | 11 |
 | `fjsplib/KacemHammadiBorne2002/kacem2.fjs` | Kacem, Hammadi and Borne (2002) | `kacem2` | 10 x 7 | 11 | 11 |
+| `fjsplib/KacemHammadiBorne2002/kacem3.fjs` | Kacem, Hammadi and Borne (2002) | `kacem3` | 10 x 10 | 7 | 7 |
 | `fjsplib/Brandimarte1993/mk01.fjs` | Brandimarte (1993) | `mk01` | 10 x 6 | 40 | 40 |
 | `fjsplib/Brandimarte1993/mk02.fjs` | Brandimarte (1993) | `mk02` | 10 x 6 | 26 | 26 |
 | `fjsplib/Brandimarte1993/mk03.fjs` | Brandimarte (1993) | `mk03` | 15 x 8 | 204 | 204 |
@@ -40,7 +43,7 @@ matching LB and UB values. These are upstream references, not values inferred
 from local solver runs. Run `experiments/exp_012_benchmark_metadata_audit.py`
 to verify one-to-one tracked-file, metadata-row, and loader consistency.
 
-The subset intentionally spans four source families and increasing sizes.
+The subset intentionally spans six source families and increasing sizes.
 `mk03` is also large enough to exercise a time-limited `FEASIBLE` CP-SAT result
 under the default 10-second batch limit. It may match the upstream BKS without
 proving optimality during that local run.
