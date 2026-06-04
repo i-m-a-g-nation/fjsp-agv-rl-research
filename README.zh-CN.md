@@ -18,7 +18,7 @@ Phase 1 已覆盖：
 - 严格 dispatching rule：DispatchFIFO、DispatchSPT、DispatchEFT、DispatchMWKR、DispatchMOPNR、DispatchRandom
 - OR-Tools CP-SAT baseline：OptionalIntervalVar、ExactlyOne、Precedence、NoOverlap、makespan 最小化
 - CP-SAT 诊断：solver status、objective bound、relative gap、solver wall time
-- 官方 FJSPLib 静态子集：16 个 tracked 上游文件，覆盖 6 个来源系列
+- 官方 FJSPLib 静态子集：19 个 tracked 上游文件，覆盖 6 个来源系列
 - 统一实验 CSV 记录和元数据审计
 - Matplotlib Gantt 图输出
 - Phase 1 数学建模 LaTeX 文档
@@ -80,6 +80,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 | `fattahi2` | 2 x 2 | 107 | 107 `OPTIMAL` | 107 |
 | `fattahi3` | 3 x 2 | 221 | 221 `OPTIMAL` | 221 |
 | `fattahi4` | 3 x 2 | 367 | 355 `OPTIMAL` | 355 |
+| `fattahi5` | 3 x 2 | 119 | 119 `OPTIMAL` | 119 |
+| `fattahi6` | 3 x 3 | 330 | 320 `OPTIMAL` | 320 |
 | Chambers-Barnes `mt10c1` | 10 x 11 | 1225 | 927 `FEASIBLE` | 927 |
 | Dauzere-Peres `01a` | 10 x 5 | 3056 | 2628 `FEASIBLE` | 2505 |
 | `kacem1` | 4 x 5 | 11 | 11 `OPTIMAL` | 11 |
@@ -92,27 +94,28 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 | Brandimarte `mk03` | 15 x 8 | 204 | 220 `FEASIBLE` | 204 |
 | Brandimarte `mk04` | 15 x 8 | 77 | 62 `FEASIBLE` | 60 |
 | Brandimarte `mk05` | 15 x 4 | 185 | 180 `FEASIBLE` | 172 |
+| Brandimarte `mk06` | 10 x 15 | 67 | 74 `FEASIBLE` | 57 |
 
 对 `FEASIBLE` 行，只能说明本地 CP-SAT 在时限内找到合法可行调度，不能说明已经证明最优。
 
 ## 最新验证
 
 - `exp_005_benchmark_batch.py`：18 个 discovered 文件全部 feasible
-- `exp_009_cpsat_benchmark_matrix.py`：64/64 个 CP-SAT 矩阵调度全部 feasible
-- `exp_010_heuristic_benchmark_matrix.py`：224/224 个启发式调度全部 feasible
-- `exp_011_heuristic_quality_report.py`：16 实例 BKS-relative 质量报告已刷新
-- `exp_012_benchmark_metadata_audit.py`：16/16 个 tracked 文件、BKS 行和 loader 校验通过
+- `exp_009_cpsat_benchmark_matrix.py`：76/76 个 CP-SAT 矩阵调度全部 feasible
+- `exp_010_heuristic_benchmark_matrix.py`：266/266 个启发式调度全部 feasible
+- `exp_011_heuristic_quality_report.py`：19 实例 BKS-relative 质量报告已刷新
+- `exp_012_benchmark_metadata_audit.py`：19/19 个 tracked 文件、BKS 行和 loader 校验通过
 - `pytest`：147 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
 
-当前 16 实例质量报告中，`DispatchMWKR` 的跨实例平均 best gap 最低：
+当前 19 实例质量报告中，`DispatchMWKR` 的跨实例平均 best gap 最低：
 
 | 算法族 | 平均 best gap | 最大 best gap |
 |---|---:|---:|
-| DispatchMWKR | 0.127536 | 0.350593 |
-| DispatchFIFO | 0.142344 | 0.331176 |
-| DispatchMOPNR | 0.183334 | 0.466667 |
-| EarliestFinishTime | 0.443474 | 1.384615 |
-| DispatchEFT | 0.452452 | 1.384615 |
+| DispatchMWKR | 0.134711 | 0.350593 |
+| DispatchFIFO | 0.141221 | 0.331176 |
+| DispatchMOPNR | 0.184949 | 0.466667 |
+| EarliestFinishTime | 0.417548 | 1.384615 |
+| DispatchEFT | 0.422339 | 1.384615 |
 
 ## 数学建模文档
 

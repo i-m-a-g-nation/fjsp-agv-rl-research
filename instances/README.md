@@ -27,6 +27,8 @@ Tracked subset:
 | `fjsplib/FattahiMehrabadJolai2007/fattahi2.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi2` | 2 x 2 | 107 | 107 |
 | `fjsplib/FattahiMehrabadJolai2007/fattahi3.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi3` | 3 x 2 | 221 | 221 |
 | `fjsplib/FattahiMehrabadJolai2007/fattahi4.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi4` | 3 x 2 | 355 | 355 |
+| `fjsplib/FattahiMehrabadJolai2007/fattahi5.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi5` | 3 x 2 | 119 | 119 |
+| `fjsplib/FattahiMehrabadJolai2007/fattahi6.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi6` | 3 x 3 | 320 | 320 |
 | `fjsplib/ChambersBarnes1996/mt10c1.fjs` | Chambers and Barnes (1996) | `mt10c1` | 10 x 11 | 927 | 927 |
 | `fjsplib/DauzerePeresPaulli1994/01a.fjs` | Dauzère-Pérès and Paulli (1994) | `01a` | 10 x 5 | 2505 | 2505 |
 | `fjsplib/HurinkJurischThole1994/edata/ft06.fjs` | Hurink, Jurisch and Thole (1994), edata | `ft06` | 6 x 6 | 55 | 55 |
@@ -39,6 +41,7 @@ Tracked subset:
 | `fjsplib/Brandimarte1993/mk03.fjs` | Brandimarte (1993) | `mk03` | 15 x 8 | 204 | 204 |
 | `fjsplib/Brandimarte1993/mk04.fjs` | Brandimarte (1993) | `mk04` | 15 x 8 | 60 | 60 |
 | `fjsplib/Brandimarte1993/mk05.fjs` | Brandimarte (1993) | `mk05` | 15 x 4 | 172 | 172 |
+| `fjsplib/Brandimarte1993/mk06.fjs` | Brandimarte (1993) | `mk06` | 10 x 15 | 57 | 57 |
 
 The machine-readable mirror [fjsplib_bks.csv](fjsplib_bks.csv) records these
 upstream bounds for quality-report scripts. Every currently tracked row has
@@ -54,6 +57,10 @@ proving optimality during that local run.
 The official benchmark table lists `kacem1` as `4 x 6`, while its official old
 format file starts with `4 5 5`. This repository records the loadable file
 content as `4 x 5` and retains the upstream BKS of `11`.
+
+The official benchmark table lists `fattahi6` as `3 x 2`, while its official
+old format file starts with `3 3 1.6`. This repository records the loadable
+file content as `3 x 3` and retains the upstream BKS of `320`.
 
 ## Format
 

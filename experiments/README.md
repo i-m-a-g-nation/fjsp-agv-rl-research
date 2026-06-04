@@ -166,11 +166,14 @@ tracked FJSPLib subset documented in `instances/README.md`:
 |---|---:|---:|---:|
 | Fattahi `fattahi1` | 2 x 2 | 66 `OPTIMAL` | 66 |
 | Fattahi `fattahi4` | 3 x 2 | 355 `OPTIMAL` | 355 |
+| Fattahi `fattahi5` | 3 x 2 | 119 `OPTIMAL` | 119 |
+| Fattahi `fattahi6` | 3 x 3 | 320 `OPTIMAL` | 320 |
 | Hurink edata `ft06` | 6 x 6 | 55 `OPTIMAL` | 55 |
 | Brandimarte `mk01` | 10 x 6 | 40 `OPTIMAL` | 40 |
-| Brandimarte `mk03` | 15 x 8 | 220 `FEASIBLE` | 204 |
-| Brandimarte `mk05` | 15 x 4 | 180 `FEASIBLE` | 172 |
-| Kacem `kacem4` | 15 x 10 | 15 `FEASIBLE` | 11 |
+| Brandimarte `mk03` | 15 x 8 | 204 `FEASIBLE` | 204 |
+| Brandimarte `mk05` | 15 x 4 | 175 `FEASIBLE` | 172 |
+| Brandimarte `mk06` | 10 x 15 | 74 `FEASIBLE` | 57 |
+| Kacem `kacem4` | 15 x 10 | 13 `FEASIBLE` | 11 |
 
 `mk03` intentionally exercises time-limited solver semantics: matching the
 upstream BKS does not become a local optimality proof unless CP-SAT reports
@@ -318,28 +321,32 @@ Tracked default aggregate result:
 | `mk04` | 1 | 2 / 2 | 68 | 68.000000 | `FEASIBLE` | 14 |
 | `mk04` | auto | 2 / 2 | 64 | 65.000000 | `FEASIBLE` | 41 |
 | `mk05` | 1 | 2 / 2 | 199 | 199.000000 | `FEASIBLE` | 32 |
-| `mk05` | auto | 2 / 2 | 180 | 180.500000 | `FEASIBLE` | 79 |
+| `mk05` | auto | 2 / 2 | 177 | 178.000000 | `FEASIBLE` | 82 |
+| `mk06` | 1 | 2 / 2 | 119 | 120.000000 | `FEASIBLE` | 6 |
+| `mk06` | auto | 2 / 2 | 77 | 80.000000 | `FEASIBLE` | 28 |
 | `mt10c1` | 1 | 2 / 2 | 957 | 957.000000 | `FEASIBLE` | 759 |
-| `mt10c1` | auto | 2 / 2 | 928 | 930.000000 | `FEASIBLE` | 863 |
-| `01a` | 1 | 2 / 2 | 2843 | 2843.000000 | `FEASIBLE` | 1395 |
-| `01a` | auto | 2 / 2 | 2645 | 2647.000000 | `FEASIBLE` | 2107 |
+| `mt10c1` | auto | 2 / 2 | 927 | 927.500000 | `FEASIBLE` | 874 |
+| `01a` | 1 | 2 / 2 | 2697 | 2697.000000 | `FEASIBLE` | 1395 |
+| `01a` | auto | 2 / 2 | 2658 | 2659.000000 | `FEASIBLE` | 2505 |
 | `fattahi1` | 1 / auto | 4 / 4 | 66 | 66.000000 | `OPTIMAL` | 66 |
 | `fattahi2` | 1 / auto | 4 / 4 | 107 | 107.000000 | `OPTIMAL` | 107 |
 | `fattahi3` | 1 / auto | 4 / 4 | 221 | 221.000000 | `OPTIMAL` | 221 |
 | `fattahi4` | 1 / auto | 4 / 4 | 355 | 355.000000 | `OPTIMAL` | 355 |
+| `fattahi5` | 1 / auto | 4 / 4 | 119 | 119.000000 | `OPTIMAL` | 119 |
+| `fattahi6` | 1 / auto | 4 / 4 | 320 | 320.000000 | `OPTIMAL` | 320 |
 | edata `ft06` | 1 / auto | 4 / 4 | 55 | 55.000000 | `OPTIMAL` | 55 |
 | `kacem1` | 1 / auto | 4 / 4 | 11 | 11.000000 | `OPTIMAL` | 11 |
 | `kacem2` | 1 / auto | 4 / 4 | 11 | 11.000000 | `OPTIMAL` | 11 |
 | `kacem3` | 1 / auto | 4 / 4 | 7 | 7.000000 | `OPTIMAL` | 7 |
-| `kacem4` | 1 | 2 / 2 | 167 | 167.000000 | `FEASIBLE` | 0 |
-| `kacem4` | auto | 2 / 2 | 19 | 20.000000 | `FEASIBLE` | 10 |
+| `kacem4` | 1 | 2 / 2 | 126 | 126.000000 | `FEASIBLE` | 0 |
+| `kacem4` | auto | 2 / 2 | 18 | 18.500000 | `FEASIBLE` | 10 |
 
 CSV artifacts:
 
 - `results/exp_009_cpsat_benchmark_matrix_runs.csv`
 - `results/exp_009_cpsat_benchmark_matrix_summary.csv`
 
-All 64 schedules passed feasibility checking. Loader failures and solver
+All 76 schedules passed feasibility checking. Loader failures and solver
 failures remain visible in the raw CSV and process exit code.
 
 ## `exp_010_heuristic_benchmark_matrix.py`
@@ -371,12 +378,15 @@ Tracked default summary:
 | `mk03` | DispatchFIFO / DispatchMWKR | 204 | 1086-1206 | 488-563 |
 | `mk04` | DispatchFIFO | 77 | 279-292 | 143-177 |
 | `mk05` | DispatchFIFO | 185 | 541-584 | 287-323 |
+| `mk06` | DispatchMWKR | 67 | 594-673 | 222-238 |
 | `mt10c1` | DispatchMOPNR | 1225 | 3348-3394 | 1446-1728 |
 | `01a` | DispatchFIFO | 3056 | 10212-10398 | 4132-4525 |
 | `fattahi1` | DispatchMWKR | 66 | 86-135 | 86-135 |
 | `fattahi2` | DispatchFIFO / DispatchMWKR | 107 | 107-192 | 107-149 |
 | `fattahi3` | DispatchFIFO / DispatchMOPNR | 221 | 298-442 | 221-361 |
 | `fattahi4` | DispatchFIFO / DispatchMWKR / DispatchMOPNR | 367 | 409-699 | 407-626 |
+| `fattahi5` | DispatchFIFO | 119 | 207-246 | 150-220 |
+| `fattahi6` | EarliestFinishTime / DispatchEFT | 330 | 557-707 | 470-557 |
 | edata `ft06` | DispatchFIFO | 55 | 146-152 | 71-112 |
 | `kacem1` | DispatchFIFO | 11 | 27-82 | 26-44 |
 | `kacem2` | DispatchMWKR | 12 | 62-102 | 50-88 |
@@ -388,7 +398,7 @@ CSV artifacts:
 - `results/exp_010_heuristic_benchmark_matrix_runs.csv`
 - `results/exp_010_heuristic_benchmark_matrix_summary.csv`
 
-All 224 schedules passed feasibility checking. Loader and solver failures remain
+All 266 schedules passed feasibility checking. Loader and solver failures remain
 visible in the raw CSV and process exit code.
 
 ## `exp_011_heuristic_quality_report.py`
@@ -410,11 +420,11 @@ Tracked family summary:
 
 | Algorithm family | Mean best gap | Maximum best gap |
 |---|---:|---:|
-| DispatchMWKR | 0.127536 | 0.350593 |
-| DispatchFIFO | 0.142344 | 0.331176 |
-| DispatchMOPNR | 0.183334 | 0.466667 |
-| EarliestFinishTime | 0.443474 | 1.384615 |
-| DispatchEFT | 0.452452 | 1.384615 |
+| DispatchMWKR | 0.134711 | 0.350593 |
+| DispatchFIFO | 0.141221 | 0.331176 |
+| DispatchMOPNR | 0.184949 | 0.466667 |
+| EarliestFinishTime | 0.417548 | 1.384615 |
+| DispatchEFT | 0.422339 | 1.384615 |
 
 CSV artifacts:
 
@@ -440,7 +450,7 @@ CSV artifact:
 - `results/exp_012_benchmark_metadata_audit.csv`
 
 The script returns exit code `1` when any tracked file, BKS metadata row, or
-loadable instance is missing. All sixteen current tracked rows pass.
+loadable instance is missing. All nineteen current tracked rows pass.
 
 ## General Requirements
 
