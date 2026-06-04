@@ -1,6 +1,6 @@
 # Phase 1 Review Status
 
-Last updated: 2026-06-02
+Last updated: 2026-06-04
 
 ## Current Status
 
@@ -21,14 +21,14 @@ Last updated: 2026-06-02
 | `experiments/exp_002_solver_check.py` | 0 | CP-SAT optimal makespan 11 with bound/gap metadata |
 | `experiments/exp_003_dispatching_rules.py` | 0 | Strict dispatching rules feasible, including MWKR and MOPNR |
 | `experiments/exp_004_benchmark_smoke.py` | 0 | Benchmark-format smoke instances feasible, including MWKR and MOPNR |
-| `experiments/exp_005_benchmark_batch.py` | 0 | All 15 discovered files feasible; time-limited CP-SAT `FEASIBLE` statuses remain explicit |
+| `experiments/exp_005_benchmark_batch.py` | 0 | All 18 discovered files feasible; time-limited CP-SAT `FEASIBLE` statuses remain explicit |
 | `experiments/exp_006_cpsat_time_limit_sweep.py` | 0 | Single-worker `mk03` sweep records status, bound, gap, and solver wall time |
 | `experiments/exp_007_cpsat_worker_sweep.py` | 0 | Fixed-limit `mk03` sweep records worker-count observations without claiming a stable ranking |
 | `experiments/exp_008_cpsat_worker_repeats.py` | 0 | 12/12 repeated `mk03` schedules feasible; raw runs and aggregate statistics recorded separately |
-| `experiments/exp_009_cpsat_benchmark_matrix.py` | 0 | 52/52 tracked-subset schedules feasible; timed instances retain bound and gap diagnostics |
-| `experiments/exp_010_heuristic_benchmark_matrix.py` | 0 | 182/182 tracked-subset heuristic schedules feasible; seeded random families aggregated |
-| `experiments/exp_011_heuristic_quality_report.py` | 0 | Thirteen-instance BKS-relative per-instance and family summaries generated from structured upstream references |
-| `experiments/exp_012_benchmark_metadata_audit.py` | 0 | 13/13 tracked files match BKS rows and remain loadable |
+| `experiments/exp_009_cpsat_benchmark_matrix.py` | 0 | 64/64 tracked-subset schedules feasible; timed instances retain bound and gap diagnostics |
+| `experiments/exp_010_heuristic_benchmark_matrix.py` | 0 | 224/224 tracked-subset heuristic schedules feasible; seeded random families aggregated |
+| `experiments/exp_011_heuristic_quality_report.py` | 0 | Sixteen-instance BKS-relative per-instance and family summaries generated from structured upstream references |
+| `experiments/exp_012_benchmark_metadata_audit.py` | 0 | 16/16 tracked files match BKS rows and remain loadable |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
 | `pytest` | 0 | 147 passed |
@@ -39,14 +39,14 @@ Last updated: 2026-06-02
 | Module | Status | Notes |
 |---|---|---|
 | `FJSPInstance` | Done | `from_jobs_array`, `get_processing_time`, `is_machine_eligible` |
-| Benchmark loader | Done | Smoke coverage plus thirteen tracked files across six FJSPLib source families |
+| Benchmark loader | Done | Smoke coverage plus sixteen tracked files across six FJSPLib source families |
 | Benchmark provenance | Done | `instances/README.md` plus `instances/fjsplib_bks.csv` record upstream repository, license, families, and BKS values |
 | Experiment records | Done | Shared runner plus normalized CSV output for `exp_001` through `exp_012` |
 | Benchmark batch entry | Done | Recursive discovery, stable order, loader failure records, optional CP-SAT controls |
 | CP-SAT sweep | Done | Fixed-worker `mk03` time-limit comparison with bound/gap diagnostics |
 | CP-SAT worker sweep | Done | Fixed-limit `mk03` worker-count comparison with cautious timed-run interpretation |
 | CP-SAT worker repeats | Done | Raw and aggregate CSV artifacts; 2, 4, and auto workers reached BKS 204 in all three tracked runs |
-| CP-SAT benchmark matrix | Done | Controlled repeated 1/auto-worker comparison across the tracked FJSPLib subset |
+| CP-SAT benchmark matrix | Done | Controlled repeated 1/auto-worker comparison across the tracked FJSPLib subset; `kacem4` remains time-limited `FEASIBLE` locally |
 | Heuristic benchmark matrix | Done | Deterministic rules plus seeded Random and DispatchRandom families across the tracked subset |
 | Heuristic quality report | Done | Per-instance and cross-instance BKS-relative ratios with reference coverage checks |
 | Benchmark metadata audit | Done | One-to-one tracked-file, BKS-row, and loader integrity gate |
@@ -60,6 +60,6 @@ Last updated: 2026-06-02
 
 ## Next Review Targets
 
-1. Expand the FJSPLib subset in further controlled batches beyond the current thirteen files.
+1. Expand the FJSPLib subset in further controlled batches beyond the current sixteen files.
 2. Re-run metadata audit and heuristic quality ratios after each benchmark batch.
 3. Compare larger static benchmark subsets before adding more dispatching rules.

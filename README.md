@@ -141,7 +141,7 @@ silently dropping malformed files. Use `--max-files`, `--skip-cp-sat`, and
 `--cp-sat-time-limit` to control runs on larger tracked collections.
 
 The tracked real subset is documented in [instances/README.md](instances/README.md).
-Its thirteen upstream files are copied from the official ScheduleOpt FJSPLib
+Its sixteen upstream files are copied from the official ScheduleOpt FJSPLib
 repository and retain CC-BY-SA-4.0 attribution.
 
 | FJSPLib instance | Size | Best heuristic in current suite | CP-SAT | FJSPLib BKS |
@@ -149,20 +149,23 @@ repository and retain CC-BY-SA-4.0 attribution.
 | `fattahi1` | 2 x 2 | 66 | 66 `OPTIMAL` | 66 |
 | `fattahi2` | 2 x 2 | 107 | 107 `OPTIMAL` | 107 |
 | `fattahi3` | 3 x 2 | 221 | 221 `OPTIMAL` | 221 |
+| `fattahi4` | 3 x 2 | 367 | 355 `OPTIMAL` | 355 |
 | Chambers-Barnes `mt10c1` | 10 x 11 | 1225 | 927 `FEASIBLE` | 927 |
-| Dauzere-Peres `01a` | 10 x 5 | 3056 | 2565 `FEASIBLE` | 2505 |
+| Dauzere-Peres `01a` | 10 x 5 | 3056 | 2628 `FEASIBLE` | 2505 |
 | `kacem1` | 4 x 5 | 11 | 11 `OPTIMAL` | 11 |
 | `kacem2` | 10 x 7 | 12 | 11 `OPTIMAL` | 11 |
 | `kacem3` | 10 x 10 | 8 | 7 `OPTIMAL` | 7 |
+| `kacem4` | 15 x 10 | 12 | 15 `FEASIBLE` | 11 |
 | Hurink edata `ft06` | 6 x 6 | 55 | 55 `OPTIMAL` | 55 |
 | Brandimarte `mk01` | 10 x 6 | 44 | 40 `OPTIMAL` | 40 |
 | Brandimarte `mk02` | 10 x 6 | 30 | 28 `FEASIBLE` | 26 |
-| Brandimarte `mk03` | 15 x 8 | 204 | 204 `FEASIBLE` | 204 |
-| Brandimarte `mk04` | 15 x 8 | 77 | 60 `FEASIBLE` | 60 |
+| Brandimarte `mk03` | 15 x 8 | 204 | 220 `FEASIBLE` | 204 |
+| Brandimarte `mk04` | 15 x 8 | 77 | 62 `FEASIBLE` | 60 |
+| Brandimarte `mk05` | 15 x 4 | 185 | 180 `FEASIBLE` | 172 |
 
-For `mk02`, `mk03`, `mk04`, `mt10c1`, and `01a`, the local CP-SAT values are time-limited feasible
-reference schedules, not locally proven optima. Timed CP-SAT runs can vary
-between observations.
+For `mk02`, `mk03`, `mk04`, `mk05`, `mt10c1`, `01a`, and `kacem4`, the local
+CP-SAT values are time-limited feasible reference schedules, not locally proven
+optima. Timed CP-SAT runs can vary between observations.
 
 ### Experiment 006: CP-SAT Time-Limit Sweep
 
@@ -224,28 +227,34 @@ the same 3-second limit.
 |---|---:|---:|---:|---:|---|---:|
 | `mk01` | 1 | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
 | `mk01` | auto | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
-| `mk02` | 1 | 2 / 2 | 30 | 30.000000 | `FEASIBLE` | 3 |
-| `mk02` | auto | 2 / 2 | 28 | 28.000000 | `FEASIBLE` | 22 |
-| `mk03` | 1 | 2 / 2 | 272 | 274.000000 | `FEASIBLE` | 20 |
-| `mk03` | auto | 2 / 2 | 215 | 218.000000 | `FEASIBLE` | 84 |
+| `mk02` | 1 | 2 / 2 | 31 | 31.000000 | `FEASIBLE` | 3 |
+| `mk02` | auto | 2 / 2 | 30 | 30.000000 | `FEASIBLE` | 20 |
+| `mk03` | 1 | 2 / 2 | 352 | 352.000000 | `FEASIBLE` | 20 |
+| `mk03` | auto | 2 / 2 | 234 | 234.000000 | `FEASIBLE` | 82 |
 | `mk04` | 1 | 2 / 2 | 68 | 68.000000 | `FEASIBLE` | 14 |
-| `mk04` | auto | 2 / 2 | 61 | 62.000000 | `FEASIBLE` | 43 |
-| `mt10c1` | 1 | 2 / 2 | 933 | 940.500000 | `FEASIBLE` | 759 |
-| `mt10c1` | auto | 2 / 2 | 927 | 927.000000 | `FEASIBLE` | 876 |
-| `01a` | 1 | 2 / 2 | 2697 | 2697.000000 | `FEASIBLE` | 1395 |
-| `01a` | auto | 2 / 2 | 2621 | 2625.500000 | `FEASIBLE` | 2505 |
+| `mk04` | auto | 2 / 2 | 64 | 65.000000 | `FEASIBLE` | 41 |
+| `mk05` | 1 | 2 / 2 | 199 | 199.000000 | `FEASIBLE` | 32 |
+| `mk05` | auto | 2 / 2 | 180 | 180.500000 | `FEASIBLE` | 79 |
+| `mt10c1` | 1 | 2 / 2 | 957 | 957.000000 | `FEASIBLE` | 759 |
+| `mt10c1` | auto | 2 / 2 | 928 | 930.000000 | `FEASIBLE` | 863 |
+| `01a` | 1 | 2 / 2 | 2843 | 2843.000000 | `FEASIBLE` | 1395 |
+| `01a` | auto | 2 / 2 | 2645 | 2647.000000 | `FEASIBLE` | 2107 |
 | `fattahi1` | 1 / auto | 4 / 4 | 66 | 66.000000 | `OPTIMAL` | 66 |
 | `fattahi2` | 1 / auto | 4 / 4 | 107 | 107.000000 | `OPTIMAL` | 107 |
 | `fattahi3` | 1 / auto | 4 / 4 | 221 | 221.000000 | `OPTIMAL` | 221 |
+| `fattahi4` | 1 / auto | 4 / 4 | 355 | 355.000000 | `OPTIMAL` | 355 |
 | edata `ft06` | 1 / auto | 4 / 4 | 55 | 55.000000 | `OPTIMAL` | 55 |
 | `kacem1` | 1 / auto | 4 / 4 | 11 | 11.000000 | `OPTIMAL` | 11 |
 | `kacem2` | 1 / auto | 4 / 4 | 11 | 11.000000 | `OPTIMAL` | 11 |
 | `kacem3` | 1 / auto | 4 / 4 | 7 | 7.000000 | `OPTIMAL` | 7 |
+| `kacem4` | 1 | 2 / 2 | 167 | 167.000000 | `FEASIBLE` | 0 |
+| `kacem4` | auto | 2 / 2 | 19 | 20.000000 | `FEASIBLE` | 10 |
 
-All 52 schedules passed the independent feasibility checker. The smaller
+All 64 schedules passed the independent feasibility checker. The smaller
 tracked instances except `mk02` were solved optimally within the limit. For
-`mk02`, `mk03`, `mk04`, `mt10c1`, and `01a`, automatic workers improved the observed incumbents and
-bounds, but neither configuration proved optimality within 3 seconds.
+`mk02`, `mk03`, `mk04`, `mk05`, `mt10c1`, `01a`, and `kacem4`, automatic
+workers improved the observed incumbents and bounds in this run, but neither
+configuration proved optimality within 3 seconds.
 
 ### Experiment 010: Heuristic Benchmark Matrix
 
@@ -259,20 +268,24 @@ seeds `42`, `123`, and `999`.
 | `mk02` | DispatchMWKR | 30 | 134-169 | 86-113 |
 | `mk03` | DispatchFIFO / DispatchMWKR | 204 | 1086-1206 | 488-563 |
 | `mk04` | DispatchFIFO | 77 | 279-292 | 143-177 |
+| `mk05` | DispatchFIFO | 185 | 541-584 | 287-323 |
 | `mt10c1` | DispatchMOPNR | 1225 | 3348-3394 | 1446-1728 |
 | `01a` | DispatchFIFO | 3056 | 10212-10398 | 4132-4525 |
 | `fattahi1` | DispatchMWKR | 66 | 86-135 | 86-135 |
 | `fattahi2` | DispatchFIFO / DispatchMWKR | 107 | 107-192 | 107-149 |
 | `fattahi3` | DispatchFIFO / DispatchMOPNR | 221 | 298-442 | 221-361 |
+| `fattahi4` | DispatchFIFO / DispatchMWKR / DispatchMOPNR | 367 | 409-699 | 407-626 |
 | edata `ft06` | DispatchFIFO | 55 | 146-152 | 71-112 |
 | `kacem1` | DispatchFIFO | 11 | 27-82 | 26-44 |
 | `kacem2` | DispatchMWKR | 12 | 62-102 | 50-88 |
 | `kacem3` | DispatchFIFO / DispatchMWKR / DispatchMOPNR | 8 | 42-77 | 50-72 |
+| `kacem4` | DispatchMWKR | 12 | 114-159 | 71-138 |
 
-All 182 schedules passed the independent feasibility checker. No single
+All 224 schedules passed the independent feasibility checker. No single
 dispatching rule dominates every instance: MWKR is strongest on `mk01`, `mk02`,
-`fattahi1`, and `kacem2`; FIFO is strongest on `mk04`, `ft06`, and `kacem1`,
-ties MWKR on `mk03` and `fattahi2`, and ties MOPNR on `fattahi3`. MOPNR is
+`fattahi1`, `kacem2`, and `kacem4`; FIFO is strongest on `mk04`, `mk05`, `ft06`,
+and `kacem1`, ties MWKR on `mk03` and `fattahi2`, and ties MOPNR on `fattahi3`
+and `fattahi4`. MOPNR is
 strongest on `mt10c1`; FIFO is strongest on `01a`; and FIFO, MWKR, and MOPNR
 tie on `kacem3`.
 Ready-operation random dispatching is consistently better than the simple
@@ -292,18 +305,18 @@ comparison references, not local optimality proofs.
 
 | Algorithm family | Mean best gap | Maximum best gap |
 |---|---:|---:|
-| FIFO | 5.046584 | 21.285714 |
-| SPT | 1.870830 | 3.366667 |
-| EarliestFinishTime | 0.459417 | 1.384615 |
-| DispatchFIFO | 0.145799 | 0.331176 |
-| DispatchSPT | 1.109732 | 2.259082 |
-| DispatchEFT | 0.461686 | 1.384615 |
-| DispatchMWKR | 0.140666 | 0.350593 |
-| DispatchMOPNR | 0.202347 | 0.466667 |
-| Random | 2.608660 | 5.000000 |
-| DispatchRandom | 1.479880 | 6.142857 |
+| FIFO | 5.832835 | 25.090909 |
+| SPT | 1.862132 | 3.366667 |
+| EarliestFinishTime | 0.443474 | 1.384615 |
+| DispatchFIFO | 0.142344 | 0.331176 |
+| DispatchSPT | 1.059447 | 2.259082 |
+| DispatchEFT | 0.452452 | 1.384615 |
+| DispatchMWKR | 0.127536 | 0.350593 |
+| DispatchMOPNR | 0.183334 | 0.466667 |
+| Random | 2.848354 | 9.363636 |
+| DispatchRandom | 1.594254 | 6.142857 |
 
-On the current thirteen-instance subset, DispatchMWKR has the strongest
+On the current sixteen-instance subset, DispatchMWKR has the strongest
 cross-instance mean best gap. The subset remains intentionally small, so the
 next step is broader benchmark coverage before adding more rules.
 
@@ -311,7 +324,7 @@ next step is broader benchmark coverage before adding more rules.
 
 Recursively discovers tracked FJSPLib files, matches them one-to-one with
 `instances/fjsplib_bks.csv`, and verifies that every tracked file still loads.
-All thirteen current rows pass the file, BKS, and loader checks. The script returns
+All sixteen current rows pass the file, BKS, and loader checks. The script returns
 a failing exit code when a file, metadata row, or loadable instance is missing.
 
 ## Known Notes

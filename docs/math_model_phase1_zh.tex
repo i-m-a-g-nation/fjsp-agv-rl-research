@@ -1,24 +1,23 @@
-\documentclass[UTF8,fontset=windows,11pt]{ctexart}
+\documentclass[11pt]{ctexart}
 
 \usepackage[a4paper,margin=1in]{geometry}
 \usepackage{amsmath,amssymb,booktabs}
 \usepackage[hidelinks]{hyperref}
 
-\title{Phase 1 静态 FJSP 数学建模}
+\title{Phase 1 静态 FJSP 数学模型}
 \author{FJSP-AGV-RL Research Platform}
 \date{\today}
 
 \begin{document}
-\sloppy
 \maketitle
 
-\section{范围说明}
+\section{范围}
 
-本文档描述当前仓库在 Phase 1 中实现的静态柔性作业车间调度
-（Flexible Job Shop Scheduling Problem, FJSP）数学模型。当前阶段只关注
-静态 FJSP，不包含 AGV 运输、路径规划、动态事件、强化学习或图神经网络。
+本文档描述仓库当前 Phase 1 实现的静态柔性作业车间调度
+（Flexible Job Shop Scheduling Problem, FJSP）模型。AGV 运输、路径规划、
+动态到达、强化学习和图神经网络均不属于 Phase 1 范围。
 
-\section{集合与下标}
+\section{集合与索引}
 
 \begin{table}[h]
 \centering
@@ -26,16 +25,16 @@
 \toprule
 符号 & 含义 \\
 \midrule
-$J$ & 工件集合，下标为 $j$ \\
-$O_j$ & 工件 $j$ 的有序工序集合，下标为 $o$ \\
-$M$ & 机器集合，下标为 $m$ \\
+$J$ & 工件集合，索引为 $j$ \\
+$O_j$ & 工件 $j$ 的有序工序集合，索引为 $o$ \\
+$M$ & 机器集合，索引为 $m$ \\
 $A_{jo}$ & 工序 $(j,o)$ 的可选机器集合 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-对于每个工件 $j$，工序必须满足工艺路线顺序：
-$(j,o)$ 必须先于 $(j,o+1)$ 加工。
+同一工件内部必须满足工艺顺序：若 $o+1 \in O_j$，则工序 $(j,o)$ 必须先于
+$(j,o+1)$ 完成。
 
 \section{参数}
 
@@ -46,16 +45,16 @@ $(j,o)$ 必须先于 $(j,o+1)$ 加工。
 符号 & 含义 \\
 \midrule
 $p_{jom}$ & 工序 $(j,o)$ 在机器 $m$ 上的加工时间 \\
-$H$ & 保守的时间上界 \\
+$H$ & 保守调度上界 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-当前 CP-SAT baseline 使用如下保守 horizon：
+实现中使用如下保守 horizon：
 \[
 H = \sum_{j \in J} \sum_{o \in O_j} \max_{m \in A_{jo}} p_{jom}.
 \]
-这个上界不一定紧，但对当前小规模 baseline 是安全的。
+该上界不一定紧，但足以支撑当前小规模 CP-SAT baseline。
 
 \section{决策变量}
 
@@ -65,406 +64,189 @@ H = \sum_{j \in J} \sum_{o \in O_j} \max_{m \in A_{jo}} p_{jom}.
 \toprule
 符号 & 含义 \\
 \midrule
-$x_{jom} \in \{0,1\}$ & 若工序 $(j,o)$ 分配到机器 $m$，则取 1 \\
+$x_{jom} \in \{0,1\}$ & 若工序 $(j,o)$ 分配给机器 $m$，则为 1 \\
 $S_{jo} \ge 0$ & 工序 $(j,o)$ 的开始时间 \\
 $C_{jo} \ge 0$ & 工序 $(j,o)$ 的完成时间 \\
-$C_{\max} \ge 0$ & 最大完工时间，也就是 makespan \\
+$C_{\max} \ge 0$ & makespan \\
 $y_{abm} \in \{0,1\}$ & 同一机器上两个工序 $a,b$ 的先后顺序变量 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-这里 $a,b$ 表示类似 $(j,o)$ 的工序编号。经典 MIP 写法可以显式使用
-$y$ 变量；当前 OR-Tools 实现则使用 optional interval 和
-\texttt{NoOverlap} 表达机器容量约束。
-
-\section{目标函数}
-
-目标是最小化 makespan：
-\[
-\min C_{\max}.
-\]
+当前 OR-Tools 实现使用 optional interval variables 和 \texttt{NoOverlap}，
+并不显式建立所有 $y$ 变量；这里给出 $y$ 是为了说明经典数学规划形式。
 
 \section{约束}
 
 \subsection{机器选择约束}
 
-每道工序必须且只能选择一台可行机器：
+每个工序必须且只能选择一台可行机器：
 \[
 \sum_{m \in A_{jo}} x_{jom} = 1,
 \qquad \forall j \in J,\; o \in O_j.
 \]
 
-不在 $A_{jo}$ 中的机器不是合法选择，代码中不会为这些机器生成候选分配。
-
-\subsection{加工时间连接约束}
-
-如果工序 $(j,o)$ 选择机器 $m$，则完成时间必须等于开始时间加加工时间：
+不可行机器不得被选择：
 \[
-C_{jo} \ge S_{jo} + p_{jom} - H(1 - x_{jom}),
-\qquad \forall j,o,\; m \in A_{jo}.
+x_{jom}=0,
+\qquad \forall m \notin A_{jo}.
+\]
+
+\subsection{加工时间约束}
+
+若工序选择机器 $m$，其完成时间由开始时间和加工时间决定：
+\[
+C_{jo} = S_{jo} + \sum_{m \in A_{jo}} p_{jom}x_{jom}.
 \]
 
 \subsection{工序顺序约束}
 
-同一工件内部必须满足工艺路线顺序：
+同一工件内部的后续工序不得早于前序工序完成：
 \[
-C_{jo} \le S_{j,o+1},
+S_{j,o+1} \ge C_{jo},
 \qquad \forall j \in J,\; o,o+1 \in O_j.
 \]
 
 \subsection{机器容量约束}
 
-每台机器同一时刻最多只能加工一道工序。对任意两个不同工序
-$a=(j,o)$ 和 $b=(k,q)$，若二者都可以选择机器 $m$，则需要满足：
+任意机器在同一时间最多加工一个工序。对可能使用同一机器 $m$ 的两个不同工序
+$a=(j,o)$ 和 $b=(j',o')$，可用 Big-M 形式表示为：
 \[
-S_a + p_{am} \le S_b + H(1 - y_{abm}) + H(2 - x_{am} - x_{bm}),
+S_b \ge C_a - H(1-y_{abm}) - H(2-x_{am}-x_{bm}),
 \]
 \[
-S_b + p_{bm} \le S_a + Hy_{abm} + H(2 - x_{am} - x_{bm}).
+S_a \ge C_b - Hy_{abm} - H(2-x_{am}-x_{bm}).
 \]
 
-当两个工序都分配到机器 $m$ 时，上述约束会强制二者不重叠。当前
-CP-SAT 代码中，这部分由每台机器上的 \texttt{NoOverlap} 约束完成。
+在代码中，这一约束由 CP-SAT 的 optional interval 和 \texttt{NoOverlap}
+表达；启发式输出则由独立 feasibility checker 验证。
 
 \subsection{Makespan 定义}
 
-makespan 必须不小于每个工件最后一道工序的完成时间：
 \[
-C_{\max} \ge C_{j,last(j)}, \qquad \forall j \in J.
+C_{\max} \ge C_{jo},
+\qquad \forall j \in J,\; o \in O_j.
+\]
+
+目标函数为：
+\[
+\min C_{\max}.
 \]
 
 \section{Feasibility Checker 对应关系}
 
-代码中的 feasibility checker 会独立验证：
+代码中的 \texttt{src/scheduling/feasibility.py} 对应检查以下内容：
 
 \begin{itemize}
-  \item 每道工序恰好出现一次；
-  \item 工件编号和工序编号不越界；
-  \item 每道工序选择的机器属于可选机器集合；
-  \item 调度记录中的加工时间与实例数据一致；
-  \item 同一工件内部满足工序顺序；
-  \item 同一机器上的工序时间区间不重叠；
-  \item 记录的 makespan 等于所有工序完成时间的最大值。
+  \item 所有工序必须被调度且仅调度一次；
+  \item 每个工序的 \texttt{job\_id}、\texttt{op\_id}、\texttt{machine\_id} 必须合法；
+  \item 加工时间必须与实例数据一致；
+  \item 同一工件内部满足 precedence；
+  \item 同一机器上不存在重叠加工；
+  \item 机器必须属于该工序的可选机器集合；
+  \item makespan 必须与记录中的最大完成时间一致。
 \end{itemize}
 
-\section{Dispatching Rule}
+因此，任何求解器或启发式算法返回调度前，都必须经过 feasibility checker。
+这也是 AGENTS.md 中 ``正确性优先'' 的核心要求。
 
-严格 dispatching rule 共享候选元组：
-\[
-(j,o,m,r_{jo},s_{jom},f_{jom},p_{jom}),
-\]
-其中 $r_{jo}$ 是工件 ready time，$s_{jom}$ 是在机器 $m$ 上的最早可行
-开始时间，$f_{jom}=s_{jom}+p_{jom}$ 是候选完成时间。
+\section{已跟踪的 FJSPLib 子集}
 
-\begin{table}[h]
-\centering
-\begin{tabular}{lll}
-\toprule
-规则 & 工序选择 & 机器选择 \\
-\midrule
-FIFO & 最小 $(r_{jo},j,o)$ & 最早完成机器 \\
-SPT & 最小 $p_{jom}$ 的 ready pair & 与 pair 同时确定 \\
-EFT & 最小 $f_{jom}$ 的 ready pair & 与 pair 同时确定 \\
-MWKR & 剩余路线工作量最大 & 最早完成机器 \\
-MOPNR & 剩余工序数最大 & 最早完成机器 \\
-Random & 随机 ready pair & 与 pair 同时确定 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-MWKR 的剩余路线工作量定义为：
-\[
-W_{jo} = \sum_{q=o}^{last(j)} \min_{m \in A_{jq}} p_{jqm}.
-\]
-MOPNR 使用剩余工序数作为 ready job 的优先级：
-\[
-N_{jo} = last(j) - o + 1.
-\]
-
-\section{实验结果记录格式}
-
-Phase 1 实验脚本会在 \texttt{experiments/results/} 下输出标准 CSV。
-每一行表示一个算法在一个实例上的一次运行：
-
-\begin{table}[h]
-\centering
-\begin{tabular}{ll}
-\toprule
-字段 & 含义 \\
-\midrule
-\texttt{experiment\_id} & 实验编号 \\
-\texttt{instance\_name} & 实例名称 \\
-\texttt{algorithm} & 算法或求解器名称 \\
-\texttt{makespan} & 目标值；若未返回调度则为空 \\
-\texttt{feasible} & feasibility checker 的结果，PASS 或 FAIL \\
-\texttt{runtime\_s} & 运行时间，单位为秒 \\
-\texttt{note} & 求解器状态、错误信息或验证说明 \\
-\texttt{objective\_bound} & CP-SAT 给出的目标下界，若可用 \\
-\texttt{gap} & 相对 gap，定义见下节，若可用 \\
-\texttt{solver\_wall\_time} & CP-SAT 内部 wall time，若可用 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-CSV 记录层只负责保存实验事实，不改变算法行为，也不改变可行性定义。
-Phase 1 实验脚本使用共用 runner helper，由 helper 统一负责计时、
-调用求解器、运行独立 feasibility checker、收集失败信息，并将可选的
-solver metadata 写入 CSV 记录。
-
-\subsection{Benchmark 批量实验入口}
-
-批量实验入口会按照稳定路径顺序递归发现 \texttt{*.fjs} 文件。对于每个
-成功加载的静态 FJSP 实例，入口会运行所选的 Phase 1 启发式算法，并默认
-运行 CP-SAT 参考求解器。CP-SAT 的单实例 time limit 可以配置，从而限制
-较大 benchmark 集合上的计算时间。若文件格式错误，入口会保留一条
-\texttt{LOAD} 算法、\texttt{FAIL} 状态的记录，避免损坏文件从实验报告中
-静默消失。
-
-\subsection{已跟踪的 FJSPLib 子集}
-
-仓库会跟踪一个较小的真实数据子集。文件来自 ScheduleOpt 官方 FJSPLib
-仓库，并按照其 CC-BY-SA-4.0 许可证保留来源说明：
+仓库跟踪了一个小型真实静态 FJSP 子集，文件来自 ScheduleOpt 官方 FJSPLib
+仓库，并保留 CC-BY-SA-4.0 归属说明：
 \url{https://scheduleopt.github.io/benchmarks/fjsplib}。
-该子集覆盖六个来源系列和逐步增大的实例规模。
+当前子集覆盖六个来源系列，共 16 个上游文件。
 
 \begin{table}[h]
 \centering
 \begin{tabular}{lrrrr}
 \toprule
-实例 & 工件数 & 机器数 & FJSPLib BKS & 本地 CP-SAT \\
+实例 & 工件数 & 机器数 & FJSPLib BKS & 本地 CP-SAT 10s \\
 \midrule
 \texttt{fattahi1} & 2 & 2 & 66 & 66 \\
 \texttt{fattahi2} & 2 & 2 & 107 & 107 \\
 \texttt{fattahi3} & 3 & 2 & 221 & 221 \\
+\texttt{fattahi4} & 3 & 2 & 355 & 355 \\
 \texttt{mt10c1} & 10 & 11 & 927 & 927 \\
-\texttt{01a} & 10 & 5 & 2505 & 2565 \\
+\texttt{01a} & 10 & 5 & 2505 & 2628 \\
 \texttt{kacem1} & 4 & 5 & 11 & 11 \\
 \texttt{kacem2} & 10 & 7 & 11 & 11 \\
 \texttt{kacem3} & 10 & 10 & 7 & 7 \\
-Hurink edata \texttt{ft06} & 6 & 6 & 55 & 55 \\
-Brandimarte \texttt{mk01} & 10 & 6 & 40 & 40 \\
-Brandimarte \texttt{mk02} & 10 & 6 & 26 & 28 \\
-Brandimarte \texttt{mk03} & 15 & 8 & 204 & 204 \\
-Brandimarte \texttt{mk04} & 15 & 8 & 60 & 60 \\
+\texttt{kacem4} & 15 & 10 & 11 & 15 \\
+\texttt{ft06} & 6 & 6 & 55 & 55 \\
+\texttt{mk01} & 10 & 6 & 40 & 40 \\
+\texttt{mk02} & 10 & 6 & 26 & 28 \\
+\texttt{mk03} & 15 & 8 & 204 & 220 \\
+\texttt{mk04} & 15 & 8 & 60 & 62 \\
+\texttt{mk05} & 15 & 4 & 172 & 180 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-上表中的本地 CP-SAT 结果均通过独立 feasibility checker。FJSPLib BKS 列来自
-上游参考数据，不是本仓库自行推断的值。对于 \texttt{mk02}、\texttt{mk03}、
-\texttt{mk04}、\texttt{mt10c1} 和 \texttt{01a}，CP-SAT 在 10 秒时限内报告
-\texttt{FEASIBLE}。因此批量实验
-只记录限时可行参考调度，不声称本地运行证明了最优性。
+上表中的 CP-SAT 值均通过独立 feasibility checker。若 CP-SAT 状态为
+\texttt{FEASIBLE} 而非 \texttt{OPTIMAL}，该值只是限时可行参考调度，
+不是本地已证明最优解。当前 \texttt{mk02}、\texttt{mk03}、\texttt{mk04}、
+\texttt{mk05}、\texttt{mt10c1}、\texttt{01a} 和 \texttt{kacem4}
+都属于这种情况。
 
-官方 benchmark 网页将 \texttt{kacem1} 标为 $4 \times 6$，但官方旧格式文件
-以 \texttt{4 5 5} 开头。本仓库按照可加载文件内容记录为 $4 \times 5$，并保留
-上游 BKS 11。
+\section{实验摘要}
 
-\section{CP-SAT 诊断信息}
+\subsection{CP-SAT benchmark 矩阵}
 
-对于 CP-SAT 结果，代码会在通用的 \texttt{ScheduleResult} 对象中保存三个
-可选诊断字段：
-\[
-LB = \text{BestObjectiveBound},
-\qquad
-gap = \frac{C_{\max}-LB}{\max(1,C_{\max})}.
-\]
-此外还会记录求解器内部的 wall time。对于 toy instance 上已证明最优的解，
-下界等于 makespan，因此 gap 为 0。启发式算法没有这些求解器诊断信息，
-对应 CSV 字段保持为空。
+实验 \texttt{exp\_009} 对 16 个 tracked FJSPLib 实例分别使用单 worker 和
+auto worker，在 3 秒时限下各重复 2 次。最新结果为：
 
-\subsection{CP-SAT 时限 sweep}
-
-tracked \texttt{mk03} sweep 将 CP-SAT worker 数固定为 1，只改变 time limit。
-固定 worker 数可以减少并行搜索噪声，使对比更容易解释。
-
-\begin{table}[h]
-\centering
-\begin{tabular}{rrrrr}
-\toprule
-时限（秒） & Makespan & 状态 & Bound & Gap \\
-\midrule
-1 & 417 & \texttt{FEASIBLE} & 20 & 0.952038 \\
-3 & 285 & \texttt{FEASIBLE} & 20 & 0.929825 \\
-10 & 220 & \texttt{FEASIBLE} & 20 & 0.909091 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-在本次运行中，更长时限改善了可行调度，但没有任何一行证明最优性。默认
-benchmark 批量实验使用求解器默认 worker 配置，并单独记录。worker 数属于
-实验配置的一部分，比较时不能隐藏。
-
-\subsection{CP-SAT worker 数量 sweep}
-
-tracked \texttt{mk03} worker sweep 将时限固定为 10 秒，只改变 CP-SAT worker
-配置。\texttt{auto} 表示保留求解器的默认 worker 选择。
-
-\begin{table}[h]
-\centering
-\begin{tabular}{rrrrr}
-\toprule
-Workers & Makespan & 状态 & Bound & Gap \\
-\midrule
-1 & 220 & \texttt{FEASIBLE} & 20 & 0.909091 \\
-2 & 207 & \texttt{FEASIBLE} & 20 & 0.903382 \\
-4 & 207 & \texttt{FEASIBLE} & 20 & 0.903382 \\
-\texttt{auto} & 209 & \texttt{FEASIBLE} & 75 & 0.641148 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-每一行均通过独立 feasibility checker。该表只是一次限时运行的观测结果，
-不是稳定的 worker 性能排名：并行 CP-SAT 搜索可能在不同运行之间产生变化。
-本次观测中，自动配置给出了更强的 bound，而 2 和 4 workers 给出了略好的
-incumbent。
-
-\subsection{CP-SAT worker 重复观测}
-
-重复实验保持相同的 \texttt{mk03} 实例和 10 秒时限，对每种 worker 配置运行
-3 次。实验同时保存每一条经过 feasibility checker 的原始记录和单独的聚合
-CSV。表中的标准差是观测 makespan 的总体标准差。
-
-\begin{table}[h]
-\centering
-\begin{tabular}{rrrrrrr}
-\toprule
-Workers & 通过数 & 最佳值 & 平均值 & 标准差 & 最佳 bound & 最佳 gap \\
-\midrule
-1 & 3/3 & 220 & 220.000000 & 0.000000 & 20 & 0.909091 \\
-2 & 3/3 & 204 & 204.000000 & 0.000000 & 20 & 0.901961 \\
-4 & 3/3 & 204 & 204.000000 & 0.000000 & 21 & 0.897059 \\
-\texttt{auto} & 3/3 & 204 & 204.000000 & 0.000000 & 88 & 0.568627 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-全部 12 个调度均通过独立 feasibility checker。在这个小样本中，2、4 和
-自动 worker 都稳定达到上游 BKS \texttt{204}。但是 CP-SAT 仍然报告
-\texttt{FEASIBLE}，所以这些结果仍然只是限时可行参考解，不是本地已证明
-最优解。
-
-\subsection{CP-SAT benchmark 重复矩阵}
-
-受控矩阵递归扫描 tracked 静态 FJSPLib 子集。每个实例在 3 秒时限下使用单
-worker 运行 2 次，再使用 auto worker 配置运行 2 次。逐次原始记录和按实例
-聚合的统计记录分别保存。
-
-\begin{table}[h]
-\centering
-\begin{tabular}{lrrrrlr}
-\toprule
-实例 & Workers & 通过数 & 最佳值 & 平均值 & 状态 & Bound \\
-\midrule
-\texttt{mk01} & 1 & 2/2 & 40 & 40.000000 & \texttt{OPTIMAL} & 40 \\
-\texttt{mk01} & \texttt{auto} & 2/2 & 40 & 40.000000 & \texttt{OPTIMAL} & 40 \\
-\texttt{mk02} & 1 & 2/2 & 30 & 30.000000 & \texttt{FEASIBLE} & 3 \\
-\texttt{mk02} & \texttt{auto} & 2/2 & 28 & 28.000000 & \texttt{FEASIBLE} & 22 \\
-\texttt{mk03} & 1 & 2/2 & 272 & 274.000000 & \texttt{FEASIBLE} & 20 \\
-\texttt{mk03} & \texttt{auto} & 2/2 & 215 & 218.000000 & \texttt{FEASIBLE} & 84 \\
-\texttt{mk04} & 1 & 2/2 & 68 & 68.000000 & \texttt{FEASIBLE} & 14 \\
-\texttt{mk04} & \texttt{auto} & 2/2 & 61 & 62.000000 & \texttt{FEASIBLE} & 43 \\
-\texttt{mt10c1} & 1 & 2/2 & 933 & 940.500000 & \texttt{FEASIBLE} & 759 \\
-\texttt{mt10c1} & \texttt{auto} & 2/2 & 927 & 927.000000 & \texttt{FEASIBLE} & 876 \\
-\texttt{01a} & 1 & 2/2 & 2697 & 2697.000000 & \texttt{FEASIBLE} & 1395 \\
-\texttt{01a} & \texttt{auto} & 2/2 & 2621 & 2625.500000 & \texttt{FEASIBLE} & 2505 \\
-\texttt{fattahi1} & 1/\texttt{auto} & 4/4 & 66 & 66.000000 & \texttt{OPTIMAL} & 66 \\
-\texttt{fattahi2} & 1/\texttt{auto} & 4/4 & 107 & 107.000000 & \texttt{OPTIMAL} & 107 \\
-\texttt{fattahi3} & 1/\texttt{auto} & 4/4 & 221 & 221.000000 & \texttt{OPTIMAL} & 221 \\
-\texttt{ft06} & 1/\texttt{auto} & 4/4 & 55 & 55.000000 & \texttt{OPTIMAL} & 55 \\
-\texttt{kacem1} & 1/\texttt{auto} & 4/4 & 11 & 11.000000 & \texttt{OPTIMAL} & 11 \\
-\texttt{kacem2} & 1/\texttt{auto} & 4/4 & 11 & 11.000000 & \texttt{OPTIMAL} & 11 \\
-\texttt{kacem3} & 1/\texttt{auto} & 4/4 & 7 & 7.000000 & \texttt{OPTIMAL} & 7 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-全部 52 个调度均通过独立 feasibility checker。除 \texttt{mk02} 外，较小的
-tracked 实例在时限内证明了最优性。对于 \texttt{mk02}、\texttt{mk03}、
-\texttt{mk04}、\texttt{mt10c1} 和 \texttt{01a}，
-auto workers 改善了本次观测中的 incumbent 和 bound，但两种配置都没有在
-3 秒内证明最优性。
+\begin{itemize}
+  \item 64/64 个 CP-SAT 调度全部通过 feasibility checker；
+  \item 小实例多数能证明 \texttt{OPTIMAL}；
+  \item \texttt{mk05}、\texttt{kacem4} 等较难实例仍主要表现为限时
+  \texttt{FEASIBLE}；
+  \item 自动 worker 在本轮观察中通常给出更好的 incumbent 或 bound，但这不是稳定性能排名。
+\end{itemize}
 
 \subsection{启发式 benchmark 矩阵}
 
-启发式矩阵在每个 tracked FJSPLib 实例上运行一次确定性 Phase 1 规则。两类
-随机算法使用固定 seed 42、123 和 999。因此，表中的范围是可复现观测，而
-不是没有控制的随机样本。
+实验 \texttt{exp\_010} 在每个 tracked 实例上运行确定性 baseline 与严格
+dispatching rule，并对 Random 与 DispatchRandom 使用固定 seed 42、123、999。
+最新结果为：
 
-\begin{table}[h]
-\centering
-\begin{tabular}{llrr}
-\toprule
-实例 & 最佳确定性规则 & Random 范围 & DispatchRandom 范围 \\
-\midrule
-\texttt{mk01} & \texttt{DispatchMWKR} (44) & 148--165 & 92--125 \\
-\texttt{mk02} & \texttt{DispatchMWKR} (30) & 134--169 & 86--113 \\
-\texttt{mk03} & \texttt{DispatchFIFO/MWKR} (204) & 1086--1206 & 488--563 \\
-\texttt{mk04} & \texttt{DispatchFIFO} (77) & 279--292 & 143--177 \\
-\texttt{mt10c1} & \texttt{DispatchMOPNR} (1225) & 3348--3394 & 1446--1728 \\
-\texttt{01a} & \texttt{DispatchFIFO} (3056) & 10212--10398 & 4132--4525 \\
-\texttt{fattahi1} & \texttt{DispatchMWKR} (66) & 86--135 & 86--135 \\
-\texttt{fattahi2} & \texttt{DispatchFIFO/MWKR} (107) & 107--192 & 107--149 \\
-\texttt{fattahi3} & \texttt{DispatchFIFO/MOPNR} (221) & 298--442 & 221--361 \\
-\texttt{ft06} & \texttt{DispatchFIFO} (55) & 146--152 & 71--112 \\
-\texttt{kacem1} & \texttt{DispatchFIFO} (11) & 27--82 & 26--44 \\
-\texttt{kacem2} & \texttt{DispatchMWKR} (12) & 62--102 & 50--88 \\
-\texttt{kacem3} & \texttt{DispatchFIFO/MWKR/MOPNR} (8) & 42--77 & 50--72 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-全部 182 个调度均通过独立 feasibility checker。没有一个规则在所有实例上
-占优：MWKR 在 \texttt{mk01}、\texttt{mk02}、\texttt{fattahi1} 和
-\texttt{kacem2} 上最好；FIFO 在 \texttt{mk04}、\texttt{ft06} 和
-\texttt{kacem1} 上最好，在 \texttt{mk03} 和 \texttt{fattahi2} 上与 MWKR
-并列，并在 \texttt{fattahi3} 上与 MOPNR 并列。MOPNR 在 \texttt{mt10c1}
-上最好；FIFO 在 \texttt{01a} 上最好；FIFO、MWKR 和 MOPNR 在
-\texttt{kacem3} 上并列。ready-operation 随机 dispatching 在当前
-tracked 子集上持续优于简单 job-order 随机 baseline，但仍然受 seed 影响。
-
-\clearpage
-\subsection{基于 BKS 的启发式质量指标}
-
-质量报告从 \texttt{instances/fjsplib\_bks.csv} 读取结构化上游参考值。对于
-启发式算法族 $h$ 和实例 $i$，计算
-\[
-gap_{\mathrm{BKS}}(h,i)
-= \frac{C_{\max}(h,i)-\mathrm{BKS}_i}{\mathrm{BKS}_i}.
-\]
-上游 BKS 用于比较，不等于本地求解器已经证明最优性。
+\begin{itemize}
+  \item 224/224 个启发式调度全部通过 feasibility checker；
+  \item 没有任何单一 dispatching rule 在所有实例上占优；
+  \item 当前 16 实例上，DispatchMWKR 的平均 best gap 最低；
+  \item \texttt{kacem4} 的启发式最好值为 12，仍高于 BKS 11，是后续优化的有用压力样本。
+\end{itemize}
 
 \begin{table}[h]
 \centering
 \begin{tabular}{lrr}
 \toprule
-算法族 & 平均最佳 gap & 最大最佳 gap \\
+算法族 & 平均 best gap & 最大 best gap \\
 \midrule
-FIFO & 5.046584 & 21.285714 \\
-SPT & 1.870830 & 3.366667 \\
-EarliestFinishTime & 0.459417 & 1.384615 \\
-DispatchFIFO & 0.145799 & 0.331176 \\
-DispatchSPT & 1.109732 & 2.259082 \\
-DispatchEFT & 0.461686 & 1.384615 \\
-DispatchMWKR & 0.140666 & 0.350593 \\
-DispatchMOPNR & 0.202347 & 0.466667 \\
-Random & 2.608660 & 5.000000 \\
-DispatchRandom & 1.479880 & 6.142857 \\
+DispatchMWKR & 0.127536 & 0.350593 \\
+DispatchFIFO & 0.142344 & 0.331176 \\
+DispatchMOPNR & 0.183334 & 0.466667 \\
+EarliestFinishTime & 0.443474 & 1.384615 \\
+DispatchEFT & 0.452452 & 1.384615 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-在当前十三实例子集上，DispatchMWKR 的平均最佳 gap 最小。当前样本仍然较小，
-应优先扩展 benchmark 覆盖，再决定是否增加新规则。
+\subsection{元数据审计}
 
-\clearpage
-\subsection{Tracked benchmark 元数据审计}
+实验 \texttt{exp\_012} 会递归发现 tracked FJSPLib 文件，将其与
+\texttt{instances/fjsplib\_bks.csv} 逐项匹配，并验证每个文件仍能被 loader
+加载。当前 16/16 个 tracked 文件全部通过文件、BKS 行和 loader 检查。
 
-在扩展 benchmark 子集之前，元数据审计会递归发现 tracked FJSPLib 文件，将
-其与 \texttt{instances/fjsplib\_bks.csv} 逐项匹配，并加载每个发现的文件。
-只有 tracked 文件存在、上游参考记录存在、loader 接受该实例时，一行记录才
-会通过。当前十三行均通过。这个门禁可以避免遗漏文件或过期元数据悄悄进入质量
-比较。
+\section{维护结论}
+
+当前项目仍然适合继续小步扩展，不需要推倒重构。推荐继续沿着以下顺序推进：
+
+\begin{enumerate}
+  \item 小批量扩展 FJSPLib 静态实例；
+  \item 每批都运行 metadata audit、heuristic matrix、CP-SAT matrix 和 pytest；
+  \item 保持 feasibility checker 独立且不可绕过；
+  \item 在 Phase 1 未稳定前，不引入 AGV、RL 或 GNN。
+\end{enumerate}
 
 \end{document}

@@ -244,16 +244,19 @@ Instance & Jobs & Machines & FJSPLib BKS & Local CP-SAT \\
 \texttt{fattahi1} & 2 & 2 & 66 & 66 \\
 \texttt{fattahi2} & 2 & 2 & 107 & 107 \\
 \texttt{fattahi3} & 3 & 2 & 221 & 221 \\
+\texttt{fattahi4} & 3 & 2 & 355 & 355 \\
 \texttt{mt10c1} & 10 & 11 & 927 & 927 \\
-\texttt{01a} & 10 & 5 & 2505 & 2565 \\
+\texttt{01a} & 10 & 5 & 2505 & 2628 \\
 \texttt{kacem1} & 4 & 5 & 11 & 11 \\
 \texttt{kacem2} & 10 & 7 & 11 & 11 \\
 \texttt{kacem3} & 10 & 10 & 7 & 7 \\
+\texttt{kacem4} & 15 & 10 & 11 & 15 \\
 Hurink edata \texttt{ft06} & 6 & 6 & 55 & 55 \\
 Brandimarte \texttt{mk01} & 10 & 6 & 40 & 40 \\
 Brandimarte \texttt{mk02} & 10 & 6 & 26 & 28 \\
-Brandimarte \texttt{mk03} & 15 & 8 & 204 & 204 \\
-Brandimarte \texttt{mk04} & 15 & 8 & 60 & 60 \\
+Brandimarte \texttt{mk03} & 15 & 8 & 204 & 220 \\
+Brandimarte \texttt{mk04} & 15 & 8 & 60 & 62 \\
+Brandimarte \texttt{mk05} & 15 & 4 & 172 & 180 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -261,7 +264,7 @@ Brandimarte \texttt{mk04} & 15 & 8 & 60 & 60 \\
 The local CP-SAT values above were independently validated by the feasibility
 checker. The FJSPLib BKS column is upstream reference data, not a value inferred
 by this repository. For \texttt{mk02}, \texttt{mk03}, \texttt{mk04},
-\texttt{mt10c1}, and \texttt{01a}, CP-SAT reports
+\texttt{mk05}, \texttt{mt10c1}, \texttt{01a}, and \texttt{kacem4}, CP-SAT reports
 \texttt{FEASIBLE} under the 10-second limit. The batch therefore records
 time-limited feasible reference schedules, not locally proven optima.
 
@@ -374,33 +377,38 @@ Instance & Workers & Pass & Best & Mean & Status & Bound \\
 \midrule
 \texttt{mk01} & 1 & 2/2 & 40 & 40.000000 & \texttt{OPTIMAL} & 40 \\
 \texttt{mk01} & \texttt{auto} & 2/2 & 40 & 40.000000 & \texttt{OPTIMAL} & 40 \\
-\texttt{mk02} & 1 & 2/2 & 30 & 30.000000 & \texttt{FEASIBLE} & 3 \\
-\texttt{mk02} & \texttt{auto} & 2/2 & 28 & 28.000000 & \texttt{FEASIBLE} & 22 \\
-\texttt{mk03} & 1 & 2/2 & 272 & 274.000000 & \texttt{FEASIBLE} & 20 \\
-\texttt{mk03} & \texttt{auto} & 2/2 & 215 & 218.000000 & \texttt{FEASIBLE} & 84 \\
+\texttt{mk02} & 1 & 2/2 & 31 & 31.000000 & \texttt{FEASIBLE} & 3 \\
+\texttt{mk02} & \texttt{auto} & 2/2 & 30 & 30.000000 & \texttt{FEASIBLE} & 20 \\
+\texttt{mk03} & 1 & 2/2 & 352 & 352.000000 & \texttt{FEASIBLE} & 20 \\
+\texttt{mk03} & \texttt{auto} & 2/2 & 234 & 234.000000 & \texttt{FEASIBLE} & 82 \\
 \texttt{mk04} & 1 & 2/2 & 68 & 68.000000 & \texttt{FEASIBLE} & 14 \\
-\texttt{mk04} & \texttt{auto} & 2/2 & 61 & 62.000000 & \texttt{FEASIBLE} & 43 \\
-\texttt{mt10c1} & 1 & 2/2 & 933 & 940.500000 & \texttt{FEASIBLE} & 759 \\
-\texttt{mt10c1} & \texttt{auto} & 2/2 & 927 & 927.000000 & \texttt{FEASIBLE} & 876 \\
-\texttt{01a} & 1 & 2/2 & 2697 & 2697.000000 & \texttt{FEASIBLE} & 1395 \\
-\texttt{01a} & \texttt{auto} & 2/2 & 2621 & 2625.500000 & \texttt{FEASIBLE} & 2505 \\
+\texttt{mk04} & \texttt{auto} & 2/2 & 64 & 65.000000 & \texttt{FEASIBLE} & 41 \\
+\texttt{mk05} & 1 & 2/2 & 199 & 199.000000 & \texttt{FEASIBLE} & 32 \\
+\texttt{mk05} & \texttt{auto} & 2/2 & 180 & 180.500000 & \texttt{FEASIBLE} & 79 \\
+\texttt{mt10c1} & 1 & 2/2 & 957 & 957.000000 & \texttt{FEASIBLE} & 759 \\
+\texttt{mt10c1} & \texttt{auto} & 2/2 & 928 & 930.000000 & \texttt{FEASIBLE} & 863 \\
+\texttt{01a} & 1 & 2/2 & 2843 & 2843.000000 & \texttt{FEASIBLE} & 1395 \\
+\texttt{01a} & \texttt{auto} & 2/2 & 2645 & 2647.000000 & \texttt{FEASIBLE} & 2107 \\
 \texttt{fattahi1} & 1/\texttt{auto} & 4/4 & 66 & 66.000000 & \texttt{OPTIMAL} & 66 \\
 \texttt{fattahi2} & 1/\texttt{auto} & 4/4 & 107 & 107.000000 & \texttt{OPTIMAL} & 107 \\
 \texttt{fattahi3} & 1/\texttt{auto} & 4/4 & 221 & 221.000000 & \texttt{OPTIMAL} & 221 \\
+\texttt{fattahi4} & 1/\texttt{auto} & 4/4 & 355 & 355.000000 & \texttt{OPTIMAL} & 355 \\
 \texttt{ft06} & 1/\texttt{auto} & 4/4 & 55 & 55.000000 & \texttt{OPTIMAL} & 55 \\
 \texttt{kacem1} & 1/\texttt{auto} & 4/4 & 11 & 11.000000 & \texttt{OPTIMAL} & 11 \\
 \texttt{kacem2} & 1/\texttt{auto} & 4/4 & 11 & 11.000000 & \texttt{OPTIMAL} & 11 \\
 \texttt{kacem3} & 1/\texttt{auto} & 4/4 & 7 & 7.000000 & \texttt{OPTIMAL} & 7 \\
+\texttt{kacem4} & 1 & 2/2 & 167 & 167.000000 & \texttt{FEASIBLE} & 0 \\
+\texttt{kacem4} & \texttt{auto} & 2/2 & 19 & 20.000000 & \texttt{FEASIBLE} & 10 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-All 52 schedules passed the independent feasibility checker. Except for
+All 64 schedules passed the independent feasibility checker. Except for
 \texttt{mk02}, the smaller tracked instances were solved optimally within the
-limit. On \texttt{mk02}, \texttt{mk03}, \texttt{mk04}, \texttt{mt10c1}, and
-\texttt{01a}, automatic workers improved the
-observed incumbents and bounds, but neither configuration proved optimality
-within 3 seconds.
+limit. On \texttt{mk02}, \texttt{mk03}, \texttt{mk04}, \texttt{mk05},
+\texttt{mt10c1}, \texttt{01a}, and \texttt{kacem4}, automatic workers improved
+the observed incumbents and bounds in this run, but neither configuration
+proved optimality within 3 seconds.
 
 \subsection{Heuristic Benchmark Matrix}
 
@@ -419,24 +427,28 @@ Instance & Best deterministic rule & Random range & DispatchRandom range \\
 \texttt{mk02} & \texttt{DispatchMWKR} (30) & 134--169 & 86--113 \\
 \texttt{mk03} & \texttt{DispatchFIFO/MWKR} (204) & 1086--1206 & 488--563 \\
 \texttt{mk04} & \texttt{DispatchFIFO} (77) & 279--292 & 143--177 \\
+\texttt{mk05} & \texttt{DispatchFIFO} (185) & 541--584 & 287--323 \\
 \texttt{mt10c1} & \texttt{DispatchMOPNR} (1225) & 3348--3394 & 1446--1728 \\
 \texttt{01a} & \texttt{DispatchFIFO} (3056) & 10212--10398 & 4132--4525 \\
 \texttt{fattahi1} & \texttt{DispatchMWKR} (66) & 86--135 & 86--135 \\
 \texttt{fattahi2} & \texttt{DispatchFIFO/MWKR} (107) & 107--192 & 107--149 \\
 \texttt{fattahi3} & \texttt{DispatchFIFO/MOPNR} (221) & 298--442 & 221--361 \\
+\texttt{fattahi4} & \texttt{DispatchFIFO/MWKR/MOPNR} (367) & 409--699 & 407--626 \\
 \texttt{ft06} & \texttt{DispatchFIFO} (55) & 146--152 & 71--112 \\
 \texttt{kacem1} & \texttt{DispatchFIFO} (11) & 27--82 & 26--44 \\
 \texttt{kacem2} & \texttt{DispatchMWKR} (12) & 62--102 & 50--88 \\
 \texttt{kacem3} & \texttt{DispatchFIFO/MWKR/MOPNR} (8) & 42--77 & 50--72 \\
+\texttt{kacem4} & \texttt{DispatchMWKR} (12) & 114--159 & 71--138 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-All 182 schedules passed the independent feasibility checker. No single rule
+All 224 schedules passed the independent feasibility checker. No single rule
 dominates every instance: MWKR is strongest on \texttt{mk01}, \texttt{mk02},
-\texttt{fattahi1}, and \texttt{kacem2}; FIFO is strongest on \texttt{mk04},
-\texttt{ft06}, and \texttt{kacem1}, ties MWKR on \texttt{mk03} and
-\texttt{fattahi2}, and ties MOPNR on \texttt{fattahi3}. MOPNR is strongest on
+\texttt{fattahi1}, \texttt{kacem2}, and \texttt{kacem4}; FIFO is strongest on
+\texttt{mk04}, \texttt{mk05}, \texttt{ft06}, and \texttt{kacem1}, ties MWKR on
+\texttt{mk03} and \texttt{fattahi2}, and ties MOPNR on \texttt{fattahi3} and
+\texttt{fattahi4}. MOPNR is strongest on
 \texttt{mt10c1}; FIFO is strongest on \texttt{01a}; and FIFO, MWKR, and MOPNR
 tie on \texttt{kacem3}. Ready-operation random
 dispatching is consistently better than the simple job-order random baseline
@@ -460,21 +472,21 @@ The upstream BKS is a comparison reference, not a local optimality proof.
 \toprule
 Algorithm family & Mean best gap & Maximum best gap \\
 \midrule
-FIFO & 5.046584 & 21.285714 \\
-SPT & 1.870830 & 3.366667 \\
-EarliestFinishTime & 0.459417 & 1.384615 \\
-DispatchFIFO & 0.145799 & 0.331176 \\
-DispatchSPT & 1.109732 & 2.259082 \\
-DispatchEFT & 0.461686 & 1.384615 \\
-DispatchMWKR & 0.140666 & 0.350593 \\
-DispatchMOPNR & 0.202347 & 0.466667 \\
-Random & 2.608660 & 5.000000 \\
-DispatchRandom & 1.479880 & 6.142857 \\
+FIFO & 5.832835 & 25.090909 \\
+SPT & 1.862132 & 3.366667 \\
+EarliestFinishTime & 0.443474 & 1.384615 \\
+DispatchFIFO & 0.142344 & 0.331176 \\
+DispatchSPT & 1.059447 & 2.259082 \\
+DispatchEFT & 0.452452 & 1.384615 \\
+DispatchMWKR & 0.127536 & 0.350593 \\
+DispatchMOPNR & 0.183334 & 0.466667 \\
+Random & 2.848354 & 9.363636 \\
+DispatchRandom & 1.594254 & 6.142857 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-DispatchMWKR has the lowest mean best gap on the current thirteen-instance subset.
+DispatchMWKR has the lowest mean best gap on the current sixteen-instance subset.
 The sample remains deliberately small, so broader benchmark coverage should
 precede additional dispatching rules.
 
@@ -485,7 +497,7 @@ Before expanding the benchmark subset, the metadata audit recursively
 discovers tracked FJSPLib files, matches them one-to-one with
 \texttt{instances/fjsplib\_bks.csv}, and loads every discovered file. A row
 passes only if the tracked file exists, its upstream reference row exists, and
-the loader accepts the instance. All thirteen currently tracked rows pass. This
+the loader accepts the instance. All sixteen currently tracked rows pass. This
 gate prevents silently omitted files and stale metadata from entering quality
 comparisons.
 
