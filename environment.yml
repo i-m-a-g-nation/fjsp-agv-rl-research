@@ -9,6 +9,7 @@ dependencies:
   - matplotlib>=3.8.4,<3.10
   - pillow>=10.4,<12
   - pytest
+  - pytest-cov
   - pydantic
   - networkx
   - scipy

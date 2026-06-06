@@ -11,6 +11,7 @@ Last updated: 2026-06-07
 | matplotlib | 3.8.4 |
 | Pillow | 10.4.0 |
 | pytest | 151 passed, 0 failed |
+| core coverage | 89.60% with 80% CI threshold |
 | Known warning | Low-priority `.pytest_cache` warning on some Windows paths |
 
 ## Verified Commands
@@ -30,6 +31,7 @@ Last updated: 2026-06-07
 | `experiments/exp_011_heuristic_quality_report.py` | 0 | Thirty-instance BKS-relative per-instance and family summaries generated from structured upstream references |
 | `experiments/exp_012_benchmark_metadata_audit.py` | 0 | 30/30 tracked files match BKS rows and remain loadable |
 | `experiments/exp_013_cpsat_report.py` | 0 | Markdown CP-SAT report generated from exp_009 aggregates without rerunning the solver |
+| `pytest --cov=src --cov-fail-under=80` | 0 | 151 passed; core coverage 89.60% |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
 | `pytest` | 0 | 151 passed |
@@ -51,6 +53,7 @@ Last updated: 2026-06-07
 | CP-SAT report builder | Done | Markdown interpretation report summarizes worker rows, best rows, bounds, gaps, and `OPTIMAL` vs `FEASIBLE` status |
 | Code walkthrough | Done | Clean Chinese guide for reading Phase 1 modules and understanding solver data flow |
 | Reproducibility checklist | Done | Fixed command order for metadata audit, benchmark runs, CP-SAT report, pytest, and PDF checks |
+| CI / coverage | Done | GitHub Actions workflow installs dev dependencies, audits metadata, builds CP-SAT report, and enforces core coverage >= 80% |
 | Heuristic benchmark matrix | Done | Deterministic rules plus seeded Random and DispatchRandom families across the tracked subset |
 | Heuristic quality report | Done | Per-instance and cross-instance BKS-relative ratios with reference coverage checks |
 | Benchmark metadata audit | Done | One-to-one tracked-file, BKS-row, and loader integrity gate |

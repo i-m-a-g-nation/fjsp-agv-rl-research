@@ -4,7 +4,7 @@ This report summarizes 60 aggregate rows over 30 tracked FJSPLib instances. All 
 
 Fully feasible aggregate rows: 60/60. Best worker rows with all repeated runs proved OPTIMAL: 13/30.
 
-Best worker rows reaching the upstream FJSPLib upper bound: 15/30.
+Best worker rows reaching the upstream FJSPLib upper bound: 15/30. Rows reaching UB without a local optimality proof: 2/30.
 
 ## Worker Summary
 
@@ -15,38 +15,38 @@ Best worker rows reaching the upstream FJSPLib upper bound: 15/30.
 
 ## Best Row Per Instance
 
-| instance | best workers | best makespan | FJSPLib LB | FJSPLib UB | reaches UB | local proof | best bound | best gap | statuses |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Brandimarte1993/mk01.fjs | 1 | 40 | 40 | 40 | yes | yes | 40.000000 | 0.000000 | OPTIMAL:2 |
-| Brandimarte1993/mk02.fjs | auto | 30 | 26 | 26 | no | no | 20.000000 | 0.333333 | FEASIBLE:2 |
-| Brandimarte1993/mk03.fjs | auto | 234 | 204 | 204 | no | no | 74.000000 | 0.683761 | FEASIBLE:2 |
-| Brandimarte1993/mk04.fjs | auto | 64 | 60 | 60 | no | no | 40.000000 | 0.411765 | FEASIBLE:2 |
-| Brandimarte1993/mk05.fjs | auto | 183 | 172 | 172 | no | no | 83.000000 | 0.546448 | FEASIBLE:2 |
-| Brandimarte1993/mk06.fjs | auto | 85 | 57 | 57 | no | no | 27.000000 | 0.686047 | FEASIBLE:2 |
-| Brandimarte1993/mk07.fjs | auto | 189 | 139 | 139 | no | no | 74.000000 | 0.614583 | FEASIBLE:2 |
-| Brandimarte1993/mk08.fjs | auto | 563 | 523 | 523 | no | no | 236.000000 | 0.592401 | FEASIBLE:2 |
-| Brandimarte1993/mk09.fjs | auto | 446 | 307 | 307 | no | no | 54.000000 | 0.881166 | FEASIBLE:2 |
-| Brandimarte1993/mk10.fjs | auto | 340 | 189 | 193 | no | no | 74.000000 | 0.782353 | FEASIBLE:2 |
-| ChambersBarnes1996/mt10c1.fjs | auto | 927 | 927 | 927 | yes | no | 864.000000 | 0.067961 | FEASIBLE:2 |
-| ChambersBarnes1996/mt10cc.fjs | auto | 908 | 908 | 908 | yes | no | 835.000000 | 0.080396 | FEASIBLE:2 |
-| ChambersBarnes1996/mt10x.fjs | auto | 922 | 918 | 918 | no | no | 862.000000 | 0.065076 | FEASIBLE:2 |
-| DauzerePeresPaulli1994/01a.fjs | auto | 2687 | 2505 | 2505 | no | no | 2103.000000 | 0.217343 | FEASIBLE:2 |
-| DauzerePeresPaulli1994/02a.fjs | auto | 2676 | 2228 | 2228 | no | no | 1049.000000 | 0.607997 | FEASIBLE:2 |
-| DauzerePeresPaulli1994/03a.fjs | auto | 2846 | 2228 | 2228 | no | no | 426.000000 | 0.850316 | FEASIBLE:2 |
-| DauzerePeresPaulli1994/04a.fjs | auto | 2628 | 2503 | 2503 | no | no | 1974.000000 | 0.252556 | FEASIBLE:2 |
-| FattahiMehrabadJolai2007/fattahi1.fjs | 1 | 66 | 66 | 66 | yes | yes | 66.000000 | 0.000000 | OPTIMAL:2 |
-| FattahiMehrabadJolai2007/fattahi2.fjs | 1 | 107 | 107 | 107 | yes | yes | 107.000000 | 0.000000 | OPTIMAL:2 |
-| FattahiMehrabadJolai2007/fattahi3.fjs | 1 | 221 | 221 | 221 | yes | yes | 221.000000 | 0.000000 | OPTIMAL:2 |
-| FattahiMehrabadJolai2007/fattahi4.fjs | 1 | 355 | 355 | 355 | yes | yes | 355.000000 | 0.000000 | OPTIMAL:2 |
-| FattahiMehrabadJolai2007/fattahi5.fjs | 1 | 119 | 119 | 119 | yes | yes | 119.000000 | 0.000000 | OPTIMAL:2 |
-| FattahiMehrabadJolai2007/fattahi6.fjs | 1 | 320 | 320 | 320 | yes | yes | 320.000000 | 0.000000 | OPTIMAL:2 |
-| FattahiMehrabadJolai2007/fattahi7.fjs | 1 | 397 | 397 | 397 | yes | yes | 397.000000 | 0.000000 | OPTIMAL:2 |
-| FattahiMehrabadJolai2007/fattahi8.fjs | 1 | 253 | 253 | 253 | yes | yes | 253.000000 | 0.000000 | OPTIMAL:2 |
-| HurinkJurischThole1994/edata/ft06.fjs | 1 | 55 | 55 | 55 | yes | yes | 55.000000 | 0.000000 | OPTIMAL:2 |
-| KacemHammadiBorne2002/kacem1.fjs | 1 | 11 | 11 | 11 | yes | yes | 11.000000 | 0.000000 | OPTIMAL:2 |
-| KacemHammadiBorne2002/kacem2.fjs | auto | 11 | 11 | 11 | yes | yes | 11.000000 | 0.000000 | OPTIMAL:2 |
-| KacemHammadiBorne2002/kacem3.fjs | auto | 7 | 7 | 7 | yes | yes | 7.000000 | 0.000000 | OPTIMAL:2 |
-| KacemHammadiBorne2002/kacem4.fjs | auto | 21 | 11 | 11 | no | no | 10.000000 | 0.523810 | FEASIBLE:2 |
+| instance | best workers | best makespan | FJSPLib LB | FJSPLib UB | BKS gap | reaches UB | local proof | best bound | best gap | statuses |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Brandimarte1993/mk01.fjs | 1 | 40 | 40 | 40 | 0.000000 | yes | yes | 40.000000 | 0.000000 | OPTIMAL:2 |
+| Brandimarte1993/mk02.fjs | auto | 30 | 26 | 26 | 0.153846 | no | no | 20.000000 | 0.333333 | FEASIBLE:2 |
+| Brandimarte1993/mk03.fjs | auto | 234 | 204 | 204 | 0.147059 | no | no | 74.000000 | 0.683761 | FEASIBLE:2 |
+| Brandimarte1993/mk04.fjs | auto | 64 | 60 | 60 | 0.066667 | no | no | 40.000000 | 0.411765 | FEASIBLE:2 |
+| Brandimarte1993/mk05.fjs | auto | 183 | 172 | 172 | 0.063953 | no | no | 83.000000 | 0.546448 | FEASIBLE:2 |
+| Brandimarte1993/mk06.fjs | auto | 85 | 57 | 57 | 0.491228 | no | no | 27.000000 | 0.686047 | FEASIBLE:2 |
+| Brandimarte1993/mk07.fjs | auto | 189 | 139 | 139 | 0.359712 | no | no | 74.000000 | 0.614583 | FEASIBLE:2 |
+| Brandimarte1993/mk08.fjs | auto | 563 | 523 | 523 | 0.076482 | no | no | 236.000000 | 0.592401 | FEASIBLE:2 |
+| Brandimarte1993/mk09.fjs | auto | 446 | 307 | 307 | 0.452769 | no | no | 54.000000 | 0.881166 | FEASIBLE:2 |
+| Brandimarte1993/mk10.fjs | auto | 340 | 189 | 193 | 0.761658 | no | no | 74.000000 | 0.782353 | FEASIBLE:2 |
+| ChambersBarnes1996/mt10c1.fjs | auto | 927 | 927 | 927 | 0.000000 | yes | no | 864.000000 | 0.067961 | FEASIBLE:2 |
+| ChambersBarnes1996/mt10cc.fjs | auto | 908 | 908 | 908 | 0.000000 | yes | no | 835.000000 | 0.080396 | FEASIBLE:2 |
+| ChambersBarnes1996/mt10x.fjs | auto | 922 | 918 | 918 | 0.004357 | no | no | 862.000000 | 0.065076 | FEASIBLE:2 |
+| DauzerePeresPaulli1994/01a.fjs | auto | 2687 | 2505 | 2505 | 0.072655 | no | no | 2103.000000 | 0.217343 | FEASIBLE:2 |
+| DauzerePeresPaulli1994/02a.fjs | auto | 2676 | 2228 | 2228 | 0.201077 | no | no | 1049.000000 | 0.607997 | FEASIBLE:2 |
+| DauzerePeresPaulli1994/03a.fjs | auto | 2846 | 2228 | 2228 | 0.277379 | no | no | 426.000000 | 0.850316 | FEASIBLE:2 |
+| DauzerePeresPaulli1994/04a.fjs | auto | 2628 | 2503 | 2503 | 0.049940 | no | no | 1974.000000 | 0.252556 | FEASIBLE:2 |
+| FattahiMehrabadJolai2007/fattahi1.fjs | 1 | 66 | 66 | 66 | 0.000000 | yes | yes | 66.000000 | 0.000000 | OPTIMAL:2 |
+| FattahiMehrabadJolai2007/fattahi2.fjs | 1 | 107 | 107 | 107 | 0.000000 | yes | yes | 107.000000 | 0.000000 | OPTIMAL:2 |
+| FattahiMehrabadJolai2007/fattahi3.fjs | 1 | 221 | 221 | 221 | 0.000000 | yes | yes | 221.000000 | 0.000000 | OPTIMAL:2 |
+| FattahiMehrabadJolai2007/fattahi4.fjs | 1 | 355 | 355 | 355 | 0.000000 | yes | yes | 355.000000 | 0.000000 | OPTIMAL:2 |
+| FattahiMehrabadJolai2007/fattahi5.fjs | 1 | 119 | 119 | 119 | 0.000000 | yes | yes | 119.000000 | 0.000000 | OPTIMAL:2 |
+| FattahiMehrabadJolai2007/fattahi6.fjs | 1 | 320 | 320 | 320 | 0.000000 | yes | yes | 320.000000 | 0.000000 | OPTIMAL:2 |
+| FattahiMehrabadJolai2007/fattahi7.fjs | 1 | 397 | 397 | 397 | 0.000000 | yes | yes | 397.000000 | 0.000000 | OPTIMAL:2 |
+| FattahiMehrabadJolai2007/fattahi8.fjs | 1 | 253 | 253 | 253 | 0.000000 | yes | yes | 253.000000 | 0.000000 | OPTIMAL:2 |
+| HurinkJurischThole1994/edata/ft06.fjs | 1 | 55 | 55 | 55 | 0.000000 | yes | yes | 55.000000 | 0.000000 | OPTIMAL:2 |
+| KacemHammadiBorne2002/kacem1.fjs | 1 | 11 | 11 | 11 | 0.000000 | yes | yes | 11.000000 | 0.000000 | OPTIMAL:2 |
+| KacemHammadiBorne2002/kacem2.fjs | auto | 11 | 11 | 11 | 0.000000 | yes | yes | 11.000000 | 0.000000 | OPTIMAL:2 |
+| KacemHammadiBorne2002/kacem3.fjs | auto | 7 | 7 | 7 | 0.000000 | yes | yes | 7.000000 | 0.000000 | OPTIMAL:2 |
+| KacemHammadiBorne2002/kacem4.fjs | auto | 21 | 11 | 11 | 0.909091 | no | no | 10.000000 | 0.523810 | FEASIBLE:2 |
 
 Interpretation note: `FEASIBLE` rows are valid schedules, but their objective bounds and gaps show that the local time limit did not prove optimality. Matching an upstream BKS is therefore reported as a good feasible solution unless the local status is `OPTIMAL`.
 

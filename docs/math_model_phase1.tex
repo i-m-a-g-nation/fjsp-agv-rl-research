@@ -526,4 +526,24 @@ instances, and no AGV, RL, GNN, dynamic rescheduling, or full paper reproduction
 is included in this phase. These boundaries keep the codebase maintainable and
 make future Phase 2 extensions easier to review.
 
+\begin{table}[h]
+\centering
+\begin{tabular}{p{0.38\linewidth}p{0.52\linewidth}}
+\toprule
+Threat & Current mitigation \\
+\midrule
+Time-limited CP-SAT may return \texttt{FEASIBLE} schedules without proof &
+Reports keep status, bound, solver gap, BKS gap, and local-proof fields separate. \\
+Benchmark subset is moderate &
+Every tracked file has provenance, LB/UB metadata, and loader audit coverage. \\
+Random heuristics are seed-sensitive &
+Random families use fixed seeds and report ranges instead of hidden single samples. \\
+Upstream BKS is external reference data &
+Reports distinguish reaching UB from locally proving \texttt{OPTIMAL}. \\
+Phase 2 topics could blur scope &
+AGV, RL, GNN, and dynamic rescheduling remain outside Phase 1. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \end{document}

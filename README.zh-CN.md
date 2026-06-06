@@ -116,8 +116,9 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 - `exp_010_heuristic_benchmark_matrix.py`：420/420 个启发式调度全部 feasible
 - `exp_011_heuristic_quality_report.py`：30 实例 BKS-relative 质量报告已刷新
 - `exp_012_benchmark_metadata_audit.py`：30/30 个 tracked 文件、BKS 行和 loader 校验通过
-- `exp_013_cpsat_report.py`：生成 CP-SAT Markdown 报告，区分 `OPTIMAL` 与时限内 `FEASIBLE`；当前 15/30 个 best row 达到上游 UB，13/30 个本地证明 `OPTIMAL`
+- `exp_013_cpsat_report.py`：生成 CP-SAT Markdown 报告，区分 `OPTIMAL` 与时限内 `FEASIBLE`；当前 15/30 个 best row 达到上游 UB，13/30 个本地证明 `OPTIMAL`，2/30 个达到 UB 但未本地证明最优
 - `pytest`：151 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
+- 核心模块 coverage：89.60%，CI 门槛为 80%
 
 当前 30 实例质量报告中，`DispatchFIFO` 的跨实例平均 best gap 最低：
 
@@ -148,6 +149,28 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 
 数学模型包含集合、参数、决策变量、机器选择约束、工序顺序约束、机器容量约束、
 makespan 定义，以及 feasibility checker 与数学约束之间的对应关系。
+
+## CI / Coverage
+
+仓库包含最小 GitHub Actions workflow：
+
+- [.github/workflows/ci.yml](.github/workflows/ci.yml)
+
+CI 会安装 dev 依赖、运行 benchmark metadata audit、生成 CP-SAT report，并执行：
+
+```powershell
+python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
+```
+
+## 威胁有效性
+
+| 风险 | 当前缓解方式 |
+|---|---|
+| CP-SAT 限时结果可能只是 feasible 而非 proved optimal | 报告保留 `FEASIBLE`、bound、gap、BKS gap 和 local proof 字段 |
+| benchmark 子集仍是中等规模 | 每次扩展先跑 `exp_012`，并记录来源、LB/UB |
+| Random 启发式受 seed 影响 | 使用固定 seeds，并报告范围而非隐藏单次结果 |
+| 上游 BKS 不是本地证明 | 报告区分“达到 UB”和“本地证明 `OPTIMAL`” |
+| Phase 2 主题容易提前混入 | AGV、RL、GNN、动态调度继续明确排除在 Phase 1 外 |
 
 ## 维护建议
 

@@ -208,10 +208,18 @@ def build_markdown_report(
     all_feasible = sum(1 for row in rows if row.feasible_runs == row.repeats)
     best_optimal = sum(1 for row in best_rows if row.proved_optimal)
     reached_bks = 0
+    reached_bks_without_proof = 0
     if references is not None:
         reached_bks = sum(
             1 for row in best_rows
             if row.best_makespan <= references[row.instance_name].upper_bound
+        )
+        reached_bks_without_proof = sum(
+            1 for row in best_rows
+            if (
+                row.best_makespan <= references[row.instance_name].upper_bound
+                and not row.proved_optimal
+            )
         )
 
     summary_table = _markdown_table(
@@ -246,6 +254,7 @@ def build_markdown_report(
             "best makespan",
             "FJSPLib LB",
             "FJSPLib UB",
+            "BKS gap",
             "reaches UB",
             "local proof",
             "best bound",
@@ -274,7 +283,8 @@ def build_markdown_report(
             ),
             (
                 "Best worker rows reaching the upstream FJSPLib upper bound: "
-                f"{reached_bks}/{total_instances}."
+                f"{reached_bks}/{total_instances}. Rows reaching UB without a "
+                f"local optimality proof: {reached_bks_without_proof}/{total_instances}."
                 if references is not None
                 else "No FJSPLib reference file was supplied for BKS comparison."
             ),
@@ -303,11 +313,13 @@ def _best_row_to_markdown(
     if references is None:
         lower_bound = ""
         upper_bound = ""
+        bks_gap = ""
         reaches_bks = ""
     else:
         reference = references[row.instance_name]
         lower_bound = str(reference.lower_bound)
         upper_bound = str(reference.upper_bound)
+        bks_gap = f"{((row.best_makespan - reference.upper_bound) / reference.upper_bound):.6f}"
         reaches_bks = "yes" if row.best_makespan <= reference.upper_bound else "no"
 
     return [
@@ -316,6 +328,7 @@ def _best_row_to_markdown(
         str(row.best_makespan),
         lower_bound,
         upper_bound,
+        bks_gap,
         reaches_bks,
         "yes" if row.proved_optimal else "no",
         f"{row.best_bound:.6f}",

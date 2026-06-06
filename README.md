@@ -355,7 +355,31 @@ It does not rerun CP-SAT; it checks the CSV shape, summarizes worker
 configurations, selects each instance's best row, adds FJSPLib LB/UB comparison,
 and keeps the distinction between `OPTIMAL` proofs and valid time-limited
 `FEASIBLE` schedules explicit. In the current 30-instance report, 15 best rows
-reach the upstream UB and 13 are locally proved `OPTIMAL`.
+reach the upstream UB, 13 are locally proved `OPTIMAL`, and 2 reach UB without
+a local optimality proof.
+
+## CI and Coverage
+
+The repository includes a minimal GitHub Actions workflow at
+[.github/workflows/ci.yml](.github/workflows/ci.yml). It installs the project
+with dev dependencies, audits benchmark metadata, rebuilds the CP-SAT report,
+and runs core coverage:
+
+```powershell
+python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
+```
+
+The current local core-module coverage is 89.60%.
+
+## Threats to Validity
+
+| Threat | Current mitigation |
+|---|---|
+| Time-limited CP-SAT may find feasible schedules without proof | Reports keep `FEASIBLE`, bound, gap, BKS gap, and local-proof fields separate |
+| Benchmark subset is still moderate | Every expansion is audited by `exp_012`; current subset is documented with provenance and LB/UB rows |
+| Random heuristics are seed-sensitive | Random families are reported with fixed seeds and ranges rather than single hidden samples |
+| Upstream BKS is external reference data | Local reports distinguish reaching UB from locally proving `OPTIMAL` |
+| Phase 2 topics could blur scope | AGV, RL, GNN, and dynamic rescheduling remain explicitly out of Phase 1 |
 
 ## Known Notes
 

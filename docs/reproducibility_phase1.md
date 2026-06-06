@@ -1,6 +1,6 @@
 # Phase 1 可复现性清单
 
-本文记录 Phase 1 静态 FJSP 实验底座的推荐复现流程。目标是让后续自己或审稿式检查时能明确知道：数据来自哪里、实验按什么顺序跑、哪些结果能称为最优、哪些只能称为限时可行。
+本文记录 Phase 1 静态 FJSP 实验底座的推荐复现流程。目标是让后续检查时能明确知道：数据来自哪里、实验按什么顺序跑、哪些结果能称为最优、哪些只能称为限时可行。
 
 ## 环境
 
@@ -50,6 +50,13 @@ D:\2-Dev\Environments\Conda\fjsp-agv-rl\python.exe
 | `exp_009` CP-SAT schedules | 120 |
 | `exp_010` heuristic schedules | 420 |
 | pytest | 151 passed |
+| core coverage | 89.60% |
+
+核心 coverage 检查：
+
+```powershell
+.\.conda-env\python.exe -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
+```
 
 ## CP-SAT 结果解释
 
@@ -66,9 +73,12 @@ CP-SAT 输出有两个层次：
 
 - FJSPLib LB
 - FJSPLib UB
+- BKS gap
 - 是否达到 UB
 - 是否本地证明最优
 - CP-SAT bound 和 gap
+
+当前报告中，15/30 个 best row 达到上游 UB，其中 13/30 个本地证明 `OPTIMAL`，2/30 个达到 UB 但仍只是限时 `FEASIBLE`。
 
 ## 文档与 PDF
 
@@ -89,12 +99,22 @@ docs/math_model_phase1_zh.pdf
 
 编译后至少检查 PDF 文本中包含当前关键数字：`30`、`120`、`420`、`mk10`、`exp_013`。
 
+## CI
+
+GitHub Actions workflow 位于：
+
+```text
+.github/workflows/ci.yml
+```
+
+CI 会安装 dev 依赖，运行 metadata audit，生成 CP-SAT report，并执行核心 coverage 检查。当前 coverage 门槛为 80%。
+
 ## 提交前检查
 
 ```powershell
 .\.conda-env\python.exe experiments\exp_012_benchmark_metadata_audit.py
 .\.conda-env\python.exe experiments\exp_013_cpsat_report.py
-.\.conda-env\python.exe -m pytest -q
+.\.conda-env\python.exe -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 git diff --check
 ```
 

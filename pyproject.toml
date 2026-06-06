@@ -24,3 +24,14 @@ dev = [
     "pytest",
     "pytest-cov",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["src"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_empty = true

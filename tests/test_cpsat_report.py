@@ -56,7 +56,8 @@ def test_cpsat_report_summarizes_workers_and_best_rows(tmp_path):
     ]
     assert "Fully feasible aggregate rows: 4/4" in report
     assert "Best worker rows reaching the upstream FJSPLib upper bound: 1/2" in report
-    assert "mk02.fjs | auto | 30 | 26 | 26 | no | no" in report
+    assert "Rows reaching UB without a local optimality proof: 0/2" in report
+    assert "mk02.fjs | auto | 30 | 26 | 26 | 0.153846 | no | no" in report
 
 
 def test_validate_reference_coverage_rejects_mismatch(tmp_path):

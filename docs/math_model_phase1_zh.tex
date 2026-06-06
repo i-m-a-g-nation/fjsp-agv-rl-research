@@ -279,4 +279,24 @@ CP-SAT 结果多为限时 \texttt{FEASIBLE}，且本阶段不包含 AGV、RL、G
 动态重调度或完整论文复现实验。保持这些边界能降低复杂度，并让后续
 Phase 2 扩展更容易审核和维护。
 
+\begin{table}[h]
+\centering
+\begin{tabular}{p{0.38\linewidth}p{0.52\linewidth}}
+\toprule
+风险 & 当前缓解方式 \\
+\midrule
+CP-SAT 限时结果可能只是 \texttt{FEASIBLE} &
+报告保留 status、bound、solver gap、BKS gap 和 local proof 字段。 \\
+benchmark 子集仍是中等规模 &
+每个 tracked 文件都有来源说明、LB/UB 元数据和 loader 审计。 \\
+Random 启发式受 seed 影响 &
+使用固定 seeds，并报告范围而非隐藏单次结果。 \\
+上游 BKS 不是本地证明 &
+报告区分“达到 UB”和“本地证明 \texttt{OPTIMAL}”。 \\
+Phase 2 主题容易提前混入 &
+AGV、RL、GNN 和动态调度继续排除在 Phase 1 外。 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \end{document}
