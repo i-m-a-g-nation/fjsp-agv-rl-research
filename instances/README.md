@@ -42,6 +42,9 @@ Tracked subset:
 | `fjsplib/Brandimarte1993/mk04.fjs` | Brandimarte (1993) | `mk04` | 15 x 8 | 60 | 60 |
 | `fjsplib/Brandimarte1993/mk05.fjs` | Brandimarte (1993) | `mk05` | 15 x 4 | 172 | 172 |
 | `fjsplib/Brandimarte1993/mk06.fjs` | Brandimarte (1993) | `mk06` | 10 x 15 | 57 | 57 |
+| `fjsplib/Brandimarte1993/mk07.fjs` | Brandimarte (1993) | `mk07` | 20 x 5 | 139 | 139 |
+| `fjsplib/Brandimarte1993/mk08.fjs` | Brandimarte (1993) | `mk08` | 20 x 10 | 523 | 523 |
+| `fjsplib/Brandimarte1993/mk09.fjs` | Brandimarte (1993) | `mk09` | 20 x 10 | 307 | 307 |
 
 The machine-readable mirror [fjsplib_bks.csv](fjsplib_bks.csv) records these
 upstream bounds for quality-report scripts. Every currently tracked row has
