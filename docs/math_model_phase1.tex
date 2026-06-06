@@ -429,14 +429,22 @@ Instance & Best deterministic rule & Random range & DispatchRandom range \\
 \texttt{mk07} & \texttt{DispatchMOPNR} (160) & 689--854 & 345--427 \\
 \texttt{mk08} & \texttt{DispatchFIFO} (531) & 2306--2560 & 755--916 \\
 \texttt{mk09} & \texttt{DispatchFIFO} (341) & 2071--2200 & 817--960 \\
+\texttt{mk10} & \texttt{DispatchMWKR} (243) & 1973--2087 & 610--710 \\
 \texttt{mt10c1} & \texttt{DispatchMOPNR} (1225) & 3348--3394 & 1446--1728 \\
+\texttt{mt10cc} & \texttt{DispatchMWKR} (1121) & 3348--3394 & 1597--1841 \\
+\texttt{mt10x} & \texttt{EarliestFinishTime/DispatchEFT} (1173) & 3095--3394 & 1744--1849 \\
 \texttt{01a} & \texttt{DispatchFIFO} (3056) & 10212--10398 & 4132--4525 \\
+\texttt{02a} & \texttt{DispatchFIFO} (2443) & 10010--10305 & 4401--4804 \\
+\texttt{03a} & \texttt{DispatchFIFO} (2413) & 10025--10207 & 4197--4898 \\
+\texttt{04a} & \texttt{DispatchMOPNR} (3070) & 10177--10380 & 4090--4495 \\
 \texttt{fattahi1} & \texttt{DispatchMWKR} (66) & 86--135 & 86--135 \\
 \texttt{fattahi2} & \texttt{DispatchFIFO/MWKR} (107) & 107--192 & 107--149 \\
 \texttt{fattahi3} & \texttt{DispatchFIFO/MOPNR} (221) & 298--442 & 221--361 \\
 \texttt{fattahi4} & \texttt{DispatchFIFO/MWKR/MOPNR} (367) & 409--699 & 407--626 \\
 \texttt{fattahi5} & \texttt{DispatchFIFO} (119) & 207--246 & 150--220 \\
 \texttt{fattahi6} & \texttt{EarliestFinishTime/DispatchEFT} (330) & 557--707 & 470--557 \\
+\texttt{fattahi7} & multiple ties (397) & 491--595 & 462--598 \\
+\texttt{fattahi8} & \texttt{EarliestFinishTime/DispatchEFT} (273) & 275--317 & 341--450 \\
 \texttt{ft06} & \texttt{DispatchFIFO} (55) & 146--152 & 71--112 \\
 \texttt{kacem1} & \texttt{DispatchFIFO} (11) & 27--82 & 26--44 \\
 \texttt{kacem2} & \texttt{DispatchMWKR} (12) & 62--102 & 50--88 \\
@@ -448,12 +456,13 @@ Instance & Best deterministic rule & Random range & DispatchRandom range \\
 
 All 420 schedules passed the independent feasibility checker. No single rule
 dominates every instance: MWKR is strongest on \texttt{mk01}, \texttt{mk02},
-\texttt{mk06}, \texttt{fattahi1}, \texttt{kacem2}, and \texttt{kacem4}; FIFO is strongest on
+\texttt{mk06}, \texttt{mk10}, \texttt{mt10cc}, \texttt{fattahi1}, \texttt{kacem2}, and \texttt{kacem4}; FIFO is strongest on
 \texttt{mk04}, \texttt{mk05}, \texttt{mk08}, \texttt{mk09}, \texttt{fattahi5},
-\texttt{ft06}, and \texttt{kacem1}, ties MWKR on
+\texttt{02a}, \texttt{03a}, \texttt{ft06}, and \texttt{kacem1}, ties MWKR on
 \texttt{mk03} and \texttt{fattahi2}, and ties MOPNR on \texttt{fattahi3} and
-\texttt{fattahi4}. EarliestFinishTime ties DispatchEFT on \texttt{fattahi6}.
-MOPNR is strongest on \texttt{mk07} and
+\texttt{fattahi4}. EarliestFinishTime ties DispatchEFT on \texttt{fattahi6},
+\texttt{mt10x}, and \texttt{fattahi8}.
+MOPNR is strongest on \texttt{mk07}, \texttt{04a}, and
 \texttt{mt10c1}; FIFO is strongest on \texttt{01a}; and FIFO, MWKR, and MOPNR
 tie on \texttt{kacem3}. Ready-operation random
 dispatching is consistently better than the simple job-order random baseline
@@ -505,5 +514,16 @@ passes only if the tracked file exists, its upstream reference row exists, and
 the loader accepts the instance. All thirty currently tracked rows pass. This
 gate prevents silently omitted files and stale metadata from entering quality
 comparisons.
+
+\section{Conclusion and Limitations}
+
+Phase 1 is now a reproducible static FJSP baseline rather than an optimization
+claim for every benchmark. The strongest current properties are the independent
+feasibility checker, audited benchmark provenance, repeated CP-SAT diagnostics,
+and BKS-aware heuristic summaries. The main limitations are deliberate: the
+benchmark subset is still moderate, CP-SAT runs are time-limited on larger
+instances, and no AGV, RL, GNN, dynamic rescheduling, or full paper reproduction
+is included in this phase. These boundaries keep the codebase maintainable and
+make future Phase 2 extensions easier to review.
 
 \end{document}

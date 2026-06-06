@@ -19,6 +19,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Sequence
 
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from experiments.exp_011_heuristic_quality_report import (
+    BenchmarkReference,
+    load_benchmark_references,
+)
+
 
 @dataclass(frozen=True)
 class CpSatAggregateRow:
@@ -156,6 +163,25 @@ def best_row_per_instance(rows: Sequence[CpSatAggregateRow]) -> list[CpSatAggreg
     return [best[name] for name in sorted(best)]
 
 
+def validate_reference_coverage(
+    rows: Sequence[CpSatAggregateRow],
+    references: dict[str, BenchmarkReference],
+) -> None:
+    """Ensure the report can compare every CP-SAT instance to FJSPLib bounds."""
+
+    instance_names = {row.instance_name for row in rows}
+    missing_refs = sorted(instance_names - set(references))
+    missing_rows = sorted(set(references) - instance_names)
+    if missing_refs:
+        raise ValueError(
+            "missing BKS reference for CP-SAT instances: " + ", ".join(missing_refs)
+        )
+    if missing_rows:
+        raise ValueError(
+            "CP-SAT summary missing BKS instances: " + ", ".join(missing_rows)
+        )
+
+
 def _markdown_table(headers: Sequence[str], rows: Iterable[Sequence[str]]) -> str:
     """Build a simple GitHub-flavored Markdown table."""
 
@@ -167,15 +193,26 @@ def _markdown_table(headers: Sequence[str], rows: Iterable[Sequence[str]]) -> st
     return "\n".join(output)
 
 
-def build_markdown_report(rows: Sequence[CpSatAggregateRow]) -> str:
+def build_markdown_report(
+    rows: Sequence[CpSatAggregateRow],
+    references: dict[str, BenchmarkReference] | None = None,
+) -> str:
     """Build a compact CP-SAT interpretation report."""
 
+    if references is not None:
+        validate_reference_coverage(rows, references)
     worker_summaries = summarize_by_worker(rows)
     best_rows = best_row_per_instance(rows)
     total_instances = len(best_rows)
     total_rows = len(rows)
     all_feasible = sum(1 for row in rows if row.feasible_runs == row.repeats)
     best_optimal = sum(1 for row in best_rows if row.proved_optimal)
+    reached_bks = 0
+    if references is not None:
+        reached_bks = sum(
+            1 for row in best_rows
+            if row.best_makespan <= references[row.instance_name].upper_bound
+        )
 
     summary_table = _markdown_table(
         [
@@ -207,19 +244,16 @@ def build_markdown_report(rows: Sequence[CpSatAggregateRow]) -> str:
             "instance",
             "best workers",
             "best makespan",
+            "FJSPLib LB",
+            "FJSPLib UB",
+            "reaches UB",
+            "local proof",
             "best bound",
             "best gap",
             "statuses",
         ],
         (
-            [
-                row.instance_name,
-                row.workers,
-                str(row.best_makespan),
-                f"{row.best_bound:.6f}",
-                f"{row.best_gap:.6f}",
-                row.statuses,
-            ]
+            _best_row_to_markdown(row, references)
             for row in best_rows
         ),
     )
@@ -238,6 +272,12 @@ def build_markdown_report(rows: Sequence[CpSatAggregateRow]) -> str:
                 f"Best worker rows with all repeated runs proved OPTIMAL: "
                 f"{best_optimal}/{total_instances}."
             ),
+            (
+                "Best worker rows reaching the upstream FJSPLib upper bound: "
+                f"{reached_bks}/{total_instances}."
+                if references is not None
+                else "No FJSPLib reference file was supplied for BKS comparison."
+            ),
             "## Worker Summary",
             summary_table,
             "## Best Row Per Instance",
@@ -252,6 +292,36 @@ def build_markdown_report(rows: Sequence[CpSatAggregateRow]) -> str:
             "",
         ]
     )
+
+
+def _best_row_to_markdown(
+    row: CpSatAggregateRow,
+    references: dict[str, BenchmarkReference] | None,
+) -> list[str]:
+    """Convert a best-row entry to report columns, optionally with BKS fields."""
+
+    if references is None:
+        lower_bound = ""
+        upper_bound = ""
+        reaches_bks = ""
+    else:
+        reference = references[row.instance_name]
+        lower_bound = str(reference.lower_bound)
+        upper_bound = str(reference.upper_bound)
+        reaches_bks = "yes" if row.best_makespan <= reference.upper_bound else "no"
+
+    return [
+        row.instance_name,
+        row.workers,
+        str(row.best_makespan),
+        lower_bound,
+        upper_bound,
+        reaches_bks,
+        "yes" if row.proved_optimal else "no",
+        f"{row.best_bound:.6f}",
+        f"{row.best_gap:.6f}",
+        row.statuses,
+    ]
 
 
 def write_markdown_report(path: str | Path, text: str) -> None:
@@ -274,6 +344,12 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="Input exp_009 aggregate CSV",
     )
     parser.add_argument(
+        "--bks-input",
+        type=Path,
+        default=root / "instances" / "fjsplib_bks.csv",
+        help="Input FJSPLib lower/upper-bound CSV for report comparison",
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=root / "experiments" / "results" / "exp_013_cpsat_report.md",
@@ -288,7 +364,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
     try:
         rows = load_cpsat_aggregates(args.summary_input)
-        report = build_markdown_report(rows)
+        references = load_benchmark_references(args.bks_input)
+        report = build_markdown_report(rows, references)
         write_markdown_report(args.output, report)
     except Exception as exc:
         print(f"Report error: {exc}")

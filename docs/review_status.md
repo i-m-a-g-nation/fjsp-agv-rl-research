@@ -10,7 +10,7 @@ Last updated: 2026-06-07
 | Python environment | Dedicated Conda environment: `.conda-env` or `FJSP_CONDA_ENV` |
 | matplotlib | 3.8.4 |
 | Pillow | 10.4.0 |
-| pytest | 150 passed, 0 failed |
+| pytest | 151 passed, 0 failed |
 | Known warning | Low-priority `.pytest_cache` warning on some Windows paths |
 
 ## Verified Commands
@@ -32,7 +32,7 @@ Last updated: 2026-06-07
 | `experiments/exp_013_cpsat_report.py` | 0 | Markdown CP-SAT report generated from exp_009 aggregates without rerunning the solver |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
-| `pytest` | 0 | 150 passed |
+| `pytest` | 0 | 151 passed |
 | `git status --short` | 0 | Clean |
 
 ## Module Status
@@ -49,6 +49,8 @@ Last updated: 2026-06-07
 | CP-SAT worker repeats | Done | Raw and aggregate CSV artifacts; 2, 4, and auto workers reached BKS 204 in all three tracked runs |
 | CP-SAT benchmark matrix | Done | Controlled repeated 1/auto-worker comparison across the tracked FJSPLib subset; `kacem4` remains time-limited `FEASIBLE` locally |
 | CP-SAT report builder | Done | Markdown interpretation report summarizes worker rows, best rows, bounds, gaps, and `OPTIMAL` vs `FEASIBLE` status |
+| Code walkthrough | Done | Clean Chinese guide for reading Phase 1 modules and understanding solver data flow |
+| Reproducibility checklist | Done | Fixed command order for metadata audit, benchmark runs, CP-SAT report, pytest, and PDF checks |
 | Heuristic benchmark matrix | Done | Deterministic rules plus seeded Random and DispatchRandom families across the tracked subset |
 | Heuristic quality report | Done | Per-instance and cross-instance BKS-relative ratios with reference coverage checks |
 | Benchmark metadata audit | Done | One-to-one tracked-file, BKS-row, and loader integrity gate |
@@ -63,5 +65,5 @@ Last updated: 2026-06-07
 ## Next Review Targets
 
 1. Keep benchmark expansion in controlled batches, with metadata audit before experiment runs.
-2. Improve LaTeX/README interpretation when CP-SAT reaches BKS with only `FEASIBLE` status.
-3. Compare larger static benchmark subsets before adding more dispatching rules.
+2. Compare larger static benchmark subsets before adding more dispatching rules.
+3. Treat AGV/RL/GNN as a later phase only after the static FJSP baseline remains stable.

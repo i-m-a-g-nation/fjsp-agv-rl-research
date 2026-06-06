@@ -457,8 +457,9 @@ Artifact:
 
 - `results/exp_013_cpsat_report.md`
 
-The report keeps the distinction between proved `OPTIMAL` rows and valid
-time-limited `FEASIBLE` schedules explicit.
+The report adds FJSPLib LB/UB columns, records whether each best local row
+reaches the upstream UB, and keeps the distinction between proved `OPTIMAL`
+rows and valid time-limited `FEASIBLE` schedules explicit.
 
 ## General Requirements
 

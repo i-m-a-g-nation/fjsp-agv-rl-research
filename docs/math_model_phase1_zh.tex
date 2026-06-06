@@ -267,4 +267,16 @@ DispatchEFT & 0.405199 & 1.384615 \\
   \item 在 Phase 1 未稳定前，不引入 AGV、RL 或 GNN。
 \end{enumerate}
 
+\section{结论与局限性}
+
+Phase 1 当前已经形成可复现的静态 FJSP 基础实验底座，而不是声称所有
+benchmark 都已经被本地求解到最优的完整优化系统。当前最可靠的部分包括：
+独立 feasibility checker、带来源说明的 benchmark 子集、重复 CP-SAT 诊断、
+以及基于上游 BKS 的启发式质量报告。
+
+主要局限性是有意保留的：当前 benchmark 子集仍然中等规模，大实例上的
+CP-SAT 结果多为限时 \texttt{FEASIBLE}，且本阶段不包含 AGV、RL、GNN、
+动态重调度或完整论文复现实验。保持这些边界能降低复杂度，并让后续
+Phase 2 扩展更容易审核和维护。
+
 \end{document}

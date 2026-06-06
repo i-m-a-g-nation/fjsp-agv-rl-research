@@ -352,8 +352,10 @@ Reads the Experiment 009 aggregate CSV and writes a Markdown interpretation
 report at
 [`experiments/results/exp_013_cpsat_report.md`](experiments/results/exp_013_cpsat_report.md).
 It does not rerun CP-SAT; it checks the CSV shape, summarizes worker
-configurations, selects each instance's best row, and keeps the distinction
-between `OPTIMAL` proofs and valid time-limited `FEASIBLE` schedules explicit.
+configurations, selects each instance's best row, adds FJSPLib LB/UB comparison,
+and keeps the distinction between `OPTIMAL` proofs and valid time-limited
+`FEASIBLE` schedules explicit. In the current 30-instance report, 15 best rows
+reach the upstream UB and 13 are locally proved `OPTIMAL`.
 
 ## Known Notes
 
@@ -364,6 +366,8 @@ between `OPTIMAL` proofs and valid time-limited `FEASIBLE` schedules explicit.
 ## Code Walkthrough
 
 For a guided tour of the Phase 1 code, see [docs/code_walkthrough_phase1.md](docs/code_walkthrough_phase1.md).
+For the exact recommended reproduction flow, see
+[docs/reproducibility_phase1.md](docs/reproducibility_phase1.md).
 
 ## Mathematical Model
 

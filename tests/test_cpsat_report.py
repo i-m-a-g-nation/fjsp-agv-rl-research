@@ -3,8 +3,10 @@ from experiments.exp_013_cpsat_report import (
     build_markdown_report,
     load_cpsat_aggregates,
     summarize_by_worker,
+    validate_reference_coverage,
     write_markdown_report,
 )
+from experiments.exp_011_heuristic_quality_report import BenchmarkReference
 
 
 HEADER = (
@@ -38,9 +40,13 @@ def test_cpsat_report_summarizes_workers_and_best_rows(tmp_path):
     )
 
     rows = load_cpsat_aggregates(summary)
+    references = {
+        "mk01.fjs": BenchmarkReference("mk01.fjs", 40, 40),
+        "mk02.fjs": BenchmarkReference("mk02.fjs", 26, 26),
+    }
     worker_rows = summarize_by_worker(rows)
     best_rows = best_row_per_instance(rows)
-    report = build_markdown_report(rows)
+    report = build_markdown_report(rows, references)
 
     assert len(rows) == 4
     assert [(row.workers, row.instances) for row in worker_rows] == [("1", 2), ("auto", 2)]
@@ -49,7 +55,25 @@ def test_cpsat_report_summarizes_workers_and_best_rows(tmp_path):
         ("mk02.fjs", "auto"),
     ]
     assert "Fully feasible aggregate rows: 4/4" in report
-    assert "mk02.fjs | auto | 30" in report
+    assert "Best worker rows reaching the upstream FJSPLib upper bound: 1/2" in report
+    assert "mk02.fjs | auto | 30 | 26 | 26 | no | no" in report
+
+
+def test_validate_reference_coverage_rejects_mismatch(tmp_path):
+    summary = tmp_path / "summary.csv"
+    summary.write_text(
+        HEADER +
+        "mk01.fjs,1,2,2,40,40.0,0.0,40,40.0,40.0,0.0,0.0,1.0,1.0,OPTIMAL:2\n",
+        encoding="utf-8",
+    )
+    rows = load_cpsat_aggregates(summary)
+
+    try:
+        validate_reference_coverage(rows, {})
+    except ValueError as exc:
+        assert "missing BKS reference" in str(exc)
+    else:
+        raise AssertionError("expected missing-reference rejection")
 
 
 def test_write_markdown_report_creates_parent_directory(tmp_path):

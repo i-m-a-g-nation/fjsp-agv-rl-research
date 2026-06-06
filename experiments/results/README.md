@@ -20,6 +20,7 @@ Current generated files:
 - `exp_011_heuristic_quality_rows.csv`
 - `exp_011_heuristic_quality_families.csv`
 - `exp_012_benchmark_metadata_audit.csv`
+- `exp_013_cpsat_report.md`
 
 Each row records:
 
@@ -40,3 +41,7 @@ references in `instances/fjsplib_bks.csv`.
 
 Experiment 012 records one-to-one tracked-file, BKS-row, and loader integrity
 checks before the benchmark subset is expanded.
+
+Experiment 013 converts the CP-SAT benchmark-matrix aggregate CSV into a
+Markdown report. It adds FJSPLib LB/UB comparison, whether the local result
+reaches the upstream UB, and whether the local CP-SAT status proved optimality.

@@ -116,8 +116,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 - `exp_010_heuristic_benchmark_matrix.py`：420/420 个启发式调度全部 feasible
 - `exp_011_heuristic_quality_report.py`：30 实例 BKS-relative 质量报告已刷新
 - `exp_012_benchmark_metadata_audit.py`：30/30 个 tracked 文件、BKS 行和 loader 校验通过
-- `exp_013_cpsat_report.py`：生成 CP-SAT Markdown 报告，区分 `OPTIMAL` 与时限内 `FEASIBLE`
-- `pytest`：150 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
+- `exp_013_cpsat_report.py`：生成 CP-SAT Markdown 报告，区分 `OPTIMAL` 与时限内 `FEASIBLE`；当前 15/30 个 best row 达到上游 UB，13/30 个本地证明 `OPTIMAL`
+- `pytest`：151 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
 
 当前 30 实例质量报告中，`DispatchFIFO` 的跨实例平均 best gap 最低：
 
@@ -140,6 +140,11 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 
 - [docs/math_model_phase1_zh.tex](docs/math_model_phase1_zh.tex)
 - [docs/math_model_phase1_zh.pdf](docs/math_model_phase1_zh.pdf)
+
+代码导读和可复现性清单：
+
+- [docs/code_walkthrough_phase1.md](docs/code_walkthrough_phase1.md)
+- [docs/reproducibility_phase1.md](docs/reproducibility_phase1.md)
 
 数学模型包含集合、参数、决策变量、机器选择约束、工序顺序约束、机器容量约束、
 makespan 定义，以及 feasibility checker 与数学约束之间的对应关系。
