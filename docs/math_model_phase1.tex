@@ -247,8 +247,15 @@ Instance & Jobs & Machines & FJSPLib BKS & Local CP-SAT \\
 \texttt{fattahi4} & 3 & 2 & 355 & 355 \\
 \texttt{fattahi5} & 3 & 2 & 119 & 119 \\
 \texttt{fattahi6} & 3 & 3 & 320 & 320 \\
+\texttt{fattahi7} & 3 & 5 & 397 & 397 \\
+\texttt{fattahi8} & 3 & 4 & 253 & 253 \\
 \texttt{mt10c1} & 10 & 11 & 927 & 927 \\
-\texttt{01a} & 10 & 5 & 2505 & 2628 \\
+\texttt{mt10cc} & 10 & 12 & 908 & 908 \\
+\texttt{mt10x} & 10 & 11 & 918 & 918 \\
+\texttt{01a} & 10 & 5 & 2505 & 2586 \\
+\texttt{02a} & 10 & 5 & 2228 & 2534 \\
+\texttt{03a} & 10 & 5 & 2228 & 2602 \\
+\texttt{04a} & 10 & 5 & 2503 & 2591 \\
 \texttt{kacem1} & 4 & 5 & 11 & 11 \\
 \texttt{kacem2} & 10 & 7 & 11 & 11 \\
 \texttt{kacem3} & 10 & 10 & 7 & 7 \\
@@ -263,6 +270,7 @@ Brandimarte \texttt{mk06} & 10 & 15 & 57 & 74 \\
 Brandimarte \texttt{mk07} & 20 & 5 & 139 & 159 \\
 Brandimarte \texttt{mk08} & 20 & 10 & 523 & 523 \\
 Brandimarte \texttt{mk09} & 20 & 10 & 307 & 340 \\
+Brandimarte \texttt{mk10} & 20 & 15 & 193 & 302 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -382,55 +390,22 @@ aggregates are stored separately.
 
 \begin{table}[h]
 \centering
-\begin{tabular}{lrrrrlr}
+\begin{tabular}{lrrrrr}
 \toprule
-Instance & Workers & Pass & Best & Mean & Status & Bound \\
+Workers & Instances & Feasible rows & Optimal rows & Mean best & Mean gap \\
 \midrule
-\texttt{mk01} & 1 & 2/2 & 40 & 40.000000 & \texttt{OPTIMAL} & 40 \\
-\texttt{mk01} & \texttt{auto} & 2/2 & 40 & 40.000000 & \texttt{OPTIMAL} & 40 \\
-\texttt{mk02} & 1 & 2/2 & 31 & 31.000000 & \texttt{FEASIBLE} & 3 \\
-\texttt{mk02} & \texttt{auto} & 2/2 & 30 & 30.000000 & \texttt{FEASIBLE} & 20 \\
-\texttt{mk03} & 1 & 2/2 & 352 & 352.000000 & \texttt{FEASIBLE} & 20 \\
-\texttt{mk03} & \texttt{auto} & 2/2 & 234 & 234.000000 & \texttt{FEASIBLE} & 82 \\
-\texttt{mk04} & 1 & 2/2 & 68 & 68.000000 & \texttt{FEASIBLE} & 14 \\
-\texttt{mk04} & \texttt{auto} & 2/2 & 64 & 65.000000 & \texttt{FEASIBLE} & 41 \\
-\texttt{mk05} & 1 & 2/2 & 199 & 199.000000 & \texttt{FEASIBLE} & 32 \\
-\texttt{mk05} & \texttt{auto} & 2/2 & 177 & 178.000000 & \texttt{FEASIBLE} & 82 \\
-\texttt{mk06} & 1 & 2/2 & 119 & 120.000000 & \texttt{FEASIBLE} & 6 \\
-\texttt{mk06} & \texttt{auto} & 2/2 & 77 & 80.000000 & \texttt{FEASIBLE} & 28 \\
-\texttt{mk07} & 1 & 2/2 & 184 & 184.000000 & \texttt{FEASIBLE} & 25 \\
-\texttt{mk07} & \texttt{auto} & 2/2 & 168 & 172.000000 & \texttt{FEASIBLE} & 87 \\
-\texttt{mk08} & 1 & 2/2 & 578 & 578.000000 & \texttt{FEASIBLE} & 182 \\
-\texttt{mk08} & \texttt{auto} & 2/2 & 528 & 530.500000 & \texttt{FEASIBLE} & 244 \\
-\texttt{mk09} & 1 & 2/2 & 589 & 589.000000 & \texttt{FEASIBLE} & 27 \\
-\texttt{mk09} & \texttt{auto} & 2/2 & 421 & 424.500000 & \texttt{FEASIBLE} & 118 \\
-\texttt{mt10c1} & 1 & 2/2 & 957 & 957.000000 & \texttt{FEASIBLE} & 759 \\
-\texttt{mt10c1} & \texttt{auto} & 2/2 & 927 & 927.500000 & \texttt{FEASIBLE} & 874 \\
-\texttt{01a} & 1 & 2/2 & 2697 & 2697.000000 & \texttt{FEASIBLE} & 1395 \\
-\texttt{01a} & \texttt{auto} & 2/2 & 2658 & 2659.000000 & \texttt{FEASIBLE} & 2505 \\
-\texttt{fattahi1} & 1/\texttt{auto} & 4/4 & 66 & 66.000000 & \texttt{OPTIMAL} & 66 \\
-\texttt{fattahi2} & 1/\texttt{auto} & 4/4 & 107 & 107.000000 & \texttt{OPTIMAL} & 107 \\
-\texttt{fattahi3} & 1/\texttt{auto} & 4/4 & 221 & 221.000000 & \texttt{OPTIMAL} & 221 \\
-\texttt{fattahi4} & 1/\texttt{auto} & 4/4 & 355 & 355.000000 & \texttt{OPTIMAL} & 355 \\
-\texttt{fattahi5} & 1/\texttt{auto} & 4/4 & 119 & 119.000000 & \texttt{OPTIMAL} & 119 \\
-\texttt{fattahi6} & 1/\texttt{auto} & 4/4 & 320 & 320.000000 & \texttt{OPTIMAL} & 320 \\
-\texttt{ft06} & 1/\texttt{auto} & 4/4 & 55 & 55.000000 & \texttt{OPTIMAL} & 55 \\
-\texttt{kacem1} & 1/\texttt{auto} & 4/4 & 11 & 11.000000 & \texttt{OPTIMAL} & 11 \\
-\texttt{kacem2} & 1/\texttt{auto} & 4/4 & 11 & 11.000000 & \texttt{OPTIMAL} & 11 \\
-\texttt{kacem3} & 1/\texttt{auto} & 4/4 & 7 & 7.000000 & \texttt{OPTIMAL} & 7 \\
-\texttt{kacem4} & 1 & 2/2 & 126 & 126.000000 & \texttt{FEASIBLE} & 0 \\
-\texttt{kacem4} & \texttt{auto} & 2/2 & 18 & 18.500000 & \texttt{FEASIBLE} & 10 \\
+1 & 30 & 30 & 12 & 674.333 & 0.451173 \\
+\texttt{auto} & 30 & 30 & 12 & 590.367 & 0.273244 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-All 88 schedules passed the independent feasibility checker. Except for
-\texttt{mk02}, the smaller tracked instances were solved optimally within the
-limit. On \texttt{mk02}, \texttt{mk03}, \texttt{mk04}, \texttt{mk05},
-\texttt{mk06}, \texttt{mk07}, \texttt{mk08}, \texttt{mk09}, \texttt{mt10c1},
-\texttt{01a}, and \texttt{kacem4}, automatic workers improved
-the observed incumbents and bounds in this run, but neither configuration
-proved optimality within 3 seconds.
+All 120 schedules passed the independent feasibility checker. A dedicated
+report builder, \texttt{exp\_013\_cpsat\_report.py}, converts the aggregate CSV
+into a Markdown report with each instance's best worker row, objective bound,
+gap, and status. The report keeps the distinction between valid
+\texttt{FEASIBLE} schedules and locally proved \texttt{OPTIMAL} schedules
+explicit.
 
 \subsection{Heuristic Benchmark Matrix}
 
@@ -471,7 +446,7 @@ Instance & Best deterministic rule & Random range & DispatchRandom range \\
 \end{tabular}
 \end{table}
 
-All 308 schedules passed the independent feasibility checker. No single rule
+All 420 schedules passed the independent feasibility checker. No single rule
 dominates every instance: MWKR is strongest on \texttt{mk01}, \texttt{mk02},
 \texttt{mk06}, \texttt{fattahi1}, \texttt{kacem2}, and \texttt{kacem4}; FIFO is strongest on
 \texttt{mk04}, \texttt{mk05}, \texttt{mk08}, \texttt{mk09}, \texttt{fattahi5},
@@ -502,21 +477,21 @@ The upstream BKS is a comparison reference, not a local optimality proof.
 \toprule
 Algorithm family & Mean best gap & Maximum best gap \\
 \midrule
-FIFO & 5.456190 & 25.090909 \\
-SPT & 2.092635 & 4.473684 \\
-EarliestFinishTime & 0.412865 & 1.384615 \\
-DispatchFIFO & 0.135868 & 0.331176 \\
-DispatchSPT & 1.192609 & 3.325733 \\
-DispatchEFT & 0.416947 & 1.384615 \\
-DispatchMWKR & 0.138297 & 0.350593 \\
-DispatchMOPNR & 0.180611 & 0.466667 \\
-Random & 3.163036 & 9.421053 \\
-DispatchRandom & 1.487223 & 6.142857 \\
+FIFO & 4.862683 & 25.090909 \\
+SPT & 2.291656 & 6.088083 \\
+EarliestFinishTime & 0.392423 & 1.384615 \\
+DispatchFIFO & 0.151281 & 0.370370 \\
+DispatchSPT & 1.393257 & 4.564767 \\
+DispatchEFT & 0.405199 & 1.384615 \\
+DispatchMWKR & 0.158760 & 0.364924 \\
+DispatchMOPNR & 0.193880 & 0.466667 \\
+Random & 3.141676 & 9.421053 \\
+DispatchRandom & 1.318093 & 6.142857 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-DispatchFIFO has the lowest mean best gap on the current twenty-two-instance subset.
+DispatchFIFO has the lowest mean best gap on the current thirty-instance subset.
 The sample remains deliberately small, so broader benchmark coverage should
 precede additional dispatching rules.
 
@@ -527,7 +502,7 @@ Before expanding the benchmark subset, the metadata audit recursively
 discovers tracked FJSPLib files, matches them one-to-one with
 \texttt{instances/fjsplib\_bks.csv}, and loads every discovered file. A row
 passes only if the tracked file exists, its upstream reference row exists, and
-the loader accepts the instance. All twenty-two currently tracked rows pass. This
+the loader accepts the instance. All thirty currently tracked rows pass. This
 gate prevents silently omitted files and stale metadata from entering quality
 comparisons.
 

@@ -18,7 +18,7 @@ Phase 1 已覆盖：
 - 严格 dispatching rule：DispatchFIFO、DispatchSPT、DispatchEFT、DispatchMWKR、DispatchMOPNR、DispatchRandom
 - OR-Tools CP-SAT baseline：OptionalIntervalVar、ExactlyOne、Precedence、NoOverlap、makespan 最小化
 - CP-SAT 诊断：solver status、objective bound、relative gap、solver wall time
-- 官方 FJSPLib 静态子集：22 个 tracked 上游文件，覆盖 6 个来源系列
+- 官方 FJSPLib 静态子集：30 个 tracked 上游文件，覆盖 6 个来源系列
 - 统一实验 CSV 记录和元数据审计
 - Matplotlib Gantt 图输出
 - Phase 1 数学建模 LaTeX 文档
@@ -72,7 +72,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 ## 当前实验状态
 
 真实 FJSPLib 子集来自 ScheduleOpt 官方仓库，并保留 CC-BY-SA-4.0 归属说明。
-当前 tracked 上游文件数为 16。
+当前 tracked 上游文件数为 30。
 
 | FJSPLib 实例 | 规模 | 当前启发式最佳值 | CP-SAT 10s | FJSPLib BKS |
 |---|---:|---:|---:|---:|
@@ -82,8 +82,15 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 | `fattahi4` | 3 x 2 | 367 | 355 `OPTIMAL` | 355 |
 | `fattahi5` | 3 x 2 | 119 | 119 `OPTIMAL` | 119 |
 | `fattahi6` | 3 x 3 | 330 | 320 `OPTIMAL` | 320 |
+| `fattahi7` | 3 x 5 | 397 | 397 `OPTIMAL` | 397 |
+| `fattahi8` | 3 x 4 | 273 | 253 `OPTIMAL` | 253 |
 | Chambers-Barnes `mt10c1` | 10 x 11 | 1225 | 927 `FEASIBLE` | 927 |
-| Dauzere-Peres `01a` | 10 x 5 | 3056 | 2628 `FEASIBLE` | 2505 |
+| Chambers-Barnes `mt10cc` | 10 x 12 | 1121 | 908 `FEASIBLE` | 908 |
+| Chambers-Barnes `mt10x` | 10 x 11 | 1173 | 918 `FEASIBLE` | 918 |
+| Dauzere-Peres `01a` | 10 x 5 | 3056 | 2586 `FEASIBLE` | 2505 |
+| Dauzere-Peres `02a` | 10 x 5 | 2443 | 2534 `FEASIBLE` | 2228 |
+| Dauzere-Peres `03a` | 10 x 5 | 2413 | 2602 `FEASIBLE` | 2228 |
+| Dauzere-Peres `04a` | 10 x 5 | 3070 | 2591 `FEASIBLE` | 2503 |
 | `kacem1` | 4 x 5 | 11 | 11 `OPTIMAL` | 11 |
 | `kacem2` | 10 x 7 | 12 | 11 `OPTIMAL` | 11 |
 | `kacem3` | 10 x 10 | 8 | 7 `OPTIMAL` | 7 |
@@ -98,27 +105,29 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 | Brandimarte `mk07` | 20 x 5 | 160 | 159 `FEASIBLE` | 139 |
 | Brandimarte `mk08` | 20 x 10 | 531 | 523 `FEASIBLE` | 523 |
 | Brandimarte `mk09` | 20 x 10 | 341 | 340 `FEASIBLE` | 307 |
+| Brandimarte `mk10` | 20 x 15 | 243 | 302 `FEASIBLE` | 193 |
 
 对 `FEASIBLE` 行，只能说明本地 CP-SAT 在时限内找到合法可行调度，不能说明已经证明最优。
 
 ## 最新验证
 
-- `exp_005_benchmark_batch.py`：18 个 discovered 文件全部 feasible
-- `exp_009_cpsat_benchmark_matrix.py`：88/88 个 CP-SAT 矩阵调度全部 feasible
-- `exp_010_heuristic_benchmark_matrix.py`：308/308 个启发式调度全部 feasible
-- `exp_011_heuristic_quality_report.py`：22 实例 BKS-relative 质量报告已刷新
-- `exp_012_benchmark_metadata_audit.py`：22/22 个 tracked 文件、BKS 行和 loader 校验通过
-- `pytest`：147 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
+- `exp_005_benchmark_batch.py`：32 个 discovered 文件全部 feasible
+- `exp_009_cpsat_benchmark_matrix.py`：120/120 个 CP-SAT 矩阵调度全部 feasible
+- `exp_010_heuristic_benchmark_matrix.py`：420/420 个启发式调度全部 feasible
+- `exp_011_heuristic_quality_report.py`：30 实例 BKS-relative 质量报告已刷新
+- `exp_012_benchmark_metadata_audit.py`：30/30 个 tracked 文件、BKS 行和 loader 校验通过
+- `exp_013_cpsat_report.py`：生成 CP-SAT Markdown 报告，区分 `OPTIMAL` 与时限内 `FEASIBLE`
+- `pytest`：150 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
 
-当前 22 实例质量报告中，`DispatchMWKR` 的跨实例平均 best gap 最低：
+当前 30 实例质量报告中，`DispatchFIFO` 的跨实例平均 best gap 最低：
 
 | 算法族 | 平均 best gap | 最大 best gap |
 |---|---:|---:|
-| DispatchFIFO | 0.135868 | 0.331176 |
-| DispatchMWKR | 0.138297 | 0.350593 |
-| DispatchMOPNR | 0.180611 | 0.466667 |
-| EarliestFinishTime | 0.412865 | 1.384615 |
-| DispatchEFT | 0.416947 | 1.384615 |
+| DispatchFIFO | 0.151281 | 0.370370 |
+| DispatchMWKR | 0.158760 | 0.364924 |
+| DispatchMOPNR | 0.193880 | 0.466667 |
+| EarliestFinishTime | 0.392423 | 1.384615 |
+| DispatchEFT | 0.405199 | 1.384615 |
 
 ## 数学建模文档
 

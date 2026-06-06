@@ -311,52 +311,22 @@ Useful controls:
 .\.conda-env\python.exe experiments\exp_009_cpsat_benchmark_matrix.py --repeats 3 --time-limit 10 --worker-counts 1 4 0
 ```
 
-Tracked default aggregate result:
+Tracked default worker summary:
 
-| Instance | Workers | Feasible runs | Best makespan | Mean makespan | Status | Best bound |
-|---|---:|---:|---:|---:|---|---:|
-| `mk01` | 1 | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
-| `mk01` | auto | 2 / 2 | 40 | 40.000000 | `OPTIMAL` | 40 |
-| `mk02` | 1 | 2 / 2 | 31 | 31.000000 | `FEASIBLE` | 3 |
-| `mk02` | auto | 2 / 2 | 30 | 30.000000 | `FEASIBLE` | 20 |
-| `mk03` | 1 | 2 / 2 | 352 | 352.000000 | `FEASIBLE` | 20 |
-| `mk03` | auto | 2 / 2 | 234 | 234.000000 | `FEASIBLE` | 82 |
-| `mk04` | 1 | 2 / 2 | 68 | 68.000000 | `FEASIBLE` | 14 |
-| `mk04` | auto | 2 / 2 | 64 | 65.000000 | `FEASIBLE` | 41 |
-| `mk05` | 1 | 2 / 2 | 199 | 199.000000 | `FEASIBLE` | 32 |
-| `mk05` | auto | 2 / 2 | 177 | 178.000000 | `FEASIBLE` | 82 |
-| `mk06` | 1 | 2 / 2 | 119 | 120.000000 | `FEASIBLE` | 6 |
-| `mk06` | auto | 2 / 2 | 77 | 80.000000 | `FEASIBLE` | 28 |
-| `mk07` | 1 | 2 / 2 | 184 | 184.000000 | `FEASIBLE` | 25 |
-| `mk07` | auto | 2 / 2 | 168 | 172.000000 | `FEASIBLE` | 87 |
-| `mk08` | 1 | 2 / 2 | 578 | 578.000000 | `FEASIBLE` | 182 |
-| `mk08` | auto | 2 / 2 | 528 | 530.500000 | `FEASIBLE` | 244 |
-| `mk09` | 1 | 2 / 2 | 589 | 589.000000 | `FEASIBLE` | 27 |
-| `mk09` | auto | 2 / 2 | 421 | 424.500000 | `FEASIBLE` | 118 |
-| `mt10c1` | 1 | 2 / 2 | 957 | 957.000000 | `FEASIBLE` | 759 |
-| `mt10c1` | auto | 2 / 2 | 927 | 927.500000 | `FEASIBLE` | 874 |
-| `01a` | 1 | 2 / 2 | 2697 | 2697.000000 | `FEASIBLE` | 1395 |
-| `01a` | auto | 2 / 2 | 2658 | 2659.000000 | `FEASIBLE` | 2505 |
-| `fattahi1` | 1 / auto | 4 / 4 | 66 | 66.000000 | `OPTIMAL` | 66 |
-| `fattahi2` | 1 / auto | 4 / 4 | 107 | 107.000000 | `OPTIMAL` | 107 |
-| `fattahi3` | 1 / auto | 4 / 4 | 221 | 221.000000 | `OPTIMAL` | 221 |
-| `fattahi4` | 1 / auto | 4 / 4 | 355 | 355.000000 | `OPTIMAL` | 355 |
-| `fattahi5` | 1 / auto | 4 / 4 | 119 | 119.000000 | `OPTIMAL` | 119 |
-| `fattahi6` | 1 / auto | 4 / 4 | 320 | 320.000000 | `OPTIMAL` | 320 |
-| edata `ft06` | 1 / auto | 4 / 4 | 55 | 55.000000 | `OPTIMAL` | 55 |
-| `kacem1` | 1 / auto | 4 / 4 | 11 | 11.000000 | `OPTIMAL` | 11 |
-| `kacem2` | 1 / auto | 4 / 4 | 11 | 11.000000 | `OPTIMAL` | 11 |
-| `kacem3` | 1 / auto | 4 / 4 | 7 | 7.000000 | `OPTIMAL` | 7 |
-| `kacem4` | 1 | 2 / 2 | 126 | 126.000000 | `FEASIBLE` | 0 |
-| `kacem4` | auto | 2 / 2 | 18 | 18.500000 | `FEASIBLE` | 10 |
+| Workers | Instances | Feasible rows | Proved-optimal rows | Mean best makespan | Mean best bound | Mean best gap |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 30 | 30 | 12 | 674.333 | 258.067 | 0.451173 |
+| auto | 30 | 30 | 12 | 590.367 | 358.900 | 0.273244 |
 
 CSV artifacts:
 
 - `results/exp_009_cpsat_benchmark_matrix_runs.csv`
 - `results/exp_009_cpsat_benchmark_matrix_summary.csv`
 
-All 88 schedules passed feasibility checking. Loader failures and solver
-failures remain visible in the raw CSV and process exit code.
+All 120 schedules passed feasibility checking. Loader failures and solver
+failures remain visible in the raw CSV and process exit code. Use
+`exp_013_cpsat_report.py` for a readable Markdown interpretation of these
+aggregates.
 
 ## `exp_010_heuristic_benchmark_matrix.py`
 
@@ -391,14 +361,22 @@ Tracked default summary:
 | `mk07` | DispatchMOPNR | 160 | 689-854 | 345-427 |
 | `mk08` | DispatchFIFO | 531 | 2306-2560 | 755-916 |
 | `mk09` | DispatchFIFO | 341 | 2071-2200 | 817-960 |
+| `mk10` | DispatchMWKR | 243 | 1973-2087 | 610-710 |
 | `mt10c1` | DispatchMOPNR | 1225 | 3348-3394 | 1446-1728 |
+| `mt10cc` | DispatchMWKR | 1121 | 3348-3394 | 1597-1841 |
+| `mt10x` | EarliestFinishTime / DispatchEFT | 1173 | 3095-3394 | 1744-1849 |
 | `01a` | DispatchFIFO | 3056 | 10212-10398 | 4132-4525 |
+| `02a` | DispatchFIFO | 2443 | 10010-10305 | 4401-4804 |
+| `03a` | DispatchFIFO | 2413 | 10025-10207 | 4197-4898 |
+| `04a` | DispatchMOPNR | 3070 | 10177-10380 | 4090-4495 |
 | `fattahi1` | DispatchMWKR | 66 | 86-135 | 86-135 |
 | `fattahi2` | DispatchFIFO / DispatchMWKR | 107 | 107-192 | 107-149 |
 | `fattahi3` | DispatchFIFO / DispatchMOPNR | 221 | 298-442 | 221-361 |
 | `fattahi4` | DispatchFIFO / DispatchMWKR / DispatchMOPNR | 367 | 409-699 | 407-626 |
 | `fattahi5` | DispatchFIFO | 119 | 207-246 | 150-220 |
 | `fattahi6` | EarliestFinishTime / DispatchEFT | 330 | 557-707 | 470-557 |
+| `fattahi7` | EarliestFinishTime / DispatchFIFO / DispatchSPT / DispatchEFT / DispatchMOPNR | 397 | 491-595 | 462-598 |
+| `fattahi8` | EarliestFinishTime / DispatchEFT | 273 | 275-317 | 341-450 |
 | edata `ft06` | DispatchFIFO | 55 | 146-152 | 71-112 |
 | `kacem1` | DispatchFIFO | 11 | 27-82 | 26-44 |
 | `kacem2` | DispatchMWKR | 12 | 62-102 | 50-88 |
@@ -410,7 +388,7 @@ CSV artifacts:
 - `results/exp_010_heuristic_benchmark_matrix_runs.csv`
 - `results/exp_010_heuristic_benchmark_matrix_summary.csv`
 
-All 308 schedules passed feasibility checking. Loader and solver failures remain
+All 420 schedules passed feasibility checking. Loader and solver failures remain
 visible in the raw CSV and process exit code.
 
 ## `exp_011_heuristic_quality_report.py`
@@ -432,11 +410,11 @@ Tracked family summary:
 
 | Algorithm family | Mean best gap | Maximum best gap |
 |---|---:|---:|
-| DispatchFIFO | 0.135868 | 0.331176 |
-| DispatchMWKR | 0.138297 | 0.350593 |
-| DispatchMOPNR | 0.180611 | 0.466667 |
-| EarliestFinishTime | 0.412865 | 1.384615 |
-| DispatchEFT | 0.416947 | 1.384615 |
+| DispatchFIFO | 0.151281 | 0.370370 |
+| DispatchMWKR | 0.158760 | 0.364924 |
+| DispatchMOPNR | 0.193880 | 0.466667 |
+| EarliestFinishTime | 0.392423 | 1.384615 |
+| DispatchEFT | 0.405199 | 1.384615 |
 
 CSV artifacts:
 
@@ -462,7 +440,25 @@ CSV artifact:
 - `results/exp_012_benchmark_metadata_audit.csv`
 
 The script returns exit code `1` when any tracked file, BKS metadata row, or
-loadable instance is missing. All twenty-two current tracked rows pass.
+loadable instance is missing. All thirty current tracked rows pass.
+
+## `exp_013_cpsat_report.py`
+
+Reads `results/exp_009_cpsat_benchmark_matrix_summary.csv` and writes a compact
+Markdown report.
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_013_cpsat_report.py
+```
+
+Artifact:
+
+- `results/exp_013_cpsat_report.md`
+
+The report keeps the distinction between proved `OPTIMAL` rows and valid
+time-limited `FEASIBLE` schedules explicit.
 
 ## General Requirements
 

@@ -155,7 +155,7 @@ C_{\max} \ge C_{jo},
 仓库跟踪了一个小型真实静态 FJSP 子集，文件来自 ScheduleOpt 官方 FJSPLib
 仓库，并保留 CC-BY-SA-4.0 归属说明：
 \url{https://scheduleopt.github.io/benchmarks/fjsplib}。
-当前子集覆盖六个来源系列，共 22 个上游文件。
+当前子集覆盖六个来源系列，共 30 个上游文件。
 
 \begin{table}[h]
 \centering
@@ -169,8 +169,15 @@ C_{\max} \ge C_{jo},
 \texttt{fattahi4} & 3 & 2 & 355 & 355 \\
 \texttt{fattahi5} & 3 & 2 & 119 & 119 \\
 \texttt{fattahi6} & 3 & 3 & 320 & 320 \\
+\texttt{fattahi7} & 3 & 5 & 397 & 397 \\
+\texttt{fattahi8} & 3 & 4 & 253 & 253 \\
 \texttt{mt10c1} & 10 & 11 & 927 & 927 \\
-\texttt{01a} & 10 & 5 & 2505 & 2628 \\
+\texttt{mt10cc} & 10 & 12 & 908 & 908 \\
+\texttt{mt10x} & 10 & 11 & 918 & 918 \\
+\texttt{01a} & 10 & 5 & 2505 & 2586 \\
+\texttt{02a} & 10 & 5 & 2228 & 2534 \\
+\texttt{03a} & 10 & 5 & 2228 & 2602 \\
+\texttt{04a} & 10 & 5 & 2503 & 2591 \\
 \texttt{kacem1} & 4 & 5 & 11 & 11 \\
 \texttt{kacem2} & 10 & 7 & 11 & 11 \\
 \texttt{kacem3} & 10 & 10 & 7 & 7 \\
@@ -185,16 +192,15 @@ C_{\max} \ge C_{jo},
 \texttt{mk07} & 20 & 5 & 139 & 159 \\
 \texttt{mk08} & 20 & 10 & 523 & 523 \\
 \texttt{mk09} & 20 & 10 & 307 & 340 \\
+\texttt{mk10} & 20 & 15 & 193 & 302 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 上表中的 CP-SAT 值均通过独立 feasibility checker。若 CP-SAT 状态为
 \texttt{FEASIBLE} 而非 \texttt{OPTIMAL}，该值只是限时可行参考调度，
-不是本地已证明最优解。当前 \texttt{mk02}、\texttt{mk03}、\texttt{mk04}、
-\texttt{mk05}、\texttt{mk06}、\texttt{mk07}、\texttt{mk08}、\texttt{mk09}、
-\texttt{mt10c1}、\texttt{01a} 和 \texttt{kacem4}
-都属于这种情况。
+不是本地已证明最优解。当前较大的 Brandimarte、Chambers-Barnes、
+Dauzere-Peres 实例以及 \texttt{kacem4} 都主要属于这种情况。
 
 官方 benchmark 表格将 \texttt{fattahi6} 标为 $3 \times 2$，但官方 old-format
 文件头为 \texttt{3 3 1.6}。本仓库按可加载文件内容记录为 $3 \times 3$，
@@ -204,15 +210,16 @@ C_{\max} \ge C_{jo},
 
 \subsection{CP-SAT benchmark 矩阵}
 
-实验 \texttt{exp\_009} 对 22 个 tracked FJSPLib 实例分别使用单 worker 和
+实验 \texttt{exp\_009} 对 30 个 tracked FJSPLib 实例分别使用单 worker 和
 auto worker，在 3 秒时限下各重复 2 次。最新结果为：
 
 \begin{itemize}
-  \item 88/88 个 CP-SAT 调度全部通过 feasibility checker；
+  \item 120/120 个 CP-SAT 调度全部通过 feasibility checker；
   \item 小实例多数能证明 \texttt{OPTIMAL}；
-  \item \texttt{mk05}、\texttt{mk06}、\texttt{mk07}、\texttt{mk08}、\texttt{mk09}、\texttt{kacem4} 等较难实例仍主要表现为限时
+  \item 较大的 Brandimarte、Chambers-Barnes、Dauzere-Peres 实例以及 \texttt{kacem4} 仍主要表现为限时
   \texttt{FEASIBLE}；
   \item 自动 worker 在本轮观察中通常给出更好的 incumbent 或 bound，但这不是稳定性能排名。
+  \item \texttt{exp\_013} 会把 CP-SAT 聚合 CSV 转换为 Markdown 报告，显式区分 \texttt{OPTIMAL} 与 \texttt{FEASIBLE}。
 \end{itemize}
 
 \subsection{启发式 benchmark 矩阵}
@@ -222,9 +229,9 @@ dispatching rule，并对 Random 与 DispatchRandom 使用固定 seed 42、123�
 最新结果为：
 
 \begin{itemize}
-  \item 308/308 个启发式调度全部通过 feasibility checker；
+  \item 420/420 个启发式调度全部通过 feasibility checker；
   \item 没有任何单一 dispatching rule 在所有实例上占优；
-  \item 当前 22 实例上，DispatchFIFO 的平均 best gap 最低；
+  \item 当前 30 实例上，DispatchFIFO 的平均 best gap 最低；
   \item \texttt{kacem4} 的启发式最好值为 12，仍高于 BKS 11，是后续优化的有用压力样本。
 \end{itemize}
 
@@ -234,11 +241,11 @@ dispatching rule，并对 Random 与 DispatchRandom 使用固定 seed 42、123�
 \toprule
 算法族 & 平均 best gap & 最大 best gap \\
 \midrule
-DispatchFIFO & 0.135868 & 0.331176 \\
-DispatchMWKR & 0.138297 & 0.350593 \\
-DispatchMOPNR & 0.180611 & 0.466667 \\
-EarliestFinishTime & 0.412865 & 1.384615 \\
-DispatchEFT & 0.416947 & 1.384615 \\
+DispatchFIFO & 0.151281 & 0.370370 \\
+DispatchMWKR & 0.158760 & 0.364924 \\
+DispatchMOPNR & 0.193880 & 0.466667 \\
+EarliestFinishTime & 0.392423 & 1.384615 \\
+DispatchEFT & 0.405199 & 1.384615 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -247,7 +254,7 @@ DispatchEFT & 0.416947 & 1.384615 \\
 
 实验 \texttt{exp\_012} 会递归发现 tracked FJSPLib 文件，将其与
 \texttt{instances/fjsplib\_bks.csv} 逐项匹配，并验证每个文件仍能被 loader
-加载。当前 22/22 个 tracked 文件全部通过文件、BKS 行和 loader 检查。
+加载。当前 30/30 个 tracked 文件全部通过文件、BKS 行和 loader 检查。
 
 \section{维护结论}
 

@@ -1,6 +1,6 @@
 ﻿# Phase 1 Review Status
 
-Last updated: 2026-06-04
+Last updated: 2026-06-07
 
 ## Current Status
 
@@ -10,7 +10,7 @@ Last updated: 2026-06-04
 | Python environment | Dedicated Conda environment: `.conda-env` or `FJSP_CONDA_ENV` |
 | matplotlib | 3.8.4 |
 | Pillow | 10.4.0 |
-| pytest | 147 passed, 0 failed |
+| pytest | 150 passed, 0 failed |
 | Known warning | Low-priority `.pytest_cache` warning on some Windows paths |
 
 ## Verified Commands
@@ -21,17 +21,18 @@ Last updated: 2026-06-04
 | `experiments/exp_002_solver_check.py` | 0 | CP-SAT optimal makespan 11 with bound/gap metadata |
 | `experiments/exp_003_dispatching_rules.py` | 0 | Strict dispatching rules feasible, including MWKR and MOPNR |
 | `experiments/exp_004_benchmark_smoke.py` | 0 | Benchmark-format smoke instances feasible, including MWKR and MOPNR |
-| `experiments/exp_005_benchmark_batch.py` | 0 | All 24 discovered files feasible; time-limited CP-SAT `FEASIBLE` statuses remain explicit |
+| `experiments/exp_005_benchmark_batch.py` | 0 | All 32 discovered files feasible; time-limited CP-SAT `FEASIBLE` statuses remain explicit |
 | `experiments/exp_006_cpsat_time_limit_sweep.py` | 0 | Single-worker `mk03` sweep records status, bound, gap, and solver wall time |
 | `experiments/exp_007_cpsat_worker_sweep.py` | 0 | Fixed-limit `mk03` sweep records worker-count observations without claiming a stable ranking |
 | `experiments/exp_008_cpsat_worker_repeats.py` | 0 | 12/12 repeated `mk03` schedules feasible; raw runs and aggregate statistics recorded separately |
-| `experiments/exp_009_cpsat_benchmark_matrix.py` | 0 | 88/88 tracked-subset schedules feasible; timed instances retain bound and gap diagnostics |
-| `experiments/exp_010_heuristic_benchmark_matrix.py` | 0 | 308/308 tracked-subset heuristic schedules feasible; seeded random families aggregated |
-| `experiments/exp_011_heuristic_quality_report.py` | 0 | Twenty-two-instance BKS-relative per-instance and family summaries generated from structured upstream references |
-| `experiments/exp_012_benchmark_metadata_audit.py` | 0 | 22/22 tracked files match BKS rows and remain loadable |
+| `experiments/exp_009_cpsat_benchmark_matrix.py` | 0 | 120/120 tracked-subset schedules feasible; timed instances retain bound and gap diagnostics |
+| `experiments/exp_010_heuristic_benchmark_matrix.py` | 0 | 420/420 tracked-subset heuristic schedules feasible; seeded random families aggregated |
+| `experiments/exp_011_heuristic_quality_report.py` | 0 | Thirty-instance BKS-relative per-instance and family summaries generated from structured upstream references |
+| `experiments/exp_012_benchmark_metadata_audit.py` | 0 | 30/30 tracked files match BKS rows and remain loadable |
+| `experiments/exp_013_cpsat_report.py` | 0 | Markdown CP-SAT report generated from exp_009 aggregates without rerunning the solver |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
-| `pytest` | 0 | 147 passed |
+| `pytest` | 0 | 150 passed |
 | `git status --short` | 0 | Clean |
 
 ## Module Status
@@ -39,14 +40,15 @@ Last updated: 2026-06-04
 | Module | Status | Notes |
 |---|---|---|
 | `FJSPInstance` | Done | `from_jobs_array`, `get_processing_time`, `is_machine_eligible` |
-| Benchmark loader | Done | Smoke coverage plus twenty-two tracked files across six FJSPLib source families; `fattahi6` records the loadable old-format size as 3 x 3 |
+| Benchmark loader | Done | Smoke coverage plus thirty tracked files across six FJSPLib source families; `fattahi6` records the loadable old-format size as 3 x 3 |
 | Benchmark provenance | Done | `instances/README.md` plus `instances/fjsplib_bks.csv` record upstream repository, license, families, and BKS values |
-| Experiment records | Done | Shared runner plus normalized CSV output for `exp_001` through `exp_012` |
+| Experiment records | Done | Shared runner plus normalized CSV output for `exp_001` through `exp_013` |
 | Benchmark batch entry | Done | Recursive discovery, stable order, loader failure records, optional CP-SAT controls |
 | CP-SAT sweep | Done | Fixed-worker `mk03` time-limit comparison with bound/gap diagnostics |
 | CP-SAT worker sweep | Done | Fixed-limit `mk03` worker-count comparison with cautious timed-run interpretation |
 | CP-SAT worker repeats | Done | Raw and aggregate CSV artifacts; 2, 4, and auto workers reached BKS 204 in all three tracked runs |
 | CP-SAT benchmark matrix | Done | Controlled repeated 1/auto-worker comparison across the tracked FJSPLib subset; `kacem4` remains time-limited `FEASIBLE` locally |
+| CP-SAT report builder | Done | Markdown interpretation report summarizes worker rows, best rows, bounds, gaps, and `OPTIMAL` vs `FEASIBLE` status |
 | Heuristic benchmark matrix | Done | Deterministic rules plus seeded Random and DispatchRandom families across the tracked subset |
 | Heuristic quality report | Done | Per-instance and cross-instance BKS-relative ratios with reference coverage checks |
 | Benchmark metadata audit | Done | One-to-one tracked-file, BKS-row, and loader integrity gate |
@@ -60,6 +62,6 @@ Last updated: 2026-06-04
 
 ## Next Review Targets
 
-1. Expand the FJSPLib subset in further controlled batches beyond the current twenty-two files.
-2. Re-run metadata audit and heuristic quality ratios after each benchmark batch.
+1. Keep benchmark expansion in controlled batches, with metadata audit before experiment runs.
+2. Improve LaTeX/README interpretation when CP-SAT reaches BKS with only `FEASIBLE` status.
 3. Compare larger static benchmark subsets before adding more dispatching rules.

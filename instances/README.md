@@ -29,8 +29,15 @@ Tracked subset:
 | `fjsplib/FattahiMehrabadJolai2007/fattahi4.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi4` | 3 x 2 | 355 | 355 |
 | `fjsplib/FattahiMehrabadJolai2007/fattahi5.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi5` | 3 x 2 | 119 | 119 |
 | `fjsplib/FattahiMehrabadJolai2007/fattahi6.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi6` | 3 x 3 | 320 | 320 |
+| `fjsplib/FattahiMehrabadJolai2007/fattahi7.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi7` | 3 x 5 | 397 | 397 |
+| `fjsplib/FattahiMehrabadJolai2007/fattahi8.fjs` | Fattahi, Mehrabad and Jolai (2007) | `fattahi8` | 3 x 4 | 253 | 253 |
 | `fjsplib/ChambersBarnes1996/mt10c1.fjs` | Chambers and Barnes (1996) | `mt10c1` | 10 x 11 | 927 | 927 |
-| `fjsplib/DauzerePeresPaulli1994/01a.fjs` | Dauzère-Pérès and Paulli (1994) | `01a` | 10 x 5 | 2505 | 2505 |
+| `fjsplib/ChambersBarnes1996/mt10cc.fjs` | Chambers and Barnes (1996) | `mt10cc` | 10 x 12 | 908 | 908 |
+| `fjsplib/ChambersBarnes1996/mt10x.fjs` | Chambers and Barnes (1996) | `mt10x` | 10 x 11 | 918 | 918 |
+| `fjsplib/DauzerePeresPaulli1994/01a.fjs` | Dauzere-Peres and Paulli (1994) | `01a` | 10 x 5 | 2505 | 2505 |
+| `fjsplib/DauzerePeresPaulli1994/02a.fjs` | Dauzere-Peres and Paulli (1994) | `02a` | 10 x 5 | 2228 | 2228 |
+| `fjsplib/DauzerePeresPaulli1994/03a.fjs` | Dauzere-Peres and Paulli (1994) | `03a` | 10 x 5 | 2228 | 2228 |
+| `fjsplib/DauzerePeresPaulli1994/04a.fjs` | Dauzere-Peres and Paulli (1994) | `04a` | 10 x 5 | 2503 | 2503 |
 | `fjsplib/HurinkJurischThole1994/edata/ft06.fjs` | Hurink, Jurisch and Thole (1994), edata | `ft06` | 6 x 6 | 55 | 55 |
 | `fjsplib/KacemHammadiBorne2002/kacem1.fjs` | Kacem, Hammadi and Borne (2002) | `kacem1` | 4 x 5 | 11 | 11 |
 | `fjsplib/KacemHammadiBorne2002/kacem2.fjs` | Kacem, Hammadi and Borne (2002) | `kacem2` | 10 x 7 | 11 | 11 |
@@ -45,6 +52,7 @@ Tracked subset:
 | `fjsplib/Brandimarte1993/mk07.fjs` | Brandimarte (1993) | `mk07` | 20 x 5 | 139 | 139 |
 | `fjsplib/Brandimarte1993/mk08.fjs` | Brandimarte (1993) | `mk08` | 20 x 10 | 523 | 523 |
 | `fjsplib/Brandimarte1993/mk09.fjs` | Brandimarte (1993) | `mk09` | 20 x 10 | 307 | 307 |
+| `fjsplib/Brandimarte1993/mk10.fjs` | Brandimarte (1993) | `mk10` | 20 x 15 | 189 | 193 |
 
 The machine-readable mirror [fjsplib_bks.csv](fjsplib_bks.csv) records these
 upstream bounds for quality-report scripts. Every currently tracked row has
@@ -52,10 +60,12 @@ matching LB and UB values. These are upstream references, not values inferred
 from local solver runs. Run `experiments/exp_012_benchmark_metadata_audit.py`
 to verify one-to-one tracked-file, metadata-row, and loader consistency.
 
-The subset intentionally spans six source families and increasing sizes.
-`mk03` is also large enough to exercise a time-limited `FEASIBLE` CP-SAT result
-under the default 10-second batch limit. It may match the upstream BKS without
-proving optimality during that local run.
+The subset intentionally spans six source families and increasing sizes. It now
+includes one open Brandimarte instance (`mk10`) to exercise LB/UB reporting
+without claiming a locally proven optimum. `mk03` is also large enough to
+exercise a time-limited `FEASIBLE` CP-SAT result under the default 10-second
+batch limit. It may match the upstream BKS without proving optimality during
+that local run.
 
 The official benchmark table lists `kacem1` as `4 x 6`, while its official old
 format file starts with `4 5 5`. This repository records the loadable file
