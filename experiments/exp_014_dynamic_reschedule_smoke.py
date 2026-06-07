@@ -27,8 +27,8 @@ from src.dynamic import (  # noqa: E402
     DynamicFJSPState,
     JobArrival,
     MachineBreakdown,
-    ProcessingTimeChange,
     apply_events,
+    events_from_specs,
     frozen_records_at_time,
     reschedule_from_state,
 )
@@ -74,17 +74,27 @@ def multi_event_solver() -> ScheduleResult:
     frozen = frozen_records_at_time(initial, current_time=2)
     state = apply_events(
         state,
-        [
-            JobArrival(time=2, operations=(((1, 2),),)),
-            MachineBreakdown(time=2, machine_id=1, repair_time=6),
-            ProcessingTimeChange(
-                time=2,
-                job_id=0,
-                op_id=1,
-                machine_id=0,
-                new_processing_time=5,
-            ),
-        ],
+        events_from_specs([
+            {
+                "type": "job_arrival",
+                "time": 2,
+                "operations": [[[1, 2]]],
+            },
+            {
+                "type": "machine_breakdown",
+                "time": 2,
+                "machine_id": 1,
+                "repair_time": 6,
+            },
+            {
+                "type": "processing_time_change",
+                "time": 2,
+                "job_id": 0,
+                "op_id": 1,
+                "machine_id": 0,
+                "new_processing_time": 5,
+            },
+        ]),
     )
     return reschedule_from_state(state, frozen_records=frozen, rule="eft")
 

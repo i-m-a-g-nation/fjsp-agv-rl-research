@@ -52,6 +52,8 @@ S_t = (I_t, t, R_t, a_t, u_t)
 | `ProcessingTimeChange` | 修改某个未来 operation-machine pair 的加工时间 |
 
 多个事件通过 `apply_events()` 按非递减时间顺序应用。若事件乱序，直接报错。
+事件也可以先写成结构化 dict，再通过 `event_from_spec()` 或
+`events_from_specs()` 转成强类型事件，方便后续接入 JSON/CSV 场景文件。
 
 ## 冻结工序
 
