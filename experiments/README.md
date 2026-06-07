@@ -511,6 +511,26 @@ Artifact:
 The script returns exit code `1` if any event file fails to load or has an
 invalid event timeline.
 
+## `exp_016_dynamic_event_file_reschedule.py`
+
+Runs a small deterministic rescheduling smoke scenario for each tracked dynamic
+event JSON file. Each file is loaded through `load_event_specs_json()`, applied
+to a compatible Phase 2A base state, and repaired with the EFT dynamic
+rescheduling baseline.
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_016_dynamic_event_file_reschedule.py
+```
+
+Artifact:
+
+- `results/exp_016_dynamic_event_file_reschedule.csv`
+
+Each row must pass the shared experiment runner's Phase 1 feasibility check and
+the dynamic checks inside `reschedule_from_state()`.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.
