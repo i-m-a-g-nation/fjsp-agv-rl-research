@@ -36,6 +36,21 @@ class TestFJSPInstance:
         assert instance.num_machines == 2
         assert instance.total_ops == 3
 
+    @pytest.mark.parametrize(
+        ("jobs", "num_machines", "message"),
+        [
+            ([], None, "at least one job"),
+            ([[]], None, "at least one operation"),
+            ([[[]]], None, "machine options"),
+            ([[[(-1, 5)]]], None, "non-negative"),
+            ([[[(0, 0)]]], None, "positive"),
+            ([[[(2, 5)]]], 2, "exceeds num_machines"),
+        ],
+    )
+    def test_from_jobs_array_rejects_invalid_input(self, jobs, num_machines, message):
+        with pytest.raises(ValueError, match=message):
+            FJSPInstance.from_jobs_array(jobs, num_machines=num_machines)
+
     def test_get_processing_time(self):
         instance = create_toy_instance()
         pt = instance.get_processing_time(job_id=0, op_id=0, machine_id=0)

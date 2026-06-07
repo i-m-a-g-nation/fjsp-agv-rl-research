@@ -254,7 +254,7 @@ def build_markdown_report(
             "best makespan",
             "FJSPLib LB",
             "FJSPLib UB",
-            "BKS gap",
+            "UB gap",
             "reaches UB",
             "local proof",
             "best bound",
@@ -286,7 +286,7 @@ def build_markdown_report(
                 f"{reached_bks}/{total_instances}. Rows reaching UB without a "
                 f"local optimality proof: {reached_bks_without_proof}/{total_instances}."
                 if references is not None
-                else "No FJSPLib reference file was supplied for BKS comparison."
+                else "No FJSPLib reference file was supplied for UB comparison."
             ),
             "## Worker Summary",
             summary_table,
@@ -295,7 +295,7 @@ def build_markdown_report(
             (
                 "Interpretation note: `FEASIBLE` rows are valid schedules, but "
                 "their objective bounds and gaps show that the local time limit "
-                "did not prove optimality. Matching an upstream BKS is therefore "
+                "did not prove optimality. Reaching an upstream UB is therefore "
                 "reported as a good feasible solution unless the local status is "
                 "`OPTIMAL`."
             ),
@@ -308,7 +308,7 @@ def _best_row_to_markdown(
     row: CpSatAggregateRow,
     references: dict[str, BenchmarkReference] | None,
 ) -> list[str]:
-    """Convert a best-row entry to report columns, optionally with BKS fields."""
+    """Convert a best-row entry to report columns, optionally with reference fields."""
 
     if references is None:
         lower_bound = ""

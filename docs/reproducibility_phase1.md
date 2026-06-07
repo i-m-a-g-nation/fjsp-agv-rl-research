@@ -49,8 +49,8 @@ D:\2-Dev\Environments\Conda\fjsp-agv-rl\python.exe
 | `exp_005` discovered 文件 | 32 |
 | `exp_009` CP-SAT schedules | 120 |
 | `exp_010` heuristic schedules | 420 |
-| pytest | 151 passed |
-| core coverage | 89.60% |
+| pytest | 159 passed |
+| core coverage | 89.72% |
 
 核心 coverage 检查：
 
@@ -73,7 +73,7 @@ CP-SAT 输出有两个层次：
 
 - FJSPLib LB
 - FJSPLib UB
-- BKS gap
+- UB gap
 - 是否达到 UB
 - 是否本地证明最优
 - CP-SAT bound 和 gap

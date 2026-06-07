@@ -15,7 +15,7 @@ Best worker rows reaching the upstream FJSPLib upper bound: 15/30. Rows reaching
 
 ## Best Row Per Instance
 
-| instance | best workers | best makespan | FJSPLib LB | FJSPLib UB | BKS gap | reaches UB | local proof | best bound | best gap | statuses |
+| instance | best workers | best makespan | FJSPLib LB | FJSPLib UB | UB gap | reaches UB | local proof | best bound | best gap | statuses |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Brandimarte1993/mk01.fjs | 1 | 40 | 40 | 40 | 0.000000 | yes | yes | 40.000000 | 0.000000 | OPTIMAL:2 |
 | Brandimarte1993/mk02.fjs | auto | 30 | 26 | 26 | 0.153846 | no | no | 20.000000 | 0.333333 | FEASIBLE:2 |
@@ -48,5 +48,5 @@ Best worker rows reaching the upstream FJSPLib upper bound: 15/30. Rows reaching
 | KacemHammadiBorne2002/kacem3.fjs | auto | 7 | 7 | 7 | 0.000000 | yes | yes | 7.000000 | 0.000000 | OPTIMAL:2 |
 | KacemHammadiBorne2002/kacem4.fjs | auto | 21 | 11 | 11 | 0.909091 | no | no | 10.000000 | 0.523810 | FEASIBLE:2 |
 
-Interpretation note: `FEASIBLE` rows are valid schedules, but their objective bounds and gaps show that the local time limit did not prove optimality. Matching an upstream BKS is therefore reported as a good feasible solution unless the local status is `OPTIMAL`.
+Interpretation note: `FEASIBLE` rows are valid schedules, but their objective bounds and gaps show that the local time limit did not prove optimality. Reaching an upstream UB is therefore reported as a good feasible solution unless the local status is `OPTIMAL`.
 

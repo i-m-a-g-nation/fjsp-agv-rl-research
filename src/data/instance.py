@@ -53,6 +53,29 @@ class FJSPInstance:
         """Build an instance from jobs_array[job_id][op_id] options."""
 
         num_jobs = len(jobs_array)
+        if num_jobs <= 0:
+            raise ValueError("FJSP instance must contain at least one job")
+        if num_machines is not None and num_machines <= 0:
+            raise ValueError("num_machines must be positive")
+
+        for j_idx, job_ops in enumerate(jobs_array):
+            if not job_ops:
+                raise ValueError(f"job {j_idx} must contain at least one operation")
+            for o_idx, op_options in enumerate(job_ops):
+                if not op_options:
+                    raise ValueError(
+                        f"job {j_idx} operation {o_idx} must have machine options"
+                    )
+                for m_id, pt in op_options:
+                    if m_id < 0:
+                        raise ValueError("machine_id must be non-negative")
+                    if pt <= 0:
+                        raise ValueError("processing_time must be positive")
+                    if num_machines is not None and m_id >= num_machines:
+                        raise ValueError(
+                            f"machine_id {m_id} exceeds num_machines {num_machines}"
+                        )
+
         if num_machines is None:
             # Infer the machine count from the largest id when a benchmark
             # parser or test fixture does not provide it explicitly.

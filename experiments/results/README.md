@@ -35,11 +35,11 @@ Each row records:
 - relative optimality gap, when reported by the solver
 - solver internal wall time, when reported by the solver
 
-Experiment 011 adds BKS-relative heuristic quality ratios. Its per-instance
+Experiment 011 adds UB-relative heuristic quality ratios. Its per-instance
 rows and cross-instance family summaries use the structured upstream
 references in `instances/fjsplib_bks.csv`.
 
-Experiment 012 records one-to-one tracked-file, BKS-row, and loader integrity
+Experiment 012 records one-to-one tracked-file, LB/UB-row, and loader integrity
 checks before the benchmark subset is expanded.
 
 Experiment 013 converts the CP-SAT benchmark-matrix aggregate CSV into a

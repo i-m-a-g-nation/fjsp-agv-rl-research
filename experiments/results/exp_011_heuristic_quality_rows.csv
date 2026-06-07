@@ -1,4 +1,4 @@
-instance_name,algorithm_family,variants,feasible_runs,fjsplib_lb,fjsplib_bks,best_makespan,best_gap_ratio,mean_makespan,mean_gap_ratio,stdev_makespan,worst_makespan,worst_gap_ratio,statuses
+instance_name,algorithm_family,variants,feasible_runs,fjsplib_lb,fjsplib_ub,best_makespan,best_gap_ratio,mean_makespan,mean_gap_ratio,stdev_makespan,worst_makespan,worst_gap_ratio,statuses
 Brandimarte1993/mk01.fjs,FIFO,fixed,1,40,40,172,3.300000,172.000000,3.300000,0.000000,172,3.300000,PASS:1
 Brandimarte1993/mk01.fjs,SPT,fixed,1,40,40,119,1.975000,119.000000,1.975000,0.000000,119,1.975000,PASS:1
 Brandimarte1993/mk01.fjs,EarliestFinishTime,fixed,1,40,40,57,0.425000,57.000000,0.425000,0.000000,57,0.425000,PASS:1

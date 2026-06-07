@@ -47,7 +47,7 @@ FJSPInstance
 | `experiments/exp_009_cpsat_benchmark_matrix.py` | 受控 CP-SAT worker 矩阵 |
 | `experiments/exp_010_heuristic_benchmark_matrix.py` | 启发式 benchmark 矩阵 |
 | `experiments/exp_011_heuristic_quality_report.py` | 基于 BKS 的启发式质量报告 |
-| `experiments/exp_012_benchmark_metadata_audit.py` | benchmark 文件、BKS 行、loader 一致性审计 |
+| `experiments/exp_012_benchmark_metadata_audit.py` | benchmark 文件、LB/UB 行、loader 一致性审计 |
 | `experiments/exp_013_cpsat_report.py` | CP-SAT 聚合结果的可读 Markdown 报告 |
 
 ## Baseline 与 Strict Dispatching

@@ -147,7 +147,7 @@ def print_metadata_audit(rows: Sequence[BenchmarkMetadataAudit]) -> None:
     """Print a compact benchmark metadata audit table."""
 
     header = (
-        f"{'Instance':48s} {'file':>4s} {'BKS':>4s} "
+        f"{'Instance':48s} {'file':>4s} {'LB/UB':>5s} "
         f"{'load':>4s} {'status':>6s}"
     )
     print(header)
@@ -216,7 +216,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(f"  - {row.instance_name}: {row.note}")
         return 1
 
-    print("Tracked benchmark files, BKS rows, and loader checks are consistent.")
+    print("Tracked benchmark files, LB/UB rows, and loader checks are consistent.")
     return 0
 
 

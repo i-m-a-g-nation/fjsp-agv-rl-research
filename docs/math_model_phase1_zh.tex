@@ -161,7 +161,7 @@ C_{\max} \ge C_{jo},
 \centering
 \begin{tabular}{lrrrr}
 \toprule
-实例 & 工件数 & 机器数 & FJSPLib BKS & 本地 CP-SAT 10s \\
+实例 & 工件数 & 机器数 & FJSPLib UB & 本地 CP-SAT 10s \\
 \midrule
 \texttt{fattahi1} & 2 & 2 & 66 & 66 \\
 \texttt{fattahi2} & 2 & 2 & 107 & 107 \\
@@ -204,7 +204,7 @@ Dauzere-Peres 实例以及 \texttt{kacem4} 都主要属于这种情况。
 
 官方 benchmark 表格将 \texttt{fattahi6} 标为 $3 \times 2$，但官方 old-format
 文件头为 \texttt{3 3 1.6}。本仓库按可加载文件内容记录为 $3 \times 3$，
-并保留上游 BKS 320。
+并保留上游 UB 320。
 
 \section{实验摘要}
 
@@ -254,7 +254,7 @@ DispatchEFT & 0.405199 & 1.384615 \\
 
 实验 \texttt{exp\_012} 会递归发现 tracked FJSPLib 文件，将其与
 \texttt{instances/fjsplib\_bks.csv} 逐项匹配，并验证每个文件仍能被 loader
-加载。当前 30/30 个 tracked 文件全部通过文件、BKS 行和 loader 检查。
+加载。当前 30/30 个 tracked 文件全部通过文件、LB/UB 行和 loader 检查。
 
 \section{维护结论}
 
@@ -272,7 +272,7 @@ DispatchEFT & 0.405199 & 1.384615 \\
 Phase 1 当前已经形成可复现的静态 FJSP 基础实验底座，而不是声称所有
 benchmark 都已经被本地求解到最优的完整优化系统。当前最可靠的部分包括：
 独立 feasibility checker、带来源说明的 benchmark 子集、重复 CP-SAT 诊断、
-以及基于上游 BKS 的启发式质量报告。
+以及基于上游 UB 的启发式质量报告。
 
 主要局限性是有意保留的：当前 benchmark 子集仍然中等规模，大实例上的
 CP-SAT 结果多为限时 \texttt{FEASIBLE}，且本阶段不包含 AGV、RL、GNN、
@@ -286,12 +286,12 @@ Phase 2 扩展更容易审核和维护。
 风险 & 当前缓解方式 \\
 \midrule
 CP-SAT 限时结果可能只是 \texttt{FEASIBLE} &
-报告保留 status、bound、solver gap、BKS gap 和 local proof 字段。 \\
+报告保留 status、bound、solver gap、UB gap 和 local proof 字段。 \\
 benchmark 子集仍是中等规模 &
 每个 tracked 文件都有来源说明、LB/UB 元数据和 loader 审计。 \\
 Random 启发式受 seed 影响 &
 使用固定 seeds，并报告范围而非隐藏单次结果。 \\
-上游 BKS 不是本地证明 &
+上游参考界不是本地证明 &
 报告区分“达到 UB”和“本地证明 \texttt{OPTIMAL}”。 \\
 Phase 2 主题容易提前混入 &
 AGV、RL、GNN 和动态调度继续排除在 Phase 1 外。 \\

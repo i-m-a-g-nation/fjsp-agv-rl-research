@@ -162,7 +162,7 @@ Behavior:
 The default batch currently includes the repository-local smoke files and the
 tracked FJSPLib subset documented in `instances/README.md`:
 
-| Upstream instance | Size | CP-SAT result | FJSPLib BKS |
+| Upstream instance | Size | CP-SAT result | FJSPLib UB |
 |---|---:|---:|---:|
 | Fattahi `fattahi1` | 2 x 2 | 66 `OPTIMAL` | 66 |
 | Fattahi `fattahi4` | 3 x 2 | 355 `OPTIMAL` | 355 |
@@ -288,7 +288,7 @@ CSV artifacts:
 - `results/exp_008_cpsat_worker_repeats_runs.csv`
 - `results/exp_008_cpsat_worker_repeats_summary.csv`
 
-All 12 tracked schedules passed feasibility checking. Matching the FJSPLib BKS
+All 12 tracked schedules passed feasibility checking. Reaching the FJSPLib UB
 does not become a local optimality proof while CP-SAT reports `FEASIBLE`.
 
 ## `exp_009_cpsat_benchmark_matrix.py`
@@ -397,7 +397,7 @@ Reads the Experiment 010 family summary and the structured upstream references
 in `instances/fjsplib_bks.csv`. For every family and instance, it computes:
 
 ```text
-gap_BKS = (makespan - BKS) / BKS
+gap_UB = (makespan - FJSPLib_UB) / FJSPLib_UB
 ```
 
 Run:
@@ -421,8 +421,9 @@ CSV artifacts:
 - `results/exp_011_heuristic_quality_rows.csv`
 - `results/exp_011_heuristic_quality_families.csv`
 
-The report rejects missing reference rows and missing summarized instances.
-Upstream BKS values are comparison references, not local optimality proofs.
+The report rejects missing reference rows, missing summarized instances, and
+values below upstream lower bounds. A feasible schedule may improve an open
+upper bound; upstream reference bounds are not local optimality proofs.
 
 ## `exp_012_benchmark_metadata_audit.py`
 

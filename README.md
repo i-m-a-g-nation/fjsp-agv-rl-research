@@ -26,8 +26,8 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - Repeated CP-SAT worker-count aggregation with per-run and summary CSV artifacts
 - Controlled repeated CP-SAT matrix across the tracked static FJSPLib subset
 - Heuristic matrix with deterministic rules and reproducibly seeded random families
-- BKS-aware heuristic quality ratios from structured upstream references
-- Metadata audit tying tracked FJSPLib files to BKS rows and loader checks
+- Upper-bound-aware heuristic quality ratios from structured upstream references
+- Metadata audit tying tracked FJSPLib files to LB/UB rows and loader checks
 - Matplotlib Gantt chart output using a non-interactive backend
 - Toy-instance experiments and pytest coverage
 
@@ -144,7 +144,7 @@ The tracked real subset is documented in [instances/README.md](instances/README.
 Its thirty upstream files are copied from the official ScheduleOpt FJSPLib
 repository and retain CC-BY-SA-4.0 attribution.
 
-| FJSPLib instance | Size | Best heuristic in current suite | CP-SAT | FJSPLib BKS |
+| FJSPLib instance | Size | Best heuristic in current suite | CP-SAT | FJSPLib UB |
 |---|---:|---:|---:|---:|
 | `fattahi1` | 2 x 2 | 66 | 66 `OPTIMAL` | 66 |
 | `fattahi2` | 2 x 2 | 107 | 107 `OPTIMAL` | 107 |
@@ -310,17 +310,18 @@ tie on `kacem3`.
 Ready-operation random dispatching is consistently better than the simple
 job-order random baseline in this tracked subset, but remains seed-sensitive.
 
-### Experiment 011: BKS-Aware Heuristic Quality Report
+### Experiment 011: Upper-Bound-Aware Heuristic Quality Report
 
 Reads the structured upstream references in `instances/fjsplib_bks.csv` and
 computes
 
 ```text
-gap_BKS = (makespan - BKS) / BKS
+gap_UB = (makespan - FJSPLib_UB) / FJSPLib_UB
 ```
 
-for every Experiment 010 family and instance. The upstream BKS values are
-comparison references, not local optimality proofs.
+for every Experiment 010 family and instance. The upstream lower bound is used
+as a sanity check, so a feasible schedule may improve an open upper bound but
+cannot fall below the upstream lower bound.
 
 | Algorithm family | Mean best gap | Maximum best gap |
 |---|---:|---:|
@@ -369,16 +370,16 @@ and runs core coverage:
 python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 ```
 
-The current local core-module coverage is 89.60%.
+The current local core-module coverage is 89.72%.
 
 ## Threats to Validity
 
 | Threat | Current mitigation |
 |---|---|
-| Time-limited CP-SAT may find feasible schedules without proof | Reports keep `FEASIBLE`, bound, gap, BKS gap, and local-proof fields separate |
+| Time-limited CP-SAT may find feasible schedules without proof | Reports keep `FEASIBLE`, bound, gap, UB gap, and local-proof fields separate |
 | Benchmark subset is still moderate | Every expansion is audited by `exp_012`; current subset is documented with provenance and LB/UB rows |
 | Random heuristics are seed-sensitive | Random families are reported with fixed seeds and ranges rather than single hidden samples |
-| Upstream BKS is external reference data | Local reports distinguish reaching UB from locally proving `OPTIMAL` |
+| Upstream reference bounds are external data | Local reports distinguish reaching UB from locally proving `OPTIMAL` |
 | Phase 2 topics could blur scope | AGV, RL, GNN, and dynamic rescheduling remain explicitly out of Phase 1 |
 
 ## Known Notes

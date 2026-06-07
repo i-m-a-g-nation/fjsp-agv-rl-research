@@ -1,10 +1,10 @@
 """
 exp_011_heuristic_quality_report.py
 
-Phase 1 BKS-aware heuristic quality report:
+Phase 1 upper-bound-aware heuristic quality report:
 - Load structured upstream FJSPLib lower and upper bounds for tracked instances
 - Load the audited exp_010 per-instance heuristic-family summary
-- Compute relative quality ratios against the upstream BKS upper bound
+- Compute relative quality ratios against the upstream FJSPLib upper bound
 - Write per-instance quality rows and cross-instance family aggregates
 """
 from __future__ import annotations
@@ -29,7 +29,7 @@ class BenchmarkReference:
 
 @dataclass(frozen=True)
 class HeuristicQuality:
-    """BKS-relative quality metrics for one algorithm family and instance."""
+    """Upper-bound-relative quality metrics for one algorithm family and instance."""
 
     instance_name: str
     family: str
@@ -54,7 +54,7 @@ class HeuristicQuality:
             "variants": self.variants,
             "feasible_runs": str(self.feasible_runs),
             "fjsplib_lb": str(self.reference.lower_bound),
-            "fjsplib_bks": str(self.reference.upper_bound),
+            "fjsplib_ub": str(self.reference.upper_bound),
             "best_makespan": str(self.best_makespan),
             "best_gap_ratio": f"{self.best_gap_ratio:.6f}",
             "mean_makespan": f"{self.mean_makespan:.6f}",
@@ -90,14 +90,31 @@ class FamilyQuality:
         }
 
 
-def relative_gap(makespan: float, bks: int) -> float:
-    """Return a non-negative BKS-relative makespan gap."""
+def relative_gap(makespan: float, reference_value: int) -> float:
+    """Return a reference-relative makespan gap.
 
-    if bks <= 0:
-        raise ValueError("BKS must be positive")
-    if makespan < bks:
-        raise ValueError(f"makespan {makespan:g} is below upstream BKS {bks}")
-    return (makespan - bks) / bks
+    The gap may be negative when a feasible schedule improves an upstream upper
+    bound. Closed references still reject impossible values through the lower
+    bound validation in build_quality_rows().
+    """
+
+    if reference_value <= 0:
+        raise ValueError("reference value must be positive")
+    return (makespan - reference_value) / reference_value
+
+
+def validate_against_reference_bounds(
+    makespan: float,
+    reference: BenchmarkReference,
+    field_name: str,
+) -> None:
+    """Reject values below the upstream lower bound for one instance."""
+
+    if makespan < reference.lower_bound:
+        raise ValueError(
+            f"{field_name} {makespan:g} is below upstream lower bound "
+            f"{reference.lower_bound} for {reference.instance_name}"
+        )
 
 
 def load_benchmark_references(path: str | Path) -> dict[str, BenchmarkReference]:
@@ -167,6 +184,9 @@ def build_quality_rows(
             best_makespan = int(row["best_makespan"])
             mean_makespan = float(row["mean_makespan"])
             worst_makespan = int(row["worst_makespan"])
+            validate_against_reference_bounds(best_makespan, reference, "best_makespan")
+            validate_against_reference_bounds(mean_makespan, reference, "mean_makespan")
+            validate_against_reference_bounds(worst_makespan, reference, "worst_makespan")
             quality_rows.append(
                 HeuristicQuality(
                     instance_name=instance_name,
@@ -196,7 +216,7 @@ def build_quality_rows(
 
 
 def aggregate_family_quality(rows: Sequence[HeuristicQuality]) -> list[FamilyQuality]:
-    """Aggregate BKS-relative quality metrics by algorithm family."""
+    """Aggregate upper-bound-relative quality metrics by algorithm family."""
 
     grouped: dict[str, list[HeuristicQuality]] = {}
     for row in rows:
@@ -215,7 +235,7 @@ def aggregate_family_quality(rows: Sequence[HeuristicQuality]) -> list[FamilyQua
 
 
 def write_quality_rows_csv(path: str | Path, rows: Sequence[HeuristicQuality]) -> None:
-    """Write per-instance BKS-relative quality rows to a UTF-8 CSV file."""
+    """Write per-instance upper-bound-relative quality rows to a UTF-8 CSV file."""
 
     output_path = Path(path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -225,7 +245,7 @@ def write_quality_rows_csv(path: str | Path, rows: Sequence[HeuristicQuality]) -
         "variants",
         "feasible_runs",
         "fjsplib_lb",
-        "fjsplib_bks",
+        "fjsplib_ub",
         "best_makespan",
         "best_gap_ratio",
         "mean_makespan",
@@ -279,7 +299,7 @@ def print_family_quality(rows: Sequence[FamilyQuality]) -> None:
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
-    """Parse command-line options for the BKS-aware heuristic quality report."""
+    """Parse command-line options for the upper-bound-aware quality report."""
 
     root = Path(__file__).parent.parent
     parser = argparse.ArgumentParser(description=__doc__)
@@ -304,7 +324,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         "--quality-output",
         type=Path,
         default=root / "experiments" / "results" / "exp_011_heuristic_quality_rows.csv",
-        help="Per-instance BKS-relative quality CSV",
+        help="Per-instance upper-bound-relative quality CSV",
     )
     parser.add_argument(
         "--family-output",
@@ -321,7 +341,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Generate BKS-aware heuristic quality artifacts."""
+    """Generate upper-bound-aware heuristic quality artifacts."""
 
     args = parse_args(argv)
     try:

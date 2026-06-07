@@ -74,7 +74,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 真实 FJSPLib 子集来自 ScheduleOpt 官方仓库，并保留 CC-BY-SA-4.0 归属说明。
 当前 tracked 上游文件数为 30。
 
-| FJSPLib 实例 | 规模 | 当前启发式最佳值 | CP-SAT 10s | FJSPLib BKS |
+| FJSPLib 实例 | 规模 | 当前启发式最佳值 | CP-SAT 10s | FJSPLib UB |
 |---|---:|---:|---:|---:|
 | `fattahi1` | 2 x 2 | 66 | 66 `OPTIMAL` | 66 |
 | `fattahi2` | 2 x 2 | 107 | 107 `OPTIMAL` | 107 |
@@ -114,11 +114,11 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 - `exp_005_benchmark_batch.py`：32 个 discovered 文件全部 feasible
 - `exp_009_cpsat_benchmark_matrix.py`：120/120 个 CP-SAT 矩阵调度全部 feasible
 - `exp_010_heuristic_benchmark_matrix.py`：420/420 个启发式调度全部 feasible
-- `exp_011_heuristic_quality_report.py`：30 实例 BKS-relative 质量报告已刷新
-- `exp_012_benchmark_metadata_audit.py`：30/30 个 tracked 文件、BKS 行和 loader 校验通过
+- `exp_011_heuristic_quality_report.py`：30 实例 UB-relative 质量报告已刷新
+- `exp_012_benchmark_metadata_audit.py`：30/30 个 tracked 文件、LB/UB 行和 loader 校验通过
 - `exp_013_cpsat_report.py`：生成 CP-SAT Markdown 报告，区分 `OPTIMAL` 与时限内 `FEASIBLE`；当前 15/30 个 best row 达到上游 UB，13/30 个本地证明 `OPTIMAL`，2/30 个达到 UB 但未本地证明最优
-- `pytest`：151 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
-- 核心模块 coverage：89.60%，CI 门槛为 80%
+- `pytest`：159 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
+- 核心模块 coverage：89.72%，CI 门槛为 80%
 
 当前 30 实例质量报告中，`DispatchFIFO` 的跨实例平均 best gap 最低：
 
@@ -166,10 +166,10 @@ python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 
 | 风险 | 当前缓解方式 |
 |---|---|
-| CP-SAT 限时结果可能只是 feasible 而非 proved optimal | 报告保留 `FEASIBLE`、bound、gap、BKS gap 和 local proof 字段 |
+| CP-SAT 限时结果可能只是 feasible 而非 proved optimal | 报告保留 `FEASIBLE`、bound、gap、UB gap 和 local proof 字段 |
 | benchmark 子集仍是中等规模 | 每次扩展先跑 `exp_012`，并记录来源、LB/UB |
 | Random 启发式受 seed 影响 | 使用固定 seeds，并报告范围而非隐藏单次结果 |
-| 上游 BKS 不是本地证明 | 报告区分“达到 UB”和“本地证明 `OPTIMAL`” |
+| 上游参考界不是本地证明 | 报告区分“达到 UB”和“本地证明 `OPTIMAL`” |
 | Phase 2 主题容易提前混入 | AGV、RL、GNN、动态调度继续明确排除在 Phase 1 外 |
 
 ## 维护建议

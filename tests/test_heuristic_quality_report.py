@@ -11,7 +11,8 @@ from experiments.exp_011_heuristic_quality_report import (
 
 def test_relative_gap_rejects_invalid_values():
     assert relative_gap(110, 100) == 0.1
-    for makespan, bks in [(99, 100), (1, 0)]:
+    assert relative_gap(95, 100) == -0.05
+    for makespan, bks in [(1, 0)]:
         try:
             relative_gap(makespan, bks)
         except ValueError:
@@ -60,6 +61,39 @@ def test_build_quality_rows_computes_bks_relative_metrics(tmp_path):
     assert row.best_gap_ratio == 0.1
     assert row.mean_gap_ratio == 0.2
     assert row.worst_gap_ratio == 0.3
+
+
+def test_build_quality_rows_allows_improving_open_upper_bound(tmp_path):
+    summary = tmp_path / "summary.csv"
+    summary.write_text(
+        "instance_name,algorithm_family,variants,feasible_runs,best_makespan,"
+        "mean_makespan,stdev_makespan,worst_makespan,statuses\n"
+        "mk10.fjs,FIFO,fixed,1,191,194.0,0.0,200,PASS:1\n",
+        encoding="utf-8",
+    )
+    references = {"mk10.fjs": BenchmarkReference("mk10.fjs", 189, 193)}
+
+    row = build_quality_rows(summary, references)[0]
+
+    assert row.best_gap_ratio < 0
+
+
+def test_build_quality_rows_rejects_values_below_lower_bound(tmp_path):
+    summary = tmp_path / "summary.csv"
+    summary.write_text(
+        "instance_name,algorithm_family,variants,feasible_runs,best_makespan,"
+        "mean_makespan,stdev_makespan,worst_makespan,statuses\n"
+        "mk10.fjs,FIFO,fixed,1,188,194.0,0.0,200,PASS:1\n",
+        encoding="utf-8",
+    )
+    references = {"mk10.fjs": BenchmarkReference("mk10.fjs", 189, 193)}
+
+    try:
+        build_quality_rows(summary, references)
+    except ValueError as exc:
+        assert "below upstream lower bound" in str(exc)
+    else:
+        raise AssertionError("expected lower-bound rejection")
 
 
 def test_build_quality_rows_rejects_missing_reference(tmp_path):

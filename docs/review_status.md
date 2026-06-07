@@ -10,8 +10,8 @@ Last updated: 2026-06-07
 | Python environment | Dedicated Conda environment: `.conda-env` or `FJSP_CONDA_ENV` |
 | matplotlib | 3.8.4 |
 | Pillow | 10.4.0 |
-| pytest | 151 passed, 0 failed |
-| core coverage | 89.60% with 80% CI threshold |
+| pytest | 159 passed, 0 failed |
+| core coverage | 89.72% with 80% CI threshold |
 | Known warning | Low-priority `.pytest_cache` warning on some Windows paths |
 
 ## Verified Commands
@@ -28,14 +28,14 @@ Last updated: 2026-06-07
 | `experiments/exp_008_cpsat_worker_repeats.py` | 0 | 12/12 repeated `mk03` schedules feasible; raw runs and aggregate statistics recorded separately |
 | `experiments/exp_009_cpsat_benchmark_matrix.py` | 0 | 120/120 tracked-subset schedules feasible; timed instances retain bound and gap diagnostics |
 | `experiments/exp_010_heuristic_benchmark_matrix.py` | 0 | 420/420 tracked-subset heuristic schedules feasible; seeded random families aggregated |
-| `experiments/exp_011_heuristic_quality_report.py` | 0 | Thirty-instance BKS-relative per-instance and family summaries generated from structured upstream references |
-| `experiments/exp_012_benchmark_metadata_audit.py` | 0 | 30/30 tracked files match BKS rows and remain loadable |
+| `experiments/exp_011_heuristic_quality_report.py` | 0 | Thirty-instance UB-relative per-instance and family summaries generated from structured upstream references |
+| `experiments/exp_012_benchmark_metadata_audit.py` | 0 | 30/30 tracked files match LB/UB rows and remain loadable |
 | `experiments/exp_013_cpsat_report.py` | 0 | Markdown CP-SAT report generated from exp_009 aggregates without rerunning the solver |
-| `pytest --cov=src --cov-fail-under=80` | 0 | 151 passed; core coverage 89.60% |
+| `pytest --cov=src --cov-fail-under=80` | 0 | 159 passed; core coverage 89.72% |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
-| `pytest` | 0 | 151 passed |
-| `git status --short` | 0 | Clean |
+| `pytest` | 0 | 159 passed |
+| `git status --short` | 0 | Pending Phase 1 closeout edits |
 
 ## Module Status
 
@@ -43,20 +43,20 @@ Last updated: 2026-06-07
 |---|---|---|
 | `FJSPInstance` | Done | `from_jobs_array`, `get_processing_time`, `is_machine_eligible` |
 | Benchmark loader | Done | Smoke coverage plus thirty tracked files across six FJSPLib source families; `fattahi6` records the loadable old-format size as 3 x 3 |
-| Benchmark provenance | Done | `instances/README.md` plus `instances/fjsplib_bks.csv` record upstream repository, license, families, and BKS values |
+| Benchmark provenance | Done | `instances/README.md` plus `instances/fjsplib_bks.csv` record upstream repository, license, families, and LB/UB values |
 | Experiment records | Done | Shared runner plus normalized CSV output for `exp_001` through `exp_013` |
 | Benchmark batch entry | Done | Recursive discovery, stable order, loader failure records, optional CP-SAT controls |
 | CP-SAT sweep | Done | Fixed-worker `mk03` time-limit comparison with bound/gap diagnostics |
 | CP-SAT worker sweep | Done | Fixed-limit `mk03` worker-count comparison with cautious timed-run interpretation |
-| CP-SAT worker repeats | Done | Raw and aggregate CSV artifacts; 2, 4, and auto workers reached BKS 204 in all three tracked runs |
+| CP-SAT worker repeats | Done | Raw and aggregate CSV artifacts; 2, 4, and auto workers reached UB 204 in all three tracked runs |
 | CP-SAT benchmark matrix | Done | Controlled repeated 1/auto-worker comparison across the tracked FJSPLib subset; `kacem4` remains time-limited `FEASIBLE` locally |
 | CP-SAT report builder | Done | Markdown interpretation report summarizes worker rows, best rows, bounds, gaps, and `OPTIMAL` vs `FEASIBLE` status |
 | Code walkthrough | Done | Clean Chinese guide for reading Phase 1 modules and understanding solver data flow |
 | Reproducibility checklist | Done | Fixed command order for metadata audit, benchmark runs, CP-SAT report, pytest, and PDF checks |
 | CI / coverage | Done | GitHub Actions workflow installs dev dependencies, audits metadata, builds CP-SAT report, and enforces core coverage >= 80% |
 | Heuristic benchmark matrix | Done | Deterministic rules plus seeded Random and DispatchRandom families across the tracked subset |
-| Heuristic quality report | Done | Per-instance and cross-instance BKS-relative ratios with reference coverage checks |
-| Benchmark metadata audit | Done | One-to-one tracked-file, BKS-row, and loader integrity gate |
+| Heuristic quality report | Done | Per-instance and cross-instance UB-relative ratios with reference coverage checks |
+| Benchmark metadata audit | Done | One-to-one tracked-file, LB/UB-row, and loader integrity gate |
 | `encoding` | Done | `ScheduleRecord`, `ScheduleResult`, solver status/bound/gap/wall-time metadata |
 | `decoding` | Done | Semi-active `decode_schedule` |
 | `feasibility` | Done | Core constraints plus robustness checks |

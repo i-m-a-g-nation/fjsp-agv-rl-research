@@ -239,7 +239,7 @@ The subset spans six source families and increasing instance sizes.
 \centering
 \begin{tabular}{lrrrr}
 \toprule
-Instance & Jobs & Machines & FJSPLib BKS & Local CP-SAT \\
+Instance & Jobs & Machines & FJSPLib UB & Local CP-SAT \\
 \midrule
 \texttt{fattahi1} & 2 & 2 & 66 & 66 \\
 \texttt{fattahi2} & 2 & 2 & 107 & 107 \\
@@ -276,7 +276,7 @@ Brandimarte \texttt{mk10} & 20 & 15 & 193 & 302 \\
 \end{table}
 
 The local CP-SAT values above were independently validated by the feasibility
-checker. The FJSPLib BKS column is upstream reference data, not a value inferred
+checker. The FJSPLib UB column is upstream reference data, not a value inferred
 by this repository. For \texttt{mk02}, \texttt{mk03}, \texttt{mk04},
 \texttt{mk05}, \texttt{mk06}, \texttt{mk07}, \texttt{mk08}, \texttt{mk09},
 \texttt{mt10c1}, \texttt{01a}, and \texttt{kacem4}, CP-SAT reports
@@ -469,16 +469,18 @@ dispatching is consistently better than the simple job-order random baseline
 in this tracked subset, but remains seed-sensitive.
 
 \clearpage
-\subsection{BKS-Relative Heuristic Quality}
+\subsection{Upper-Bound-Relative Heuristic Quality}
 
 The quality report reads structured upstream references from
 \texttt{instances/fjsplib\_bks.csv}. For heuristic family $h$ and instance
 $i$, it computes
 \[
-gap_{\mathrm{BKS}}(h,i)
-= \frac{C_{\max}(h,i)-\mathrm{BKS}_i}{\mathrm{BKS}_i}.
+gap_{\mathrm{UB}}(h,i)
+= \frac{C_{\max}(h,i)-\mathrm{UB}_i}{\mathrm{UB}_i}.
 \]
-The upstream BKS is a comparison reference, not a local optimality proof.
+The upstream lower bound is used as a sanity check. A feasible schedule may
+improve an open upstream upper bound, but it cannot be accepted below the
+upstream lower bound.
 
 \begin{table}[h]
 \centering
@@ -520,7 +522,7 @@ comparisons.
 Phase 1 is now a reproducible static FJSP baseline rather than an optimization
 claim for every benchmark. The strongest current properties are the independent
 feasibility checker, audited benchmark provenance, repeated CP-SAT diagnostics,
-and BKS-aware heuristic summaries. The main limitations are deliberate: the
+and upper-bound-aware heuristic summaries. The main limitations are deliberate: the
 benchmark subset is still moderate, CP-SAT runs are time-limited on larger
 instances, and no AGV, RL, GNN, dynamic rescheduling, or full paper reproduction
 is included in this phase. These boundaries keep the codebase maintainable and
@@ -533,12 +535,12 @@ make future Phase 2 extensions easier to review.
 Threat & Current mitigation \\
 \midrule
 Time-limited CP-SAT may return \texttt{FEASIBLE} schedules without proof &
-Reports keep status, bound, solver gap, BKS gap, and local-proof fields separate. \\
+Reports keep status, bound, solver gap, UB gap, and local-proof fields separate. \\
 Benchmark subset is moderate &
 Every tracked file has provenance, LB/UB metadata, and loader audit coverage. \\
 Random heuristics are seed-sensitive &
 Random families use fixed seeds and report ranges instead of hidden single samples. \\
-Upstream BKS is external reference data &
+Upstream reference bounds are external data &
 Reports distinguish reaching UB from locally proving \texttt{OPTIMAL}. \\
 Phase 2 topics could blur scope &
 AGV, RL, GNN, and dynamic rescheduling remain outside Phase 1. \\
