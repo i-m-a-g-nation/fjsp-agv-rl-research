@@ -2,9 +2,9 @@
 
 English version: [README.md](README.md)
 
-本项目当前处于 **Phase 1：静态柔性作业车间调度（FJSP）基础实验底座**。
-现阶段目标不是直接实现 AGV、强化学习或图神经网络，而是先把静态 FJSP
-的数据结构、解码、合法性校验、基准算法、CP-SAT 接口和实验记录做稳。
+本项目当前处于 **Phase 2A：动态柔性作业车间调度（FJSP）最小底座**。
+Phase 2A 在已经验证的 Phase 1 静态 FJSP 底座上加入动态事件和确定性
+重调度；AGV、运输时间、强化学习和图神经网络仍然不进入当前范围。
 
 ## 当前范围
 
@@ -23,13 +23,15 @@ Phase 1 已覆盖：
 - Matplotlib Gantt 图输出
 - Phase 1 数学建模 LaTeX 文档
 - pytest 单元测试
+- Phase 2A 动态事件、动态状态和最小重调度 baseline
 
-Phase 1 明确不做：
+当前阶段明确不做：
 
 - AGV 运输、路径规划、避碰
-- 动态事件、实时重调度
+- 运输时间建模
 - 强化学习、PPO、DQN、多智能体
 - 图神经网络
+- 多目标优化
 - 复杂论文算法完整复现
 
 ## 目录结构
@@ -39,6 +41,7 @@ src/
   data/          FJSP 实例结构和 benchmark loader
   scheduling/    编码、解码、合法性检查
   solvers/       baseline、dispatching rule、兼容门面和 OR-Tools CP-SAT
+  dynamic/       Phase 2A 动态事件、状态和重调度 baseline
   vis/           Gantt 图绘制
 tests/           pytest 测试
 experiments/     实验脚本、CSV 结果和图像产物
@@ -117,8 +120,9 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 - `exp_011_heuristic_quality_report.py`：30 实例 UB-relative 质量报告已刷新
 - `exp_012_benchmark_metadata_audit.py`：30/30 个 tracked 文件、LB/UB 行和 loader 校验通过
 - `exp_013_cpsat_report.py`：生成 CP-SAT Markdown 报告，区分 `OPTIMAL` 与时限内 `FEASIBLE`；当前 15/30 个 best row 达到上游 UB，13/30 个本地证明 `OPTIMAL`，2/30 个达到 UB 但未本地证明最优
-- `pytest`：159 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
-- 核心模块 coverage：89.72%，CI 门槛为 80%
+- `exp_014_dynamic_reschedule_smoke.py`：2 个 Phase 2A 动态重调度 smoke 场景全部 feasible
+- `pytest`：166 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
+- 核心模块 coverage：88.74%，CI 门槛为 80%
 
 当前 30 实例质量报告中，`DispatchFIFO` 的跨实例平均 best gap 最低：
 
@@ -170,7 +174,7 @@ python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 | benchmark 子集仍是中等规模 | 每次扩展先跑 `exp_012`，并记录来源、LB/UB |
 | Random 启发式受 seed 影响 | 使用固定 seeds，并报告范围而非隐藏单次结果 |
 | 上游参考界不是本地证明 | 报告区分“达到 UB”和“本地证明 `OPTIMAL`” |
-| Phase 2 主题容易提前混入 | AGV、RL、GNN、动态调度继续明确排除在 Phase 1 外 |
+| Phase 2 主题容易提前混入 | Phase 2A 只允许动态事件和重调度；AGV、RL、GNN、运输和多目标优化继续排除 |
 
 ## 维护建议
 
@@ -179,7 +183,7 @@ python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 - 分批扩展 FJSPLib 子集，并每批运行 metadata audit、heuristic matrix、CP-SAT matrix
 - 优先观察更大静态实例上的求解行为，再决定是否增加新规则
 - 保持 feasibility checker 独立、严格、不可绕过
-- 暂时不要引入 AGV/RL/GNN，避免复杂度过早失控
+- 暂时不要引入 AGV/RL/GNN/运输时间，避免复杂度过早失控
 
 项目优先级保持：
 

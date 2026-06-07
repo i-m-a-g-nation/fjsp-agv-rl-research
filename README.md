@@ -2,9 +2,13 @@
 
 Chinese version: [README.zh-CN.md](README.zh-CN.md)
 
-Phase 1: a static flexible job shop scheduling (FJSP) research platform.
+Phase 2A: a minimal dynamic flexible job shop scheduling (FJSP) layer on top
+of the verified Phase 1 static research platform.
 
-This repository currently focuses on correctness, reproducibility, and a small verified experimental baseline. AGV scheduling, transportation time, dynamic events, reinforcement learning, and GNN models are intentionally out of scope for Phase 1.
+This repository currently focuses on correctness, reproducibility, and small
+verified baselines. Phase 2A adds dynamic events and deterministic
+rescheduling; AGV scheduling, transportation time, reinforcement learning, and
+GNN models remain out of scope.
 
 ## Scope
 
@@ -30,6 +34,7 @@ This repository currently focuses on correctness, reproducibility, and a small v
 - Metadata audit tying tracked FJSPLib files to LB/UB rows and loader checks
 - Matplotlib Gantt chart output using a non-interactive backend
 - Toy-instance experiments and pytest coverage
+- Phase 2A dynamic events, dynamic state, and a minimal rescheduling baseline
 
 ## Repository Layout
 
@@ -38,6 +43,7 @@ src/
   data/          FJSP instance data structures and loaders
   scheduling/    encoding, decoding, and feasibility checking
   solvers/       baselines, dispatching rules, compatibility facade, and CP-SAT
+  dynamic/       Phase 2A events, state, and rescheduling baseline
   vis/           Gantt chart rendering
 tests/           pytest suite
 experiments/     experiment scripts and tracked artifacts
@@ -370,7 +376,7 @@ and runs core coverage:
 python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 ```
 
-The current local core-module coverage is 89.72%.
+The current local core-module coverage is 88.74%.
 
 ## Threats to Validity
 
@@ -380,7 +386,7 @@ The current local core-module coverage is 89.72%.
 | Benchmark subset is still moderate | Every expansion is audited by `exp_012`; current subset is documented with provenance and LB/UB rows |
 | Random heuristics are seed-sensitive | Random families are reported with fixed seeds and ranges rather than single hidden samples |
 | Upstream reference bounds are external data | Local reports distinguish reaching UB from locally proving `OPTIMAL` |
-| Phase 2 topics could blur scope | AGV, RL, GNN, and dynamic rescheduling remain explicitly out of Phase 1 |
+| Phase 2 topics could blur scope | Phase 2A allows dynamic events and rescheduling only; AGV, RL, GNN, transportation, and multi-objective extensions remain excluded |
 
 ## Known Notes
 

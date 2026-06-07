@@ -21,6 +21,7 @@ Current generated files:
 - `exp_011_heuristic_quality_families.csv`
 - `exp_012_benchmark_metadata_audit.csv`
 - `exp_013_cpsat_report.md`
+- `exp_014_dynamic_reschedule_smoke.csv`
 
 Each row records:
 
@@ -45,3 +46,6 @@ checks before the benchmark subset is expanded.
 Experiment 013 converts the CP-SAT benchmark-matrix aggregate CSV into a
 Markdown report. It adds FJSPLib LB/UB comparison, whether the local result
 reaches the upstream UB, and whether the local CP-SAT status proved optimality.
+
+Experiment 014 records Phase 2A dynamic-rescheduling smoke scenarios. Each row
+is still validated through the Phase 1 feasibility checker.

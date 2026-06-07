@@ -462,6 +462,26 @@ The report adds FJSPLib LB/UB columns, records whether each best local row
 reaches the upstream UB, and keeps the distinction between proved `OPTIMAL`
 rows and valid time-limited `FEASIBLE` schedules explicit.
 
+## `exp_014_dynamic_reschedule_smoke.py`
+
+Runs the Phase 2A dynamic FJSP smoke scenarios:
+
+- a machine-breakdown event that delays the remaining operation until repair
+- a job-arrival event that enlarges the current instance before rescheduling
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_014_dynamic_reschedule_smoke.py
+```
+
+Artifact:
+
+- `results/exp_014_dynamic_reschedule_smoke.csv`
+
+Each result is a full `ScheduleResult` and must pass the Phase 1 feasibility
+checker before being written as `PASS`.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.
