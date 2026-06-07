@@ -413,3 +413,5 @@ Chinese versions are also available:
 The Phase 2A dynamic extension is documented in
 [docs/math_model_phase2a.tex](docs/math_model_phase2a.tex), with the compiled
 PDF at [docs/math_model_phase2a.pdf](docs/math_model_phase2a.pdf).
+A concise Chinese reading note is available at
+[docs/phase2a_dynamic_model_zh.md](docs/phase2a_dynamic_model_zh.md).

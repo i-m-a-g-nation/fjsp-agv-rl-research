@@ -23,6 +23,7 @@ Phase 1 已覆盖：
 - Matplotlib Gantt 图输出
 - Phase 1 数学建模 LaTeX 文档
 - Phase 2A 动态 FJSP LaTeX 建模文档
+- Phase 2A 动态 FJSP 中文说明文档
 - pytest 单元测试
 - Phase 2A 动态事件、动态状态、动态合法性检查、冻结记录快照和最小重调度 baseline
 
