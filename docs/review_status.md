@@ -64,7 +64,7 @@ Last updated: 2026-06-07
 | Dynamic event specs | Started | Structured dictionaries and UTF-8 JSON arrays can be converted into typed dynamic events; `exp_015` audits three event files, `exp_016` replays them into feasible schedules, and `exp_017` summarizes the dynamic chain |
 | Code walkthrough | Done | Clean Chinese guide for reading Phase 1 modules and understanding solver data flow |
 | Reproducibility checklist | Done | Fixed command order for metadata audit, benchmark runs, CP-SAT report, pytest, and PDF checks |
-| CI / coverage | Done | GitHub Actions workflow installs dev dependencies, audits metadata, builds CP-SAT report, and enforces core coverage >= 80% |
+| CI / coverage | Done | GitHub Actions workflow installs dev dependencies, audits metadata, builds CP-SAT and Phase 2A dynamic reports, and enforces core coverage >= 80% |
 | Heuristic benchmark matrix | Done | Deterministic rules plus seeded Random and DispatchRandom families across the tracked subset |
 | Heuristic quality report | Done | Per-instance and cross-instance UB-relative ratios with reference coverage checks |
 | Benchmark metadata audit | Done | One-to-one tracked-file, LB/UB-row, and loader integrity gate |

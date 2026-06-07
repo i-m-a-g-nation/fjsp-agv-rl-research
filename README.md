@@ -370,13 +370,13 @@ a local optimality proof.
 The repository includes a minimal GitHub Actions workflow at
 [.github/workflows/ci.yml](.github/workflows/ci.yml). It installs the project
 with dev dependencies, audits benchmark metadata, rebuilds the CP-SAT report,
-and runs core coverage:
+refreshes the Phase 2A dynamic report chain, and runs core coverage:
 
 ```powershell
 python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 ```
 
-The current local core-module coverage is 88.74%.
+The current local core-module coverage is 89.35%.
 
 ## Threats to Validity
 

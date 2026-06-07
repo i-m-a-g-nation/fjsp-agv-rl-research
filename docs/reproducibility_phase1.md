@@ -114,7 +114,7 @@ GitHub Actions workflow 位于：
 .github/workflows/ci.yml
 ```
 
-CI 会安装 dev 依赖，运行 metadata audit，生成 CP-SAT report，并执行核心 coverage 检查。当前 coverage 门槛为 80%。
+CI 会安装 dev 依赖，运行 metadata audit，生成 CP-SAT report，刷新 Phase 2A dynamic report chain，并执行核心 coverage 检查。当前 coverage 门槛为 80%。
 
 ## 提交前检查
 

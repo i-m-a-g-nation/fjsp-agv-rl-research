@@ -165,7 +165,7 @@ makespan 定义，以及 feasibility checker 与数学约束之间的对应关�
 
 - [.github/workflows/ci.yml](.github/workflows/ci.yml)
 
-CI 会安装 dev 依赖、运行 benchmark metadata audit、生成 CP-SAT report，并执行：
+CI 会安装 dev 依赖、运行 benchmark metadata audit、生成 CP-SAT report、刷新 Phase 2A 动态报告链，并执行：
 
 ```powershell
 python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80

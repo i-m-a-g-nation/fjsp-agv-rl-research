@@ -1,4 +1,4 @@
-name: Phase 1 CI
+name: Phase 1 and 2A CI
 
 on:
   push:
@@ -31,6 +31,13 @@ jobs:
 
       - name: Build CP-SAT report
         run: python experiments/exp_013_cpsat_report.py
+
+      - name: Run Phase 2A dynamic smoke checks
+        run: |
+          python experiments/exp_014_dynamic_reschedule_smoke.py
+          python experiments/exp_015_dynamic_event_file_check.py
+          python experiments/exp_016_dynamic_event_file_reschedule.py
+          python experiments/exp_017_phase2a_dynamic_report.py
 
       - name: Run tests with core coverage
         run: python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
