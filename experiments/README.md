@@ -485,6 +485,26 @@ Artifact:
 Each result is a full `ScheduleResult` and must pass the Phase 1 feasibility
 checker before being written as `PASS`.
 
+## `exp_015_dynamic_event_file_check.py`
+
+Audits Phase 2A dynamic event JSON scenario files before they are used by
+rescheduling experiments. The audit checks that each file can be loaded into
+typed dynamic events, contains at least one event, and has non-decreasing event
+times for deterministic replay.
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_015_dynamic_event_file_check.py
+```
+
+Artifact:
+
+- `results/exp_015_dynamic_event_file_check.csv`
+
+The script returns exit code `1` if any event file fails to load or has an
+invalid event timeline.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.
