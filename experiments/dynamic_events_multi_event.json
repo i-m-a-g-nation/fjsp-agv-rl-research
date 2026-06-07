@@ -1,0 +1,25 @@
+[
+  {
+    "type": "job_arrival",
+    "time": 2,
+    "operations": [
+      [
+        [1, 2]
+      ]
+    ]
+  },
+  {
+    "type": "machine_breakdown",
+    "time": 2,
+    "machine_id": 1,
+    "repair_time": 6
+  },
+  {
+    "type": "processing_time_change",
+    "time": 2,
+    "job_id": 0,
+    "op_id": 1,
+    "machine_id": 0,
+    "new_processing_time": 5
+  }
+]

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
+import json
+from pathlib import Path
 from typing import Any
 
 from src.dynamic.events import (
@@ -49,6 +51,19 @@ def events_from_specs(specs: Iterable[Mapping[str, Any]]) -> list[DynamicEvent]:
     """Build a list of dynamic events from structured dictionaries."""
 
     return [event_from_spec(spec) for spec in specs]
+
+
+def load_event_specs_json(path: str | Path) -> list[DynamicEvent]:
+    """Load a UTF-8 JSON array of dynamic event specs."""
+
+    with Path(path).open("r", encoding="utf-8") as f:
+        payload = json.load(f)
+    if not isinstance(payload, list):
+        raise ValueError("dynamic event JSON must contain a list of event specs")
+    for item in payload:
+        if not isinstance(item, Mapping):
+            raise ValueError("dynamic event JSON entries must be objects")
+    return events_from_specs(payload)
 
 
 def _required_str(spec: Mapping[str, Any], key: str) -> str:

@@ -7,6 +7,7 @@ from src.dynamic import (
     ProcessingTimeChange,
     event_from_spec,
     events_from_specs,
+    load_event_specs_json,
 )
 
 
@@ -58,3 +59,23 @@ def test_event_from_spec_rejects_bad_job_arrival_options():
             "time": 1,
             "operations": [[["bad", 3]]],
         })
+
+
+def test_load_event_specs_json_loads_utf8_array(tmp_path):
+    path = tmp_path / "events.json"
+    path.write_text(
+        '[{"type": "machine_repair", "time": 2, "machine_id": 1}]',
+        encoding="utf-8",
+    )
+
+    events = load_event_specs_json(path)
+
+    assert events == [MachineRepair(time=2, machine_id=1)]
+
+
+def test_load_event_specs_json_rejects_non_list_payload(tmp_path):
+    path = tmp_path / "events.json"
+    path.write_text('{"type": "machine_repair"}', encoding="utf-8")
+
+    with pytest.raises(ValueError, match="list"):
+        load_event_specs_json(path)

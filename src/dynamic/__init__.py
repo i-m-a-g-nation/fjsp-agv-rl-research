@@ -5,7 +5,7 @@ from src.dynamic.events import (
     MachineRepair,
     ProcessingTimeChange,
 )
-from src.dynamic.event_specs import event_from_spec, events_from_specs
+from src.dynamic.event_specs import event_from_spec, events_from_specs, load_event_specs_json
 from src.dynamic.feasibility import DynamicViolation, check_dynamic_feasibility
 from src.dynamic.remaining import RemainingOperation, remaining_operations_from_frozen
 from src.dynamic.reschedule import reschedule_from_state
@@ -27,6 +27,7 @@ __all__ = [
     "event_from_spec",
     "events_from_specs",
     "frozen_records_at_time",
+    "load_event_specs_json",
     "remaining_operations_from_frozen",
     "reschedule_from_state",
 ]

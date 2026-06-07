@@ -469,7 +469,7 @@ Runs the Phase 2A dynamic FJSP smoke scenarios:
 - a machine-breakdown event that delays the remaining operation until repair
 - a job-arrival event that enlarges the current instance before rescheduling
 - a multi-event sequence combining job arrival, machine breakdown, and
-  processing-time change
+  processing-time change from `dynamic_events_multi_event.json`
 
 Run:
 
