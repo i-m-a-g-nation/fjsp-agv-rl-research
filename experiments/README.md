@@ -492,6 +492,12 @@ rescheduling experiments. The audit checks that each file can be loaded into
 typed dynamic events, contains at least one event, and has non-decreasing event
 times for deterministic replay.
 
+Current tracked event files:
+
+- `dynamic_events_multi_event.json`
+- `dynamic_events_release_stagger.json`
+- `dynamic_events_repair_cycle.json`
+
 Run:
 
 ```powershell

@@ -123,7 +123,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 - `exp_012_benchmark_metadata_audit.py`：30/30 个 tracked 文件、LB/UB 行和 loader 校验通过
 - `exp_013_cpsat_report.py`：生成 CP-SAT Markdown 报告，区分 `OPTIMAL` 与时限内 `FEASIBLE`；当前 15/30 个 best row 达到上游 UB，13/30 个本地证明 `OPTIMAL`，2/30 个达到 UB 但未本地证明最优
 - `exp_014_dynamic_reschedule_smoke.py`：3 个 Phase 2A 动态重调度 smoke 场景全部 feasible
-- `exp_015_dynamic_event_file_check.py`：动态事件 JSON 文件可加载、非空、时间线非递减
+- `exp_015_dynamic_event_file_check.py`：3/3 个动态事件 JSON 文件可加载、非空、时间线非递减
 - `pytest`：191 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
 - 核心模块 coverage：89.35%，CI 门槛为 80%
 

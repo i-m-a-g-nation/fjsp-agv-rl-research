@@ -1,0 +1,21 @@
+[
+  {
+    "type": "machine_breakdown",
+    "time": 1,
+    "machine_id": 0,
+    "repair_time": 6
+  },
+  {
+    "type": "machine_repair",
+    "time": 4,
+    "machine_id": 0
+  },
+  {
+    "type": "processing_time_change",
+    "time": 4,
+    "job_id": 0,
+    "op_id": 1,
+    "machine_id": 0,
+    "new_processing_time": 5
+  }
+]

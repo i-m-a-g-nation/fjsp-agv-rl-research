@@ -51,7 +51,7 @@ D:\2-Dev\Environments\Conda\fjsp-agv-rl\python.exe
 | `exp_005` discovered 文件 | 32 |
 | `exp_009` CP-SAT schedules | 120 |
 | `exp_010` heuristic schedules | 420 |
-| dynamic event-file audit | 1/1 JSON files passed |
+| dynamic event-file audit | 3/3 JSON files passed |
 | pytest | 191 passed |
 | core coverage | 89.35% |
 

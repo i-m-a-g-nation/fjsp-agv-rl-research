@@ -32,7 +32,7 @@ Last updated: 2026-06-07
 | `experiments/exp_012_benchmark_metadata_audit.py` | 0 | 30/30 tracked files match LB/UB rows and remain loadable |
 | `experiments/exp_013_cpsat_report.py` | 0 | Markdown CP-SAT report generated from exp_009 aggregates without rerunning the solver |
 | `experiments/exp_014_dynamic_reschedule_smoke.py` | 0 | Three Phase 2A dynamic-rescheduling smoke scenarios feasible |
-| `experiments/exp_015_dynamic_event_file_check.py` | 0 | Dynamic event JSON files load successfully and have non-decreasing event times |
+| `experiments/exp_015_dynamic_event_file_check.py` | 0 | 3/3 dynamic event JSON files load successfully and have non-decreasing event times |
 | `pytest --cov=src --cov-fail-under=80` | 0 | 191 passed; core coverage 89.35% |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
@@ -59,7 +59,7 @@ Last updated: 2026-06-07
 | Dynamic timeline | Started | `apply_events()` applies ordered event sequences and rejects out-of-order timelines |
 | Dynamic snapshot | Started | `frozen_records_at_time()` extracts completed and in-process operations for rescheduling |
 | Dynamic remaining view | Started | `remaining_operations_from_frozen()` reports unscheduled operations after frozen route prefixes |
-| Dynamic event specs | Started | Structured dictionaries and UTF-8 JSON arrays can be converted into typed dynamic events; `exp_015` audits event-file loadability and event-time order |
+| Dynamic event specs | Started | Structured dictionaries and UTF-8 JSON arrays can be converted into typed dynamic events; `exp_015` audits three event files for loadability and event-time order |
 | Code walkthrough | Done | Clean Chinese guide for reading Phase 1 modules and understanding solver data flow |
 | Reproducibility checklist | Done | Fixed command order for metadata audit, benchmark runs, CP-SAT report, pytest, and PDF checks |
 | CI / coverage | Done | GitHub Actions workflow installs dev dependencies, audits metadata, builds CP-SAT report, and enforces core coverage >= 80% |

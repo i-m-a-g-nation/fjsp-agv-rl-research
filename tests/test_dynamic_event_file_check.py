@@ -2,6 +2,7 @@ import csv
 
 from experiments.exp_015_dynamic_event_file_check import (
     audit_event_file,
+    discover_event_files,
     run_event_file_audit,
     write_event_audit_csv,
 )
@@ -59,19 +60,33 @@ def test_event_file_audit_rejects_invalid_specs(tmp_path):
 
 
 def test_event_file_audit_discovers_and_writes_csv(tmp_path):
-    path = tmp_path / "dynamic_events_valid.json"
-    path.write_text(
+    first = tmp_path / "dynamic_events_b.json"
+    first.write_text(
         '[{"type": "job_arrival", "time": 3, "operations": [[[0, 2]]]}]',
         encoding="utf-8",
     )
+    second = tmp_path / "dynamic_events_a.json"
+    second.write_text(
+        '[{"type": "machine_repair", "time": 1, "machine_id": 0}]',
+        encoding="utf-8",
+    )
 
+    discovered = discover_event_files(tmp_path)
     audits = run_event_file_audit(tmp_path)
     output = tmp_path / "audit.csv"
     write_event_audit_csv(output, audits)
 
-    assert len(audits) == 1
-    assert audits[0].file_name == "dynamic_events_valid.json"
+    assert [path.name for path in discovered] == [
+        "dynamic_events_a.json",
+        "dynamic_events_b.json",
+    ]
+    assert len(audits) == 2
+    assert [audit.file_name for audit in audits] == [
+        "dynamic_events_a.json",
+        "dynamic_events_b.json",
+    ]
     with output.open("r", encoding="utf-8", newline="") as f:
         rows = list(csv.DictReader(f))
-    assert rows[0]["status"] == "PASS"
-    assert rows[0]["event_count"] == "1"
+    assert len(rows) == 2
+    assert {row["status"] for row in rows} == {"PASS"}
+    assert {row["event_count"] for row in rows} == {"1"}
