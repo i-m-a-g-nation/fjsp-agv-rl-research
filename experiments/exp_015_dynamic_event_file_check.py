@@ -8,10 +8,12 @@ Phase 2A dynamic event-file audit:
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Sequence
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -155,13 +157,30 @@ def print_event_audits(audits: list[EventFileAudit]) -> None:
         )
 
 
-def main() -> None:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
+    """Parse command-line options for the event-file audit."""
+
+    root = Path(__file__).parent.parent
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=root / "experiments" / "results" / "exp_015_dynamic_event_file_check.csv",
+        help="Output CSV path",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Run the dynamic event-file audit and return a process exit code."""
+
+    args = parse_args(argv)
     root = Path(__file__).parent.parent
     experiments_root = root / "experiments"
     audits = run_event_file_audit(experiments_root)
 
     print_event_audits(audits)
-    output_path = root / "experiments" / "results" / "exp_015_dynamic_event_file_check.csv"
+    output_path = args.output
     write_event_audit_csv(output_path, audits)
     print()
     print(f"CSV results written to: {output_path}")
@@ -172,12 +191,12 @@ def main() -> None:
         print("FAILURES:")
         for failure in failures:
             print(f"  - {failure.file_name}: {failure.note}")
-        sys.exit(1)
+        return 1
 
     print()
     print("All dynamic event JSON files passed the Phase 2A audit.")
-    sys.exit(0)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main(sys.argv[1:]))

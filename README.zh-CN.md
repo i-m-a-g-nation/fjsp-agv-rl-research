@@ -134,7 +134,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1
 - `exp_015_dynamic_event_file_check.py`：3/3 个动态事件 JSON 文件可加载、非空、时间线非递减
 - `exp_016_dynamic_event_file_reschedule.py`：3/3 个动态事件 JSON 文件驱动的重调度场景全部 feasible
 - `exp_017_phase2a_dynamic_report.py`：汇总 exp_014/015/016，Phase 2A 动态链条总览 PASS
-- `pytest`：198 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
+- `pytest`：201 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
 - 核心模块 coverage：89.35%，CI 门槛为 80%
 
 当前 30 实例质量报告中，`DispatchFIFO` 的跨实例平均 best gap 最低：

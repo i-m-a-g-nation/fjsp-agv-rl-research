@@ -8,9 +8,10 @@ Phase 2A dynamic FJSP smoke experiment:
 """
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Sequence
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -166,15 +167,31 @@ def write_markdown_report(path: str | Path, report: str) -> None:
     output_path.write_text(report, encoding="utf-8")
 
 
-def main() -> None:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
+    """Parse command-line options for the smoke experiment."""
+
     root = Path(__file__).parent.parent
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=root / "experiments" / "results",
+        help="Directory for CSV and Markdown outputs",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Run the dynamic smoke experiment and return a process exit code."""
+
+    args = parse_args(argv)
     experiment_id = "exp_014_dynamic_reschedule_smoke"
     runs, records = run_dynamic_smoke_experiment(experiment_id)
 
     print_solver_runs(runs, algorithm_width=32)
-    output_path = root / "experiments" / "results" / f"{experiment_id}.csv"
+    output_path = args.output_dir / f"{experiment_id}.csv"
     write_results_csv(output_path, records)
-    report_path = root / "experiments" / "results" / f"{experiment_id}.md"
+    report_path = args.output_dir / f"{experiment_id}.md"
     write_markdown_report(report_path, build_markdown_report(records))
     print()
     print(f"CSV results written to: {output_path}")
@@ -186,12 +203,12 @@ def main() -> None:
         print("FAILURES:")
         for failure in failures:
             print(f"  - {failure}")
-        sys.exit(1)
+        return 1
 
     print()
     print("All Phase 2A dynamic reschedules passed feasibility check.")
-    sys.exit(0)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main(sys.argv[1:]))

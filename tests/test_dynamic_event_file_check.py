@@ -3,6 +3,7 @@ import csv
 from experiments.exp_015_dynamic_event_file_check import (
     audit_event_file,
     discover_event_files,
+    main,
     run_event_file_audit,
     write_event_audit_csv,
 )
@@ -90,3 +91,15 @@ def test_event_file_audit_discovers_and_writes_csv(tmp_path):
     assert len(rows) == 2
     assert {row["status"] for row in rows} == {"PASS"}
     assert {row["event_count"] for row in rows} == {"1"}
+
+
+def test_event_file_audit_main_writes_to_custom_output(tmp_path):
+    output = tmp_path / "audit.csv"
+
+    exit_code = main(["--output", str(output)])
+
+    assert exit_code == 0
+    with output.open("r", encoding="utf-8", newline="") as f:
+        rows = list(csv.DictReader(f))
+    assert len(rows) == 3
+    assert {row["status"] for row in rows} == {"PASS"}

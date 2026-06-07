@@ -5,6 +5,7 @@ from experiments.exp_016_dynamic_event_file_reschedule import (
     build_markdown_report,
     build_event_file_scenarios,
     build_event_file_solvers,
+    main,
     run_event_file_reschedule_experiment,
     write_markdown_report,
 )
@@ -59,3 +60,11 @@ def test_event_file_reschedule_markdown_report_lists_event_files(tmp_path):
     assert "dynamic_events_repair_cycle.json" in text
     assert "dynamic_events_release_stagger.json" in text
     assert "| dynamic_file_multi_event_2x2 | dynamic_events_multi_event.json | 8 | PASS |" in text
+
+
+def test_event_file_reschedule_main_writes_to_custom_output_dir(tmp_path):
+    exit_code = main(["--output-dir", str(tmp_path)])
+
+    assert exit_code == 0
+    assert (tmp_path / "exp_016_dynamic_event_file_reschedule.csv").exists()
+    assert (tmp_path / "exp_016_dynamic_event_file_reschedule.md").exists()

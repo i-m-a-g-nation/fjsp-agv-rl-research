@@ -56,7 +56,7 @@ D:\2-Dev\Environments\Conda\fjsp-agv-rl\python.exe
 | dynamic event-file audit | 3/3 JSON files passed |
 | dynamic event-file reschedules | 3/3 JSON-driven scenarios passed |
 | Phase 2A dynamic overview report | PASS |
-| pytest | 198 passed |
+| pytest | 201 passed |
 | core coverage | 89.35% |
 
 核心 coverage 检查：

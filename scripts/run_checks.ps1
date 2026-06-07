@@ -4,6 +4,7 @@ $ProjectRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Pa
 $DefaultEnvPath = Join-Path $ProjectRoot ".conda-env"
 $EnvPath = if ($env:FJSP_CONDA_ENV) { $env:FJSP_CONDA_ENV } else { $DefaultEnvPath }
 $PythonExe = Join-Path $EnvPath "python.exe"
+$TempResults = Join-Path ([System.IO.Path]::GetTempPath()) ("fjsp-check-results-" + [System.Guid]::NewGuid().ToString("N"))
 
 Set-Location $ProjectRoot
 
@@ -29,13 +30,36 @@ function Invoke-Check {
 
 Write-Host "Project root: $ProjectRoot"
 Write-Host "Python executable: $PythonExe"
+Write-Host "Temporary result directory: $TempResults"
 
 Invoke-Check "Audit benchmark metadata" @("experiments\exp_012_benchmark_metadata_audit.py")
 Invoke-Check "Build CP-SAT report" @("experiments\exp_013_cpsat_report.py")
-Invoke-Check "Run Phase 2A dynamic smoke" @("experiments\exp_014_dynamic_reschedule_smoke.py")
-Invoke-Check "Audit Phase 2A dynamic event files" @("experiments\exp_015_dynamic_event_file_check.py")
-Invoke-Check "Replay Phase 2A dynamic event files" @("experiments\exp_016_dynamic_event_file_reschedule.py")
-Invoke-Check "Build Phase 2A dynamic overview report" @("experiments\exp_017_phase2a_dynamic_report.py")
+Invoke-Check "Run Phase 2A dynamic smoke" @(
+    "experiments\exp_014_dynamic_reschedule_smoke.py",
+    "--output-dir",
+    $TempResults
+)
+Invoke-Check "Audit Phase 2A dynamic event files" @(
+    "experiments\exp_015_dynamic_event_file_check.py",
+    "--output",
+    (Join-Path $TempResults "exp_015_dynamic_event_file_check.csv")
+)
+Invoke-Check "Replay Phase 2A dynamic event files" @(
+    "experiments\exp_016_dynamic_event_file_reschedule.py",
+    "--output-dir",
+    $TempResults
+)
+Invoke-Check "Build Phase 2A dynamic overview report" @(
+    "experiments\exp_017_phase2a_dynamic_report.py",
+    "--smoke-input",
+    (Join-Path $TempResults "exp_014_dynamic_reschedule_smoke.csv"),
+    "--audit-input",
+    (Join-Path $TempResults "exp_015_dynamic_event_file_check.csv"),
+    "--replay-input",
+    (Join-Path $TempResults "exp_016_dynamic_event_file_reschedule.csv"),
+    "--output",
+    (Join-Path $TempResults "exp_017_phase2a_dynamic_report.md")
+)
 Invoke-Check "Run pytest with core coverage" @(
     "-m",
     "pytest",
