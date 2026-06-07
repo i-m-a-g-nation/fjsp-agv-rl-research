@@ -20,6 +20,8 @@ paper reproduction.
 - Extract frozen records from an existing `ScheduleResult` with
   `frozen_records_at_time()`, including in-process operations by default because
   Phase 2A does not model preemption.
+- Build an auditable remaining-operation view with
+  `remaining_operations_from_frozen()` for future repair and dispatch policies.
 
 ## Initial Events
 
