@@ -102,6 +102,39 @@ def test_processing_time_change_updates_future_reschedule_duration():
     assert feasible, violations
 
 
+def test_multi_event_sequence_reschedules_with_release_and_unavailability():
+    instance = FJSPInstance.from_jobs_array([
+        [[(0, 2)], [(0, 3), (1, 4)]],
+    ], num_machines=2)
+    state = DynamicFJSPState.from_instance(instance, current_time=2)
+    frozen = [ScheduleRecord(0, 0, 0, start=0, end=2, processing_time=2)]
+    state = state.apply_event(JobArrival(time=2, operations=(((1, 2),),)))
+    state = state.apply_event(MachineBreakdown(time=2, machine_id=1, repair_time=6))
+    state = state.apply_event(
+        ProcessingTimeChange(
+            time=2,
+            job_id=0,
+            op_id=1,
+            machine_id=0,
+            new_processing_time=5,
+        )
+    )
+
+    result = reschedule_from_state(state, frozen, rule="eft")
+
+    assert state.instance.num_jobs == 2
+    assert len(result.records) == 3
+    assert all(
+        record.start >= 6
+        for record in result.records
+        if record.machine_id == 1 and (record.job_id, record.op_id) != (0, 0)
+    )
+    feasible, violations = check_feasibility(result)
+    assert feasible, violations
+    dynamic_feasible, dynamic_violations = check_dynamic_feasibility(result, state, frozen)
+    assert dynamic_feasible, dynamic_violations
+
+
 def test_reschedule_rejects_non_prefix_frozen_records():
     instance = create_toy_instance()
     state = DynamicFJSPState.from_instance(instance, current_time=3)

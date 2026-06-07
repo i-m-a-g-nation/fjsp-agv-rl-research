@@ -17,6 +17,7 @@ def test_dynamic_smoke_experiment_records_all_scenarios(tmp_path):
     assert {record.instance_name for record in records} == {
         "dynamic_breakdown_1x1",
         "dynamic_job_arrival_2x1",
+        "dynamic_multi_event_2x2",
     }
     assert all(record.note == "DYNAMIC_PASS" for record in records)
 
@@ -25,5 +26,5 @@ def test_dynamic_smoke_experiment_records_all_scenarios(tmp_path):
     with output.open("r", encoding="utf-8", newline="") as f:
         rows = list(csv.DictReader(f))
 
-    assert len(rows) == 2
+    assert len(rows) == 3
     assert {row["feasible"] for row in rows} == {"PASS"}

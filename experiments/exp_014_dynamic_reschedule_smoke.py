@@ -27,6 +27,7 @@ from src.dynamic import (  # noqa: E402
     DynamicFJSPState,
     JobArrival,
     MachineBreakdown,
+    ProcessingTimeChange,
     reschedule_from_state,
 )
 from src.scheduling.encoding import ScheduleRecord, ScheduleResult  # noqa: E402
@@ -64,6 +65,37 @@ def job_arrival_solver() -> ScheduleResult:
     return reschedule_from_state(state, rule="eft")
 
 
+def multi_event_solver() -> ScheduleResult:
+    """Return a rescheduled result after a small sequence of dynamic events."""
+
+    instance = FJSPInstance.from_jobs_array([
+        [[(0, 2)], [(0, 3), (1, 4)]],
+    ], num_machines=2)
+    state = DynamicFJSPState.from_instance(instance, current_time=2)
+    frozen = [
+        ScheduleRecord(
+            job_id=0,
+            op_id=0,
+            machine_id=0,
+            start=0,
+            end=2,
+            processing_time=2,
+        )
+    ]
+    state = state.apply_event(JobArrival(time=2, operations=(((1, 2),),)))
+    state = state.apply_event(MachineBreakdown(time=2, machine_id=1, repair_time=6))
+    state = state.apply_event(
+        ProcessingTimeChange(
+            time=2,
+            job_id=0,
+            op_id=1,
+            machine_id=0,
+            new_processing_time=5,
+        )
+    )
+    return reschedule_from_state(state, frozen_records=frozen, rule="eft")
+
+
 def build_dynamic_smoke_solvers() -> list[tuple[str, str, Callable[[], ScheduleResult]]]:
     """Return named Phase 2A smoke scenarios."""
 
@@ -77,6 +109,11 @@ def build_dynamic_smoke_solvers() -> list[tuple[str, str, Callable[[], ScheduleR
             "dynamic_job_arrival_2x1",
             "DynamicEFT(job_arrival)",
             job_arrival_solver,
+        ),
+        (
+            "dynamic_multi_event_2x2",
+            "DynamicEFT(multi_event)",
+            multi_event_solver,
         ),
     ]
 

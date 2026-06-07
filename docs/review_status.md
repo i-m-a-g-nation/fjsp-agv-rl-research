@@ -10,7 +10,7 @@ Last updated: 2026-06-07
 | Python environment | Dedicated Conda environment: `.conda-env` or `FJSP_CONDA_ENV` |
 | matplotlib | 3.8.4 |
 | Pillow | 10.4.0 |
-| pytest | 171 passed, 0 failed |
+| pytest | 172 passed, 0 failed |
 | core coverage | 88.75% with 80% CI threshold |
 | Known warning | Low-priority `.pytest_cache` warning on some Windows paths |
 
@@ -31,11 +31,11 @@ Last updated: 2026-06-07
 | `experiments/exp_011_heuristic_quality_report.py` | 0 | Thirty-instance UB-relative per-instance and family summaries generated from structured upstream references |
 | `experiments/exp_012_benchmark_metadata_audit.py` | 0 | 30/30 tracked files match LB/UB rows and remain loadable |
 | `experiments/exp_013_cpsat_report.py` | 0 | Markdown CP-SAT report generated from exp_009 aggregates without rerunning the solver |
-| `experiments/exp_014_dynamic_reschedule_smoke.py` | 0 | Two Phase 2A dynamic-rescheduling smoke scenarios feasible |
-| `pytest --cov=src --cov-fail-under=80` | 0 | 171 passed; core coverage 88.75% |
+| `experiments/exp_014_dynamic_reschedule_smoke.py` | 0 | Three Phase 2A dynamic-rescheduling smoke scenarios feasible |
+| `pytest --cov=src --cov-fail-under=80` | 0 | 172 passed; core coverage 88.75% |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
-| `pytest` | 0 | 171 passed |
+| `pytest` | 0 | 172 passed |
 | `git status --short` | 0 | Pending Phase 2A edits |
 
 ## Module Status

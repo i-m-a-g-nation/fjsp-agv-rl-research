@@ -120,8 +120,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 - `exp_011_heuristic_quality_report.py`：30 实例 UB-relative 质量报告已刷新
 - `exp_012_benchmark_metadata_audit.py`：30/30 个 tracked 文件、LB/UB 行和 loader 校验通过
 - `exp_013_cpsat_report.py`：生成 CP-SAT Markdown 报告，区分 `OPTIMAL` 与时限内 `FEASIBLE`；当前 15/30 个 best row 达到上游 UB，13/30 个本地证明 `OPTIMAL`，2/30 个达到 UB 但未本地证明最优
-- `exp_014_dynamic_reschedule_smoke.py`：2 个 Phase 2A 动态重调度 smoke 场景全部 feasible
-- `pytest`：171 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
+- `exp_014_dynamic_reschedule_smoke.py`：3 个 Phase 2A 动态重调度 smoke 场景全部 feasible
+- `pytest`：172 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
 - 核心模块 coverage：88.75%，CI 门槛为 80%
 
 当前 30 实例质量报告中，`DispatchFIFO` 的跨实例平均 best gap 最低：
