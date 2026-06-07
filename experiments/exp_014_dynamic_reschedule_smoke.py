@@ -28,6 +28,7 @@ from src.dynamic import (  # noqa: E402
     JobArrival,
     MachineBreakdown,
     ProcessingTimeChange,
+    apply_events,
     reschedule_from_state,
 )
 from src.scheduling.encoding import ScheduleRecord, ScheduleResult  # noqa: E402
@@ -82,16 +83,19 @@ def multi_event_solver() -> ScheduleResult:
             processing_time=2,
         )
     ]
-    state = state.apply_event(JobArrival(time=2, operations=(((1, 2),),)))
-    state = state.apply_event(MachineBreakdown(time=2, machine_id=1, repair_time=6))
-    state = state.apply_event(
-        ProcessingTimeChange(
-            time=2,
-            job_id=0,
-            op_id=1,
-            machine_id=0,
-            new_processing_time=5,
-        )
+    state = apply_events(
+        state,
+        [
+            JobArrival(time=2, operations=(((1, 2),),)),
+            MachineBreakdown(time=2, machine_id=1, repair_time=6),
+            ProcessingTimeChange(
+                time=2,
+                job_id=0,
+                op_id=1,
+                machine_id=0,
+                new_processing_time=5,
+            ),
+        ],
     )
     return reschedule_from_state(state, frozen_records=frozen, rule="eft")
 

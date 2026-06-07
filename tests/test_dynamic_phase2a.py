@@ -7,6 +7,7 @@ from src.dynamic import (
     MachineBreakdown,
     MachineRepair,
     ProcessingTimeChange,
+    apply_events,
     check_dynamic_feasibility,
     reschedule_from_state,
 )
@@ -108,16 +109,19 @@ def test_multi_event_sequence_reschedules_with_release_and_unavailability():
     ], num_machines=2)
     state = DynamicFJSPState.from_instance(instance, current_time=2)
     frozen = [ScheduleRecord(0, 0, 0, start=0, end=2, processing_time=2)]
-    state = state.apply_event(JobArrival(time=2, operations=(((1, 2),),)))
-    state = state.apply_event(MachineBreakdown(time=2, machine_id=1, repair_time=6))
-    state = state.apply_event(
-        ProcessingTimeChange(
-            time=2,
-            job_id=0,
-            op_id=1,
-            machine_id=0,
-            new_processing_time=5,
-        )
+    state = apply_events(
+        state,
+        [
+            JobArrival(time=2, operations=(((1, 2),),)),
+            MachineBreakdown(time=2, machine_id=1, repair_time=6),
+            ProcessingTimeChange(
+                time=2,
+                job_id=0,
+                op_id=1,
+                machine_id=0,
+                new_processing_time=5,
+            ),
+        ],
     )
 
     result = reschedule_from_state(state, frozen, rule="eft")
@@ -133,6 +137,22 @@ def test_multi_event_sequence_reschedules_with_release_and_unavailability():
     assert feasible, violations
     dynamic_feasible, dynamic_violations = check_dynamic_feasibility(result, state, frozen)
     assert dynamic_feasible, dynamic_violations
+
+
+def test_apply_events_rejects_out_of_order_events():
+    instance = FJSPInstance.from_jobs_array([
+        [[(0, 2)]],
+    ])
+    state = DynamicFJSPState.from_instance(instance, current_time=0)
+
+    with pytest.raises(ValueError, match="sorted"):
+        apply_events(
+            state,
+            [
+                MachineBreakdown(time=5, machine_id=0, repair_time=8),
+                JobArrival(time=4, operations=(((0, 3),),)),
+            ],
+        )
 
 
 def test_reschedule_rejects_non_prefix_frozen_records():

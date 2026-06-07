@@ -15,6 +15,8 @@ paper reproduction.
 - Check dynamic-only constraints that the static feasibility checker cannot
   see: frozen-record immutability, job release times, and machine unavailable
   windows.
+- Apply event sequences through `apply_events()` so experiments reject
+  out-of-order dynamic timelines early.
 
 ## Initial Events
 
