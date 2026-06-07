@@ -127,10 +127,8 @@ CI 会安装 dev 依赖，运行 metadata audit，生成 CP-SAT report，刷新 
 .\.conda-env\python.exe experiments\exp_017_phase2a_dynamic_report.py
 .\.conda-env\python.exe -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 
-# One-command local check chain:
+# One-command local check chain, including git diff --check:
 powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1
-
-git diff --check
 ```
 
 Windows 下可能出现 `.pytest_cache` 权限警告；只要测试通过，该警告不影响结果。

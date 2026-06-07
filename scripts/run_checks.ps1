@@ -45,4 +45,8 @@ Invoke-Check "Run pytest with core coverage" @(
 )
 
 Write-Host ""
+Write-Host "==> Check diff whitespace"
+git diff --check
+
+Write-Host ""
 Write-Host "All local checks completed successfully."
