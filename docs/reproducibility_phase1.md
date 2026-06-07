@@ -41,6 +41,7 @@ D:\2-Dev\Environments\Conda\fjsp-agv-rl\python.exe
 .\.conda-env\python.exe experiments\exp_014_dynamic_reschedule_smoke.py
 .\.conda-env\python.exe experiments\exp_015_dynamic_event_file_check.py
 .\.conda-env\python.exe experiments\exp_016_dynamic_event_file_reschedule.py
+.\.conda-env\python.exe experiments\exp_017_phase2a_dynamic_report.py
 .\.conda-env\python.exe -m pytest -q
 ```
 
@@ -54,7 +55,8 @@ D:\2-Dev\Environments\Conda\fjsp-agv-rl\python.exe
 | `exp_010` heuristic schedules | 420 |
 | dynamic event-file audit | 3/3 JSON files passed |
 | dynamic event-file reschedules | 3/3 JSON-driven scenarios passed |
-| pytest | 194 passed |
+| Phase 2A dynamic overview report | PASS |
+| pytest | 198 passed |
 | core coverage | 89.35% |
 
 核心 coverage 检查：
@@ -122,6 +124,7 @@ CI 会安装 dev 依赖，运行 metadata audit，生成 CP-SAT report，并执�
 .\.conda-env\python.exe experiments\exp_014_dynamic_reschedule_smoke.py
 .\.conda-env\python.exe experiments\exp_015_dynamic_event_file_check.py
 .\.conda-env\python.exe experiments\exp_016_dynamic_event_file_reschedule.py
+.\.conda-env\python.exe experiments\exp_017_phase2a_dynamic_report.py
 .\.conda-env\python.exe -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 git diff --check
 ```

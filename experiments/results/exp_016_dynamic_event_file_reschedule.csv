@@ -1,4 +1,4 @@
 experiment_id,instance_name,algorithm,makespan,feasible,runtime_s,note,objective_bound,gap,solver_wall_time
-exp_016_dynamic_event_file_reschedule,dynamic_file_multi_event_2x2,DynamicEFT(dynamic_events_multi_event.json),8,PASS,0.000473,EVENT_FILE_DYNAMIC_PASS,,,
-exp_016_dynamic_event_file_reschedule,dynamic_file_repair_cycle_1x2,DynamicEFT(dynamic_events_repair_cycle.json),10,PASS,0.000378,EVENT_FILE_DYNAMIC_PASS,,,
-exp_016_dynamic_event_file_reschedule,dynamic_file_release_stagger_3x2,DynamicEFT(dynamic_events_release_stagger.json),14,PASS,0.000453,EVENT_FILE_DYNAMIC_PASS,,,
+exp_016_dynamic_event_file_reschedule,dynamic_file_multi_event_2x2,DynamicEFT(dynamic_events_multi_event.json),8,PASS,0.000526,EVENT_FILE_DYNAMIC_PASS,,,
+exp_016_dynamic_event_file_reschedule,dynamic_file_repair_cycle_1x2,DynamicEFT(dynamic_events_repair_cycle.json),10,PASS,0.000390,EVENT_FILE_DYNAMIC_PASS,,,
+exp_016_dynamic_event_file_reschedule,dynamic_file_release_stagger_3x2,DynamicEFT(dynamic_events_release_stagger.json),14,PASS,0.000419,EVENT_FILE_DYNAMIC_PASS,,,

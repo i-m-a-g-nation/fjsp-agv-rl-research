@@ -532,6 +532,25 @@ Artifact:
 Each row must pass the shared experiment runner's Phase 1 feasibility check and
 the dynamic checks inside `reschedule_from_state()`.
 
+## `exp_017_phase2a_dynamic_report.py`
+
+Reads the Phase 2A dynamic CSV artifacts from Experiments 014, 015, and 016,
+then writes one Markdown overview report. This is a report-only gate: it does
+not rerun solvers, so refresh `exp_014`, `exp_015`, and `exp_016` first.
+
+Run:
+
+```powershell
+.\.conda-env\python.exe experiments\exp_017_phase2a_dynamic_report.py
+```
+
+Artifact:
+
+- `results/exp_017_phase2a_dynamic_report.md`
+
+The report summarizes dynamic smoke reschedules, event-file audits, and
+event-file replay reschedules in one place.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.
