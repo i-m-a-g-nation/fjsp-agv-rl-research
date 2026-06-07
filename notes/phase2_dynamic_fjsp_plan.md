@@ -12,6 +12,9 @@ paper reproduction.
 - Freeze already executed or currently executing schedule records.
 - Re-dispatch remaining operations with Phase 1-style feasibility guarantees.
 - Return the same `ScheduleResult` type used by Phase 1.
+- Check dynamic-only constraints that the static feasibility checker cannot
+  see: frozen-record immutability, job release times, and machine unavailable
+  windows.
 
 ## Initial Events
 
@@ -34,6 +37,7 @@ paper reproduction.
 - `FJSPInstance` remains the authoritative operation-machine data model.
 - `ScheduleRecord` and `ScheduleResult` remain the output representation.
 - `check_feasibility()` remains mandatory before returning a rescheduled result.
+- `check_dynamic_feasibility()` is also mandatory for Phase 2A reschedules.
 - Dispatching remains deterministic unless an explicitly random policy is added
   later.
 
@@ -42,4 +46,5 @@ paper reproduction.
 `reschedule_from_state()` accepts a `DynamicFJSPState` and frozen records. It
 computes job and machine ready times from those records, applies machine
 unavailability, dispatches all remaining operations with a simple rule, and
-checks the final full schedule with the Phase 1 feasibility checker.
+checks the final full schedule with both the Phase 1 feasibility checker and
+the Phase 2A dynamic feasibility checker.

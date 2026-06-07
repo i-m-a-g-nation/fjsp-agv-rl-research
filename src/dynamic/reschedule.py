@@ -3,9 +3,10 @@ from __future__ import annotations
 from dataclasses import replace
 from typing import Iterable, Literal
 
+from src.dynamic.feasibility import check_dynamic_feasibility
+from src.dynamic.state import DynamicFJSPState
 from src.scheduling.encoding import ScheduleRecord, ScheduleResult
 from src.scheduling.feasibility import check_feasibility
-from src.dynamic.state import DynamicFJSPState
 
 RescheduleRule = Literal["fifo", "spt", "eft"]
 _Candidate = tuple[int, int, int, int, int, int, int]
@@ -33,7 +34,13 @@ def reschedule_from_state(
     result.records.extend(sorted(frozen, key=lambda r: (r.start, r.machine_id, r.job_id, r.op_id)))
 
     job_next_op = {job.job_id: 0 for job in instance.jobs}
-    job_ready_time = {job.job_id: state.current_time for job in instance.jobs}
+    job_ready_time = {
+        job.job_id: max(
+            state.current_time,
+            (state.job_release_times or ())[job.job_id],
+        )
+        for job in instance.jobs
+    }
     machine_ready_time = {
         machine_id: max(state.current_time, unavailable_until)
         for machine_id, unavailable_until in enumerate(state.machine_unavailable_until or ())
@@ -86,6 +93,16 @@ def reschedule_from_state(
     feasible, violations = check_feasibility(result)
     if not feasible:
         raise RuntimeError(f"dynamic reschedule produced infeasible schedule: {violations}")
+    dynamic_feasible, dynamic_violations = check_dynamic_feasibility(
+        result,
+        state,
+        frozen,
+    )
+    if not dynamic_feasible:
+        raise RuntimeError(
+            "dynamic reschedule violated dynamic constraints: "
+            f"{dynamic_violations}"
+        )
     return result
 
 

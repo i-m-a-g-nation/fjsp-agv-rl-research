@@ -7,6 +7,7 @@ from src.dynamic import (
     MachineBreakdown,
     MachineRepair,
     ProcessingTimeChange,
+    check_dynamic_feasibility,
     reschedule_from_state,
 )
 from src.scheduling.encoding import ScheduleRecord
@@ -36,6 +37,8 @@ def test_machine_breakdown_delays_future_operation_until_repair():
     assert op1.start == 10
     feasible, violations = check_feasibility(result)
     assert feasible, violations
+    dynamic_feasible, dynamic_violations = check_dynamic_feasibility(result, state, frozen)
+    assert dynamic_feasible, dynamic_violations
 
 
 def test_machine_repair_clears_future_unavailability_at_event_time():
@@ -51,6 +54,8 @@ def test_machine_repair_clears_future_unavailability_at_event_time():
     assert result.records[0].start == 5
     feasible, violations = check_feasibility(result)
     assert feasible, violations
+    dynamic_feasible, dynamic_violations = check_dynamic_feasibility(result, state)
+    assert dynamic_feasible, dynamic_violations
 
 
 def test_job_arrival_appends_new_job_and_reschedule_includes_it():

@@ -19,6 +19,7 @@ class DynamicFJSPState:
     instance: FJSPInstance
     current_time: int = 0
     released_job_ids: frozenset[int] | None = None
+    job_release_times: tuple[int, ...] | None = None
     machine_unavailable_until: tuple[int, ...] | None = None
 
     def __post_init__(self) -> None:
@@ -29,6 +30,11 @@ class DynamicFJSPState:
             if self.released_job_ids is None
             else self.released_job_ids
         )
+        release_times = (
+            tuple(0 for _ in range(self.instance.num_jobs))
+            if self.job_release_times is None
+            else self.job_release_times
+        )
         unavailable = (
             tuple(0 for _ in range(self.instance.num_machines))
             if self.machine_unavailable_until is None
@@ -36,11 +42,18 @@ class DynamicFJSPState:
         )
         if any(job_id < 0 or job_id >= self.instance.num_jobs for job_id in released):
             raise ValueError("released_job_ids contains an invalid job id")
+        if len(release_times) != self.instance.num_jobs:
+            raise ValueError("job_release_times length must match num_jobs")
+        if any(time < 0 for time in release_times):
+            raise ValueError("job_release_times values must be non-negative")
+        if any(release_times[job_id] > self.current_time for job_id in released):
+            raise ValueError("released jobs cannot have release times in the future")
         if len(unavailable) != self.instance.num_machines:
             raise ValueError("machine_unavailable_until length must match num_machines")
         if any(time < 0 for time in unavailable):
             raise ValueError("machine_unavailable_until values must be non-negative")
         object.__setattr__(self, "released_job_ids", released)
+        object.__setattr__(self, "job_release_times", release_times)
         object.__setattr__(self, "machine_unavailable_until", unavailable)
 
     @classmethod
@@ -89,6 +102,7 @@ class DynamicFJSPState:
         instance: FJSPInstance | None = None,
         current_time: int | None = None,
         released_job_ids: frozenset[int] | None = None,
+        job_release_times: tuple[int, ...] | None = None,
         machine_unavailable_until: tuple[int, ...] | None = None,
     ) -> DynamicFJSPState:
         return DynamicFJSPState(
@@ -96,6 +110,9 @@ class DynamicFJSPState:
             current_time=self.current_time if current_time is None else current_time,
             released_job_ids=(
                 self.released_job_ids if released_job_ids is None else released_job_ids
+            ),
+            job_release_times=(
+                self.job_release_times if job_release_times is None else job_release_times
             ),
             machine_unavailable_until=(
                 self.machine_unavailable_until
@@ -115,10 +132,12 @@ class DynamicFJSPState:
             num_machines=self.instance.num_machines,
         )
         released = frozenset(set(self.released_job_ids or ()) | {new_instance.num_jobs - 1})
+        release_times = tuple(self.job_release_times or ()) + (event.time,)
         return self._replace(
             instance=new_instance,
             current_time=event.time,
             released_job_ids=released,
+            job_release_times=release_times,
         )
 
     def _change_processing_time(
