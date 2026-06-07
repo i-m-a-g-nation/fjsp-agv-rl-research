@@ -480,6 +480,7 @@ Run:
 Artifact:
 
 - `results/exp_014_dynamic_reschedule_smoke.csv`
+- `results/exp_014_dynamic_reschedule_smoke.md`
 
 Each result is a full `ScheduleResult` and must pass the Phase 1 feasibility
 checker before being written as `PASS`.

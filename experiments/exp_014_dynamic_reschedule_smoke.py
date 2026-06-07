@@ -125,6 +125,56 @@ def run_dynamic_smoke_experiment(
     return runs, records
 
 
+def build_markdown_report(records: list[ExperimentRecord]) -> str:
+    """Build a compact Markdown report for Phase 2A dynamic smoke runs."""
+
+    total = len(records)
+    feasible = sum(1 for record in records if record.feasible)
+    rows = [
+        "| scenario | algorithm | makespan | feasible | note |",
+        "| --- | --- | --- | --- | --- |",
+    ]
+    for record in records:
+        makespan = "" if record.makespan is None else str(record.makespan)
+        feasible_text = "PASS" if record.feasible else "FAIL"
+        rows.append(
+            "| "
+            + " | ".join([
+                record.instance_name,
+                record.algorithm,
+                makespan,
+                feasible_text,
+                record.note,
+            ])
+            + " |"
+        )
+    return "\n".join([
+        "# Phase 2A Dynamic Reschedule Smoke Report",
+        "",
+        (
+            f"This report summarizes {total} dynamic smoke scenarios. "
+            f"Feasible rows: {feasible}/{total}."
+        ),
+        "",
+        *rows,
+        "",
+        (
+            "Every PASS row is a full ScheduleResult validated by the static "
+            "Phase 1 feasibility checker and the Phase 2A dynamic checks inside "
+            "the rescheduling path."
+        ),
+        "",
+    ])
+
+
+def write_markdown_report(path: str | Path, report: str) -> None:
+    """Write a UTF-8 Markdown report, creating parent folders as needed."""
+
+    output_path = Path(path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(report, encoding="utf-8")
+
+
 def main() -> None:
     root = Path(__file__).parent.parent
     experiment_id = "exp_014_dynamic_reschedule_smoke"
@@ -133,8 +183,11 @@ def main() -> None:
     print_solver_runs(runs, algorithm_width=32)
     output_path = root / "experiments" / "results" / f"{experiment_id}.csv"
     write_results_csv(output_path, records)
+    report_path = root / "experiments" / "results" / f"{experiment_id}.md"
+    write_markdown_report(report_path, build_markdown_report(records))
     print()
     print(f"CSV results written to: {output_path}")
+    print(f"Markdown report written to: {report_path}")
 
     failures = [f"{record.algorithm}: {record.note}" for record in records if not record.feasible]
     if failures:

@@ -1,8 +1,10 @@
 import csv
 
 from experiments.exp_014_dynamic_reschedule_smoke import (
+    build_markdown_report,
     build_dynamic_smoke_solvers,
     run_dynamic_smoke_experiment,
+    write_markdown_report,
 )
 from experiments.common import write_results_csv
 
@@ -28,3 +30,17 @@ def test_dynamic_smoke_experiment_records_all_scenarios(tmp_path):
 
     assert len(rows) == 3
     assert {row["feasible"] for row in rows} == {"PASS"}
+
+
+def test_dynamic_smoke_markdown_report_lists_scenarios(tmp_path):
+    _runs, records = run_dynamic_smoke_experiment()
+
+    report = build_markdown_report(records)
+    output = tmp_path / "report.md"
+    write_markdown_report(output, report)
+
+    text = output.read_text(encoding="utf-8")
+    assert "Feasible rows: 3/3" in text
+    assert "dynamic_breakdown_1x1" in text
+    assert "dynamic_job_arrival_2x1" in text
+    assert "dynamic_multi_event_2x2" in text
