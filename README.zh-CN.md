@@ -63,6 +63,14 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 
 常用检查：
 
+推荐先跑本地 CI 风格检查链：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1
+```
+
+也可以逐项运行：
+
 ```powershell
 .\.conda-env\python.exe experiments\exp_005_benchmark_batch.py
 .\.conda-env\python.exe experiments\exp_009_cpsat_benchmark_matrix.py

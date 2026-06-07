@@ -70,6 +70,14 @@ Do not use the Conda `base` environment for project checks.
 
 ## Quick Checks
 
+Run the local CI-style check chain:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1
+```
+
+Or run individual checks:
+
 ```powershell
 .\.conda-env\python.exe -c "import sys; print(sys.executable)"
 .\.conda-env\python.exe experiments\exp_001_toy_instance.py
