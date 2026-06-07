@@ -1,0 +1,152 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\title{Phase 2A Dynamic FJSP Minimal Model}
+\author{FJSP-AGV-RL Research}
+\date{June 2026}
+
+\begin{document}
+\maketitle
+
+\section{Scope}
+
+Phase 2A extends the verified Phase 1 static flexible job shop scheduling
+platform with a minimal dynamic layer. The current scope is deliberately small:
+dynamic events, a dynamic state, frozen records, remaining-operation views, and
+deterministic rescheduling. AGV routing, transportation time, reinforcement
+learning, graph neural networks, operation preemption, and multi-objective
+optimization remain outside this phase.
+
+\section{Static Base}
+
+Let $J$ be the set of jobs and let job $j \in J$ contain ordered operations
+$O_j = \{0,\ldots,n_j-1\}$. Each operation $(j,o)$ has an eligible machine set
+$M_{jo}$ and processing time $p_{jom}$ for each $m \in M_{jo}$. A schedule record
+is
+\[
+  r = (j,o,m,s,e,p),
+\]
+where $s$ is start time, $e=s+p$ is end time, and $p=p_{jom}$. Phase 2A keeps the
+same \texttt{ScheduleRecord} and \texttt{ScheduleResult} representation used by
+Phase 1.
+
+\section{Dynamic State}
+
+At rescheduling time $t$, the dynamic state is
+\[
+  S_t = (I_t, t, R_t, a_t, u_t),
+\]
+where:
+
+\begin{itemize}
+  \item $I_t$ is the current FJSP instance.
+  \item $R_t \subseteq J_t$ is the set of released jobs.
+  \item $a_t(j)$ is the release time of job $j$.
+  \item $u_t(m)$ is the earliest time machine $m$ can start a new future
+        operation.
+\end{itemize}
+
+The implementation stores $a_t$ as \texttt{job\_release\_times} and $u_t$ as
+\texttt{machine\_unavailable\_until}.
+
+\section{Events}
+
+The Phase 2A event set is shown in Table~\ref{tab:events}. Events are applied in
+non-decreasing time order by \texttt{apply\_events()}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+Event & State effect \\
+\midrule
+\texttt{MachineBreakdown} & Set $u_t(m)$ to at least the repair time. \\
+\texttt{MachineRepair} & Set $u_t(m)$ to the repair event time. \\
+\texttt{JobArrival} & Append a new job and set its release time. \\
+\texttt{ProcessingTimeChange} & Update one future $p_{jom}$. \\
+\bottomrule
+\end{tabular}
+\caption{Phase 2A dynamic event types.}
+\label{tab:events}
+\end{table}
+
+\section{Frozen Records}
+
+Given an existing schedule $x$ and current time $t$, Phase 2A defines the frozen
+record set as
+\[
+  F_t =
+  \{r \in x : e_r \le t\}
+  \cup
+  \{r \in x : s_r < t < e_r\}.
+\]
+The second set freezes in-process operations because Phase 2A does not model
+preemption. The helper \texttt{frozen\_records\_at\_time()} implements this rule.
+
+Frozen records must be copied exactly into the rescheduled result:
+\[
+  (m'_r,s'_r,e'_r,p'_r) = (m_r,s_r,e_r,p_r), \quad r \in F_t.
+\]
+
+\section{Remaining Operations}
+
+For each released job $j$, frozen operations must form a route prefix:
+\[
+  F_{tj} = \{0,\ldots,k_j-1\}.
+\]
+The remaining operations are then
+\[
+  Q_t = \{(j,o): j \in R_t,\ o \in \{k_j,\ldots,n_j-1\}\}.
+\]
+The helper \texttt{remaining\_operations\_from\_frozen()} exposes $Q_t$ for audit
+and later repair policies.
+
+\section{Rescheduling Baseline}
+
+The current baseline dispatches all operations in $Q_t$ while respecting:
+
+\begin{align}
+  s_{jo} &\ge a_t(j), && \text{job release time,}\\
+  s_{jo} &\ge u_t(m), && \text{machine availability for future starts,}\\
+  s_{j,o+1} &\ge e_{jo}, && \text{job precedence,}\\
+  [s_{jo}, e_{jo}) &\cap [s_{j'o'}, e_{j'o'}) = \emptyset,
+    && \text{same-machine non-overlap.}
+\end{align}
+
+The implementation currently supports deterministic \texttt{fifo},
+\texttt{spt}, and \texttt{eft} rules. The returned result is still a full
+\texttt{ScheduleResult}; it is checked by both the Phase 1 static feasibility
+checker and the Phase 2A dynamic feasibility checker.
+
+\section{Smoke Verification}
+
+Experiment \texttt{exp\_014\_dynamic\_reschedule\_smoke.py} currently validates
+three small scenarios:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrr}
+\toprule
+Scenario & Makespan & Feasible \\
+\midrule
+\texttt{dynamic\_breakdown\_1x1} & 12 & PASS \\
+\texttt{dynamic\_job\_arrival\_2x1} & 10 & PASS \\
+\texttt{dynamic\_multi\_event\_2x2} & 8 & PASS \\
+\bottomrule
+\end{tabular}
+\caption{Current Phase 2A dynamic smoke results.}
+\end{table}
+
+\section{Limitations}
+
+The current model is intentionally conservative. It does not interrupt running
+operations, add transport resources, optimize AGV paths, simulate stochastic
+event streams, or train policies. These restrictions keep Phase 2A small enough
+to audit while preserving the Phase 1 legality guarantees.
+
+\end{document}

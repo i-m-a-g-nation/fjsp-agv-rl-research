@@ -35,6 +35,7 @@ Last updated: 2026-06-07
 | `pytest --cov=src --cov-fail-under=80` | 0 | 181 passed; core coverage 89.27% |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
+| `docs/math_model_phase2a.tex` compile | 0 | Tectonic generated `docs/math_model_phase2a.pdf` |
 | `pytest` | 0 | 181 passed |
 | `git status --short` | 0 | Pending Phase 2A edits |
 

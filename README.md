@@ -409,3 +409,7 @@ PDF is available at [docs/math_model_phase1_en.pdf](docs/math_model_phase1_en.pd
 Chinese versions are also available:
 [docs/math_model_phase1_zh.tex](docs/math_model_phase1_zh.tex) and
 [docs/math_model_phase1_zh.pdf](docs/math_model_phase1_zh.pdf).
+
+The Phase 2A dynamic extension is documented in
+[docs/math_model_phase2a.tex](docs/math_model_phase2a.tex), with the compiled
+PDF at [docs/math_model_phase2a.pdf](docs/math_model_phase2a.pdf).
