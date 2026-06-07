@@ -10,7 +10,7 @@ Last updated: 2026-06-07
 | Python environment | Dedicated Conda environment: `.conda-env` or `FJSP_CONDA_ENV` |
 | matplotlib | 3.8.4 |
 | Pillow | 10.4.0 |
-| pytest | 193 passed, 0 failed |
+| pytest | 194 passed, 0 failed |
 | core coverage | 89.35% with 80% CI threshold |
 | Known warning | Low-priority `.pytest_cache` warning on some Windows paths |
 
@@ -34,12 +34,12 @@ Last updated: 2026-06-07
 | `experiments/exp_014_dynamic_reschedule_smoke.py` | 0 | Three Phase 2A dynamic-rescheduling smoke scenarios feasible |
 | `experiments/exp_015_dynamic_event_file_check.py` | 0 | 3/3 dynamic event JSON files load successfully and have non-decreasing event times |
 | `experiments/exp_016_dynamic_event_file_reschedule.py` | 0 | 3/3 dynamic event JSON files drive feasible reschedules |
-| `pytest --cov=src --cov-fail-under=80` | 0 | 193 passed; core coverage 89.35% |
+| `pytest --cov=src --cov-fail-under=80` | 0 | 194 passed; core coverage 89.35% |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
 | `docs/math_model_phase2a.tex` compile | 0 | Tectonic generated `docs/math_model_phase2a.pdf` |
 | `docs/phase2a_dynamic_model_zh.md` | 0 | Chinese Phase 2A dynamic model reading note added |
-| `pytest` | 0 | 193 passed |
+| `pytest` | 0 | 194 passed |
 | `git status --short` | 0 | Pending Phase 2A edits |
 
 ## Module Status

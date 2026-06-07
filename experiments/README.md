@@ -527,6 +527,7 @@ Run:
 Artifact:
 
 - `results/exp_016_dynamic_event_file_reschedule.csv`
+- `results/exp_016_dynamic_event_file_reschedule.md`
 
 Each row must pass the shared experiment runner's Phase 1 feasibility check and
 the dynamic checks inside `reschedule_from_state()`.

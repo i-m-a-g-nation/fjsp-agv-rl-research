@@ -2,9 +2,11 @@ import csv
 
 from experiments.common import write_results_csv
 from experiments.exp_016_dynamic_event_file_reschedule import (
+    build_markdown_report,
     build_event_file_scenarios,
     build_event_file_solvers,
     run_event_file_reschedule_experiment,
+    write_markdown_report,
 )
 
 
@@ -42,3 +44,18 @@ def test_event_file_reschedule_experiment_records_all_scenarios(tmp_path):
 
     assert len(rows) == 3
     assert {row["feasible"] for row in rows} == {"PASS"}
+
+
+def test_event_file_reschedule_markdown_report_lists_event_files(tmp_path):
+    _runs, records = run_event_file_reschedule_experiment(event_root="experiments")
+
+    report = build_markdown_report(records)
+    output = tmp_path / "report.md"
+    write_markdown_report(output, report)
+
+    text = output.read_text(encoding="utf-8")
+    assert "Feasible rows: 3/3" in text
+    assert "dynamic_events_multi_event.json" in text
+    assert "dynamic_events_repair_cycle.json" in text
+    assert "dynamic_events_release_stagger.json" in text
+    assert "| dynamic_file_multi_event_2x2 | dynamic_events_multi_event.json | 8 | PASS |" in text

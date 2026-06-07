@@ -135,6 +135,65 @@ def run_event_file_reschedule_experiment(
     return runs, records
 
 
+def build_markdown_report(records: list[ExperimentRecord]) -> str:
+    """Build a readable Markdown report for event-file rescheduling runs."""
+
+    total = len(records)
+    feasible = sum(1 for record in records if record.feasible)
+    rows = [
+        "| scenario | event file | makespan | feasible | note |",
+        "| --- | --- | ---: | --- | --- |",
+    ]
+    for record in records:
+        event_file = _event_file_from_algorithm(record.algorithm)
+        makespan = "" if record.makespan is None else str(record.makespan)
+        feasible_text = "PASS" if record.feasible else "FAIL"
+        rows.append(
+            "| "
+            + " | ".join([
+                record.instance_name,
+                event_file,
+                makespan,
+                feasible_text,
+                record.note,
+            ])
+            + " |"
+        )
+    return "\n".join([
+        "# Phase 2A Event-File Reschedule Report",
+        "",
+        (
+            f"This report replays {total} dynamic event JSON files. "
+            f"Feasible rows: {feasible}/{total}."
+        ),
+        "",
+        *rows,
+        "",
+        (
+            "Each PASS row is a full ScheduleResult produced after loading the "
+            "listed JSON file, applying its events to a compatible dynamic "
+            "state, and passing both the static and dynamic feasibility gates."
+        ),
+        "",
+    ])
+
+
+def write_markdown_report(path: str | Path, report: str) -> None:
+    """Write a UTF-8 Markdown report, creating parent folders as needed."""
+
+    output_path = Path(path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(report, encoding="utf-8")
+
+
+def _event_file_from_algorithm(algorithm: str) -> str:
+    prefix = "DynamicEFT("
+    suffix = ")"
+    if algorithm.startswith(prefix) and algorithm.endswith(suffix):
+        return algorithm[len(prefix):-len(suffix)]
+    return ""
+
+
 def main() -> None:
     root = Path(__file__).parent.parent
     experiment_id = "exp_016_dynamic_event_file_reschedule"
@@ -146,8 +205,11 @@ def main() -> None:
     print_solver_runs(runs, algorithm_width=48)
     output_path = root / "experiments" / "results" / f"{experiment_id}.csv"
     write_results_csv(output_path, records)
+    report_path = root / "experiments" / "results" / f"{experiment_id}.md"
+    write_markdown_report(report_path, build_markdown_report(records))
     print()
     print(f"CSV results written to: {output_path}")
+    print(f"Markdown report written to: {report_path}")
 
     failures = [f"{record.algorithm}: {record.note}" for record in records if not record.feasible]
     if failures:

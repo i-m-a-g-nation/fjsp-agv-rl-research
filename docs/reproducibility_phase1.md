@@ -54,7 +54,7 @@ D:\2-Dev\Environments\Conda\fjsp-agv-rl\python.exe
 | `exp_010` heuristic schedules | 420 |
 | dynamic event-file audit | 3/3 JSON files passed |
 | dynamic event-file reschedules | 3/3 JSON-driven scenarios passed |
-| pytest | 193 passed |
+| pytest | 194 passed |
 | core coverage | 89.35% |
 
 核心 coverage 检查：
