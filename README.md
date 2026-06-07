@@ -34,7 +34,7 @@ GNN models remain out of scope.
 - Metadata audit tying tracked FJSPLib files to LB/UB rows and loader checks
 - Matplotlib Gantt chart output using a non-interactive backend
 - Toy-instance experiments and pytest coverage
-- Phase 2A dynamic events, dynamic state, dynamic feasibility checks, and a minimal rescheduling baseline
+- Phase 2A dynamic events, dynamic state, dynamic feasibility checks, frozen-record snapshots, and a minimal rescheduling baseline
 
 ## Repository Layout
 

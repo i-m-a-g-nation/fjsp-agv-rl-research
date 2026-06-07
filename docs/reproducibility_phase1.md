@@ -49,8 +49,8 @@ D:\2-Dev\Environments\Conda\fjsp-agv-rl\python.exe
 | `exp_005` discovered 文件 | 32 |
 | `exp_009` CP-SAT schedules | 120 |
 | `exp_010` heuristic schedules | 420 |
-| pytest | 173 passed |
-| core coverage | 88.93% |
+| pytest | 177 passed |
+| core coverage | 89.10% |
 
 核心 coverage 检查：
 

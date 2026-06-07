@@ -10,8 +10,8 @@ Last updated: 2026-06-07
 | Python environment | Dedicated Conda environment: `.conda-env` or `FJSP_CONDA_ENV` |
 | matplotlib | 3.8.4 |
 | Pillow | 10.4.0 |
-| pytest | 173 passed, 0 failed |
-| core coverage | 88.93% with 80% CI threshold |
+| pytest | 177 passed, 0 failed |
+| core coverage | 89.10% with 80% CI threshold |
 | Known warning | Low-priority `.pytest_cache` warning on some Windows paths |
 
 ## Verified Commands
@@ -32,10 +32,10 @@ Last updated: 2026-06-07
 | `experiments/exp_012_benchmark_metadata_audit.py` | 0 | 30/30 tracked files match LB/UB rows and remain loadable |
 | `experiments/exp_013_cpsat_report.py` | 0 | Markdown CP-SAT report generated from exp_009 aggregates without rerunning the solver |
 | `experiments/exp_014_dynamic_reschedule_smoke.py` | 0 | Three Phase 2A dynamic-rescheduling smoke scenarios feasible |
-| `pytest --cov=src --cov-fail-under=80` | 0 | 173 passed; core coverage 88.93% |
+| `pytest --cov=src --cov-fail-under=80` | 0 | 177 passed; core coverage 89.10% |
 | `docs/math_model_phase1.tex` compile | 0 | Tectonic generated refreshed `docs/math_model_phase1_en.pdf` |
 | `docs/math_model_phase1_zh.tex` compile | 0 | Tectonic generated `docs/math_model_phase1_zh.pdf` |
-| `pytest` | 0 | 173 passed |
+| `pytest` | 0 | 177 passed |
 | `git status --short` | 0 | Pending Phase 2A edits |
 
 ## Module Status
@@ -54,6 +54,7 @@ Last updated: 2026-06-07
 | CP-SAT report builder | Done | Markdown interpretation report summarizes worker rows, best rows, bounds, gaps, and `OPTIMAL` vs `FEASIBLE` status |
 | Dynamic feasibility | Started | Phase 2A checker validates frozen-record immutability, job release times, and machine unavailable windows |
 | Dynamic timeline | Started | `apply_events()` applies ordered event sequences and rejects out-of-order timelines |
+| Dynamic snapshot | Started | `frozen_records_at_time()` extracts completed and in-process operations for rescheduling |
 | Code walkthrough | Done | Clean Chinese guide for reading Phase 1 modules and understanding solver data flow |
 | Reproducibility checklist | Done | Fixed command order for metadata audit, benchmark runs, CP-SAT report, pytest, and PDF checks |
 | CI / coverage | Done | GitHub Actions workflow installs dev dependencies, audits metadata, builds CP-SAT report, and enforces core coverage >= 80% |

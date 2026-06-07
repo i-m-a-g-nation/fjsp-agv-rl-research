@@ -29,9 +29,10 @@ from src.dynamic import (  # noqa: E402
     MachineBreakdown,
     ProcessingTimeChange,
     apply_events,
+    frozen_records_at_time,
     reschedule_from_state,
 )
-from src.scheduling.encoding import ScheduleRecord, ScheduleResult  # noqa: E402
+from src.scheduling.encoding import ScheduleResult  # noqa: E402
 
 
 def machine_breakdown_solver() -> ScheduleResult:
@@ -40,18 +41,12 @@ def machine_breakdown_solver() -> ScheduleResult:
     instance = FJSPInstance.from_jobs_array([
         [[(0, 3)], [(0, 2)]],
     ])
+    initial = ScheduleResult(instance=instance)
+    initial.add_record(0, 0, 0, start=0, processing_time=3)
+    initial.compute_makespan()
     state = DynamicFJSPState.from_instance(instance, current_time=3)
     state = state.apply_event(MachineBreakdown(time=3, machine_id=0, repair_time=10))
-    frozen = [
-        ScheduleRecord(
-            job_id=0,
-            op_id=0,
-            machine_id=0,
-            start=0,
-            end=3,
-            processing_time=3,
-        )
-    ]
+    frozen = frozen_records_at_time(initial, current_time=3)
     return reschedule_from_state(state, frozen_records=frozen, rule="eft")
 
 
@@ -72,17 +67,11 @@ def multi_event_solver() -> ScheduleResult:
     instance = FJSPInstance.from_jobs_array([
         [[(0, 2)], [(0, 3), (1, 4)]],
     ], num_machines=2)
+    initial = ScheduleResult(instance=instance)
+    initial.add_record(0, 0, 0, start=0, processing_time=2)
+    initial.compute_makespan()
     state = DynamicFJSPState.from_instance(instance, current_time=2)
-    frozen = [
-        ScheduleRecord(
-            job_id=0,
-            op_id=0,
-            machine_id=0,
-            start=0,
-            end=2,
-            processing_time=2,
-        )
-    ]
+    frozen = frozen_records_at_time(initial, current_time=2)
     state = apply_events(
         state,
         [

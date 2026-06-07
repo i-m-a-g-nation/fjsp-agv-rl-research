@@ -17,6 +17,9 @@ paper reproduction.
   windows.
 - Apply event sequences through `apply_events()` so experiments reject
   out-of-order dynamic timelines early.
+- Extract frozen records from an existing `ScheduleResult` with
+  `frozen_records_at_time()`, including in-process operations by default because
+  Phase 2A does not model preemption.
 
 ## Initial Events
 
