@@ -29,3 +29,9 @@ Final: Ruling: preserve separate session-lifecycle and experiment-result statuse
 Final: Ruling: keep new optimizers, continuous event simulation and research superiority claims outside Phase 2A — user approved fixed baseline validation with existing algorithms — cost if wrong: neither innovation nor graduation is completed by this increment.
 
 Final: fixed malformed-result diagnostics — three regressions RED→GREEN; targeted batch 15/15; final full suite **339/339**, **87.85%** coverage, 13 upstream deprecation warnings, no skipped cases. Native post-fix matrix and replay remain 243/243 and all registered artifacts verify. Finalization: commit source, regenerate saved evidence against that committed source revision, prepare a real scope-pause without approving it, then commit artifacts and final record.
+
+Source frozen at d1cdf1f; saved matrix regenerated against that commit and replayed in another directory, all case/deterministic hashes and registered artifact/source hashes verified. Real zero-provider-budget managed CLI returned WAITING_HUMAN at scope (exit 3), provider calls 0; no real approval created.
+
+Evidence storage verification found Git core.autocrlf changed CSV bytes in the index (byte comparison RED). Added narrowly scoped -text attributes for the new protocol and saved evidence directory, preserving hashes across Git storage; index-byte verification pending.
+
+Final Git-storage verification GREEN: all 287 saved artifact files plus the source protocol (288 files) match the exact indexed bytes. Source code remains d1cdf1f; artifact preservation attributes do not alter execution. All three implementation tasks complete; no merge/push, no paid provider calls, no real human approval manufactured. Final full verification log: `.pytest_cache/protocol-full-final.log`.

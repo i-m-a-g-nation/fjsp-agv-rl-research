@@ -77,6 +77,8 @@ python experiments/exp_018_ai_rag_workflow.py --track foundation --experiment-pr
 
 `283d85b4218e24f9f2eb701e494ae53c61651a02ebdf0f4a1b8f3c74051a3893`
 
+最终存档使用提交 `d1cdf1f` 中的代码实际重跑，并核对文件指纹。新协议及存档通过 `.gitattributes` 保留原始字节，防止 Git 换行转换破坏记录哈希。摘要包含输入字节身份；更换输入换行、代码版本或运行环境时，需按 manifest 逐项复核，不能只比较一个运行时间或 Git HEAD 字符串。本轮的实际运行验证平台是 Windows。
+
 例如种子 42 的 mk01 新工件场景，FIFO/SPT/EFT 的 makespan 为 48/72/72。这是本场景下的规则差异，不支持“新算法优于基线”的结论。本轮没有新增调度算法。
 
 代表甘特图已查看；小算例清晰，mk01 的短工序文字仍存在拥挤，逐条数值以 JSON/CSV 为准，图片尚不是论文定稿版式。

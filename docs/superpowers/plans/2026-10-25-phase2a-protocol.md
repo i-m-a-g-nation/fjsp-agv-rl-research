@@ -41,4 +41,4 @@ Interfaces: experiment_protocol_path initial session field / --experiment-protoc
 - [x] RED tests for three gates without RAG/model work, changed protocol/input refusal, no generation on protocol route, research status still not achieved and rejected approvals.
 - [x] Integrate the fixed route, preserving existing selector path and persistent budget/identity checks; GREEN integration tests.
 - [x] Run the declared 243-run matrix, independently replay and compare deterministic artifacts; inspect representative Gantt images; write cautious report and both-track evidence map.
-- [ ] Full pytest coverage >=80%, native 001/002, one final review; fix important findings RED→GREEN and rerun full suite. Update docs with actual results and commit tested changes.
+- [x] Full pytest coverage >=80%, native 001/002, one final review; fix important findings RED→GREEN and rerun full suite. Update docs with actual results and commit tested changes.
