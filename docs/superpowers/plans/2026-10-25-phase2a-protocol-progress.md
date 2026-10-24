@@ -35,3 +35,5 @@ Source frozen at d1cdf1f; saved matrix regenerated against that commit and repla
 Evidence storage verification found Git core.autocrlf changed CSV bytes in the index (byte comparison RED). Added narrowly scoped -text attributes for the new protocol and saved evidence directory, preserving hashes across Git storage; index-byte verification pending.
 
 Final Git-storage verification GREEN: all 287 saved artifact files plus the source protocol (288 files) match the exact indexed bytes. Source code remains d1cdf1f; artifact preservation attributes do not alter execution. All three implementation tasks complete; no merge/push, no paid provider calls, no real human approval manufactured. Final full verification log: `.pytest_cache/protocol-full-final.log`.
+
+Archived CRLF text initially triggered Git's whitespace checker after byte preservation. The archive's per-path whitespace attribute now explicitly permits CR at EOL; other whitespace errors remain checked. A separate CR-at-EOL check over the archive commit passed without changing any evidence bytes.
