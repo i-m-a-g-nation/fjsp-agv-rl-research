@@ -15,3 +15,8 @@ build/
 experiments/*_tmp*.png
 experiments/*_scratch*.png
 .opencode/node_modules/
+.env
+.local_auth/
+.archify/
+papers/auto_fetched/
+experiments/ai_memory/
