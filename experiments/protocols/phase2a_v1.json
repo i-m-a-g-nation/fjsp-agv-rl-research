@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "protocol_id": "phase2a-baselines-v1",
+  "phase": "Phase 2A",
+  "instances": [
+    {"id": "fattahi1", "path": "instances/fjsplib/FattahiMehrabadJolai2007/fattahi1.fjs"},
+    {"id": "kacem1", "path": "instances/fjsplib/KacemHammadiBorne2002/kacem1.fjs"},
+    {"id": "mk01", "path": "instances/fjsplib/Brandimarte1993/mk01.fjs"}
+  ],
+  "event_types": ["machine_breakdown", "job_arrival", "processing_time_change"],
+  "rules": ["fifo", "spt", "eft"],
+  "seeds": [42, 43, 44],
+  "timing_repetitions": 3
+}
