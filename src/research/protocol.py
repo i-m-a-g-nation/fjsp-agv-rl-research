@@ -60,7 +60,11 @@ def instance_path(project_root: Path, relative: str) -> Path:
 
 
 def load_protocol(path: Path, project_root: Path) -> Protocol:
-    protocol = Protocol.model_validate_json(Path(path).read_bytes())
+    return parse_protocol(Path(path).read_bytes(), project_root)
+
+
+def parse_protocol(data: bytes, project_root: Path) -> Protocol:
+    protocol = Protocol.model_validate_json(data)
     resolved = [instance_path(project_root, item.path) for item in protocol.instances]
     if len(set(resolved)) != len(resolved):
         raise ValueError("Instance paths alias the same file")

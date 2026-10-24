@@ -31,9 +31,9 @@ Interfaces: load_protocol(path, project_root) returns validated Protocol and res
 ### Task 2: Batch execution and artifacts
 Files: src/research/batch.py, experiments/exp_019_phase2a_protocol.py, tests/test_phase2a_batch.py, .gitignore.
 Interfaces: run_protocol(protocol_path, output_dir, project_root, *, expected_protocol_hash=None, expected_input_hashes=None, plots=True) returns manifest summary; describe_protocol returns schema/grid/input fingerprint description.
-- [ ] RED tests for identical schedule hashes on replay, dual-checker enforcement/failure rows, timing-repeat aggregation, new-only output and input identity.
-- [ ] Implement finite grid, JSON schedules/input snapshots, raw/aggregate CSV and Markdown with failure counts; deterministic representative Gantt generation.
-- [ ] CLI exit tests for success/failure/config errors; GREEN targeted suite; commit.
+- [x] RED tests for identical schedule hashes on replay, dual-checker enforcement/failure rows, timing-repeat aggregation, new-only output and input identity.
+- [x] Implement finite grid, JSON schedules/input snapshots, raw/aggregate CSV and Markdown with failure counts; deterministic representative Gantt generation.
+- [x] CLI exit tests for success/failure/config errors; GREEN targeted suite; commit.
 
 ### Task 3: Review integration, research run and acceptance map
 Files: src/ai_workflow/langgraph_pipeline.py, sessions.py, session_worker.py; experiments/exp_018_ai_rag_workflow.py; tests/test_protocol_workflow.py; docs/phase2a_experiment_protocol.md; docs/research_acceptance_map.md; relevant README/status docs.

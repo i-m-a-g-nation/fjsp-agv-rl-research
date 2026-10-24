@@ -20,3 +20,4 @@ experiments/*_scratch*.png
 .archify/
 papers/auto_fetched/
 experiments/ai_memory/
+experiments/runs/
