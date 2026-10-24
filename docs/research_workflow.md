@@ -2,6 +2,8 @@
 
 工作流用于文献辅助和受控静态派工实验。当前开发阶段仍为 Phase 2A，不能实现或认证 AGV、运输、RL、GNN 或维护优化。要求清单描述长期课题目标，不会自动开放后续阶段权限。
 
+新增固定 Phase 2A 协议路线：`--experiment-protocol experiments/protocols/phase2a_v1.json`，通过相同三道人审运行已有动态规则批量实验。这条路线不建立 RAG、不调用模型、不生成代码。协议、算例及结果指纹均参与审核；参见 [固定实验协议](phase2a_experiment_protocol.md) 和 [双课题验收对照](research_acceptance_map.md)。
+
 ## 三套要求配置
 
 | track | 原始依据和目标 | 当前可以认证的内容 |
@@ -92,6 +94,7 @@ SQLite 保存真实检查点和决定，`status.json` 仅作展示；恢复前�
 - `DEGRADED`：模型调用失败后显式降级，不得作为正式研究结果。
 - `FAILED`：执行、数据或合法性失败。
 - `REVIEW_REQUIRED`：在线候选实验已运行，证据和课题结论仍须审核。
+- `PHASE2A_BASELINE`：固定协议内已有动态规则的实验执行完成；研究课题仍须独立验收。
 
 退出码：`3` 表示等待人工审核；`0` 仅表示 foundation 演示及三道审核完成；`1` 表示失败、拒绝、降级或预算耗尽；`2` 表示三道审核结束但研究目标仍未验收（也用于 argparse 参数错误，应结合输出区分）。innovation 和 graduation 当前完整审核后仍返回 `2`，即使静态调度合法。
 

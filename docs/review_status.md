@@ -1,5 +1,16 @@
 # Platform Review Status
 
+## Fixed Phase 2A protocol 2026-10-25
+
+- Final Windows verification: **339 passed**, **87.85%** source coverage, unchanged **80%** threshold. Thirteen upstream Matplotlib/pyparsing deprecation warnings; no failed or skipped tests.
+- Experiment 019 freezes fattahi1/kacem1/mk01, three isolated event types, seeds 42/43/44, existing FIFO/SPT/EFT and three timing repetitions: **243/243 feasible**, **81 repeatable rule groups**, **27 configurations / 23 distinct snapshots**. Separate-directory replay matches all case hashes and deterministic digest `283d85b4218e24f9f2eb701e494ae53c61651a02ebdf0f4a1b8f3c74051a3893`.
+- Exact protocol/input snapshots, raw and aggregate CSV, schedule JSON, manifest and predetermined representative Gantt images are retained in `experiments/results/exp_019_phase2a_protocol_v1/`. Input, case, source and registered output fingerprints were checked.
+- The persistent protocol route retains all three reviews and cumulative supervision; it bypasses RAG/models/code generation, pins protocol and benchmarks and rejects changed conclusion artifacts.
+- One independent review found malformed schedule diagnostics could abort a batch. NaN/unserializable/bad-record regressions failed first, then passed after bounded diagnostic serialization and acceptance reset. Complete suite green after the single fix pass; no deferred Minor findings.
+- Native 001/002 remain green, toy CP-SAT makespan 11 OPTIMAL; tracked legacy artifacts restored. Core scheduling/dynamic/checker/solver modules unchanged.
+- This is baseline validation. No new optimizer, statistical superiority, online continuous simulation or research completion is established; both research tracks remain not achieved. Dense mk01 plot labels remain documented; numerical artifacts are authoritative.
+- See [protocol](phase2a_experiment_protocol.md), [acceptance map](research_acceptance_map.md), and [execution ledger](superpowers/plans/2026-10-25-phase2a-protocol-progress.md).
+
 ## Claim evidence traceability 2026-10-24
 
 - Deterministic per-claim auditing records exact target-text quotations, character/line coordinates, missing or ambiguous references, and code-derived PDF physical pages where supported. Model-supplied audits or verification flags do not establish evidence.

@@ -111,3 +111,71 @@ def test_batch_cli_reports_success_and_refuses_overwrite(tmp_path, batch_input):
     args = ["--protocol", str(batch_input[0]), "--project-root", str(tmp_path), "--output-dir", str(tmp_path / "cli"), "--no-plots"]
     assert main(args) == 0
     assert main(args) == 1
+
+
+def test_different_seeds_with_identical_events_are_not_counted_as_unique_scenarios(tmp_path, batch_input):
+    from src.research.batch import run_protocol
+    path = batch_input[0]
+    payload = json.loads(path.read_text())
+    payload["seeds"] = [42, 43, 44]
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    result = run_protocol(path, tmp_path / "duplicate-events", tmp_path, plots=False)
+    assert result["case_count"] == 9
+    assert result["unique_case_count"] == 3
+
+
+def test_valid_but_different_repeat_schedules_fail_reproducibility(tmp_path, batch_input, monkeypatch):
+    from src.research import batch
+    original = batch.reschedule_from_state
+    calls = []
+    def varying(state, frozen, **kwargs):
+        result = original(state, frozen, **kwargs)
+        frozen_keys = {(r.job_id, r.op_id) for r in frozen}
+        calls.append(True)
+        for record in result.records:
+            if (record.job_id, record.op_id) not in frozen_keys:
+                record.start += len(calls) % 2
+                record.end += len(calls) % 2
+        result.compute_makespan()
+        return result
+    monkeypatch.setattr(batch, "reschedule_from_state", varying)
+    result = batch.run_protocol(batch_input[0], tmp_path / "varying", tmp_path, plots=False)
+    assert result["passed_runs"] == 18
+    assert result["status"] == "FAILED"
+    assert result["nonreproducible_groups"] == 9
+    assert all(g["makespan"] is None for g in result["groups"])
+
+
+@pytest.mark.parametrize("malformed", ["nonfinite", "unserializable", "bad_record"])
+def test_malformed_first_schedule_is_retained_without_aborting_the_remaining_grid(tmp_path, batch_input, monkeypatch, malformed):
+    from src.research import batch
+    from experiments.exp_019_phase2a_protocol import main
+    original = batch.reschedule_from_state
+    calls = []
+    def corrupted(*args, **kwargs):
+        result = original(*args, **kwargs)
+        calls.append(True)
+        if len(calls) == 1:
+            if malformed == "nonfinite":
+                result.records[0].start = float("nan")
+            elif malformed == "unserializable":
+                result.records[0].processing_time = object()
+            else:
+                result.records[0] = {"unexpected": "record"}
+        return result
+    monkeypatch.setattr(batch, "reschedule_from_state", corrupted)
+    output = tmp_path / "malformed"
+    assert main(["--protocol", str(batch_input[0]), "--project-root", str(tmp_path),
+                 "--output-dir", str(output), "--no-plots"]) == 1
+    assert len(calls) == 18
+    rows = read_rows(output)
+    assert len(rows) == 18
+    assert rows[0]["makespan"] == rows[0]["schedule_hash"] == ""
+    assert all(row["feasible"] == "True" for row in rows[1:])
+    manifest = json.loads((output / "manifest.json").read_text())
+    assert (manifest["status"], manifest["passed_runs"], manifest["failed_runs"]) == ("FAILED", 17, 1)
+    def reject_nonfinite(value):
+        raise AssertionError(f"Nonportable JSON constant: {value}")
+    for path in (output / "schedules").glob("*.json"):
+        json.loads(path.read_text(), parse_constant=reject_nonfinite)
+    assert (output / "report.md").is_file()

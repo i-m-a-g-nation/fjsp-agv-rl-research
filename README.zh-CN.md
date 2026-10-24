@@ -136,10 +136,11 @@ powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1
 - `exp_015_dynamic_event_file_check.py`：3/3 个动态事件 JSON 文件可加载、非空、时间线非递减
 - `exp_016_dynamic_event_file_reschedule.py`：3/3 个动态事件 JSON 文件驱动的重调度场景全部 feasible
 - `exp_017_phase2a_dynamic_report.py`：汇总 exp_014/015/016，Phase 2A 动态链条总览 PASS
-- `pytest`：2026-10-24 工作流三轮加固后 300 passed
-- 全部 `src` coverage：85.49%，包含科研辅助工作流与受监督子进程，CI 门槛仍为 80%
+- `pytest`：2026-10-25 工作流加固与固定动态协议实现后 339 passed
+- 全部 `src` coverage：87.85%，包含科研辅助工作流与受监督子进程，CI 门槛仍为 80%
 - 科研入口现在默认持久化范围、证据与结论三道人工审核；累计执行、供应商调用与输出预占预算跨恢复保留
 - 文献陈述逐项绑定原文片段与位置；有可靠对应关系时显示 PDF 物理页码。缓存绑定目标论文，文字匹配仍须人工判断科学依据
+- [固定 Phase 2A 实验协议](docs/phase2a_experiment_protocol.md)：243 次既有动态基线运行全部合法；27 配置对应 23 个不同场景，独立目录复跑摘要一致。[双课题验收对照](docs/research_acceptance_map.md)继续列出研究缺口
 
 当前 30 实例质量报告中，`DispatchFIFO` 的跨实例平均 best gap 最低：
 

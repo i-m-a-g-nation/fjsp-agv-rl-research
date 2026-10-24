@@ -8,6 +8,7 @@ from dataclasses import asdict
 import hashlib
 import importlib.metadata
 import json
+import math
 from pathlib import Path
 import platform
 import statistics
@@ -61,6 +62,32 @@ def _records(result):
     return [asdict(record) for record in sorted(result.records, key=lambda r: (r.job_id, r.op_id, r.machine_id, r.start))]
 
 
+def _diagnostic_value(value, depth=0):
+    """Bound malformed diagnostics; never use this to certify or hash a schedule."""
+    if depth > 12:
+        return "diagnostic_depth_limit"
+    if value is None or isinstance(value, (bool, int)):
+        return value
+    if isinstance(value, str):
+        return value[:2000]
+    if isinstance(value, float):
+        return value if math.isfinite(value) else f"nonfinite:{value}"
+    if isinstance(value, dict):
+        return {str(key)[:100]: _diagnostic_value(item, depth + 1) for key, item in list(value.items())[:1000]}
+    if isinstance(value, (tuple, list)):
+        return [_diagnostic_value(item, depth + 1) for item in value[:10000]]
+    return f"unserializable:{type(value).__name__}"
+
+
+def _diagnostic_records(result):
+    if result is None:
+        return [], ""
+    try:
+        return _diagnostic_value(_records(result)), ""
+    except Exception as exc:
+        return [], f"{type(exc).__name__}: {str(exc)[:500]}"
+
+
 def _case_data(case):
     instance = case.state.instance
     return {"event": case.event_spec, "initial_records": _records(case.initial),
@@ -111,7 +138,8 @@ def _report(manifest):
     lines = ["<!-- fjsp-generated-report track=foundation -->", "# Phase 2A Fixed Baseline Report", "",
              f"Protocol: `{manifest['protocol_id']}` / `{manifest['protocol_hash']}`.",
              f"Status: **{manifest['status']}**. Passed {manifest['passed_runs']}/{manifest['expected_runs']} runs; failed {manifest['failed_runs']}.",
-             f"Independent instance/event/seed cases: {manifest['case_count']}. Timing repetitions do not add independent quality samples.",
+             f"Declared instance/event/seed configurations: {manifest['case_count']}; distinct case snapshots: {manifest['unique_case_count']}.",
+             f"Complete groups with inconsistent repeated schedules: {manifest['nonreproducible_groups']}. Neither seeds nor timing repetitions establish independent statistical samples.",
              "", "| Case | Rule | PASS/expected | Makespan | Repeatable schedule | Median runtime (s) |",
              "|---|---|---:|---:|---|---:|"]
     for group in manifest["groups"]:
@@ -146,7 +174,7 @@ def run_protocol(protocol_path: Path, output_dir: Path, project_root: Path, *,
     (output_dir / "protocol.json").write_bytes(raw)
     for name in ("inputs", "cases", "schedules", "gantt"):
         (output_dir / name).mkdir()
-    rows, plot_errors = [], []
+    rows, plot_errors, case_hashes = [], [], {}
     manifest = {"protocol_id": protocol.protocol_id, "protocol_hash": digest, "status": "RUNNING",
                 "expected_runs": protocol.expected_runs, "case_count": len(inputs) * len(protocol.event_types) * len(protocol.seeds),
                 "input_hashes": {item["id"]: item["sha256"] for item in inputs}, "runtime": _runtime_metadata()}
@@ -163,7 +191,9 @@ def run_protocol(protocol_path: Path, output_dir: Path, project_root: Path, *,
                     if case_error:
                         raise ValueError(case_error)
                     case = build_case(load_benchmark_file(snapshot), event_type, seed)
-                    _write_json(output_dir / "cases" / f"{case_id}.json", _case_data(case))
+                    case_data = _case_data(case)
+                    case_hashes[case_id] = _hash(_encoded(case_data))
+                    _write_json(output_dir / "cases" / f"{case_id}.json", case_data)
                 except Exception as exc:
                     case_error = f"case: {type(exc).__name__}: {exc}"
                     _write_json(output_dir / "cases" / f"{case_id}.json", {"error": case_error})
@@ -186,15 +216,18 @@ def run_protocol(protocol_path: Path, output_dir: Path, project_root: Path, *,
                                     schedule_hash = _hash(_encoded({"records": _records(result), "makespan": result.makespan}))
                             except Exception as exc:
                                 runtime_s = time.perf_counter() - started
-                                error = f"run: {type(exc).__name__}: {exc}"
+                                accepted, schedule_hash = False, None
+                                error = f"run: {type(exc).__name__}: {str(exc)[:500]}"
                         run_id = f"{case_id}-{rule}-{repeat}"
                         row = {"case_id": case_id, "instance_id": item["id"], "event_type": event_type, "seed": seed,
                                "rule": rule, "repeat": repeat, "feasible": accepted,
                                "makespan": result.makespan if accepted else None, "runtime_s": runtime_s,
                                "schedule_hash": schedule_hash, "error": error}
                         rows.append(row)
+                        diagnostic_records, serialization_error = (_records(result), "") if accepted else _diagnostic_records(result)
                         _write_json(output_dir / "schedules" / f"{run_id}.json",
-                                    {**row, "records": _records(result) if result is not None else []})
+                                    {**row, "records": diagnostic_records, "diagnostic_only": not accepted,
+                                     "record_serialization_error": serialization_error})
                         if plots and accepted and rule == "eft" and seed == protocol.seeds[0] and repeat == 0:
                             try:
                                 from src.vis.gantt import plot_gantt
@@ -204,8 +237,10 @@ def run_protocol(protocol_path: Path, output_dir: Path, project_root: Path, *,
     groups = _aggregate(rows, protocol.timing_repetitions)
     passed = sum(row["feasible"] for row in rows)
     manifest.update(passed_runs=passed, failed_runs=len(rows) - passed, groups=groups, plot_errors=plot_errors,
+                    case_hashes=case_hashes, unique_case_count=len(set(case_hashes.values())),
+                    nonreproducible_groups=sum(g["passed_runs"] == g["expected_runs"] and not g["reproducible"] for g in groups),
                     status="COMPLETED" if passed == protocol.expected_runs and all(g["reproducible"] for g in groups) and not plot_errors else "FAILED",
-                    deterministic_digest=_hash(_encoded({"protocol_hash": digest, "inputs": manifest["input_hashes"],
+                    deterministic_digest=_hash(_encoded({"protocol_hash": digest, "inputs": manifest["input_hashes"], "cases": case_hashes,
                         "runs": [{key: value for key, value in row.items() if key != "runtime_s"} for row in rows]})))
     _write_csv(output_dir / "raw.csv", rows)
     _write_csv(output_dir / "aggregate.csv", groups)
@@ -214,3 +249,14 @@ def run_protocol(protocol_path: Path, output_dir: Path, project_root: Path, *,
                              for p in sorted(output_dir.rglob("*")) if p.is_file() and p.name != "manifest.json"}
     _write_json(output_dir / "manifest.json", manifest)
     return manifest
+
+
+def verify_batch_artifacts(output_dir: Path, expected_manifest_hash: str) -> None:
+    output_dir = Path(output_dir)
+    raw = (output_dir / "manifest.json").read_bytes()
+    if _hash(raw) != expected_manifest_hash:
+        raise ValueError("Reviewed batch manifest changed")
+    for relative, expected in json.loads(raw)["artifacts"].items():
+        path = (output_dir / relative).resolve()
+        if not path.is_relative_to(output_dir.resolve()) or _hash(path.read_bytes()) != expected:
+            raise ValueError("Reviewed batch artifact changed")

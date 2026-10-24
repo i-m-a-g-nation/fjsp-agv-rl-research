@@ -24,6 +24,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--track", required=True, choices=("foundation", "innovation", "graduation"))
     parser.add_argument("--mode", choices=("offline", "live"), default="offline")
     parser.add_argument("--paper-path", type=Path)
+    parser.add_argument("--experiment-protocol", type=Path, help="Fixed Phase 2A protocol; bypasses RAG and model/code generation, retaining all three reviews.")
     parser.add_argument("--goal")
     parser.add_argument("--session-dir", type=Path)
     parser.add_argument("--decision-file", type=Path, help="Human-completed content-bound decision JSON.")
@@ -56,6 +57,16 @@ def main(argv: list[str] | None = None) -> int:
     if args.decision_file and (args.session_dir is None or not (args.session_dir / "session.json").is_file()):
         print("A review decision requires an existing --session-dir.")
         return 1
+    try:
+        stored_input = json.loads((args.session_dir / "session.json").read_text(encoding="utf-8"))["input_state"] if args.session_dir and (args.session_dir / "session.json").is_file() else {}
+    except (ValueError, OSError) as exc:
+        print(f"Cannot read session configuration: {exc}")
+        return 1
+    protocol_mode = bool(args.experiment_protocol or stored_input.get("experiment_protocol_path"))
+    if protocol_mode and (args.mode != "offline" or args.paper_path is not None or args.allow_network_fetch or
+                          args.strict_require_fulltext or args.allow_fallback or args.rag_index_dir):
+        print("Fixed protocol requires offline mode and cannot combine paper, network, model fallback or RAG export options.")
+        return 1
     if args.mode == "live":
         load_dotenv_if_present()
         config = LLMConfig(allow_fallback=args.allow_fallback)
@@ -76,16 +87,21 @@ def main(argv: list[str] | None = None) -> int:
             supplied = {"research_goal": args.goal, "allow_network_fetch": args.allow_network_fetch,
                         "strict_require_fulltext": args.strict_require_fulltext,
                         "paper_path": str(args.paper_path.resolve()) if args.paper_path is not None else None}
+            supplied["experiment_protocol_path"] = str(args.experiment_protocol.resolve()) if args.experiment_protocol else None
             if any(value is not None and value != frozen_input.get(key) for key, value in supplied.items()):
                 raise ValueError("Explicit input override conflicts with the frozen session; create a new session")
         if not existing:
-            paper = args.paper_path or PROJECT_ROOT / "notes" / "papers" / "2023_fjsp_dual_attention_rl.md"
-            if not paper.is_file():
-                raise ValueError(f"Paper input missing: {paper}")
-            state = {"research_goal": args.goal or "", "paper_path": str(paper.resolve()),
-                     "paper_title": paper.stem, "paper_text": "",
-                     "allow_network_fetch": bool(args.allow_network_fetch),
-                     "strict_require_fulltext": bool(args.strict_require_fulltext) or args.mode == "live", "max_iterations": 2}
+            if protocol_mode:
+                state = {"research_goal": args.goal or "", "experiment_protocol_path": str(args.experiment_protocol.resolve()),
+                         "allow_network_fetch": False}
+            else:
+                paper = args.paper_path or PROJECT_ROOT / "notes" / "papers" / "2023_fjsp_dual_attention_rl.md"
+                if not paper.is_file():
+                    raise ValueError(f"Paper input missing: {paper}")
+                state = {"research_goal": args.goal or "", "paper_path": str(paper.resolve()),
+                         "paper_title": paper.stem, "paper_text": "",
+                         "allow_network_fetch": bool(args.allow_network_fetch),
+                         "strict_require_fulltext": bool(args.strict_require_fulltext) or args.mode == "live", "max_iterations": 2}
         budget_args = {"max_active_seconds": args.max_active_seconds, "max_provider_calls": args.max_provider_calls,
                        "max_output_tokens": args.max_output_token_budget}
         overrides = {key: value for key, value in budget_args.items() if value is not None}

@@ -38,7 +38,7 @@ Interfaces: run_protocol(protocol_path, output_dir, project_root, *, expected_pr
 ### Task 3: Review integration, research run and acceptance map
 Files: src/ai_workflow/langgraph_pipeline.py, sessions.py, session_worker.py; experiments/exp_018_ai_rag_workflow.py; tests/test_protocol_workflow.py; docs/phase2a_experiment_protocol.md; docs/research_acceptance_map.md; relevant README/status docs.
 Interfaces: experiment_protocol_path initial session field / --experiment-protocol CLI flag; protocol_hash and benchmark_hashes pinned by session; protocol_result state links audited batch artifacts.
-- [ ] RED tests for three gates without RAG/model work, changed protocol/input refusal, no generation on protocol route, research status still not achieved and rejected approvals.
-- [ ] Integrate the fixed route, preserving existing selector path and persistent budget/identity checks; GREEN integration tests.
-- [ ] Run the declared 243-run matrix, independently replay and compare deterministic artifacts; inspect representative Gantt images; write cautious report and both-track evidence map.
+- [x] RED tests for three gates without RAG/model work, changed protocol/input refusal, no generation on protocol route, research status still not achieved and rejected approvals.
+- [x] Integrate the fixed route, preserving existing selector path and persistent budget/identity checks; GREEN integration tests.
+- [x] Run the declared 243-run matrix, independently replay and compare deterministic artifacts; inspect representative Gantt images; write cautious report and both-track evidence map.
 - [ ] Full pytest coverage >=80%, native 001/002, one final review; fix important findings RED→GREEN and rerun full suite. Update docs with actual results and commit tested changes.

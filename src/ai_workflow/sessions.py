@@ -105,6 +105,10 @@ def run_session(
                 raise ValueError("Session benchmark set cannot change on resume")
             if _benchmark_hashes(spec["benchmark_paths"]) != spec["benchmark_hashes"]:
                 raise ValueError("Session benchmark contents changed; create a new session")
+            if spec.get("protocol_hash"):
+                current_protocol = Path(spec["input_state"]["experiment_protocol_path"]).read_bytes()
+                if hashlib.sha256(current_protocol).hexdigest() != spec["protocol_hash"]:
+                    raise ValueError("Session experiment protocol changed; create a new session")
             if _runtime_versions() != spec["runtime_versions"]:
                 raise ValueError("Session runtime configuration changed; create a new session")
             if input_state is not None and artifact_hash(input_state) != artifact_hash(spec["input_state"]):
@@ -124,7 +128,7 @@ def run_session(
                 raise ValueError("Unexpected session artifacts without associated session metadata")
             if input_state is None or decision is not None:
                 raise ValueError("New session requires input and cannot start with a review decision")
-            allowed = {"paper_path", "paper_text", "paper_title", "research_goal", "allow_network_fetch", "strict_require_fulltext", "max_iterations", "requested_capabilities"}
+            allowed = {"paper_path", "paper_text", "paper_title", "research_goal", "allow_network_fetch", "strict_require_fulltext", "max_iterations", "requested_capabilities", "experiment_protocol_path"}
             if set(input_state) - allowed:
                 raise ValueError("Unexpected initial session fields")
             limits = limits or BudgetLimits()
@@ -132,11 +136,27 @@ def run_session(
             selected_benchmarks = benchmark_paths if benchmark_paths is not None else [
                 root / "instances/fjsplib/Brandimarte1993/mk01.fjs", root / "instances/fjsplib/KacemHammadiBorne2002/kacem1.fjs",
                 root / "instances/fjsplib/FattahiMehrabadJolai2007/fattahi1.fjs"]
+            protocol_hash = None
+            if input_state.get("experiment_protocol_path"):
+                from src.research.batch import describe_protocol
+                if config.has_api_key or input_state.get("allow_network_fetch") or any(
+                    input_state.get(key) for key in ("paper_path", "paper_text", "paper_title", "strict_require_fulltext", "max_iterations")
+                ):
+                    raise ValueError("Fixed protocol cannot be combined with paper, live model, network or synthesis inputs")
+                protocol_path = Path(input_state["experiment_protocol_path"]).resolve()
+                description = describe_protocol(protocol_path, root)
+                declared = [Path(item["path"]) for item in description["inputs"]]
+                if benchmark_paths is not None and [p.resolve() for p in benchmark_paths] != declared:
+                    raise ValueError("Benchmark override conflicts with experiment protocol")
+                selected_benchmarks = declared
+                protocol_hash = description["protocol_hash"]
+                input_state = {**input_state, "experiment_protocol_path": str(protocol_path)}
             selected_benchmarks = [str(p.resolve()) for p in selected_benchmarks]
             spec = {"track": track, "project_root": str((project_root or default_project_root()).resolve()),
                     "input_state": input_state, "contract_hash": contract.contract_hash,
                     "config_hash": config_hash, "code_hash": _code_hash(), "limits": asdict(limits),
                     "benchmark_paths": selected_benchmarks, "benchmark_hashes": _benchmark_hashes(selected_benchmarks),
+                    "protocol_hash": protocol_hash,
                     "runtime_versions": _runtime_versions(), "seed": 42}
             _write_json(spec_path, spec)
         budget = RunBudget(folder / "session.sqlite", limits)

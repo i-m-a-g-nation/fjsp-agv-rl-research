@@ -63,6 +63,9 @@ class ResearchWorkflowState(TypedDict, total=False):
     session_identity: str
     source_file_hash: str
     source_map: dict[str, Any]
+    experiment_protocol_path: str
+    protocol_description: dict[str, Any]
+    protocol_result: dict[str, Any]
 
 
 def build_research_workflow(
@@ -101,6 +104,17 @@ def build_research_workflow(
         ]
         benchmark_paths = default_bms
 
+    def protocol_description(state):
+        from src.research.batch import describe_protocol
+        description = describe_protocol(Path(state["experiment_protocol_path"]), project_root)
+        expected = (review_context or {}).get("protocol_hash") or state.get("protocol_description", {}).get("protocol_hash")
+        if expected and description["protocol_hash"] != expected:
+            raise ValueError("Reviewed protocol changed")
+        expected_inputs = (review_context or {}).get("benchmark_hashes")
+        if expected_inputs is not None and {item["path"]: item["sha256"] for item in description["inputs"]} != expected_inputs:
+            raise ValueError("Reviewed protocol input changed")
+        return description
+
     def review_node(stage):
         def node(state):
             if stage == "scope":
@@ -112,13 +126,22 @@ def build_research_workflow(
                            "execution_settings": {key: state.get(key) for key in
                                 ("allow_network_fetch", "strict_require_fulltext", "max_iterations", "requested_capabilities")},
                            "runtime": review_context or {}}
+                if state.get("experiment_protocol_path"):
+                    payload["experiment_protocol"] = protocol_description(state)
             elif stage == "evidence":
                 payload = {"paper_title": state.get("paper_title"),
                            "resolved_source_path": state.get("resolved_source_path", ""),
                            "resolved_text_hash": artifact_hash(state.get("paper_text", "")),
                            "extraction_report": state.get("extraction_report", {}),
                            "notice": "Approval permits a foundation experiment, not certification of paper claims."}
+                if state.get("experiment_protocol_path"):
+                    payload = {"experiment_protocol": protocol_description(state),
+                               "notice": "Review the fixed protocol, input fingerprints, event semantics and metrics; no paper or scientific claim is verified."}
             else:
+                if state.get("protocol_result"):
+                    from src.research.batch import verify_batch_artifacts
+                    batch = state["protocol_result"]
+                    verify_batch_artifacts(Path(batch["output_dir"]), batch["manifest_hash"])
                 payload = {"report": state.get("final_summary_markdown", ""),
                            "acceptance": state.get("acceptance", {}),
                            "metrics": state.get("eval_metrics", {})}
@@ -136,6 +159,37 @@ def build_research_workflow(
             return update
         return node
 
+    def prepare_protocol_node(state):
+        if workspace_index_path is None:
+            raise ValueError("Fixed protocol requires an associated persistent workspace")
+        if cfg.has_api_key or state.get("allow_network_fetch") or any(state.get(key) for key in
+                ("paper_path", "paper_text", "paper_title", "strict_require_fulltext", "max_iterations")):
+            raise ValueError("Fixed protocol cannot be combined with paper, live model, network or synthesis inputs")
+        requested = state.get("requested_capabilities", [])
+        if not isinstance(requested, list) or any(not isinstance(item, str) for item in requested) or set(requested) - ALLOWED_CAPABILITIES:
+            raise ValueError("Requested capabilities exceed Phase 2A")
+        return {"protocol_description": protocol_description(state), "contract": contract.to_dict(),
+                "execution_mode": "fixed_baseline", "provider_errors": []}
+
+    def execute_protocol_node(state):
+        from src.research.batch import run_protocol
+        description = protocol_description(state)
+        output = workspace_index_path.parent / "protocol_run"
+        manifest = run_protocol(Path(state["experiment_protocol_path"]), output, project_root,
+                    expected_protocol_hash=description["protocol_hash"],
+                    expected_input_hashes={item["path"]: item["sha256"] for item in description["inputs"]})
+        batch = {"output_dir": str(output.resolve()), "manifest_hash": hashlib.sha256((output / "manifest.json").read_bytes()).hexdigest(),
+                 **{key: manifest[key] for key in ("passed_runs", "failed_runs", "expected_runs", "status", "deterministic_digest")}}
+        passed = manifest["status"] == "COMPLETED"
+        acceptance = assess_research_contract(contract, feasible=passed)
+        acceptance.update(evidence_status="protocol_and_input_fingerprints_only", performance_status="descriptive_baselines_only")
+        text = (f"<!-- fjsp-generated-report track={track} -->\n" + (output / "report.md").read_text(encoding="utf-8")
+                + f"\n\n课题：{contract.title}；要求版本：{contract.contract_hash}；研究状态：{acceptance['research_status']}。\n"
+                + "未满足要求：" + ", ".join(acceptance["unmet_requirements"]) + "。\n")
+        return {"protocol_result": batch, "eval_passed": passed, "eval_metrics": batch,
+                "acceptance": acceptance, "overall_status": "PHASE2A_BASELINE" if passed else "FAILED",
+                "final_summary_markdown": text}
+
     def index_workspace_node(state):
         if workspace_index_path is not None:
             paper = Path(state["paper_path"]) if state.get("paper_path") else None
@@ -144,6 +198,8 @@ def build_research_workflow(
         return {}
 
     def resolve_and_ingest_paper_node(state: ResearchWorkflowState) -> dict[str, Any]:
+        if state.get("experiment_protocol_path"):
+            raise ValueError("Fixed protocol execution requires persistent review")
         max_iters = state.get("max_iterations", 2)
         if type(max_iters) is not int or not 1 <= max_iters <= 3:
             raise ValueError("max_iterations must be an integer between 1 and 3")
@@ -419,6 +475,8 @@ def build_research_workflow(
     graph.add_node("synthesize_algorithm_code", synthesize_algorithm_code_node)
     graph.add_node("evaluate_in_sandbox", evaluate_in_sandbox_node)
     graph.add_node("record_memory_and_report", record_memory_and_report_node)
+    graph.add_node("prepare_protocol", prepare_protocol_node)
+    graph.add_node("execute_protocol", execute_protocol_node)
 
     if review_required:
         graph.add_node("review_scope", review_node("scope"))
@@ -426,11 +484,15 @@ def build_research_workflow(
         graph.add_node("review_evidence", review_node("evidence"))
         graph.add_node("review_conclusion", review_node("conclusion"))
         graph.set_entry_point("review_scope")
-        for name, following in (("review_scope", "index_workspace"),
-                                ("review_evidence", "synthesize_algorithm_code"),
-                                ("review_conclusion", END)):
-            graph.add_conditional_edges(name, lambda state: "stop" if state.get("human_review_status") == "reject" else "next",
-                                        {"stop": END, "next": following})
+        graph.add_conditional_edges("review_scope", lambda state: "stop" if state.get("human_review_status") == "reject" else
+                                    "protocol" if state.get("experiment_protocol_path") else "paper",
+                                    {"stop": END, "protocol": "prepare_protocol", "paper": "index_workspace"})
+        graph.add_conditional_edges("review_evidence", lambda state: "stop" if state.get("human_review_status") == "reject" else
+                                    "protocol" if state.get("experiment_protocol_path") else "paper",
+                                    {"stop": END, "protocol": "execute_protocol", "paper": "synthesize_algorithm_code"})
+        graph.add_conditional_edges("review_conclusion", lambda state: "stop", {"stop": END})
+        graph.add_edge("prepare_protocol", "review_evidence")
+        graph.add_edge("execute_protocol", "review_conclusion")
         graph.add_edge("index_workspace", "resolve_and_ingest_paper")
     else:
         graph.set_entry_point("resolve_and_ingest_paper")
