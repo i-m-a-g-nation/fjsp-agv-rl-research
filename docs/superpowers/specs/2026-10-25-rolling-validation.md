@@ -1,0 +1,13 @@
+# Phase 2A sequential event validation
+
+Continue the user's requested model/experiment validation within Phase 2A. The existing fixed matrix covers isolated perturbations; apply_events updates state but does not dispatch between distinct timestamps. Add an explicit sequential replay harness using existing FIFO/SPT/EFT and both feasibility checkers. Preserve the prior protocol and saved evidence unchanged. No new optimizer, AGV/RL/transport or maintenance optimization; no manufactured human approval.
+
+Every episode starts with the same existing FIFO initial schedule at t=0. Events have nondecreasing integer times. Batch all events at one timestamp, in supplied order, before one reschedule. Before applying that batch, derive frozen records from the immediately preceding validated schedule, including completed and in-process records. Each returned result is a full ScheduleResult and passes static/dynamic checks. Later algorithms may have different execution histories; only the initial plan and exogenous event stream are common.
+
+Reject duration updates to any frozen operation. Match the current idle-only breakdown assumption: a breakdown targeting an in-process machine is unsupported, not silently deferred or treated as physical preemption. Operations starting exactly at the event time have not begun until that timestamp's event batch is processed. Repair releases future waiting work at its actual event time, without letting a future repair influence earlier dispatch.
+
+On an unsupported or failed event batch, stop that episode, retain the successful prefix plus failed batch and diagnostic, expose no accepted final result, and return failure. Do not process later events from an undefined state. Invalid event ordering/type or unknown rule is a configuration error. Empty streams return the validated initial schedule.
+
+Native smoke: (1) breakdown at0, early repair at5, final makespan9; (2) idle breakdown at1, arrival at4, future duration change at6, final13; (3) simultaneous breakdown/duration/arrival at0, final12. Three existing rules ->9 episodes /18 timestamp groups. These hand-checkable cases validate temporal semantics, not statistical superiority or real-world simulation fidelity.
+
+Export exact jobs/events, initial and per-step schedules, frozen snapshots, state, errors, raw CSV, manifest and readable report. New-only output directories; inspectable chronological trace, all failed episodes retained. Preserve exact evidence bytes in Git. Local commits authorized; no merge/push. Existing real human-review session remains waiting, and code-version changes intentionally require a new session for future execution.

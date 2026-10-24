@@ -1,5 +1,14 @@
 # Platform Review Status
 
+## Sequential event replay 2026-10-25
+
+- Final Windows full suite: **359 passed**, **88.08%** source coverage, unchanged **80%** threshold. Thirteen upstream Matplotlib/pyparsing deprecation warnings; no failed or skipped tests.
+- New `src/dynamic/rolling.py` replays equal-time batches before dispatch, freezes the immediately preceding validated plan and rejects unsupported busy-machine breakdowns/frozen-duration updates. Existing state transitions, rule selection and checkers are unchanged.
+- Experiment020: **9/9 episodes,18timestamp groups**, hand-derived final planned makespans9/13/12 for each existing rule; independent replay matches digest `b9fd42d91316a9ee66d677726fc3a06ecb18ee3b88baf3ad02aa40ce363e64dc`. Chronology and new-job frozen history inspected.
+- One fresh read-only review found no Critical, Important or Minor issues; in-memory boundary/aliasing probes passed. Existing001/002 pass, toy CP-SAT11 OPTIMAL; legacy artifacts restored. Prior019 protocol/evidence unchanged.
+- This validates deterministic planned execution prefixes under idle-only/non-preemptive assumptions, not physical interruption, statistical superiority or research acceptance. Failed episodes have no accepted final result. Returned ScheduleResult objects retain the existing mutable API.
+- [Model and replay scope](phase2a_sequential_validation.md), [execution ledger](superpowers/plans/2026-10-25-rolling-validation-progress.md).
+
 ## Fixed Phase 2A protocol 2026-10-25
 
 - Final Windows verification: **339 passed**, **87.85%** source coverage, unchanged **80%** threshold. Thirteen upstream Matplotlib/pyparsing deprecation warnings; no failed or skipped tests.

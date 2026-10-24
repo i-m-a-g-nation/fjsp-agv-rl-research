@@ -386,9 +386,11 @@ refreshes the Phase 2A dynamic report chain, and runs core coverage:
 python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 ```
 
-The 2026-10-25 local suite has 339 passing tests and 87.85% coverage across all of `src`, including the research workflow and supervised subprocesses. The CI minimum remains 80%. The research CLI pauses for durable scope, evidence, and conclusion review, enforces cumulative per-session execution/call budgets, and traces individual claims to target-text quotations and supported PDF page locations. Literal matching still requires scientific review; caches are bound to the requested paper.
+The 2026-10-25 local suite has 359 passing tests and 88.08% coverage across all of `src`, including the research workflow and supervised subprocesses. The CI minimum remains 80%. The research CLI pauses for durable scope, evidence, and conclusion review, enforces cumulative per-session execution/call budgets, and traces individual claims to target-text quotations and supported PDF page locations. Literal matching still requires scientific review; caches are bound to the requested paper.
 
 The fixed [Phase 2A protocol](docs/phase2a_experiment_protocol.md) runs existing dynamic FIFO/SPT/EFT baselines with complete input, event, schedule and failure evidence. The saved matrix has 243 feasible runs, 27 declared configurations and 23 distinct snapshots; an independent directory replay matches the deterministic digest. [Research acceptance](docs/research_acceptance_map.md) remains separate from baseline success.
+
+[Sequential replay validation](docs/phase2a_sequential_validation.md) additionally checks 9 small episodes / 18 timestamp groups, preserving the preceding plan's frozen history at every event. It uses the existing rules and reports failures without accepting partial episode results.
 
 ## Threats to Validity
 

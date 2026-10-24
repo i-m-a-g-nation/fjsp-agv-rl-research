@@ -555,6 +555,8 @@ event-file replay reschedules in one place.
 
 Experiment 019 executes the fixed Phase 2A FIFO/SPT/EFT protocol without models. `python experiments/exp_019_phase2a_protocol.py` writes a unique new run with input/case/schedule evidence, raw/aggregate CSV, manifest, report and representative Gantt images. The persistent 018 route accepts `--experiment-protocol experiments/protocols/phase2a_v1.json` and retains three human reviews. See [protocol semantics and limits](../docs/phase2a_experiment_protocol.md).
 
+Experiment 020 independently validates sequential timestamps using the existing rules: `python experiments/exp_020_sequential_reschedule.py`. It exports per-step frozen records and schedules for 9 episodes/18 timestamp batches; it is not wired into 018's isolated-event protocol route. See [sequential validation assumptions](../docs/phase2a_sequential_validation.md).
+
 Experiment 018 is a supervised research assistant. Use an explicit `--track foundation`, `--track innovation`, or `--track graduation`; the default mode is offline. Static feasibility does not certify either research target. See [workflow requirements and exit statuses](../docs/research_workflow.md).
 
 The entry point now creates a persistent session and returns `3` at scope, evidence, and conclusion review gates. Resume with `--session-dir` and a human-completed `--decision-file`; budgets are cumulative and cannot change on resume.

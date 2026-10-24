@@ -12,6 +12,7 @@ from src.dynamic.reschedule import reschedule_from_state
 from src.dynamic.snapshot import frozen_records_at_time
 from src.dynamic.state import DynamicFJSPState
 from src.dynamic.timeline import apply_events
+from src.dynamic.rolling import ReplayEpisode, ReplayStep, replay_events
 
 __all__ = [
     "apply_events",
@@ -30,4 +31,7 @@ __all__ = [
     "load_event_specs_json",
     "remaining_operations_from_frozen",
     "reschedule_from_state",
+    "ReplayEpisode",
+    "ReplayStep",
+    "replay_events",
 ]
