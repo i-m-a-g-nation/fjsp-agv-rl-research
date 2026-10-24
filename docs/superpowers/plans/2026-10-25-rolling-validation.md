@@ -32,4 +32,4 @@ Files: experiments/exp_020_sequential_reschedule.py, tests/test_sequential_exper
 Interfaces: run_experiment(output_dir) -> manifest; CLI default unique output under ignored experiments/runs. All 9 episodes and each chronological step exported.
 - [x] RED tests for the declared 9 episodes/18 steps, reproducible schedule/trace digest, rejected stream retained, CSV/CLI failure and new-only output.
 - [x] Implement export and report; run 9 episodes and independent replay; manually inspect chronological records.
-- [ ] Full coverage>=80%, native001/002, one fresh review; Important fixes RED→GREEN and full suite. Commit verified source, regenerate saved evidence against source revision, verify Git bytes, update docs and commit artifacts.
+- [x] Full coverage>=80%, native001/002, one fresh review; Important fixes RED→GREEN and full suite. Commit verified source, regenerate saved evidence against source revision, verify Git bytes, update docs and commit artifacts.

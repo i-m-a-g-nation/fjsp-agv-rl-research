@@ -1,0 +1,10 @@
+scenario,rule,status,completed_steps,final_makespan,runtime_s,error
+repair_releases_work,fifo,PASS,2,9,0.00024140000459738076,
+repair_releases_work,spt,PASS,2,9,0.0002027000009547919,
+repair_releases_work,eft,PASS,2,9,0.0001728000061120838,
+arrival_then_duration,fifo,PASS,3,13,0.0005157999985385686,
+arrival_then_duration,spt,PASS,3,13,0.0005729000040446408,
+arrival_then_duration,eft,PASS,3,13,0.0004417999953147955,
+simultaneous_updates,fifo,PASS,1,12,0.00022139999782666564,
+simultaneous_updates,spt,PASS,1,12,0.0002055000004475005,
+simultaneous_updates,eft,PASS,1,12,0.0001940000001923181,

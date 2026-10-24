@@ -1,0 +1,1 @@
+{"events": [{"machine_id": 1, "repair_time": 5, "time": 1, "type": "machine_breakdown"}, {"operations": [[[0, 2]]], "time": 4, "type": "job_arrival"}, {"job_id": 0, "machine_id": 0, "new_processing_time": 4, "op_id": 2, "time": 6, "type": "processing_time_change"}], "jobs": [[[[0, 3]], [[1, 4]], [[0, 2]]]], "num_machines": 2}
