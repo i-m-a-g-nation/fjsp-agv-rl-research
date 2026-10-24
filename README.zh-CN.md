@@ -6,6 +6,8 @@ English version: [README.md](README.md)
 Phase 2A 在已经验证的 Phase 1 静态 FJSP 底座上加入动态事件和确定性
 重调度；AGV、运输时间、强化学习和图神经网络仍然不进入当前范围。
 
+科研辅助工作流提供独立的大创、毕设要求配置和受限静态实验，默认离线；它不代表已经实现两个研究课题。运行方式、状态解释与人工审核点见 [科研辅助工作流说明](docs/research_workflow.md)。
+
 ## 当前范围
 
 Phase 1 已覆盖：
@@ -134,8 +136,10 @@ powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1
 - `exp_015_dynamic_event_file_check.py`：3/3 个动态事件 JSON 文件可加载、非空、时间线非递减
 - `exp_016_dynamic_event_file_reschedule.py`：3/3 个动态事件 JSON 文件驱动的重调度场景全部 feasible
 - `exp_017_phase2a_dynamic_report.py`：汇总 exp_014/015/016，Phase 2A 动态链条总览 PASS
-- `pytest`：201 passed；Windows 下可能仍出现低优先级 `.pytest_cache` 权限警告
-- 核心模块 coverage：89.35%，CI 门槛为 80%
+- `pytest`：2026-10-24 工作流三轮加固后 300 passed
+- 全部 `src` coverage：85.49%，包含科研辅助工作流与受监督子进程，CI 门槛仍为 80%
+- 科研入口现在默认持久化范围、证据与结论三道人工审核；累计执行、供应商调用与输出预占预算跨恢复保留
+- 文献陈述逐项绑定原文片段与位置；有可靠对应关系时显示 PDF 物理页码。缓存绑定目标论文，文字匹配仍须人工判断科学依据
 
 当前 30 实例质量报告中，`DispatchFIFO` 的跨实例平均 best gap 最低：
 

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import html
+import hashlib
+import json
 import os
 from pathlib import Path
 import re
@@ -51,10 +53,8 @@ def detect_content_depth(text: str) -> ContentDepth:
     """
 
     cleaned = text.strip()
-    if len(cleaned) >= 3500:
-        return "full_text"
-
-    # Check if there are actual mathematical equations or methodology paragraphs
+    # Length alone cannot establish that an abstract or note is a full paper.
+    # This remains a structural hint, not verification of individual claims.
     has_math_or_method = bool(
         re.search(r"(\$\$|\\begin\{equation\}|State Space|Reward Function|目标函数.*min|s\.t\.)", cleaned, re.IGNORECASE)
     )
@@ -82,6 +82,53 @@ def extract_identifiers_from_stub(text: str, fallback_title: str = "") -> tuple[
     return title, arxiv_id, doi
 
 
+def _cache_request_identity(raw_text: str, title: str, arxiv_id: str | None, doi: str | None) -> str:
+    identity = {"arxiv_id": arxiv_id, "doi": doi} if (arxiv_id or doi) else {"title": title, "input": raw_text}
+    return hashlib.sha256(json.dumps(identity, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
+
+
+def _write_resolved_cache(path: Path, text: str, depth: ContentDepth, arxiv_id: str | None, doi: str | None,
+                          *, request_identity: str | None = None, pdf_path: Path | None = None) -> None:
+    """Preserve acquisition depth, without treating it as verified paper claims."""
+    path.write_text(text, encoding="utf-8")
+    provenance = {"version": 2 if request_identity else 1, "content_depth": depth, "arxiv_id": arxiv_id, "doi": doi,
+                  "request_identity": request_identity,
+                  "sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
+                  "pdf_sha256": hashlib.sha256(pdf_path.read_bytes()).hexdigest() if pdf_path and pdf_path.is_file() else None}
+    path.with_suffix(".source.json").write_text(json.dumps(provenance), encoding="utf-8")
+
+
+def _cached_depth(path: Path, text: str, arxiv_id: str | None, doi: str | None, request_identity: str) -> ContentDepth | None:
+    provenance_path = path.with_suffix(".source.json")
+    if not provenance_path.exists():
+        return None
+    try:
+        provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
+        bound = ((provenance.get("version") == 2 and provenance.get("request_identity") == request_identity)
+                 or (provenance.get("version") == 1 and bool(arxiv_id or doi)))
+        if (bound and provenance.get("arxiv_id") == arxiv_id
+                and provenance.get("doi") == doi
+                and provenance.get("sha256") == hashlib.sha256(text.encode("utf-8")).hexdigest()
+                and provenance.get("content_depth") in {"full_text", "abstract_only"}):
+            return provenance["content_depth"]
+    except (ValueError, OSError, AttributeError):
+        pass
+    return None
+
+
+def _associated_cached_pdf(cache_path: Path, pdf_path: Path) -> Path | None:
+    """A nearby filename alone cannot associate a PDF with this acquisition."""
+    try:
+        provenance = json.loads(cache_path.with_suffix(".source.json").read_text(encoding="utf-8"))
+        expected = provenance.get("pdf_sha256")
+        if provenance.get("content_depth") == "full_text" and expected and pdf_path.is_file():
+            if hashlib.sha256(pdf_path.read_bytes()).hexdigest() == expected:
+                return pdf_path
+    except (ValueError, OSError, AttributeError):
+        pass
+    return None
+
+
 def resolve_paper_content(
     paper_path: Path | None,
     raw_text: str,
@@ -104,6 +151,7 @@ def resolve_paper_content(
 
     logs: list[str] = []
     title, arxiv_id, doi = extract_identifiers_from_stub(raw_text, fallback_title=fallback_title)
+    request_identity = _cache_request_identity(raw_text, title, arxiv_id, doi)
     stem = paper_path.stem if paper_path is not None else re.sub(r"[^a-zA-Z0-9_-]", "_", fallback_title)[:40]
 
     initial_depth = detect_content_depth(raw_text)
@@ -131,7 +179,7 @@ def resolve_paper_content(
     # 1. Check local cache first
     if cached_md.exists():
         cached_text = cached_md.read_text(encoding="utf-8", errors="ignore")
-        depth = detect_content_depth(cached_text)
+        depth = _cached_depth(cached_md, cached_text, arxiv_id, doi, request_identity)
         if depth in {"full_text", "abstract_only"}:
             logs.append(f"Loaded cached resolved document from `{cached_md.name}` ({len(cached_text)} chars, {depth}).")
             return PaperResolutionResult(
@@ -140,10 +188,11 @@ def resolve_paper_content(
                 resolved_text=cached_text,
                 arxiv_id=arxiv_id,
                 doi=doi,
-                downloaded_pdf_path=cached_pdf if cached_pdf.exists() else None,
+                downloaded_pdf_path=_associated_cached_pdf(cached_md, cached_pdf),
                 cached_fulltext_path=cached_md,
                 resolution_log=logs,
             )
+        logs.append("Ignored unbound, mismatched, or modified cache; select its original document explicitly or reacquire it.")
 
     if not allow_network:
         logs.append("Network fetching disabled (`allow_network=False`); keeping stub as-is.")
@@ -174,7 +223,7 @@ def resolve_paper_content(
                 f"## Abstract\n{arxiv_abs}\n\n"
                 f"## Extracted PDF Full Text\n{pdf_text}\n"
             )
-            cached_md.write_text(combined, encoding="utf-8")
+            _write_resolved_cache(cached_md, combined, "full_text", arxiv_id, doi, request_identity=request_identity, pdf_path=cached_pdf)
             return PaperResolutionResult(
                 content_depth="full_text",
                 paper_title=title,
@@ -187,7 +236,7 @@ def resolve_paper_content(
             )
         if arxiv_abs:
             combined = f"{raw_text}\n\n## Official arXiv Abstract\n{arxiv_abs}\n"
-            cached_md.write_text(combined, encoding="utf-8")
+            _write_resolved_cache(cached_md, combined, "abstract_only", arxiv_id, doi, request_identity=request_identity)
             return PaperResolutionResult(
                 content_depth="abstract_only",
                 paper_title=title,
@@ -216,7 +265,7 @@ def resolve_paper_content(
                 f"- **Source**: Campus Institutional Access\n\n"
                 f"## Extracted PDF Full Text\n{campus_pdf_text}\n"
             )
-            cached_md.write_text(combined, encoding="utf-8")
+            _write_resolved_cache(cached_md, combined, "full_text", arxiv_id, doi, request_identity=request_identity, pdf_path=cached_pdf)
             return PaperResolutionResult(
                 content_depth="full_text",
                 paper_title=title,
@@ -250,7 +299,7 @@ def resolve_paper_content(
                 f"## Abstract\n{abstract_text}\n\n"
                 f"## Extracted PDF Full Text\n{pdf_text}\n"
             )
-            cached_md.write_text(combined, encoding="utf-8")
+            _write_resolved_cache(cached_md, combined, "full_text", arxiv_id, doi, request_identity=request_identity, pdf_path=cached_pdf)
             return PaperResolutionResult(
                 content_depth="full_text",
                 paper_title=title,
@@ -268,7 +317,7 @@ def resolve_paper_content(
             f"## Retrieved Official Abstract (via DOI/OpenAlex/SemanticScholar)\n"
             f"{abstract_text}\n"
         )
-        cached_md.write_text(combined, encoding="utf-8")
+        _write_resolved_cache(cached_md, combined, "abstract_only", arxiv_id, doi, request_identity=request_identity)
         logs.append(
             "Closed-access publisher paper (no public PDF); saved official abstract "
             "and marked as `abstract_only` to prevent formula hallucination."

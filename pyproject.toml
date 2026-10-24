@@ -23,6 +23,15 @@ dependencies = [
 dev = [
     "pytest",
     "pytest-cov",
+    "coverage>=7.10,<8",
+]
+research = [
+    "langgraph>=1.2.17,<2",
+    "langgraph-checkpoint-sqlite>=3.1.2,<4",
+    "faiss-cpu>=1.15.1,<2",
+    "pypdf>=6.21.2,<7",
+    "requests>=2.34.2,<3",
+    "langchain-openai>=1.7.2,<2",
 ]
 
 [tool.pytest.ini_options]
@@ -30,6 +39,7 @@ testpaths = ["tests"]
 
 [tool.coverage.run]
 source = ["src"]
+patch = ["subprocess"]
 
 [tool.coverage.report]
 fail_under = 80

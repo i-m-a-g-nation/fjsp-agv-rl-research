@@ -553,6 +553,10 @@ event-file replay reschedules in one place.
 
 ## General Requirements
 
+Experiment 018 is a supervised research assistant. Use an explicit `--track foundation`, `--track innovation`, or `--track graduation`; the default mode is offline. Static feasibility does not certify either research target. See [workflow requirements and exit statuses](../docs/research_workflow.md).
+
+The entry point now creates a persistent session and returns `3` at scope, evidence, and conclusion review gates. Resume with `--session-dir` and a human-completed `--decision-file`; budgets are cumulative and cannot change on resume.
+
 - Every experiment result must pass `check_feasibility()`.
 - Infeasible schedules must not be reported as valid schedules.
 - Feasibility constraints must not be weakened to make tests pass.

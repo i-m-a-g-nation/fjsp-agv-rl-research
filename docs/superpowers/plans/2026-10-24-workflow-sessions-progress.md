@@ -1,0 +1,21 @@
+# Execution ledger — plan: 2026-10-24-workflow-sessions.md
+
+- Baseline: previous safeguard round finished with 245 tests passed and 82.15% coverage; preserve all prior uncommitted changes.
+- Authorization: user said “继续”; implement the previously stated persistent review and total execution/call budget gaps inline, within Phase 2A.
+- Task 1: six budget tests failed first; persistent quota implementation and existing evidence guards then passed 15 tests. Added the tested SQLite checkpoint dependency to the dedicated Conda environment and the research extra.
+- Task 2: four review-gate tests failed first; scope/evidence/conclusion gates and SQLite reopen tests then passed together with budget tests (10 tests).
+- Task 3: five session tests failed first; Windows process-tree supervision fixed after tracing a Job Object information-class error, then all five passed. Three CLI regressions and two supervised-file/source-hash regressions also observed failing before implementation.
+- Ruling: the CLI always uses persistent review for all three tracks; do not add a bypass demo flag. The low-level graph API remains compatible for tests and embedding. Cost: previous one-shot CLI commands now pause with exit code 3 and require human decisions.
+- Runtime definition: sum of active supervised worker segments, including parsing, RAG, network/model calls and experiments; human waiting and read-only status checks consume no active budget. Parent-side argument/config validation is bookkeeping, not a research execution segment.
+- Pre-review verification: 265 tests passed, coverage 83.72%.
+- Final review found five important boundaries: unassociated RAG before scope, Linux supervisor death, benchmark/workspace identity, ignored CLI overrides, and stale status versus real checkpoints.
+- Final: fixed RAG association and strict restore; new-session artifact regression RED→GREEN and missing-vector regression added. Checkpoints are validated before RAG loading and registered snapshots cannot be implicitly rebuilt.
+- Final: fixed process lifetime ownership and interrupted time accounting; active-segment reservation test RED→GREEN. Windows parent-death integration passed; Linux watchdog EOF logic has a unit test and real Linux behavior remains a Linux CI responsibility.
+- Final: fixed benchmark/workspace fingerprints; replacement-data/workspace test RED→GREEN. Runtime versions and seed remain in session metadata.
+- Final: fixed explicit input override handling; network-disable regression RED→GREEN; omitted flags remain distinguishable from explicit values.
+- Final: fixed stale status; the completed-gate replay regression RED→GREEN. A status file cannot override the real SQLite pending interrupt.
+- Verification after fixes: 271 passed, 1 Linux-only test skipped, coverage 82.52%; then the ownership test was extended to execute the actual Windows process-tree death path and a watchdog EOF unit case, both passed. Final complete suite is running.
+- Final complete verification: **274 passed**, **83.71% coverage**, no skipped cases on this Windows run. The cross-platform ownership integration exercised Windows, not Linux; Linux-specific kernel behavior remains unverified locally.
+- A subsequent full run exposed a race in the test PID handshake (empty file observed before write completion); atomic publication fixed the test without weakening its ownership assertions. Watchdog startup timeout classification also received a RED→GREEN regression.
+- Native checks: experiments 001 and 002 passed with original tracked artifacts restored; package metadata dry run succeeded. Both research CLI scope-pause/reject smoke flows produced WAITING_HUMAN then REJECTED, provider calls 0.
+- All four implementation tasks complete. One independent review, five important findings addressed; no deferred minor findings. Ruling remains: all CLI tracks require persistent human review; no bypass demo flag. Changes stay reviewable in the managed worktree without merge/push.

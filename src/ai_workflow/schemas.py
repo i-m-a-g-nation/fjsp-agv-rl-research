@@ -1,6 +1,18 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from typing import Any, Literal
+
+from pydantic import BaseModel, ConfigDict, Field, StrictInt
+
+
+class ClaimEvidenceReference(BaseModel):
+    """A model supplies quotes, never trusted page numbers or audit results."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+    field: str = Field(min_length=1, max_length=100)
+    item_index: StrictInt | None = Field(default=None, ge=0)
+    quote: str = Field(min_length=1, max_length=2000)
+    source_start: StrictInt | None = Field(default=None, ge=0)
 
 
 class MathematicalModelSpec(BaseModel):
@@ -74,11 +86,16 @@ class PaperExtractionReport(BaseModel):
     """Full structured output produced by the literature extraction node."""
 
     title: str
+    extraction_method: Literal["unverified_template", "llm"] = "unverified_template"
+    evidence_status: Literal["unverified", "verified"] = "unverified"
+    source_quotes: list[str] = Field(default_factory=list)
+    claim_evidence: list[ClaimEvidenceReference] = Field(default_factory=list, max_length=100)
+    evidence_audit: dict[str, Any] = Field(default_factory=dict)
     problem_type: str = Field(
         description="e.g., Static FJSP, Dynamic FJSP + AGV, Parallel Machine + Maintenance"
     )
-    content_depth: str = Field(
-        default="full_text",
+    content_depth: Literal["full_text", "abstract_only", "metadata_only"] = Field(
+        default="metadata_only",
         description="One of `full_text`, `abstract_only`, or `metadata_only`",
     )
     missing_warnings: list[str] = Field(
@@ -98,8 +115,8 @@ class PaperExtractionReport(BaseModel):
         """Render the structured extraction report as clean Markdown."""
 
         depth_badge = {
-            "full_text": "✅ `full_text`（已获取并解析论文 PDF 全文与公式）",
-            "abstract_only": "⚠️ `abstract_only`（闭源期刊未公开 PDF，已联网抓取官方摘要，具体公式未脑补）",
+            "full_text": "`full_text`（正文候选；不代表公式或结论已核实）",
+            "abstract_only": "`abstract_only`（摘要级内容；全文及公式待核实）",
             "metadata_only": "❌ `metadata_only`（仅含标题/链接元数据，缺失正文与公式）",
         }.get(self.content_depth, self.content_depth)
 
@@ -108,6 +125,8 @@ class PaperExtractionReport(BaseModel):
             "",
             f"- **问题类型**：{self.problem_type}",
             f"- **文献正文完整度**：{depth_badge}",
+            f"- **提取方式**：{self.extraction_method}",
+            f"- **证据状态**：{self.evidence_status}（须逐项核对原文）",
             f"- **RAG 检索参考源**：{', '.join(self.retrieved_sources) if self.retrieved_sources else '无'}",
             "",
         ]
@@ -153,7 +172,7 @@ class PaperExtractionReport(BaseModel):
                 f"### 奖励函数 (Reward Function)\n{self.rl_formulation.reward_function}",
                 f"### 网络与算法架构\n{self.rl_formulation.network_architecture}",
                 "",
-                "## 3. 与当前项目 (`fjsp-agv-rl-research`) 接口对齐分析",
+                "## 3. 项目接口适配建议（不是原文结论）",
                 "### 可直接复用的现有模块",
                 *[f"- {item}" for item in self.codebase_alignment.reusable_modules],
                 "### 待扩展差距 (Gap Analysis)",
@@ -163,4 +182,6 @@ class PaperExtractionReport(BaseModel):
                 "",
             ]
         )
+        from src.ai_workflow.evidence import render_evidence_audit
+        lines.extend(render_evidence_audit(self.evidence_audit))
         return "\n".join(lines)

@@ -11,6 +11,7 @@ import faiss
 import numpy as np
 
 from src.ai_workflow.config import LLMConfig, default_project_root
+from src.ai_workflow.runtime_budget import BudgetExceeded
 
 ChunkCategory = Literal["literature", "codebase", "experiment_memory"]
 
@@ -25,6 +26,8 @@ class KnowledgeChunk:
     title: str
     content: str
     score: float = 0.0
+    track_id: str = "shared"
+    review_status: str = "reference"
 
 
 class LocalEmbeddingsProvider:
@@ -56,6 +59,8 @@ class LocalEmbeddingsProvider:
                 client = OpenAI(
                     api_key=self.config.api_key,
                     base_url=self.config.base_url,
+                    timeout=self.config.provider_timeout(output_tokens=0),
+                    max_retries=self.config.max_retries,
                 )
                 response = client.embeddings.create(
                     model=self.config.embedding_model,
@@ -67,9 +72,11 @@ class LocalEmbeddingsProvider:
                 )
                 faiss.normalize_L2(vecs)
                 return vecs
-            except Exception:
-                # Fall back gracefully to local deterministic embeddings
-                pass
+            except BudgetExceeded:
+                raise
+            except Exception as exc:
+                # Mixing remote and local vector spaces would invalidate retrieval.
+                raise RuntimeError("Embedding request failed; vector backend was not silently changed") from exc
 
         return self._embed_local_ngrams(texts)
 
@@ -183,20 +190,25 @@ class ResearchRAGStore:
 
         for mem_path in memory_files:
             if mem_path.exists() and mem_path.is_file():
-                collected.extend(
-                    self._chunk_file(mem_path, category="experiment_memory")
-                )
+                chunks = self._chunk_file(mem_path, category="experiment_memory")
+                if exp_memory_dir in mem_path.parents:
+                    from dataclasses import replace
+                    chunks = [replace(chunk, review_status="unreviewed") for chunk in chunks]
+                collected.extend(chunks)
 
         # 4. Any user-provided extra PDFs or Markdown documents
         for extra in extra_paths:
             if extra.exists() and extra.is_file():
                 collected.extend(self._chunk_file(extra, category="literature"))
 
-        self.chunks = collected
+        self.chunks = list({chunk.chunk_id: chunk for chunk in collected}.values())
         self._rebuild_faiss_index()
         return len(self.chunks)
 
-    def add_memory_note(self, title: str, content: str, source_tag: str = "ai_memory") -> None:
+    def add_memory_note(
+        self, title: str, content: str, source_tag: str = "ai_memory", *,
+        track_id: str = "shared", review_status: str = "unreviewed",
+    ) -> None:
         """Append an episodic experiment record directly into the live RAG store."""
 
         chunk = KnowledgeChunk(
@@ -205,6 +217,8 @@ class ResearchRAGStore:
             source_path=source_tag,
             title=title,
             content=content,
+            track_id=track_id,
+            review_status=review_status,
         )
         self.chunks.append(chunk)
         self._rebuild_faiss_index()
@@ -214,6 +228,7 @@ class ResearchRAGStore:
         query: str,
         top_k: int = 5,
         category: ChunkCategory | None = None,
+        track_id: str | None = None,
     ) -> list[KnowledgeChunk]:
         """Retrieve top_k relevant chunks via FAISS inner-product similarity."""
 
@@ -221,7 +236,7 @@ class ResearchRAGStore:
             return []
 
         q_vec = self.embedder.embed_texts([query])
-        search_k = min(len(self.chunks), max(top_k * 4, 20))
+        search_k = len(self.chunks)
         scores, indices = self.index.search(q_vec, search_k)
 
         results: list[KnowledgeChunk] = []
@@ -229,6 +244,10 @@ class ResearchRAGStore:
             if idx < 0 or idx >= len(self.chunks):
                 continue
             chunk = self.chunks[idx]
+            if chunk.review_status not in {"reference", "approved"}:
+                continue
+            if track_id is not None and chunk.track_id not in {"shared", track_id}:
+                continue
             if category is not None and chunk.category != category:
                 continue
             results.append(
@@ -239,6 +258,8 @@ class ResearchRAGStore:
                     title=chunk.title,
                     content=chunk.content,
                     score=float(score),
+                    track_id=chunk.track_id,
+                    review_status=chunk.review_status,
                 )
             )
             if len(results) >= top_k:
@@ -260,7 +281,7 @@ class ResearchRAGStore:
         )
 
     @classmethod
-    def load(cls, directory: Path, config: LLMConfig | None = None) -> ResearchRAGStore:
+    def load(cls, directory: Path, config: LLMConfig | None = None, *, rebuild_missing_index: bool = True) -> ResearchRAGStore:
         """Load a saved FAISS index and chunk metadata from disk."""
 
         store = cls(config=config)
@@ -268,12 +289,18 @@ class ResearchRAGStore:
         if not metadata_path.exists():
             raise FileNotFoundError(f"RAG metadata not found at {metadata_path}")
         raw_items = json.loads(metadata_path.read_text(encoding="utf-8"))
+        for item in raw_items:
+            if (item.get("category") == "experiment_memory" and "review_status" not in item
+                    and item.get("source_path") not in {"AGENTS.md", "README.zh-CN.md"}):
+                item["review_status"] = "unreviewed"
         store.chunks = [KnowledgeChunk(**item) for item in raw_items]
         index_path = directory / "index.faiss"
         if index_path.exists():
             raw_bytes = np.frombuffer(index_path.read_bytes(), dtype=np.uint8)
             store.index = faiss.deserialize_index(raw_bytes)
         else:
+            if store.chunks and not rebuild_missing_index:
+                raise ValueError("Associated RAG vectors are missing; refusing implicit rebuild")
             store._rebuild_faiss_index()
         return store
 
@@ -297,6 +324,20 @@ class ResearchRAGStore:
         if not text.strip():
             return []
 
+        # Provenance follows the document, not the caller's chosen ingestion route.
+        marker = re.match(r"\s*<!-- fjsp-generated-report track=(foundation|innovation|graduation) -->", text)
+        generated = ("ai_memory" in file_path.parts or marker is not None
+                     or text.lstrip().startswith("# 文献深度解析与代码对齐报告："))
+        track_id, review_status = "shared", "reference"
+        if generated:
+            category, review_status = "experiment_memory", "unreviewed"
+            if marker:
+                track_id = marker.group(1)
+            elif "ai_memory" in file_path.parts:
+                suffix = file_path.parts[file_path.parts.index("ai_memory") + 1:]
+                if suffix and suffix[0] in {"foundation", "innovation", "graduation"}:
+                    track_id = suffix[0]
+
         try:
             rel_path = file_path.relative_to(self.project_root).as_posix()
         except ValueError:
@@ -313,6 +354,8 @@ class ResearchRAGStore:
                     source_path=rel_path,
                     title=title,
                     content=part,
+                    track_id=track_id,
+                    review_status=review_status,
                 )
             )
         return chunks

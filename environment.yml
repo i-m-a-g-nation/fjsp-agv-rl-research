@@ -17,3 +17,4 @@ dependencies:
   - ipykernel
   - pip:
       - ortools
+      - -e ".[dev,research]"

@@ -10,6 +10,8 @@ verified baselines. Phase 2A adds dynamic events and deterministic
 rescheduling; AGV scheduling, transportation time, reinforcement learning, and
 GNN models remain out of scope.
 
+The supervised research assistant now separates innovation-project and graduation requirements, defaults to offline execution, and reports unmet research goals independently of static feasibility. See [workflow operation and review](docs/research_workflow.md).
+
 ## Scope
 
 - FJSP instance data structures: `FJSPInstance`, jobs, operations, and machine options
@@ -384,7 +386,7 @@ refreshes the Phase 2A dynamic report chain, and runs core coverage:
 python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 ```
 
-The current local core-module coverage is 89.35%.
+The 2026-10-24 local suite has 300 passing tests and 85.49% coverage across all of `src`, including the research workflow and supervised subprocesses. The CI minimum remains 80%. The research CLI pauses for durable scope, evidence, and conclusion review, enforces cumulative per-session execution/call budgets, and traces individual claims to target-text quotations and supported PDF page locations. Literal matching still requires scientific review; caches are bound to the requested paper.
 
 ## Threats to Validity
 

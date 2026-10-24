@@ -1,108 +1,137 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
+import json
 from pathlib import Path
+import shutil
 import sys
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.ai_workflow import LLMConfig, ResearchRAGStore, build_research_workflow
+from src.ai_workflow import LLMConfig
+from src.ai_workflow.config import load_dotenv_if_present
+from src.ai_workflow.contracts import get_research_contract
+from src.ai_workflow.review import json_safe
+from src.ai_workflow.runtime_budget import BudgetLimits
+from src.ai_workflow.sessions import read_session_status, run_session
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Run the LangGraph + FAISS RAG automated literature-to-code research workflow."
-    )
-    parser.add_argument(
-        "--paper-path",
-        type=Path,
-        default=PROJECT_ROOT / "notes" / "papers" / "2023_fjsp_dual_attention_rl.md",
-        help="Path to a paper PDF or Markdown file (if stub, auto-fetches arXiv PDF / DOI abstract).",
-    )
-    parser.add_argument(
-        "--goal",
-        type=str,
-        default="提取车间调度与AGV物流/设备维护协同的数学模型、强化学习状态奖励机制，并对齐到当前项目接口生成可执行派工算子。",
-        help="Research goal for the workflow.",
-    )
-    parser.add_argument(
-        "--output-report",
-        type=Path,
-        default=PROJECT_ROOT / "experiments" / "ai_memory" / "exp_018_ai_rag_workflow_report.md",
-        help="Output Markdown report path.",
-    )
-    parser.add_argument(
-        "--rag-index-dir",
-        type=Path,
-        default=PROJECT_ROOT / "experiments" / "ai_memory" / "rag_index",
-        help="Directory to persist the FAISS index and chunk metadata.",
-    )
-    parser.add_argument(
-        "--no-network-fetch",
-        action="store_true",
-        help="Disable automatic online arXiv PDF / DOI abstract fetching for metadata stubs.",
-    )
-    parser.add_argument(
-        "--strict-require-fulltext",
-        action="store_true",
-        help="Raise an error if the paper only has metadata/abstract and full PDF could not be obtained.",
-    )
+    parser = argparse.ArgumentParser(description="Persistent supervised research assistant; approvals never certify research completion.")
+    parser.add_argument("--track", required=True, choices=("foundation", "innovation", "graduation"))
+    parser.add_argument("--mode", choices=("offline", "live"), default="offline")
+    parser.add_argument("--paper-path", type=Path)
+    parser.add_argument("--goal")
+    parser.add_argument("--session-dir", type=Path)
+    parser.add_argument("--decision-file", type=Path, help="Human-completed content-bound decision JSON.")
+    parser.add_argument("--status", action="store_true", help="Read session status without running any node.")
+    parser.add_argument("--max-active-seconds", type=float)
+    parser.add_argument("--max-provider-calls", type=int)
+    parser.add_argument("--max-output-token-budget", type=int)
+    parser.add_argument("--output-report", type=Path)
+    parser.add_argument("--rag-index-dir", type=Path, help="Optional export of the final index; checkpoints retain their own index.")
+    network = parser.add_mutually_exclusive_group()
+    network.add_argument("--allow-network-fetch", action="store_true")
+    network.add_argument("--no-network-fetch", action="store_false", dest="allow_network_fetch")
+    parser.set_defaults(allow_network_fetch=None)
+    parser.add_argument("--strict-require-fulltext", action="store_true", default=None)
+    parser.add_argument("--allow-fallback", action="store_true")
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
-    config = LLMConfig()
+    if args.status:
+        try:
+            if args.session_dir is None:
+                raise ValueError("--status requires --session-dir")
+            print(json.dumps(read_session_status(args.session_dir), ensure_ascii=False, indent=2))
+            return 0
+        except (ValueError, OSError) as exc:
+            print(f"Cannot read session status: {exc}")
+            return 1
+    if args.decision_file and (args.session_dir is None or not (args.session_dir / "session.json").is_file()):
+        print("A review decision requires an existing --session-dir.")
+        return 1
+    if args.mode == "live":
+        load_dotenv_if_present()
+        config = LLMConfig(allow_fallback=args.allow_fallback)
+        if not config.has_api_key:
+            print("Live mode requires an API key; no provider calls were made.")
+            return 1
+    else:
+        config = LLMConfig(api_key="", embedding_backend="hybrid_local")
 
-    print("==> Step 1: Building local FAISS RAG knowledge base from workspace...")
-    rag_store = ResearchRAGStore(project_root=PROJECT_ROOT, config=config)
-    extra_files = [args.paper_path] if args.paper_path.exists() else []
-    num_chunks = rag_store.build_from_workspace(extra_paths=extra_files)
-    print(f"    Indexed {num_chunks} workspace chunks.")
-
-    paper_text = ""
-    paper_title = args.paper_path.stem
-    if args.paper_path.exists():
-        paper_text = rag_store._read_file_text(args.paper_path)
-
-    print("==> Step 2: Resolving paper content (Auto-detecting metadata stubs & fetching arXiv PDF / DOI)...")
-    workflow = build_research_workflow(rag_store=rag_store, config=config)
-    final_state = workflow.invoke(
-        {
-            "research_goal": args.goal,
-            "paper_path": str(args.paper_path),
-            "paper_title": paper_title,
-            "paper_text": paper_text,
-            "allow_network_fetch": not args.no_network_fetch,
-            "strict_require_fulltext": args.strict_require_fulltext,
-            "max_iterations": 2,
-        }
-    )
-
-    for log_line in final_state.get("resolution_log", []):
-        print(f"    [PaperFetcher] {log_line}")
-    print(f"    [ContentDepth] {final_state.get('content_depth', 'unknown')}")
-
-    # Save updated RAG store (including newly downloaded PDF chunks and episodic memory)
-    rag_store.save(args.rag_index_dir)
-    print(f"    Total RAG chunks persisted: {len(rag_store.chunks)} -> {args.rag_index_dir}")
-
-    report_md = final_state.get("final_summary_markdown", "")
-    args.output_report.parent.mkdir(parents=True, exist_ok=True)
-    args.output_report.write_text(report_md, encoding="utf-8")
-
-    passed = final_state.get("eval_passed", False)
-    metrics = final_state.get("eval_metrics", {})
-    print(f"==> Step 3: Sandbox Feasibility Check: {'PASS' if passed else 'FAIL'}")
-    print(f"    AI Composite Rule Avg Makespan: {metrics.get('avg_makespan', 0.0):.2f}")
-    print(f"    Baseline FIFO Avg Makespan    : {metrics.get('baseline_fifo_makespan', 0.0):.2f}")
-    print(f"    Baseline MWKR Avg Makespan    : {metrics.get('baseline_mwkr_makespan', 0.0):.2f}")
-    print(f"    Baseline SPT Avg Makespan     : {metrics.get('baseline_spt_makespan', 0.0):.2f}")
-    print(f"    Baseline EFT Avg Makespan     : {metrics.get('baseline_eft_makespan', 0.0):.2f}")
-    print(f"    Report saved to: {args.output_report}")
-    return 0 if passed else 1
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    folder = args.session_dir or PROJECT_ROOT / "experiments" / "ai_memory" / args.track / stamp
+    output = args.output_report or folder / "report.md"
+    try:
+        existing = (folder / "session.json").is_file()
+        state = None
+        if existing:
+            frozen_input = json.loads((folder / "session.json").read_text(encoding="utf-8"))["input_state"]
+            supplied = {"research_goal": args.goal, "allow_network_fetch": args.allow_network_fetch,
+                        "strict_require_fulltext": args.strict_require_fulltext,
+                        "paper_path": str(args.paper_path.resolve()) if args.paper_path is not None else None}
+            if any(value is not None and value != frozen_input.get(key) for key, value in supplied.items()):
+                raise ValueError("Explicit input override conflicts with the frozen session; create a new session")
+        if not existing:
+            paper = args.paper_path or PROJECT_ROOT / "notes" / "papers" / "2023_fjsp_dual_attention_rl.md"
+            if not paper.is_file():
+                raise ValueError(f"Paper input missing: {paper}")
+            state = {"research_goal": args.goal or "", "paper_path": str(paper.resolve()),
+                     "paper_title": paper.stem, "paper_text": "",
+                     "allow_network_fetch": bool(args.allow_network_fetch),
+                     "strict_require_fulltext": bool(args.strict_require_fulltext) or args.mode == "live", "max_iterations": 2}
+        budget_args = {"max_active_seconds": args.max_active_seconds, "max_provider_calls": args.max_provider_calls,
+                       "max_output_tokens": args.max_output_token_budget}
+        overrides = {key: value for key, value in budget_args.items() if value is not None}
+        if existing and overrides:
+            stored = json.loads((folder / "session.json").read_text(encoding="utf-8"))["limits"]
+            limits = BudgetLimits(**{**stored, **overrides})
+        else:
+            limits = BudgetLimits(**overrides) if overrides or not existing else None
+        decision = json.loads(args.decision_file.read_text(encoding="utf-8")) if args.decision_file else None
+        result = run_session(folder, track=args.track, config=config, input_state=state,
+                             project_root=PROJECT_ROOT, limits=limits, decision=decision)
+        final = result.get("state", {})
+        output.parent.mkdir(parents=True, exist_ok=True)
+        metadata = {**final, "contract": get_research_contract(args.track).to_dict(),
+                    "session_status": result["status"], "budget": result["budget"],
+                    "runtime_versions": result.get("runtime_versions", {}), "seed": result.get("seed", 42)}
+        if result["status"] != "COMPLETED":
+            metadata["overall_status"] = result["status"]
+        output.with_suffix(".json").write_text(json.dumps(json_safe(metadata), ensure_ascii=False, indent=2, allow_nan=False), encoding="utf-8")
+        if final.get("final_summary_markdown"):
+            text = final["final_summary_markdown"]
+            if result["status"] != "COMPLETED":
+                text += f"\n\n会话状态：{result['status']}；人工审核尚未完成。\n"
+            output.write_text(text, encoding="utf-8")
+        if args.rag_index_dir and result["status"] == "COMPLETED":
+            args.rag_index_dir.mkdir(parents=True, exist_ok=True)
+            for name in ("chunks.json", "index.faiss"):
+                source = folder / "rag_index" / name
+                if source.exists() and source.resolve() != (args.rag_index_dir / name).resolve():
+                    shutil.copy2(source, args.rag_index_dir / name)
+    except (ValueError, OSError) as exc:
+        print(f"Workflow stopped: {exc}")
+        return 1
+    print(f"Session: {folder}; status: {result['status']}")
+    print(f"Budget: {result['budget']}")
+    if result["status"] == "WAITING_HUMAN":
+        print(f"Review {result['pending_review']['stage']}: {folder / 'review-request.json'}")
+        print(f"Complete {folder / 'decision-template.json'} and resume with --decision-file.")
+        return 3
+    if result["status"] != "COMPLETED":
+        print(result.get("error", "Human rejected this run."))
+        return 1
+    print(f"Research status: {final['acceptance']['research_status']}; report: {output}")
+    if not final.get("eval_passed") or final.get("execution_mode") == "degraded":
+        return 1
+    return 0 if args.track == "foundation" else 2
 
 
 if __name__ == "__main__":

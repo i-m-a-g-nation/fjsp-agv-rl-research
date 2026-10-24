@@ -62,7 +62,7 @@ def test_rag_store_build_search_and_persistence(tmp_path: Path) -> None:
     code_hits = store.search("check_feasibility ScheduleResult", top_k=3, category="codebase")
     assert len(code_hits) > 0
 
-    store.add_memory_note("test_mem", "Reward oscillation fixed by potential function")
+    store.add_memory_note("test_mem", "Reward oscillation fixed by potential function", review_status="approved")
     save_dir = tmp_path / "rag_idx"
     store.save(save_dir)
 

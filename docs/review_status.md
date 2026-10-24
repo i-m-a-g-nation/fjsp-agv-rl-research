@@ -1,8 +1,45 @@
-﻿# Phase 1 Review Status
+# Platform Review Status
+
+## Claim evidence traceability 2026-10-24
+
+- Deterministic per-claim auditing records exact target-text quotations, character/line coordinates, missing or ambiguous references, and code-derived PDF physical pages where supported. Model-supplied audits or verification flags do not establish evidence.
+- A fully located set of quotations remains `unverified`; semantic support, formulas and research acceptance require human judgment. Codebase adaptation is labeled as project advice.
+- Evidence review hashes bind the complete audit. Session recovery rejects changed resolved-source files and PDFs, including caches acquired from an unchanged input stub.
+- One independent review found an Important cache-to-paper identity issue. Regressions reproduced it before a single fix pass: new caches bind request identity, unbound old caches cannot automatically replace the target, and neighboring PDFs require a matching stored byte hash. Compatible DOI/arXiv-bound version-1 text caches remain usable.
+- Native experiments 001/002 passed with all schedules feasible and toy CP-SAT makespan 11 `OPTIMAL`; tracked artifacts restored. Scheduling/checker implementations are unchanged.
+- No real model/embedding providers or institutional login were called; Linux kernel behavior remains unverified on this Windows host. Local records are not authenticated or tamper-proof; low-level source maps require trusted callers.
+- Final Windows complete-suite verification after the cache fix: **300 passed**, **85.49%** source coverage, unchanged **80%** minimum. No deferred Minor findings. See the [evidence progress ledger](superpowers/plans/2026-10-24-workflow-evidence-progress.md).
+
+## Persistent review and execution budgets 2026-10-24
+
+- Final Windows verification: **274 passed**, **83.71%** source coverage, unchanged **80%** threshold.
+- SQLite checkpoints persist scope, evidence, and conclusion review. Human decisions bind exact artifacts; completed checkpoints reject stale-status replays.
+- Cumulative active execution, provider-attempt, and output-token reservations survive process restarts. An interrupted active segment retains its unspent reservation until normal settlement; budgets cannot be raised on resume.
+- Managed workers validate checkpoint identity before restoring associated RAG snapshots. Missing vectors never trigger implicit paid rebuilding. Benchmark contents, workspace, code, runtime versions and explicit CLI overrides are checked.
+- One independent review found five important boundary issues; regression tests and lifetime supervision changes addressed them. A PID-read race in the new ownership test was fixed with atomic publication; final complete suite is green.
+- Actual Windows supervisor-death/descendant cleanup and deadline paths verified; Linux watchdog EOF and startup-timeout logic unit-tested. Real Linux process execution remains a Linux CI responsibility and was not run on this host.
+- CLI scope-pause and reject paths exercised separately for both innovation and graduation with zero provider calls. Complete three-review offline flow covered by end-to-end tests; research status stays not achieved.
+- Experiments 001/002 rerun: all schedules feasible, toy CP-SAT makespan 11 `OPTIMAL`; original tracked artifacts restored. Scheduling/checker code unchanged.
+- Real model/embedding services and institutional authentication were not called. These safeguards do not implement the underlying AGV/RL/maintenance research algorithms.
+- Read [the workflow guide](research_workflow.md) before using the new persistent CLI; initial exit code 3 means waiting for human review.
+
+## Workflow safeguard review 2026-10-24
+
+- Verified dedicated Conda interpreter through `FJSP_CONDA_ENV`; Windows / Python 3.11.15.
+- Full suite: **245 passed**, coverage **82.15%**, unchanged minimum **80%**. Coverage includes generated-selector subprocesses.
+- Experiments 001 and 002 rerun successfully; CP-SAT toy makespan 11 reported `OPTIMAL`. Existing tracked artifacts restored byte-for-byte after verification.
+- Dynamic chain 014–017 rerun into temporary outputs: 3/3 smoke reschedules, 3/3 event audits, 3/3 event-file replays.
+- Experiment 018 foundation/innovation/graduation offline runs verified. Foundation returns 0 for a successful demonstration; both research tracks return 2 and explicitly report unmet requirements.
+- Independent whole-change review found two important issues: cached-PDF provenance loss and generated-report quarantine bypass. Both reproduced with failing regression tests, fixed, and covered by the final green suite.
+- Research dependencies declared as the `research` extra; editable-package metadata dry run succeeds. CI installs `.[dev,research]`.
+- No real model/embedding API calls or institutional authentication were tested. POSIX memory-limit code was inspected, not executed locally. Original AGV/RL/maintenance research algorithms remain unimplemented.
+- Workflow usage, evidence limitations, requirements and human review: [research_workflow.md](research_workflow.md).
+
+## Historical Phase 1 and 2A review
 
 Last updated: 2026-06-07
 
-## Current Status
+### Historical status
 
 | Item | Value |
 |---|---|
