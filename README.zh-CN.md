@@ -8,7 +8,7 @@ Phase 2A 在已经验证的 Phase 1 静态 FJSP 底座上加入动态事件和�
 
 科研辅助工作流提供独立的大创、毕设要求配置和受限静态实验，默认离线；它不代表已经实现两个研究课题。运行方式、状态解释与人工审核点见 [科研辅助工作流说明](docs/research_workflow.md)。
 
-用户已批准毕设 G1 同质机任务/维护数据、精确总延期与独立合法性检查，随后放行 G2 固定/联合 CP-SAT 参考求解与有界独立枚举。既有工作流尚未接入这些后端。范围和可复现证据见 [G1验证](docs/graduation_g1_validation.md)、[G2参考求解验证](docs/graduation_g2_validation.md)。
+用户已批准毕设G1数据/延期/维护检查、G2固定/联合参考求解及独立枚举。现有`--graduation-request`专用离线路线已将参考后端接入三道人审，重新核对保存的维护计划，不经过RAG/模型/代码生成。见[毕设三审使用说明](docs/graduation_workflow.md)、[G2验证](docs/graduation_g2_validation.md)。
 
 ## 当前范围
 

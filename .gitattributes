@@ -1,5 +1,6 @@
 # Preserve exact evidence bytes so Git newline conversion cannot break hashes.
 experiments/protocols/phase2a_v1.json -text
+experiments/requests/graduation_reference_v1.json -text
 experiments/results/exp_019_phase2a_protocol_v1/** -text whitespace=cr-at-eol
 experiments/results/exp_020_sequential_reschedule_v1/** -text whitespace=cr-at-eol
 experiments/results/exp_021_graduation_g2_v1/** -text whitespace=cr-at-eol

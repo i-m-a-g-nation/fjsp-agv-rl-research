@@ -25,6 +25,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--mode", choices=("offline", "live"), default="offline")
     parser.add_argument("--paper-path", type=Path)
     parser.add_argument("--experiment-protocol", type=Path, help="Fixed Phase 2A protocol; bypasses RAG and model/code generation, retaining all three reviews.")
+    parser.add_argument('--graduation-request', type=Path, help='Reviewed fixed/joint graduation request; offline references with three review gates.')
     parser.add_argument("--goal")
     parser.add_argument("--session-dir", type=Path)
     parser.add_argument("--decision-file", type=Path, help="Human-completed content-bound decision JSON.")
@@ -63,7 +64,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Cannot read session configuration: {exc}")
         return 1
     protocol_mode = bool(args.experiment_protocol or stored_input.get("experiment_protocol_path"))
-    if protocol_mode and (args.mode != "offline" or args.paper_path is not None or args.allow_network_fetch or
+    graduation_mode = bool(args.graduation_request or stored_input.get('graduation_request_path'))
+    if graduation_mode and (args.track != 'graduation' or protocol_mode):
+        print('Graduation request requires graduation track and cannot combine experiment protocol inputs.')
+        return 1
+    if (protocol_mode or graduation_mode) and (args.mode != "offline" or args.paper_path is not None or args.allow_network_fetch or
                           args.strict_require_fulltext or args.allow_fallback or args.rag_index_dir):
         print("Fixed protocol requires offline mode and cannot combine paper, network, model fallback or RAG export options.")
         return 1
@@ -88,10 +93,14 @@ def main(argv: list[str] | None = None) -> int:
                         "strict_require_fulltext": args.strict_require_fulltext,
                         "paper_path": str(args.paper_path.resolve()) if args.paper_path is not None else None}
             supplied["experiment_protocol_path"] = str(args.experiment_protocol.resolve()) if args.experiment_protocol else None
+            supplied['graduation_request_path'] = str(args.graduation_request.resolve()) if args.graduation_request else None
             if any(value is not None and value != frozen_input.get(key) for key, value in supplied.items()):
                 raise ValueError("Explicit input override conflicts with the frozen session; create a new session")
         if not existing:
-            if protocol_mode:
+            if graduation_mode:
+                state = {'research_goal': args.goal or '', 'graduation_request_path': str(args.graduation_request.resolve()),
+                         'allow_network_fetch': False}
+            elif protocol_mode:
                 state = {"research_goal": args.goal or "", "experiment_protocol_path": str(args.experiment_protocol.resolve()),
                          "allow_network_fetch": False}
             else:
@@ -109,7 +118,8 @@ def main(argv: list[str] | None = None) -> int:
             stored = json.loads((folder / "session.json").read_text(encoding="utf-8"))["limits"]
             limits = BudgetLimits(**{**stored, **overrides})
         else:
-            limits = BudgetLimits(**overrides) if overrides or not existing else None
+            defaults = {'max_provider_calls': 0, 'max_output_tokens': 0} if graduation_mode else {}
+            limits = BudgetLimits(**{**defaults, **overrides}) if overrides or not existing else None
         decision = json.loads(args.decision_file.read_text(encoding="utf-8")) if args.decision_file else None
         result = run_session(folder, track=args.track, config=config, input_state=state,
                              project_root=PROJECT_ROOT, limits=limits, decision=decision)

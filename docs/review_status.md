@@ -1,5 +1,14 @@
 # Platform Review Status
 
+## Graduation supervised backend integration 2026-10-25
+
+- Added a dedicated offline `--graduation-request` route for the approved G1/G2 reference model. It reuses persistent SQLite checkpoints, scope/evidence/conclusion interrupts, cumulative budgets, source/runtime identity and process supervision; no RAG/network/model/codegen or fabricated human decisions. Existing paper/selector and dynamic protocol routes retain their scope.
+- Strict self-contained JSON binds all production, due-date, maintenance/fixed-start/window and solver-budget inputs. Original bytes are pinned at session creation, checked on every resume and execution, and included in scope/evidence requests. Defaults provider/token budgets0; solver limits30s,4workers,50tasks/10machines. Unknown/duplicate/nonfinite/bool/unsupported inputs reject.
+- Saving and conclusion verification independently recheck production/mandatory maintenance and objective-specific status/value/bound/gap, reconstructing plans from input snapshots. Failed rows have no accepted metric, FEASIBLE is not promoted. Current-input technical checks are separate from research_status=not_achieved; formal fixed_vs_joint_maintenance and final research gates remain unmet. Frozen contracts, original checkers/solvers and019/020/021 evidence unchanged.
+- New backend/graph/session tests observed RED then35new/old-protocol tests GREEN; new CLI tests observed RED then15new/oldCLI tests GREEN. Complete Windows suite **525 passed**, **88.71%** coverage with unchanged80% gate,13upstream warnings,296.50s. Source frozen throughout full run. Native001/002 pass; toy CP-SAT11OPTIMAL, legacyCSV/Gantt restored byte-for-byte.
+- One fresh read-only review found no Critical/Important issues and no Declined-to-judge items. Deferred minor: additional regression protection for oversized/count/numeric inputs, missing/extra artifacts and semantic rejection after recomputing test hashes; implementation guards/rechecks are already present. No code fix or second review needed.
+- [Usage and human review](graduation_workflow.md), [sample request](../experiments/requests/graduation_reference_v1.json), [execution ledger](superpowers/plans/2026-10-25-graduation-workflow-progress.md). Real demonstration stops atscope with provider0; only temporary synthetic tests exercise completed approvals. G3 formal protocols, taskbook/final algorithm confirmation and innovation research remain future work.
+
 ## Graduation G2 reference optimization 2026-10-25
 
 - User requested execution after the fixed/joint CP-SAT, independent-enumeration and objective-evidence proposal. First-edition G1 assumptions remain; G2 is the explicitly released increment, with no AGENTS/contract/runtime-approval rewrite or workflow backend integration.

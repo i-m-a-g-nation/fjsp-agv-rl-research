@@ -12,7 +12,7 @@ GNN models remain out of scope.
 
 The supervised research assistant now separates innovation-project and graduation requirements, defaults to offline execution, and reports unmet research goals independently of static feasibility. See [workflow operation and review](docs/research_workflow.md).
 
-User-approved graduation G1 adds identical-machine task/maintenance data, exact total tardiness and a separate maintenance feasibility checker. G2 adds fixed/joint CP-SAT references and a bounded independent tiny-instance oracle. The current workflow has not connected these backends. See [G1 validation](docs/graduation_g1_validation.md) and [G2 solver validation](docs/graduation_g2_validation.md).
+User-approved graduation G1 adds identical-machine maintenance validation; G2 adds fixed/joint CP-SAT references and an independent tiny oracle. A dedicated offline `--graduation-request` route now runs these references through all three persistent review gates, without RAG/model/code generation or research certification. See [supervised graduation usage](docs/graduation_workflow.md) and [G2 validation](docs/graduation_g2_validation.md).
 
 ## Scope
 
