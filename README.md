@@ -12,7 +12,7 @@ GNN models remain out of scope.
 
 The supervised research assistant now separates innovation-project and graduation requirements, defaults to offline execution, and reports unmet research goals independently of static feasibility. See [workflow operation and review](docs/research_workflow.md).
 
-User-approved graduation G1 adds identical-machine task/maintenance data, exact total tardiness and a separate maintenance feasibility checker. It contains no maintenance optimizer; the current workflow does not automatically invoke this domain checker. See [G1 scope and validation](docs/graduation_g1_validation.md).
+User-approved graduation G1 adds identical-machine task/maintenance data, exact total tardiness and a separate maintenance feasibility checker. G2 adds fixed/joint CP-SAT references and a bounded independent tiny-instance oracle. The current workflow has not connected these backends. See [G1 validation](docs/graduation_g1_validation.md) and [G2 solver validation](docs/graduation_g2_validation.md).
 
 ## Scope
 
@@ -396,7 +396,7 @@ The fixed [Phase 2A protocol](docs/phase2a_experiment_protocol.md) runs existing
 
 [Sequential replay validation](docs/phase2a_sequential_validation.md) additionally checks 9 small episodes / 18 timestamp groups, preserving the preceding plan's frozen history at every event. It uses the existing rules and reports failures without accepting partial episode results.
 
-The [Phase 2A closeout checklist](docs/phase2a_acceptance.md) records engineering evidence separately from human acceptance. It corrects the previously missing EAM requirement and identifies the proposal's remaining logistics/RL/publication outcomes. The [graduation first-edition model](docs/graduation_model_draft.md) now has user-approved G1 data, metric and maintenance validation; optimization and research comparisons remain future work.
+The [Phase 2A closeout checklist](docs/phase2a_acceptance.md) records engineering evidence separately from human acceptance. It corrects the previously missing EAM requirement and identifies the proposal's remaining logistics/RL/publication outcomes. The [graduation first-edition model](docs/graduation_model_draft.md) now has G1 validation and G2 reference optimization; formal research comparisons and final acceptance remain future work.
 
 ## Threats to Validity
 

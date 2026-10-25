@@ -1,5 +1,15 @@
 # Platform Review Status
 
+## Graduation G2 reference optimization 2026-10-25
+
+- User requested execution after the fixed/joint CP-SAT, independent-enumeration and objective-evidence proposal. First-edition G1 assumptions remain; G2 is the explicitly released increment, with no AGENTS/contract/runtime-approval rewrite or workflow backend integration.
+- Added `src/graduation/solver.py`: optional production intervals, ExactlyOne, mandatory per-machine maintenance and NoOverlap; exact total-tardiness minimization. Extraction independently recomputes T, checks original solver objective/bound and passes the unchanged G1 domain checker. Status FEASIBLE stays FEASIBLE; failed/unknown/model-invalid results cannot be extracted. Original FJSP makespan solver/checkers unchanged.
+- Added bounded independent enumeration over maintenance starts, assignments, production orders and maintenance positions. Only full completion returns OPTIMAL; size/state/numeric guards and a preallocation window-cardinality guard prevent unbounded pools. Twelve seeded variable tiny cases agree in both domains, with literal4/0 and6/0 witnesses.
+- New functionality observed RED before implementation. Final graduation targeted tests **128 passed**; complete Windows suite **492 passed**, **88.61%** coverage with unchanged80% threshold;13 upstream warnings. Full suite took246.81s, with source files frozen during the run. Native001/002 also pass, toy CP-SAT11OPTIMAL; tracked legacy CSV/Gantt restored byte-for-byte.
+- Fresh read-only code/mathematical review found no Critical/Important/Minor issues and no Declined-to-judge items. It checked oracle completeness, pool/state memory limits, objective/status metadata and invalid/FEASIBLE report boundaries. No fix pass required; existing G1 corrupted-object diagnostic minor remains historical.
+- Experiment021 records four hand/boundary examples plus eight preselected tiny instances, fixed/joint modes, raw objective/bound/gap/time and independently checked schedules. Final source-bound archive/replay evidence is recorded in [G2 validation](graduation_g2_validation.md) and the [execution ledger](superpowers/plans/2026-10-25-graduation-g2-progress.md).
+- This is tiny-model correctness validation. G3 formal comparisons, final research algorithms/taskbook confirmation, workflow integration and innovation logistics/RL/publication requirements remain outstanding. Both research tracks remain not achieved; no human approval was fabricated.
+
 ## Graduation G1 implementation 2026-10-25
 
 - User explicitly released G1 only: identical machines, one nonpreemptive operation per job, release0, exactly one mandatory maintenance per machine including idle machines, full-interval windows and no shared crew. Existing AGENTS, research contracts and runtime approval decisions are unchanged.

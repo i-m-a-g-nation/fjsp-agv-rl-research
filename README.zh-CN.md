@@ -8,7 +8,7 @@ Phase 2A 在已经验证的 Phase 1 静态 FJSP 底座上加入动态事件和�
 
 科研辅助工作流提供独立的大创、毕设要求配置和受限静态实验，默认离线；它不代表已经实现两个研究课题。运行方式、状态解释与人工审核点见 [科研辅助工作流说明](docs/research_workflow.md)。
 
-用户已明确批准毕设 G1：同质机任务/维护数据、精确总延期计算及独立维护合法性检查。当前未实现维护优化器，既有工作流也尚未自动调用该领域检查器。范围及可复现证据见 [G1 验证说明](docs/graduation_g1_validation.md)。
+用户已批准毕设 G1 同质机任务/维护数据、精确总延期与独立合法性检查，随后放行 G2 固定/联合 CP-SAT 参考求解与有界独立枚举。既有工作流尚未接入这些后端。范围和可复现证据见 [G1验证](docs/graduation_g1_validation.md)、[G2参考求解验证](docs/graduation_g2_validation.md)。
 
 ## 当前范围
 
@@ -144,7 +144,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1
 - 文献陈述逐项绑定原文片段与位置；有可靠对应关系时显示 PDF 物理页码。缓存绑定目标论文，文字匹配仍须人工判断科学依据
 - [固定 Phase 2A 实验协议](docs/phase2a_experiment_protocol.md)：243 次既有动态基线运行全部合法；27 配置对应 23 个不同场景，独立目录复跑摘要一致。[双课题验收对照](docs/research_acceptance_map.md)继续列出研究缺口
 - [连续事件顺序重放](docs/phase2a_sequential_validation.md)：9 条运行、18 个时间戳批次合法，逐次冻结上一份计划中的执行历史；同一时刻事件合并后只调度一次，失败前缀不当作最终结果
-- [Phase2A交付自检](docs/phase2a_acceptance.md)：补齐此前遗漏的EAM基线，001/002中toy makespan为11；EAM与EFT分开定义，既有019/020协议不变。[毕设首版模型](docs/graduation_model_draft.md)的 G1 基础接口已实现，G2 优化及正式比较仍待推进
+- [Phase2A交付自检](docs/phase2a_acceptance.md)：补齐此前遗漏的EAM基线，001/002中toy makespan为11；EAM与EFT分开定义，既有019/020协议不变。[毕设首版模型](docs/graduation_model_draft.md)的 G1 基础及 G2 参考求解已有，G3正式比较与最终验收仍待推进
 
 当前 30 实例质量报告中，`DispatchFIFO` 的跨实例平均 best gap 最低：
 
