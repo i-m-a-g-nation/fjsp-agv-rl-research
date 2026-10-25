@@ -51,6 +51,6 @@
 
 下一次科研决策是G3正式算例/预算/比较协议及最终算法要求；维护参考后端已接入受监督工作流，实际会话仍逐道人审。不能通过修改验收清单来消除尚未实现的能力。
 
-用户最新偏好为加入RL，但完整任务书算法要求仍不清楚；已准备[G3A参考协议](graduation_g3_protocol_draft.md)及[RL建模草案](graduation_rl_design_draft.md)，未执行正式批次或训练。RL优先方向不替代当前模型检查，也不直接满足大创生产—物流课题。
+用户最新偏好为加入RL，但完整任务书算法要求仍不清楚；[G3A参考协议](graduation_g3_protocol_draft.md)仍未冻结/执行，[RL方案](graduation_rl_design_draft.md)的[R1无训练构造环境](graduation_rl_environment_validation.md)已实现，尚无已训练策略或算法优势证据。该环境不替代G1检查，也不直接满足大创生产—物流课题。
 
 已形成[Phase2A交付自检](phase2a_acceptance.md)、[毕设首版模型](graduation_model_draft.md)、[G1基础验证](graduation_g1_validation.md)和[G2参考求解](graduation_g2_validation.md)。G1/G2已分别获准并实现，不表示后续阶段自动放行。按申请书2026年7–11月仿真环境开发安排，目前物流、AGV、缓冲仍是阶段交付缺口。

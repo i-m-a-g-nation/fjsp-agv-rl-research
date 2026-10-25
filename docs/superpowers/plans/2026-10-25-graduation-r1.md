@@ -27,18 +27,18 @@
 ### Task1: environment core and boundary tests
 Files: src/graduation/rl_environment.py; src/graduation/__init__.py; tests/test_graduation_rl_environment.py.
 API: ParallelMaintenanceEnv(data,*,mode), reset()/observe()->ConstructionObservation, action_masks()->tuple[bool,...], step(action)->ConstructionStep, truncate()->ConstructionStep, get_result()->MaintenanceScheduleResult. Frozen dataclasses include observation.status/steps/scale,24taskfeature triples(p/W,d/W,scheduled),4machinefeature septuples(tail/W,q/W,L/W,U/W,f/W,maintenance_done,f_present), presence masks and100action mask; missingf=-1, paddingzero with presenceFalse. Step includes observation,reward,terminated,truncated,result|None. EpisodeInvariantError marks failed terminal checks.
-- [ ] RED literal action trajectories fixed/joint4/0,6/0 and reward-.04/0,-.06/0; masks/types/padding, mandatory idle maintenance, late-window wait, invalid-action nonmutation, reset/copy isolation, truncate without accepted result, terminal checker refusal.
-- [ ] Implement integer timeline/masks, independent final metric/check and snapshots; finite numeric domain shared in intent with G2, strict constructor bounds and mode.
-- [ ] GREEN targeted R1 plus existing graduation core suites; commit.
+- [x] RED literal action trajectories fixed/joint4/0,6/0 and reward-.04/0,-.06/0; masks/types/padding, mandatory idle maintenance, late-window wait, invalid-action nonmutation, reset/copy isolation, truncate without accepted result, terminal checker refusal.
+- [x] Implement integer timeline/masks, independent final metric/check and snapshots; finite numeric domain shared in intent with G2, strict constructor bounds and mode.
+- [x] GREEN targeted R1 plus existing graduation core suites; commit.
 
 ### Task2: independent reachable-state and maximum-size verification
 Files: tests/test_graduation_rl_reachability.py; test-only helpers if needed.
-- [ ] Exhaustively traverse tiny legal action trees in tests with finite visit guard, no production clone/test-only hooks; compare all-leaf bestT to existing independent enumeration for fixed/joint and literal witnesses. Every terminal plan must pass G1 and return=-T/100.
-- [ ] Seeded maximum24/4 legal trajectories terminate in28steps with nonempty masks and presence flags, unchanged immutable data and reproducible reset. No solver invoked during environment transitions.
-- [ ] GREEN targeted suites; update ledger and commit.
+- [x] Exhaustively traverse tiny legal action trees in tests with finite visit guard, no production clone/test-only hooks; compare all-leaf bestT to existing independent enumeration for fixed/joint and literal witnesses. Every terminal plan must pass G1 and return=-T/100.
+- [x] Seeded maximum24/4 legal trajectories terminate in28steps with nonempty masks and presence flags, unchanged immutable data and reproducible reset. No solver invoked during environment transitions.
+- [x] GREEN targeted suites; update ledger and commit.
 
 ### Task3: full validation and delivery
 Files: docs/graduation_rl_environment_validation.md; current model/RL draft/readmes/review status/acceptance progress.
-- [ ] Full `python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80 -q`, expected green>=80%; freeze source during run.
-- [ ] One fresh read-only final review of entire R1delta; important fixes once via RED→GREEN and full suite, minors deferred. Native001/002 with original artifacts restored; four bounded native R1 trajectories with domain check.
-- [ ] Commit verified implementation/docs on current branch; no merge/push, new real human approvals, G3matrix execution, dependency install or RL training. Existing completed G2 session remains historical and cannot be resumed under new code.
+- [x] Full `python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80 -q`, expected green>=80%; freeze source during run.
+- [x] One fresh read-only final review of entire R1delta; important fixes once via RED→GREEN and full suite, minors deferred. Native001/002 with original artifacts restored; four bounded native R1 trajectories with domain check.
+- [x] Commit verified implementation/docs on current branch; no merge/push, new real human approvals, G3matrix execution, dependency install or RL training. Existing completed G2 session remains historical and cannot be resumed under new code.

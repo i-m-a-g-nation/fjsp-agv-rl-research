@@ -1,5 +1,14 @@
 # Platform Review Status
 
+## R1 no-training construction environment 2026-10-25
+
+- User continued after the concrete R1 design recommendation and RL preference. Added `ParallelMaintenanceEnv` plus frozen observations/step snapshots,100task-machine/mandatory-maintenance action slots and read-only data/mode. Pure Python: no Gym/PPO adapter, trained policy, dependency installation or optimizer call inside transitions.
+- Integer masks reserve full maintenance and include idle machines; valid episodes consume exactlyn+mobjects. Invalid/padded/duplicate/noninteger actions reject before mutation. ACTIVE/TERMINATED/TRUNCATED/FAILED are distinct; only independently G1-validated termination returns detached ScheduleResult-compatible plans. Objective-aligned return is-T/100, no makespan replacement or terminal double charge.
+- Core24tests observed RED, then97R1/G1core GREEN. All40R1tests pass, including full tiny action trees against independent enumeration and6maximum24task/4machine paths ending in28steps with reset reproducibility. Native4literal traces yieldT4/0/6/0 and returns-.04/0/-.06/0; all domain-valid, no trained policy or optimality certificate claimed for constructed plans.
+- Complete dedicated Windows suite **578 passed**, **89.07%** coverage with unchanged80% gate;13upstream warnings,331.79s. Source frozen during run. Native001/002 pass, toy CP-SAT11OPTIMAL; originalCSV/Gantt restored byte-for-byte. Original checkers/G2solvers/contracts/AGENTS/dependencies and019/020/021archives unchanged.
+- One fresh read-only code/math review found no Critical/Important issue and no Declined-to-judge items. It confirmed Markov observation, earliest append construction's optimal-value preservation and result isolation. Deferred minor: add separate terminal-failure injections for metric exceptions/wrongT and checker-raised exceptions; existing unified failure handling already rejects them, no leakage found. No fix pass or re-review required.
+- [R1 interface and evidence](graduation_rl_environment_validation.md), [execution ledger](superpowers/plans/2026-10-25-graduation-r1-progress.md). NextR2must define complete EDD/SPT/seededRandom action/maintenance/tie-break rules before a Gym/PPO adapter and bounded training. G3protocol remains unapproved/unexecuted and both research tracks not_achieved. Old completed G2 approvals remain historical; no new approval was created.
+
 ## G3 reference protocol and RL direction draft 2026-10-25
 
 - User requested next-stage continuation and clarified “暂不清楚，但最好加强化学习”. RL is the preferred research direction, while the full taskbook requirement remains unconfirmed. No RL implementation/training or formal G3 result inferred.

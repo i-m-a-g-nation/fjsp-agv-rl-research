@@ -4,13 +4,13 @@ English version: [README.md](README.md)
 
 本项目当前处于 **Phase 2A：动态柔性作业车间调度（FJSP）最小底座**。
 Phase 2A 在已经验证的 Phase 1 静态 FJSP 底座上加入动态事件和确定性
-重调度；AGV、运输时间、强化学习和图神经网络仍然不进入当前范围。
+重调度；AGV、运输时间、RL训练和图神经网络仍为后续阶段，用户另行放行的毕设增量见下。
 
 科研辅助工作流提供独立的大创、毕设要求配置和受限静态实验，默认离线；它不代表已经实现两个研究课题。运行方式、状态解释与人工审核点见 [科研辅助工作流说明](docs/research_workflow.md)。
 
 用户已批准毕设G1数据/延期/维护检查、G2固定/联合参考求解及独立枚举。现有`--graduation-request`专用离线路线已将参考后端接入三道人审，重新核对保存的维护计划，不经过RAG/模型/代码生成。见[毕设三审使用说明](docs/graduation_workflow.md)、[G2验证](docs/graduation_g2_validation.md)。
 
-后续已起草[G3参考对照协议](docs/graduation_g3_protocol_draft.md)及[RL建模与验收方案](docs/graduation_rl_design_draft.md)。用户偏好加入RL，完整任务书算法要求仍待核对；这些是未冻结/未执行的设计，不是现已具备训练能力或课题达标证据。
+后续已起草[G3参考对照协议](docs/graduation_g3_protocol_draft.md)及[RL方案](docs/graduation_rl_design_draft.md)。其中[R1纯Python无训练环境](docs/graduation_rl_environment_validation.md)已实现并验证动作/维护/奖励；没有Gym/PPO适配器或训练策略，G3协议仍为未冻结/未执行设计，完整任务书算法要求仍待核对。
 
 ## 当前范围
 

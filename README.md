@@ -7,12 +7,14 @@ of the verified Phase 1 static research platform.
 
 This repository currently focuses on correctness, reproducibility, and small
 verified baselines. Phase 2A adds dynamic events and deterministic
-rescheduling; AGV scheduling, transportation time, reinforcement learning, and
-GNN models remain out of scope.
+rescheduling; AGV scheduling, transportation time, reinforcement-learning training,
+and GNN models remain later-stage work. User-approved graduation extensions are described below.
 
 The supervised research assistant now separates innovation-project and graduation requirements, defaults to offline execution, and reports unmet research goals independently of static feasibility. See [workflow operation and review](docs/research_workflow.md).
 
 User-approved graduation G1 adds identical-machine maintenance validation; G2 adds fixed/joint CP-SAT references and an independent tiny oracle. A dedicated offline `--graduation-request` route now runs these references through all three persistent review gates, without RAG/model/code generation or research certification. See [supervised graduation usage](docs/graduation_workflow.md) and [G2 validation](docs/graduation_g2_validation.md).
+
+Graduation R1 now provides a pure-Python, no-training schedule-construction environment with mandatory maintenance action masks, objective-aligned rewards and validated terminal results. It has no Gym/PPO adapter or trained policy. See [R1 API and validation](docs/graduation_rl_environment_validation.md).
 
 ## Scope
 
