@@ -1,5 +1,11 @@
 # Platform Review Status
 
+## First live API diagnostic 2026-10-26
+
+- User filled the ignored local key and requested continuation. Exactly two real requests through the existing DeepSeek adapter, nonthinking mode, 30-second per-request timeout, no retries; output reservations 256 + 2048. No paper fetch, RAG embedding request, generated selector, workflow session or fabricated approval.
+- Connectivity passed; output checks did not all pass. Model reported maintenance start 2 with total tardiness 0; independent G1 reconstruction gives 2 and rejects the claim. Synthetic extraction preserved absent RL fields and the correct objective, but only 5/9 claims had locatable references. An initial diagnostic keyword check missed the equivalent LaTeX objective; the separate offline review corrects that check without altering original evidence or the overall failed result.
+- [Diagnostic report and archived public evidence](model_api_validation_2026-10-26.md). No production source, checkers, solver, contracts, dependencies or prior research archives changed. Targeted interface/evidence/tardiness/maintenance tests: 93 passed in 3.63s. This is a synthetic interface diagnostic, not a model ranking or research acceptance. The prior complete regression remains 673 passed / 89.46%; this documentation update is not another full-suite run.
+
 ## R2 rules and development validation 2026-10-25
 
 - User continued after the progress audit and explicitly permitted multiple agents. Implemented EDD/SPT/seededRandom on unchanged R1 transitions/masks/reward/checker; only added immutable exact machine_tails snapshots. Earliest legal maintenance wins only if strictly earlier than selected production; equal start favors production. This declared baseline variant is not a best-maintenance-policy claim.

@@ -1,0 +1,9 @@
+{
+  "kind": "synthetic_live_api_diagnostic",
+  "source_commit": "727980c0bcbc53c34a152a51ea507f198559e550",
+  "files_sha256": {
+    "result.json": "731b316cbe85d5bb217028998cc4eb208f95e5535bb4e04c2ad9fd07db6d0c95",
+    "offline_review.json": "e42e5b65295bbc6f2a83f3669636dfaa3890a7edc8aa625eb93c685c4481d423",
+    "driver_snapshot.py.txt": "dbd8692e52fe218cc043c1877ec2a051b4c211b7ac10a1a81c027aba685d6551"
+  }
+}

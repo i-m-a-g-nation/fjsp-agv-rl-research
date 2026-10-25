@@ -1,0 +1,338 @@
+{
+  "kind": "synthetic_api_diagnostic_not_research_acceptance",
+  "at": "2026-10-26T00:59:36.907057+08:00",
+  "source_commit": "727980c0bcbc53c34a152a51ea507f198559e550",
+  "configuration": {
+    "base_url": "https://api.deepseek.com",
+    "model": "deepseek-flash",
+    "thinking_mode": "disabled",
+    "embedding_backend": "hybrid_local",
+    "api_key_configured": true
+  },
+  "limits": {
+    "calls": 2,
+    "output_tokens_reserved_max": 2304,
+    "per_request_timeout_seconds": 30,
+    "retries": 0
+  },
+  "probes": [
+    {
+      "name": "known_tardiness_example",
+      "max_output_tokens": 256,
+      "connected": true,
+      "input": "Synthetic API diagnostic, not a research claim. One machine processes A then B; both are released at 0. Processing times are 2 and 2; due dates are 2 and 4. One compulsory non-preemptive maintenance has duration 2 and its complete interval must lie in [0,6). Jobs and maintenance cannot overlap. Case fixed: maintenance starts at 0. Case joint: choose the maintenance start minimizing total tardiness. Tardiness is max(0, completion - due date). Return only a JSON object with integer fields fixed_total_tardiness, joint_total_tardiness, joint_maintenance_start. No explanation.",
+      "elapsed_seconds": 0.828,
+      "response": "{\"fixed_total_tardiness\":4,\"joint_total_tardiness\":0,\"joint_maintenance_start\":2}",
+      "metadata": {
+        "token_usage": {
+          "completion_tokens": 24,
+          "prompt_tokens": 147,
+          "total_tokens": 171,
+          "completion_tokens_details": null,
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": null,
+            "cached_tokens": 0,
+            "image_tokens": null,
+            "text_tokens": null
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 147
+        },
+        "model_provider": "openai",
+        "model_name": "deepseek-flash",
+        "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+        "id": "9f71ccbd-6048-4ef3-afac-7f1a0960229a",
+        "finish_reason": "stop",
+        "logprobs": null
+      },
+      "usage": {
+        "input_tokens": 147,
+        "output_tokens": 24,
+        "total_tokens": 171,
+        "input_token_details": {
+          "cache_read": 0
+        },
+        "output_token_details": {}
+      },
+      "expected": {
+        "fixed_total_tardiness": 4,
+        "joint_total_tardiness": 0,
+        "joint_maintenance_start": 4
+      },
+      "checks": {
+        "strict_json_and_known_values": false,
+        "not_truncated": true
+      }
+    },
+    {
+      "name": "existing_extraction_with_missing_rl_fields",
+      "max_output_tokens": 2048,
+      "input": "TEST FIXTURE: This is synthetic API validation data, not a published paper.\nWe study scheduling of production jobs on identical parallel machines with compulsory maintenance.\nEvery machine has exactly one non-preemptive maintenance, including idle machines.\nThe complete maintenance interval must fit inside its allowed maintenance window.\nThe objective is to minimize total tardiness, defined as sum_j max(0, C_j - d_j).\nC_j denotes completion time and d_j denotes the due date of job j.\nNo reward function, state space, action space, action masking, or neural network architecture is specified.\n",
+      "connected": true,
+      "elapsed_seconds": 2.328,
+      "extraction": {
+        "title": "Synthetic API validation fixture (NOT a published paper)",
+        "extraction_method": "llm",
+        "evidence_status": "unverified",
+        "source_quotes": [],
+        "claim_evidence": [
+          {
+            "field": "problem_type",
+            "item_index": null,
+            "quote": "scheduling of production jobs on identical parallel machines with compulsory maintenance",
+            "source_start": null
+          },
+          {
+            "field": "math_model.objectives",
+            "item_index": 0,
+            "quote": "The objective is to minimize total tardiness, defined as sum_j max(0, C_j - d_j).",
+            "source_start": null
+          },
+          {
+            "field": "math_model.parameters",
+            "item_index": 0,
+            "quote": "C_j denotes completion time and d_j denotes the due date of job j.",
+            "source_start": null
+          },
+          {
+            "field": "math_model.constraints",
+            "item_index": 0,
+            "quote": "Every machine has exactly one non-preemptive maintenance, including idle machines.",
+            "source_start": null
+          },
+          {
+            "field": "math_model.constraints",
+            "item_index": 1,
+            "quote": "The complete maintenance interval must fit inside its allowed maintenance window.",
+            "source_start": null
+          }
+        ],
+        "evidence_audit": {
+          "source": {
+            "source_path": "",
+            "source_kind": "text",
+            "text_sha256": "c92eab8f58dfe43f146fbf6d62c28f852d429eaae50b3042e2551dd2febd6252",
+            "text_length": 597,
+            "pages": [],
+            "warnings": []
+          },
+          "context_start": 0,
+          "context_end": 597,
+          "claims": [
+            {
+              "field": "problem_type",
+              "item_index": null,
+              "claim": "Identical parallel machine scheduling with compulsory non-preemptive maintenance and total tardiness objective",
+              "status": "located_unreviewed",
+              "locations": [
+                {
+                  "quote": "scheduling of production jobs on identical parallel machines with compulsory maintenance",
+                  "start": 85,
+                  "end": 173,
+                  "source_path": "",
+                  "source_kind": "resolved_text",
+                  "line_start": 2,
+                  "line_end": 2,
+                  "page_start": null,
+                  "page_end": null
+                }
+              ],
+              "errors": []
+            },
+            {
+              "field": "math_model.sets_and_indices",
+              "item_index": 0,
+              "claim": "j: job index (jobs j)",
+              "status": "missing",
+              "locations": [],
+              "errors": []
+            },
+            {
+              "field": "math_model.sets_and_indices",
+              "item_index": 1,
+              "claim": "machines: identical parallel machines (index not explicitly denoted in text)",
+              "status": "missing",
+              "locations": [],
+              "errors": []
+            },
+            {
+              "field": "math_model.parameters",
+              "item_index": 0,
+              "claim": "d_j: due date of job j",
+              "status": "located_unreviewed",
+              "locations": [
+                {
+                  "quote": "C_j denotes completion time and d_j denotes the due date of job j.",
+                  "start": 422,
+                  "end": 488,
+                  "source_path": "",
+                  "source_kind": "resolved_text",
+                  "line_start": 6,
+                  "line_end": 6,
+                  "page_start": null,
+                  "page_end": null
+                }
+              ],
+              "errors": []
+            },
+            {
+              "field": "math_model.parameters",
+              "item_index": 1,
+              "claim": "maintenance window per machine (allowed interval for the single non-preemptive maintenance)",
+              "status": "missing",
+              "locations": [],
+              "errors": []
+            },
+            {
+              "field": "math_model.decision_variables",
+              "item_index": 0,
+              "claim": "C_j: completion time of job j",
+              "status": "missing",
+              "locations": [],
+              "errors": []
+            },
+            {
+              "field": "math_model.objectives",
+              "item_index": 0,
+              "claim": "\\min \\sum_j \\max(0, C_j - d_j)",
+              "status": "located_unreviewed",
+              "locations": [
+                {
+                  "quote": "The objective is to minimize total tardiness, defined as sum_j max(0, C_j - d_j).",
+                  "start": 340,
+                  "end": 421,
+                  "source_path": "",
+                  "source_kind": "resolved_text",
+                  "line_start": 5,
+                  "line_end": 5,
+                  "page_start": null,
+                  "page_end": null
+                }
+              ],
+              "errors": []
+            },
+            {
+              "field": "math_model.constraints",
+              "item_index": 0,
+              "claim": "Each machine has exactly one non-preemptive maintenance, including idle machines.",
+              "status": "located_unreviewed",
+              "locations": [
+                {
+                  "quote": "Every machine has exactly one non-preemptive maintenance, including idle machines.",
+                  "start": 175,
+                  "end": 257,
+                  "source_path": "",
+                  "source_kind": "resolved_text",
+                  "line_start": 3,
+                  "line_end": 3,
+                  "page_start": null,
+                  "page_end": null
+                }
+              ],
+              "errors": []
+            },
+            {
+              "field": "math_model.constraints",
+              "item_index": 1,
+              "claim": "The complete maintenance interval must fit inside its allowed maintenance window.",
+              "status": "located_unreviewed",
+              "locations": [
+                {
+                  "quote": "The complete maintenance interval must fit inside its allowed maintenance window.",
+                  "start": 258,
+                  "end": 339,
+                  "source_path": "",
+                  "source_kind": "resolved_text",
+                  "line_start": 4,
+                  "line_end": 4,
+                  "page_start": null,
+                  "page_end": null
+                }
+              ],
+              "errors": []
+            }
+          ],
+          "rejected_references": [],
+          "summary": {
+            "claims_total": 9,
+            "claims_located": 5,
+            "counts": {
+              "located_unreviewed": 5,
+              "missing": 4
+            },
+            "rejected_references": 0,
+            "all_claims_located": false,
+            "status": "text_locations_only"
+          },
+          "notice": "Exact text location is not proof of entailment, formula correctness, or scientific verification."
+        },
+        "problem_type": "Identical parallel machine scheduling with compulsory non-preemptive maintenance and total tardiness objective",
+        "content_depth": "full_text",
+        "missing_warnings": [
+          "正文候选不等于证据已核实；公式与结论须有原文依据。"
+        ],
+        "resolution_log": [
+          "Manual synthetic fixture; no paper fetched, no RAG or codebase context."
+        ],
+        "math_model": {
+          "sets_and_indices": [
+            "j: job index (jobs j)",
+            "machines: identical parallel machines (index not explicitly denoted in text)"
+          ],
+          "parameters": [
+            "d_j: due date of job j",
+            "maintenance window per machine (allowed interval for the single non-preemptive maintenance)"
+          ],
+          "decision_variables": [
+            "C_j: completion time of job j"
+          ],
+          "objectives": [
+            "\\min \\sum_j \\max(0, C_j - d_j)"
+          ],
+          "constraints": [
+            "Each machine has exactly one non-preemptive maintenance, including idle machines.",
+            "The complete maintenance interval must fit inside its allowed maintenance window."
+          ]
+        },
+        "rl_formulation": {
+          "state_space": [],
+          "action_space": [],
+          "action_masking": [],
+          "reward_function": "",
+          "network_architecture": ""
+        },
+        "codebase_alignment": {
+          "reusable_modules": [],
+          "missing_gaps": [],
+          "candidate_rule_description": ""
+        },
+        "retrieved_sources": []
+      },
+      "checks": {
+        "all_rl_fields_missing": true,
+        "objective_present": false,
+        "all_claim_quotes_located": false,
+        "still_unverified": true,
+        "llm_extraction_not_offline_fallback": true
+      }
+    }
+  ],
+  "workflow_session_created": false,
+  "human_approval_created": false,
+  "research_source_modified": false,
+  "elapsed_seconds": 3.375,
+  "budget": {
+    "limits": {
+      "max_active_seconds": 90,
+      "max_output_tokens": 2304,
+      "max_provider_calls": 2
+    },
+    "active_seconds": 3.375,
+    "active_seconds_charged": 3.375,
+    "active_seconds_reserved": 0,
+    "provider_calls": 2,
+    "output_tokens_reserved": 2304
+  },
+  "passed": false
+}
