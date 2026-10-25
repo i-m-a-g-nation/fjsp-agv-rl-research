@@ -66,6 +66,9 @@ class ResearchWorkflowState(TypedDict, total=False):
     experiment_protocol_path: str
     protocol_description: dict[str, Any]
     protocol_result: dict[str, Any]
+    graduation_request_path: str
+    graduation_description: dict[str, Any]
+    graduation_result: dict[str, Any]
 
 
 def build_research_workflow(
@@ -115,6 +118,18 @@ def build_research_workflow(
             raise ValueError("Reviewed protocol input changed")
         return description
 
+    def graduation_description(state):
+        from src.ai_workflow.graduation_backend import describe_graduation_request, validate_graduation_route
+        if not review_required or workspace_index_path is None:
+            raise ValueError('Graduation reference requires persistent human review')
+        validate_graduation_route(state, track=track, config=cfg)
+        description = describe_graduation_request(Path(state['graduation_request_path']))
+        expected = ((review_context or {}).get('graduation_request_hash')
+                    or state.get('graduation_description', {}).get('request_hash'))
+        if expected and description['request_hash'] != expected:
+            raise ValueError('Reviewed graduation request changed')
+        return description
+
     def review_node(stage):
         def node(state):
             if stage == "scope":
@@ -128,6 +143,8 @@ def build_research_workflow(
                            "runtime": review_context or {}}
                 if state.get("experiment_protocol_path"):
                     payload["experiment_protocol"] = protocol_description(state)
+                if state.get('graduation_request_path'):
+                    payload['graduation_request'] = graduation_description(state)
             elif stage == "evidence":
                 payload = {"paper_title": state.get("paper_title"),
                            "resolved_source_path": state.get("resolved_source_path", ""),
@@ -137,7 +154,14 @@ def build_research_workflow(
                 if state.get("experiment_protocol_path"):
                     payload = {"experiment_protocol": protocol_description(state),
                                "notice": "Review the fixed protocol, input fingerprints, event semantics and metrics; no paper or scientific claim is verified."}
+                if state.get('graduation_request_path'):
+                    payload = {'graduation_request': graduation_description(state),
+                               'notice': 'Review first-edition assumptions, exact input, fixed starts, objective and solver limits; no scientific claim is certified.'}
             else:
+                if state.get('graduation_result'):
+                    from src.ai_workflow.graduation_backend import verify_graduation_artifacts
+                    batch = state['graduation_result']
+                    verify_graduation_artifacts(Path(batch['output_dir']), batch['manifest_hash'])
                 if state.get("protocol_result"):
                     from src.research.batch import verify_batch_artifacts
                     batch = state["protocol_result"]
@@ -152,12 +176,41 @@ def build_research_workflow(
             if stage == "scope":
                 update["session_identity"] = artifact_hash(review_context or {})
                 update["source_file_hash"] = source_hash
+                if state.get('graduation_request_path'):
+                    update['graduation_description'] = payload['graduation_request']
             if decision["decision"] == "reject":
                 update["overall_status"] = "REJECTED"
             elif stage == "conclusion":
-                update["final_summary_markdown"] = state["final_summary_markdown"] + "\n\n人工已审核本次基础实验；课题未满足要求及未核实证据的状态保持不变。\n"
+                update["final_summary_markdown"] = state["final_summary_markdown"] + "\n\n人工已审核本次受监督运行；课题未满足要求及未核实证据的状态保持不变。\n"
             return update
         return node
+
+    def prepare_graduation_node(state):
+        return {'graduation_description': graduation_description(state), 'contract': contract.to_dict(),
+                'execution_mode': 'fixed_graduation_reference', 'provider_errors': []}
+
+    def execute_graduation_node(state):
+        from src.ai_workflow.graduation_backend import run_graduation_request, verify_graduation_artifacts
+        description = graduation_description(state)
+        output = workspace_index_path.parent / 'graduation_run'
+        manifest = run_graduation_request(Path(state['graduation_request_path']), output,
+                                          expected_request_hash=description['request_hash'])
+        digest = hashlib.sha256((output / 'manifest.json').read_bytes()).hexdigest()
+        verify_graduation_artifacts(output, digest)
+        batch = {'output_dir': str(output.resolve()), 'manifest_hash': digest, **manifest}
+        passed = manifest['status'] == 'COMPLETED'
+        checked = [item for item in contract.required_capabilities if item != 'fixed_vs_joint_maintenance'] if passed else []
+        acceptance = {'scope_status': 'graduation_g2_reference_only', 'research_status': 'not_achieved',
+            'feasibility_status': 'PASS' if passed else 'FAIL', 'verified_capabilities': checked,
+            'unmet_requirements': [item for item in contract.required_capabilities if item not in checked],
+            'remaining_research_gates': ['formal_comparative_experiments', 'final_algorithm_requirements', 'complete_taskbook_confirmation'],
+            'evidence_status': 'checked_current_input_only', 'human_review_required': True}
+        text = ((output / 'report.md').read_text(encoding='utf-8')
+                + f"\n课题：{contract.title}；要求版本：{contract.contract_hash}；研究状态：not_achieved。\n"
+                + '仅验证本次输入的技术约束；正式比较、完整任务书及最终算法仍待审核。\n')
+        return {'graduation_result': batch, 'eval_passed': passed, 'eval_metrics': batch,
+                'acceptance': acceptance, 'overall_status': 'GRADUATION_REFERENCE' if passed else 'FAILED',
+                'final_summary_markdown': text}
 
     def prepare_protocol_node(state):
         if workspace_index_path is None:
@@ -198,7 +251,7 @@ def build_research_workflow(
         return {}
 
     def resolve_and_ingest_paper_node(state: ResearchWorkflowState) -> dict[str, Any]:
-        if state.get("experiment_protocol_path"):
+        if state.get("experiment_protocol_path") or state.get('graduation_request_path'):
             raise ValueError("Fixed protocol execution requires persistent review")
         max_iters = state.get("max_iterations", 2)
         if type(max_iters) is not int or not 1 <= max_iters <= 3:
@@ -477,6 +530,8 @@ def build_research_workflow(
     graph.add_node("record_memory_and_report", record_memory_and_report_node)
     graph.add_node("prepare_protocol", prepare_protocol_node)
     graph.add_node("execute_protocol", execute_protocol_node)
+    graph.add_node('prepare_graduation', prepare_graduation_node)
+    graph.add_node('execute_graduation', execute_graduation_node)
 
     if review_required:
         graph.add_node("review_scope", review_node("scope"))
@@ -485,14 +540,16 @@ def build_research_workflow(
         graph.add_node("review_conclusion", review_node("conclusion"))
         graph.set_entry_point("review_scope")
         graph.add_conditional_edges("review_scope", lambda state: "stop" if state.get("human_review_status") == "reject" else
-                                    "protocol" if state.get("experiment_protocol_path") else "paper",
-                                    {"stop": END, "protocol": "prepare_protocol", "paper": "index_workspace"})
+                                    'graduation' if state.get('graduation_request_path') else "protocol" if state.get("experiment_protocol_path") else "paper",
+                                    {"stop": END, "protocol": "prepare_protocol", "paper": "index_workspace", 'graduation': 'prepare_graduation'})
         graph.add_conditional_edges("review_evidence", lambda state: "stop" if state.get("human_review_status") == "reject" else
-                                    "protocol" if state.get("experiment_protocol_path") else "paper",
-                                    {"stop": END, "protocol": "execute_protocol", "paper": "synthesize_algorithm_code"})
+                                    'graduation' if state.get('graduation_request_path') else "protocol" if state.get("experiment_protocol_path") else "paper",
+                                    {"stop": END, "protocol": "execute_protocol", "paper": "synthesize_algorithm_code", 'graduation': 'execute_graduation'})
         graph.add_conditional_edges("review_conclusion", lambda state: "stop", {"stop": END})
         graph.add_edge("prepare_protocol", "review_evidence")
         graph.add_edge("execute_protocol", "review_conclusion")
+        graph.add_edge('prepare_graduation', 'review_evidence')
+        graph.add_edge('execute_graduation', 'review_conclusion')
         graph.add_edge("index_workspace", "resolve_and_ingest_paper")
     else:
         graph.set_entry_point("resolve_and_ingest_paper")

@@ -89,6 +89,14 @@ def describe_graduation_request(path: Path) -> dict:
     return _parse(_read_request(path))[0]
 
 
+def validate_graduation_route(state, *, track, config):
+    if (track != 'graduation' or config.has_api_key or config.allow_fallback
+            or state.get('allow_network_fetch') or state.get('requested_capabilities')
+            or any(key in state for key in ('paper_path', 'paper_text', 'paper_title',
+                   'strict_require_fulltext', 'max_iterations', 'experiment_protocol_path'))):
+        raise ValueError('Graduation reference route requires graduation track, offline mode and no paper/protocol/synthesis inputs')
+
+
 def _checked_metrics(data, result, mode):
     accepted, issues = check_parallel_maintenance_feasibility(result, data, mode=mode)
     if not accepted:

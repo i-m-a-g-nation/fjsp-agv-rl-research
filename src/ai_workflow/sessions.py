@@ -109,6 +109,11 @@ def run_session(
                 current_protocol = Path(spec["input_state"]["experiment_protocol_path"]).read_bytes()
                 if hashlib.sha256(current_protocol).hexdigest() != spec["protocol_hash"]:
                     raise ValueError("Session experiment protocol changed; create a new session")
+            if spec.get("graduation_request_hash"):
+                from src.ai_workflow.graduation_backend import describe_graduation_request
+                description = describe_graduation_request(Path(spec["input_state"]["graduation_request_path"]))
+                if description["request_hash"] != spec["graduation_request_hash"]:
+                    raise ValueError("Session graduation request changed; create a new session")
             if _runtime_versions() != spec["runtime_versions"]:
                 raise ValueError("Session runtime configuration changed; create a new session")
             if input_state is not None and artifact_hash(input_state) != artifact_hash(spec["input_state"]):
@@ -128,14 +133,26 @@ def run_session(
                 raise ValueError("Unexpected session artifacts without associated session metadata")
             if input_state is None or decision is not None:
                 raise ValueError("New session requires input and cannot start with a review decision")
-            allowed = {"paper_path", "paper_text", "paper_title", "research_goal", "allow_network_fetch", "strict_require_fulltext", "max_iterations", "requested_capabilities", "experiment_protocol_path"}
+            allowed = {"paper_path", "paper_text", "paper_title", "research_goal", "allow_network_fetch", "strict_require_fulltext", "max_iterations", "requested_capabilities", "experiment_protocol_path", "graduation_request_path"}
             if set(input_state) - allowed:
                 raise ValueError("Unexpected initial session fields")
+            graduation_request_hash = None
+            if input_state.get("graduation_request_path"):
+                from src.ai_workflow.graduation_backend import describe_graduation_request, validate_graduation_route
+                validate_graduation_route(input_state, track=track, config=config)
+                request_path = Path(input_state["graduation_request_path"]).resolve()
+                graduation_request_hash = describe_graduation_request(request_path)["request_hash"]
+                input_state = {**input_state, "graduation_request_path": str(request_path)}
+                if benchmark_paths:
+                    raise ValueError("Graduation input cannot combine FJSP benchmark overrides")
+                limits = limits or BudgetLimits(max_provider_calls=0, max_output_tokens=0)
             limits = limits or BudgetLimits()
             root = (project_root or default_project_root()).resolve()
             selected_benchmarks = benchmark_paths if benchmark_paths is not None else [
                 root / "instances/fjsplib/Brandimarte1993/mk01.fjs", root / "instances/fjsplib/KacemHammadiBorne2002/kacem1.fjs",
                 root / "instances/fjsplib/FattahiMehrabadJolai2007/fattahi1.fjs"]
+            if graduation_request_hash:
+                selected_benchmarks = []
             protocol_hash = None
             if input_state.get("experiment_protocol_path"):
                 from src.research.batch import describe_protocol
@@ -157,6 +174,7 @@ def run_session(
                     "config_hash": config_hash, "code_hash": _code_hash(), "limits": asdict(limits),
                     "benchmark_paths": selected_benchmarks, "benchmark_hashes": _benchmark_hashes(selected_benchmarks),
                     "protocol_hash": protocol_hash,
+                    "graduation_request_hash": graduation_request_hash,
                     "runtime_versions": _runtime_versions(), "seed": 42}
             _write_json(spec_path, spec)
         budget = RunBudget(folder / "session.sqlite", limits)

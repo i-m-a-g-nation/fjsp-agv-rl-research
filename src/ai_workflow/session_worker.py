@@ -65,6 +65,7 @@ def main():
                    "session_spec_hash": artifact_hash(spec), "workspace": spec["project_root"],
                    "benchmark_hashes": spec["benchmark_hashes"], "model_name": cfg.model_name}
         context["protocol_hash"] = spec.get("protocol_hash")
+        context["graduation_request_hash"] = spec.get("graduation_request_hash")
         with SqliteSaver.from_conn_string(str(folder / "session.sqlite")) as saver:
             graph = build_research_workflow(store, cfg,
                     [Path(p) for p in spec["benchmark_paths"]],
