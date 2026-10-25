@@ -1,0 +1,1 @@
+{"data": {"maintenance": [{"duration": 1, "fixed_start": 3, "machine_id": 0, "window_end": 4, "window_start": 3}], "num_machines": 1, "tasks": [{"due_date": 1, "job_id": 0, "processing_time": 1}]}, "expected": {"fixed": 0, "joint": 0}}

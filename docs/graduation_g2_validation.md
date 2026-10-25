@@ -42,4 +42,14 @@ G2不是G3正式研究比较，也尚未接入LangGraph验收后端。完整毕�
 
 人需要读懂：任务/维护假设是否符合题目，总延期与makespan的区别，两模式是否仅改变维护开始约束，求解状态与下界能支持什么结论，以及手算/枚举一致不等于研究创新或真实车间适用性。
 
-完整回归、审查及最终存档记录完成后见`review_status.md`和本轮执行记录。
+## 本轮最终证据
+
+专项128项、完整回归492项通过，覆盖率88.61%（门槛80%），13条上游弃用警告；基础实验001/002通过，toy CP-SAT11OPTIMAL。一次独立只读代码/数学审查未发现Critical/Important/Minor问题，没有放弃判断项。原G1、静态和动态checker、研究契约及019/020证据均未修改。
+
+[实验021报告](../experiments/results/exp_021_graduation_g2_v1/report.md)、[原始CSV](../experiments/results/exp_021_graduation_g2_v1/raw.csv)和[manifest](../experiments/results/exp_021_graduation_g2_v1/manifest.json)由已提交源码`3de4200`生成。固定/联合共24/24通过，另一个新目录重跑得到相同输入哈希和核对摘要：
+
+`580676a61c750239c6043cbb65bd0a8228a4376cdd68a9c2797f14bb4c96b164`
+
+两份输出均逐个核对38个登记文件、56个源文件的SHA256，并从JSON重建全部CP-SAT/枚举生产维护计划重新过领域检查。manifest本身由Git版本化，不自引用其哈希。两次运行允许原始耗时与同值最优排程不同。
+
+更多记录见`review_status.md`和`superpowers/plans/2026-10-25-graduation-g2-progress.md`。现有G1中直接删除可变记录字段的低优先级诊断问题仍保留，本轮G2未新增审查待修项。
