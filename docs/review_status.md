@@ -1,5 +1,13 @@
 # Platform Review Status
 
+## Max thinking and bounded extraction feedback 2026-10-26
+
+- User requested improvement and challenged whether max thinking was enabled. Previous evidence remains explicitly nonthinking. Official docs rechecked; new local/example profile enabled/max with8192tokens/60s. Numeric env settings retain defaults4096/30 and original hard limits8192/60; config identity and default cumulative session budgets remain enforced.
+- Live extraction now re-audits every attempt, feeds missing/invalid/ambiguous reference paths back once, preserves reports immediately, and ends EVIDENCE_INCOMPLETE before synthesis/sandbox/experiment-memory when completed repairs remain incomplete. Complete locations remain unverified and reach original human evidence review; explicit degraded labels/history and original budget failures are retained.
+- TDD covered max payloads and actual SDK timeouts, strict numeric/profile limits, bounded feedback and graph routing. Reviewer found lost history on repair exceptions;7RED regressions reproduced it, snapshots and safe exception metadata fixed it, and fresh re-review approved. Final profile review found no new issue. Complete final dedicated Windows suite **770 passed,89.57%coverage**,80% gate unchanged,13upstream warnings,300.20s; runtime source frozen during the final run.
+- [Actual max diagnostic and source snapshots](model_api_max_validation_2026-10-26.md): only2real calls, both enabled/max HTTP200/stop with nonzero reasoning usage; same synthetic inputs return4/0/start4 and7/7quote locations, no repair needed.53.234s,9975actual completion tokens,16384reserved of24576. G1 reconstructs/accepts both plans; no reasoning text, credential, approval or source application saved. Different thinking and budget settings mean no controlled superiority claim.
+- Old AGENTS/contracts/checkers/solvers/dependencies/prior archives and main remain unchanged. No RL training, paper-code reuse, autonomous performance optimization, research completion, merge or push inferred. Default16384 output reservation permits only two8192requests; extraction+repair can exhaust it before synthesis.
+
 ## First live API diagnostic 2026-10-26
 
 - User filled the ignored local key and requested continuation. Exactly two real requests through the existing DeepSeek adapter, nonthinking mode, 30-second per-request timeout, no retries; output reservations 256 + 2048. No paper fetch, RAG embedding request, generated selector, workflow session or fabricated approval.

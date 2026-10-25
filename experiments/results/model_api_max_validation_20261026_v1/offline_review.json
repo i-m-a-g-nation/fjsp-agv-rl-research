@@ -1,0 +1,95 @@
+{
+  "kind": "offline_domain_and_archive_review_no_additional_calls",
+  "original_result_sha256": "ca7cf45fd1e5b1f7dc3ac2524489ba35c2660c7e5c3e3100a780f4f5b9038204",
+  "additional_provider_calls": 0,
+  "witnesses": [
+    {
+      "mode": "fixed",
+      "accepted": true,
+      "recomputed_total_tardiness": 4,
+      "production": [
+        {
+          "job_id": 0,
+          "op_id": 0,
+          "machine_id": 0,
+          "start": 2,
+          "end": 4,
+          "processing_time": 2
+        },
+        {
+          "job_id": 1,
+          "op_id": 0,
+          "machine_id": 0,
+          "start": 4,
+          "end": 6,
+          "processing_time": 2
+        }
+      ],
+      "maintenance": [
+        {
+          "machine_id": 0,
+          "start": 0,
+          "end": 2,
+          "duration": 2
+        }
+      ]
+    },
+    {
+      "mode": "joint",
+      "accepted": true,
+      "recomputed_total_tardiness": 0,
+      "production": [
+        {
+          "job_id": 0,
+          "op_id": 0,
+          "machine_id": 0,
+          "start": 0,
+          "end": 2,
+          "processing_time": 2
+        },
+        {
+          "job_id": 1,
+          "op_id": 0,
+          "machine_id": 0,
+          "start": 2,
+          "end": 4,
+          "processing_time": 2
+        }
+      ],
+      "maintenance": [
+        {
+          "machine_id": 0,
+          "start": 4,
+          "end": 6,
+          "duration": 2
+        }
+      ]
+    }
+  ],
+  "extraction_audit": {
+    "claims_total": 7,
+    "claims_located": 7,
+    "counts": {
+      "located_unreviewed": 7
+    },
+    "rejected_references": 0,
+    "all_claims_located": true,
+    "status": "text_locations_only"
+  },
+  "runtime_snapshot_hashes_verified": true,
+  "hidden_reasoning_text_saved": false,
+  "public_local_profile": {
+    "thinking_mode": "enabled",
+    "reasoning_effort": "max",
+    "max_output_tokens": 8192,
+    "request_timeout_seconds": 60.0
+  },
+  "library_versions_after_run_in_unchanged_env": {
+    "langchain-openai": "1.7.2",
+    "openai": "3.37.0",
+    "httpx": "0.28.1",
+    "langgraph": "1.2.17",
+    "pydantic": "2.13.4"
+  },
+  "note": "Same two synthetic inputs; different mode and token/time limits, not controlled model comparison or research acceptance."
+}

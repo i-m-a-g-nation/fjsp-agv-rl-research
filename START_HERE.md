@@ -21,10 +21,12 @@ R1/R2 目前通过独立 API 和 `exp_022` 开发验证使用，尚未接入三�
 
 ## 先把模型配在哪里
 
-在**当前打开的这份工作树**根目录编辑 `.env`，把密钥填入 `OPENAI_API_KEY=`。其余首选值已放在[`.env.example`](.env.example)：官方 DeepSeek 地址、`deepseek-flash`、关闭本项目小调用的思考模式，以及本地 RAG。检查命令见[模型接口说明](docs/model_interface.md)。
+在**当前打开的这份工作树**根目录编辑 `.env`，把密钥填入 `OPENAI_API_KEY=`。其余首选值已放在[`.env.example`](.env.example)：官方 DeepSeek 地址、`deepseek-flash`、显式开启 max 思考，以及本地 RAG。检查命令见[模型接口说明](docs/model_interface.md)。
 
 `.env` 是本机忽略文件，不会提交，也不会随分支合并带到另一份检出目录。`.env.example` 才是版本化模板。现在无需先合并到 main 才能配置或检查这份工作树。
 
 2026-10-26 已完成[首次真实 API 诊断](docs/model_api_validation_2026-10-26.md)：接口已连通；非思考模式样本出现一个计划/指标不一致及引用缺项。检查器拒绝错误指标，算法源码未因此改变；这不表示自动科研循环已经完成。
+
+同日已切换并验证[max 思考及引用反馈](docs/model_api_max_validation_2026-10-26.md)：真实请求 enabled/max，两个短样本通过；在线引用缺项最多纠正一次，仍不完整即停止代码生成。每次请求明确采用 8192 tokens / 60 秒，累计会话预算不变。
 
 完整背景、历史实验表和环境说明仍在 [中文 README](README.zh-CN.md) / [English README](README.md)。

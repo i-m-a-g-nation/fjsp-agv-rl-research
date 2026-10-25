@@ -44,7 +44,11 @@ def check_configuration(config: LLMConfig) -> tuple[dict, list[str]]:
 
     summary = {'base_url': config.base_url if valid_url else '<invalid; hidden>',
                'model': config.model_name if model_valid else '<invalid; hidden>',
-               'thinking_mode': config.thinking_mode, 'embedding_backend': config.embedding_backend,
+               'thinking_mode': config.thinking_mode, 'reasoning_effort': config.reasoning_effort,
+               'extraction_repair_attempts': config.extraction_repair_attempts,
+               'max_output_tokens': config.max_output_tokens,
+               'request_timeout_seconds': config.request_timeout_seconds,
+               'embedding_backend': config.embedding_backend,
                'api_key_configured': config.has_api_key}
     # Even a credential accidentally reused in another public field stays hidden.
     if config.api_key:

@@ -59,6 +59,9 @@ class LLMConfig:
     thinking_mode: Literal["enabled", "disabled"] = field(
         default_factory=lambda: os.getenv("LLM_THINKING_MODE", "disabled")
     )
+    reasoning_effort: Literal["low", "high", "max"] = field(
+        default_factory=lambda: os.getenv("LLM_REASONING_EFFORT", "max")
+    )
     embedding_model: str = field(
         default_factory=lambda: os.getenv(
             "EMBEDDING_MODEL_NAME",
@@ -74,9 +77,14 @@ class LLMConfig:
     )
     temperature: float = 0.2
     allow_fallback: bool = False
-    request_timeout_seconds: float = 30.0
-    max_output_tokens: int = 4096
+    request_timeout_seconds: float = field(
+        default_factory=lambda: float(os.getenv("LLM_REQUEST_TIMEOUT_SECONDS", "30"))
+    )
+    max_output_tokens: int = field(
+        default_factory=lambda: int(os.getenv("LLM_MAX_OUTPUT_TOKENS", "4096"))
+    )
     max_retries: int = 0
+    extraction_repair_attempts: int = 1
     budget: RunBudget | None = field(default=None, repr=False, compare=False)
 
     def provider_timeout(self, *, output_tokens: int) -> float:
@@ -88,6 +96,10 @@ class LLMConfig:
     def __post_init__(self) -> None:
         if self.thinking_mode not in ("enabled", "disabled"):
             raise ValueError("thinking_mode must be enabled or disabled")
+        if self.reasoning_effort not in ("low", "high", "max"):
+            raise ValueError("reasoning_effort must be low, high, or max")
+        if type(self.extraction_repair_attempts) is not int or not 0 <= self.extraction_repair_attempts <= 1:
+            raise ValueError("extraction_repair_attempts must be an integer from 0 to 1")
         if (not math.isfinite(self.request_timeout_seconds) or not 0 < self.request_timeout_seconds <= 60
                 or type(self.max_output_tokens) is not int or not 1 <= self.max_output_tokens <= 8192
                 or type(self.max_retries) is not int or not 0 <= self.max_retries <= 1):
@@ -99,10 +111,13 @@ class LLMConfig:
             # ChatOpenAI rewrites its max_tokens field to max_completion_tokens.
             # DeepSeek requires max_tokens: omit the renamed field and merge
             # the documented parameter into the SDK's final HTTP request body.
-            return {"max_tokens": None, "extra_body": {
+            body = {
                 "thinking": {"type": self.thinking_mode},
                 "max_tokens": self.max_output_tokens,
-            }}
+            }
+            if self.thinking_mode == "enabled":
+                body["reasoning_effort"] = self.reasoning_effort
+            return {"max_tokens": None, "extra_body": body}
         return {"max_tokens": self.max_output_tokens}
 
     @property
