@@ -6,9 +6,11 @@ from src.graduation.metrics import calculate_total_tardiness
 from src.graduation.feasibility import MaintenanceViolation, check_parallel_maintenance_feasibility
 from src.graduation.solver import GraduationSolverError, solve_parallel_maintenance
 from src.graduation.enumeration import EnumerationLimitError, enumerate_parallel_maintenance
+from src.graduation.rl_environment import ParallelMaintenanceEnv, ConstructionObservation, ConstructionStep, EpisodeInvariantError
 
 __all__ = ['ProductionTask', 'MaintenanceRequirement', 'ParallelMaintenanceInstance', 'to_fjsp_instance',
            'MaintenanceRecord', 'MaintenanceScheduleResult', 'calculate_total_tardiness',
            'MaintenanceViolation', 'check_parallel_maintenance_feasibility',
            'GraduationSolverError', 'solve_parallel_maintenance',
-           'EnumerationLimitError', 'enumerate_parallel_maintenance']
+           'EnumerationLimitError', 'enumerate_parallel_maintenance',
+           'ParallelMaintenanceEnv', 'ConstructionObservation', 'ConstructionStep', 'EpisodeInvariantError']
