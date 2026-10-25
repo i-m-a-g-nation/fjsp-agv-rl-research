@@ -4,7 +4,9 @@ from src.graduation.data import MaintenanceRequirement, ParallelMaintenanceInsta
 from src.graduation.result import MaintenanceRecord, MaintenanceScheduleResult
 from src.graduation.metrics import calculate_total_tardiness
 from src.graduation.feasibility import MaintenanceViolation, check_parallel_maintenance_feasibility
+from src.graduation.solver import GraduationSolverError, solve_parallel_maintenance
 
 __all__ = ['ProductionTask', 'MaintenanceRequirement', 'ParallelMaintenanceInstance', 'to_fjsp_instance',
            'MaintenanceRecord', 'MaintenanceScheduleResult', 'calculate_total_tardiness',
-           'MaintenanceViolation', 'check_parallel_maintenance_feasibility']
+           'MaintenanceViolation', 'check_parallel_maintenance_feasibility',
+           'GraduationSolverError', 'solve_parallel_maintenance']

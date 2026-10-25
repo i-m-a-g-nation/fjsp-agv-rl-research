@@ -17,3 +17,4 @@ class MaintenanceRecord:
 class MaintenanceScheduleResult(ScheduleResult):
     maintenance_records: list[MaintenanceRecord] = field(default_factory=list)
     total_tardiness: int | None = None
+    solver_objective_value: float | None = None
