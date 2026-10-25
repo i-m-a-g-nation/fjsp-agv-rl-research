@@ -52,4 +52,6 @@ $workflowPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'pyth
 
 完整回归525项通过、覆盖率88.71%（门槛80%）；基础001/002通过，toy CP-SAT11OPTIMAL，既有证据未改动。
 
+已用已测源码`516f067`创建本地演示会话`experiments/ai_memory/graduation/g2-reference-v1`，退出码3，WAITING_HUMAN/scope，供应商调用0，尚未求解且决定模板为空。原始请求哈希、会话code_hash及scope中的session_spec_hash均核对一致。阅读[本地scope待审材料](../experiments/ai_memory/graduation/g2-reference-v1/review-request.json)；该目录为本地忽略产物，其他机器应按上文新建会话，不能假定随Git克隆存在。
+
 独立审查未发现Critical/Important问题。保留一项低优先级回归保护建议：补充超限输入、缺失/额外文件，以及重算测试哈希后非法保存计划/元数据的反例；对应实现检查已存在。本轮没有把这项测试补强说成已完成。
