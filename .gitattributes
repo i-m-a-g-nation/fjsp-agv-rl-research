@@ -4,5 +4,6 @@ experiments/requests/graduation_reference_v1.json -text
 experiments/results/exp_019_phase2a_protocol_v1/** -text whitespace=cr-at-eol
 experiments/results/exp_020_sequential_reschedule_v1/** -text whitespace=cr-at-eol
 experiments/results/exp_021_graduation_g2_v1/** -text whitespace=cr-at-eol
+experiments/results/exp_022_graduation_rules_v1/** -text whitespace=cr-at-eol
 # Keep the generated empty diagnostics section byte-identical to the run.
 experiments/results/exp_021_graduation_g2_v1/report.md whitespace=-blank-at-eof,cr-at-eol

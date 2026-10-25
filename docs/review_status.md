@@ -1,5 +1,13 @@
 # Platform Review Status
 
+## R2 rules and development validation 2026-10-25
+
+- User continued after the progress audit and explicitly permitted multiple agents. Implemented EDD/SPT/seededRandom on unchanged R1 transitions/masks/reward/checker; only added immutable exact machine_tails snapshots. Earliest legal maintenance wins only if strictly earlier than selected production; equal start favors production. This declared baseline variant is not a best-maintenance-policy claim.
+- Observed missing-featureRED before implementation; focused181pass, including60new rule and8new smoke cases. Complete dedicated Windows suite **646passed,89.23%coverage**, unchanged80% gate,13upstream warnings,324.96s. Source frozen throughout.
+- Native four-case/two-mode/three-rule development matrix24/24 in each of two new directories. All48saved plans independently restored/rechecked/replayed with exact metrics/masks/rewards and source/artifact hashes; digest4565f79e4a0c13a7b81e82295e529baec2b8d6c4ff60a3bd5afa5c4fc50b9c39. Existing-directory CLI returns1 without changing evidence. [R2 details](graduation_r2_validation.md), [durable ledger](superpowers/plans/2026-10-25-graduation-r2-progress.md).
+- Fresh task and final integration reviews found no Critical/Important/newMinor issue. Final review covered R2 and selected branch seams, not exhaustive historical supervision/provider/sandbox validation. Parent owns runtime evidence.
+- No trained policy, formalG3pilot, new dependency or scientific advantage. Original AGENTS/contracts/checkers/G2solver/prior sessions and019/020/021archives unchanged; main not merged/pushed. [Innovation minimum-scope draft](innovation_minimum_scope_draft.md) records proposal-to-code gaps and domain choices only; it does not implement AGV or approve that stage. Both research tracks remainnot_achieved.
+
 ## R1 no-training construction environment 2026-10-25
 
 - User continued after the concrete R1 design recommendation and RL preference. Added `ParallelMaintenanceEnv` plus frozen observations/step snapshots,100task-machine/mandatory-maintenance action slots and read-only data/mode. Pure Python: no Gym/PPO adapter, trained policy, dependency installation or optimizer call inside transitions.

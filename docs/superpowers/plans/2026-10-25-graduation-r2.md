@@ -36,14 +36,14 @@
 
 **Interfaces:** Exact public interfaces, rule names, priorities, seed domain, cases and artifact schema are in the Spec; read it before writing tests. No extra strategies or evaluation framework.
 
-- [ ] Write meaningful tests for priority differences/ties, fixed/joint literal outcomes4/0 and6/0, exact integer tails isolation, complete maintenance, maximum24/4 inputs, local RNG and invalid rule/seed. Watch expected feature failures before production code.
-- [ ] Implement the minimal rule module, readonly property and exports; run focused R1/R2/G1 tests to GREEN. Record actual commands/results and RED evidence in task report.
-- [ ] Write smoke tests for 24 checked rows, deterministic digest in new directories, refusal to overwrite, truthful development labels, manifests/hashes, invalid returned schedule handling retaining failed rows and CLI failure exit. Watch expected missing-function failures.
-- [ ] Implement the bounded smoke and concise validation document. Run the new focused tests; self-review the full diff against the Spec.
-- [ ] Commit only owned files. Report actual scoped counts and any concerns; do not run a second full suite (parent owns full verification).
+- [x] Write meaningful tests for priority differences/ties, fixed/joint literal outcomes4/0 and6/0, exact integer tails isolation, complete maintenance, maximum24/4 inputs, local RNG and invalid rule/seed. Watch expected feature failures before production code.
+- [x] Implement the minimal rule module, readonly property and exports; run focused R1/R2/G1 tests to GREEN. Record actual commands/results and RED evidence in task report.
+- [x] Write smoke tests for 24 checked rows, deterministic digest in new directories, refusal to overwrite, truthful development labels, manifests/hashes, invalid returned schedule handling retaining failed rows and CLI failure exit. Watch expected missing-function failures.
+- [x] Implement the bounded smoke and concise validation document. Run the new focused tests; self-review the full diff against the Spec.
+- [x] Commit only owned files. Report actual scoped counts and any concerns; do not run a second full suite (parent owns full verification).
 
 ## Parent closeout
 
-- [ ] Run one task-scoped spec/code review and handle material issues.
-- [ ] Run full dedicated-environment regression with coverage and two fresh native smoke directories; compare deterministic evidence and validate saved plans independently.
-- [ ] Request final branch review, record findings and limitations in durable progress/status docs; keep main and prior evidence unchanged.
+- [x] Run one task-scoped spec/code review and handle material issues.
+- [x] Run full dedicated-environment regression with coverage and two fresh native smoke directories; compare deterministic evidence and validate saved plans independently.
+- [x] Request final branch review, record findings and limitations in durable progress/status docs; keep main and prior evidence unchanged.

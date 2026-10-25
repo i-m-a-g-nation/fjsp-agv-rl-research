@@ -47,4 +47,4 @@ ACTIVE、TERMINATED、TRUNCATED和FAILED分别处理。预算截断没有接受�
 
 独立只读代码/数学审查未发现Critical/Important问题；留有一项低优先级测试补强：分别注入末步指标异常、错误T和checker自身异常，验证FAILED/reset各分支。现有统一异常处理和整数累计核对已覆盖拒绝逻辑，审查未发现实际非法结果泄漏。
 
-下一步为R2在同一环境定义EDD/SPT/seeded Random的完整规则及维护优先/tie-break；随后才接Gym/MaskablePPO及有界试训。G3A协议仍为未冻结草案，现有工作流仍只运行G2参考后端，不会自动调用R1或训练RL。旧G2已完成人审记录保留为历史，不能用其批准启动新阶段。
+后续[R2规则及开发验证](graduation_r2_validation.md)已实现，增加只读整数machine_tails快照，其余R1观察/转移/掩码/奖励不变。下一步才接Gym/MaskablePPO及有界试训。G3A协议仍为未冻结草案，现有工作流仍只运行G2参考后端，不会自动调用R1/R2或训练RL。旧G2已完成人审记录保留为历史，不能用其批准启动新阶段。
