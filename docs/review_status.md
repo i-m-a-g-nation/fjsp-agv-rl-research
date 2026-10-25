@@ -1,5 +1,12 @@
 # Platform Review Status
 
+## Graduation design confirmation 2026-10-25
+
+- User selected graduation as the priority and confirmed the first-edition assumptions: identical machines, one mandatory maintenance per machine including idle machines, and complete maintenance intervals inside their windows.
+- The draft now includes the missing argument that H=maxU+sumP preserves the optimal total-tardiness value, not merely existence of a feasible schedule. Other model defaults and full taskbook requirements remain to be checked.
+- [G1 implementation plan](superpowers/plans/2026-10-25-graduation-g1.md) is prepared for data/metric/checker only. No graduation code, solver, stage instruction or runtime approval was changed. Current AGENTS still limits implementation to Phase2A until explicitly released.
+- This update is documentation only; the latest code verification remains364passed/88.11%, not a newly repeated full test run. The EAM FIFO-ready-order regression suggestion remains deferred; the horizon prose suggestion is now addressed.
+
 ## Phase 2A closeout and EAM correction 2026-10-25
 
 - Audit found the required EAM baseline was previously absent; EFT did not satisfy that separate requirement. Added the declared FIFO-operation / earliest feasible start / machine-ID-tie variant through existing dispatch and checker APIs, public facades and001/002.
