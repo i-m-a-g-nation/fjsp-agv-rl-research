@@ -2,6 +2,8 @@
 
 Chinese version: [README.zh-CN.md](README.zh-CN.md)
 
+**Start here:** [short project entry](START_HERE.md) · [where files live](docs/project_structure.md) · [model API setup](docs/model_interface.md). Put your API key in `.env` at the root of the **current worktree**; the tracked template is [`.env.example`](.env.example). The local `.env` is ignored and does not transfer through a branch merge.
+
 Phase 2A: a minimal dynamic flexible job shop scheduling (FJSP) layer on top
 of the verified Phase 1 static research platform.
 
@@ -15,6 +17,8 @@ The supervised research assistant now separates innovation-project and graduatio
 User-approved graduation G1 adds identical-machine maintenance validation; G2 adds fixed/joint CP-SAT references and an independent tiny oracle. A dedicated offline `--graduation-request` route now runs these references through all three persistent review gates, without RAG/model/code generation or research certification. See [supervised graduation usage](docs/graduation_workflow.md) and [G2 validation](docs/graduation_g2_validation.md).
 
 Graduation R1 now provides a pure-Python, no-training schedule-construction environment with mandatory maintenance action masks, objective-aligned rewards and validated terminal results. It has no Gym/PPO adapter or trained policy. See [R1 API and validation](docs/graduation_rl_environment_validation.md).
+
+Graduation R2 adds EDD/SPT/seeded Random rules and a standalone `exp_022` development validation, documented in [R2 validation](docs/graduation_r2_validation.md). R1/R2 are not yet connected to the human-reviewed CLI route. The repository remains a supervised executor; autonomous paper-to-code research iteration, RL training, formal G3 comparisons, and acceptance of either research project remain unfinished.
 
 ## Scope
 
@@ -44,19 +48,26 @@ Graduation R1 now provides a pure-Python, no-training schedule-construction envi
 
 ## Repository Layout
 
+The [project structure guide](docs/project_structure.md) maps tasks to code, inputs, evidence and design history. Existing files remain in place.
+
 ```text
 src/
   data/          FJSP instance data structures and loaders
   scheduling/    encoding, decoding, and feasibility checking
   solvers/       baselines, dispatching rules, compatibility facade, and CP-SAT
   dynamic/       Phase 2A events, state, and rescheduling baseline
+  graduation/    maintenance/tardiness model, G1/G2 references, R1/R2 construction
+  ai_workflow/   supervised paper/RAG/candidate routes, budgets and human review
   vis/           Gantt chart rendering
 tests/           pytest suite
 experiments/     experiment scripts and tracked artifacts
 instances/       local smoke files and a tracked real FJSPLib subset
-notes/           literature notes and review material
+docs/            usage, models and validation; superpowers/ holds development history
+notes/           literature notes, reviews and discussion material
 papers/          paper category indexes
-scripts/         environment helper scripts
+scripts/         environment helpers and offline model configuration checker
+START_HERE.md    short human-facing entry point
+.env.example     tracked model configuration template; .env is local and ignored
 AGENTS.md        project rules and phase boundaries
 environment.yml  Conda environment definition
 pyproject.toml   Python project metadata

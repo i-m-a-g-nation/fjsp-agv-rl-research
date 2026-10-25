@@ -2,6 +2,8 @@
 
 English version: [README.md](README.md)
 
+**先看[简短入口 START_HERE](START_HERE.md)**；找文件看[项目结构导航](docs/project_structure.md)，填 API 看[模型接口说明](docs/model_interface.md)。密钥写在**当前工作树根目录 `.env`**，版本化模板为[`.env.example`](.env.example)；本机 `.env` 不会随分支合并复制到另一目录。
+
 本项目当前处于 **Phase 2A：动态柔性作业车间调度（FJSP）最小底座**。
 Phase 2A 在已经验证的 Phase 1 静态 FJSP 底座上加入动态事件和确定性
 重调度；AGV、运输时间、RL训练和图神经网络仍为后续阶段，用户另行放行的毕设增量见下。
@@ -11,6 +13,8 @@ Phase 2A 在已经验证的 Phase 1 静态 FJSP 底座上加入动态事件和�
 用户已批准毕设G1数据/延期/维护检查、G2固定/联合参考求解及独立枚举。现有`--graduation-request`专用离线路线已将参考后端接入三道人审，重新核对保存的维护计划，不经过RAG/模型/代码生成。见[毕设三审使用说明](docs/graduation_workflow.md)、[G2验证](docs/graduation_g2_validation.md)。
 
 后续已起草[G3参考对照协议](docs/graduation_g3_protocol_draft.md)及[RL方案](docs/graduation_rl_design_draft.md)。其中[R1纯Python无训练环境](docs/graduation_rl_environment_validation.md)已实现并验证动作/维护/奖励；没有Gym/PPO适配器或训练策略，G3协议仍为未冻结/未执行设计，完整任务书算法要求仍待核对。
+
+[R2 EDD/SPT/Random 规则](docs/graduation_r2_validation.md)及独立 `exp_022` 开发验证也已实现。R1/R2 尚未接入三审 CLI；仓库程序仍是受监督执行器，自动论文到代码迭代、RL 训练、正式 G3 对照和两个课题的最终验收都尚未完成。
 
 ## 当前范围
 
@@ -33,16 +37,18 @@ Phase 1 已覆盖：
 - pytest 单元测试
 - Phase 2A 动态事件、动态状态、动态合法性检查、冻结记录快照和最小重调度 baseline
 
-当前阶段明确不做：
+除用户已明确放行的毕设 G1/G2、R1/R2 外，当前阶段仍不扩展：
 
 - AGV 运输、路径规划、避碰
 - 运输时间建模
-- 强化学习、PPO、DQN、多智能体
+- RL 训练、PPO、DQN、多智能体；现有 R1/R2 仅为无训练环境与规则
 - 图神经网络
 - 多目标优化
 - 复杂论文算法完整复现
 
 ## 目录结构
+
+按任务找代码、输入、证据和设计历史，见[项目结构导航](docs/project_structure.md)。本次整理不搬动已有目录或结果。
 
 ```text
 src/
@@ -50,13 +56,18 @@ src/
   scheduling/    编码、解码、合法性检查
   solvers/       baseline、dispatching rule、兼容门面和 OR-Tools CP-SAT
   dynamic/       Phase 2A 动态事件、状态和重调度 baseline
+  graduation/    毕设维护/延期模型、G1/G2参考、R1环境及R2规则
+  ai_workflow/   文献/RAG、受限候选、预算、持久会话与三道人审
   vis/           Gantt 图绘制
 tests/           pytest 测试
 experiments/     实验脚本、CSV 结果和图像产物
 instances/       本地 smoke 文件和真实 FJSPLib 子集
-docs/            代码说明、审查状态、数学模型
-notes/           开发笔记和方案讨论
+docs/            使用、模型与验证；superpowers/保存开发规格及历史
+notes/           文献阅读、审查与讨论笔记
 papers/          文献索引
+scripts/         专用环境与离线模型配置检查脚本
+START_HERE.md    日常简短入口
+.env.example     模型配置模板；本机.env被Git忽略
 ```
 
 ## 快速运行
@@ -78,6 +89,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1
 也可以逐项运行：
 
 ```powershell
+.\.conda-env\python.exe -c "import sys; print(sys.executable)"
 .\.conda-env\python.exe experiments\exp_005_benchmark_batch.py
 .\.conda-env\python.exe experiments\exp_009_cpsat_benchmark_matrix.py
 .\.conda-env\python.exe experiments\exp_010_heuristic_benchmark_matrix.py

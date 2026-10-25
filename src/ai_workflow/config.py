@@ -5,6 +5,7 @@ import math
 import os
 from pathlib import Path
 from typing import Literal
+from urllib.parse import urlsplit
 from src.ai_workflow.runtime_budget import RunBudget
 
 
@@ -38,12 +39,12 @@ def load_dotenv_if_present(env_path: Path | None = None) -> None:
 class LLMConfig:
     """Configuration for OpenAI-compatible LLM and Embedding endpoints.
 
-    Automatically reads from `.env` in project root or environment variables.
-    Supports DeepSeek, Qwen (DashScope), SiliconFlow, OpenAI, or local mock mode
-    when no API key is set (for deterministic offline unit testing).
+    Reads process environment variables. The live CLI and explicit configuration
+    checker load the project's .env; construction alone never reads credentials.
+    Supports compatible chat endpoints and deterministic offline operation.
     """
 
-    api_key: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
+    api_key: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""), repr=False)
     base_url: str = field(
         default_factory=lambda: os.getenv(
             "OPENAI_BASE_URL",
@@ -51,7 +52,12 @@ class LLMConfig:
         )
     )
     model_name: str = field(
-        default_factory=lambda: os.getenv("LLM_MODEL_NAME", "deepseek-chat")
+        default_factory=lambda: os.getenv("LLM_MODEL_NAME", "deepseek-flash")
+    )
+    # Explicit project default for existing short, bounded calls. DeepSeek's
+    # server default is enabled; do not rely on that implicit provider setting.
+    thinking_mode: Literal["enabled", "disabled"] = field(
+        default_factory=lambda: os.getenv("LLM_THINKING_MODE", "disabled")
     )
     embedding_model: str = field(
         default_factory=lambda: os.getenv(
@@ -80,10 +86,24 @@ class LLMConfig:
         return min(self.request_timeout_seconds, self.budget.remaining_seconds())
 
     def __post_init__(self) -> None:
+        if self.thinking_mode not in ("enabled", "disabled"):
+            raise ValueError("thinking_mode must be enabled or disabled")
         if (not math.isfinite(self.request_timeout_seconds) or not 0 < self.request_timeout_seconds <= 60
                 or type(self.max_output_tokens) is not int or not 1 <= self.max_output_tokens <= 8192
                 or type(self.max_retries) is not int or not 0 <= self.max_retries <= 1):
             raise ValueError("Model call budget exceeds allowed timeout, token, or retry bounds")
+
+    def chat_request_options(self) -> dict:
+        """Provider-only options; each call gets a new independent payload."""
+        if urlsplit(self.base_url).hostname == "api.deepseek.com":
+            # ChatOpenAI rewrites its max_tokens field to max_completion_tokens.
+            # DeepSeek requires max_tokens: omit the renamed field and merge
+            # the documented parameter into the SDK's final HTTP request body.
+            return {"max_tokens": None, "extra_body": {
+                "thinking": {"type": self.thinking_mode},
+                "max_tokens": self.max_output_tokens,
+            }}
+        return {"max_tokens": self.max_output_tokens}
 
     @property
     def has_api_key(self) -> bool:

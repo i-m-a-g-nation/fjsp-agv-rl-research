@@ -603,8 +603,8 @@ def _llm_extract_paper(
         model=cfg.model_name,
         temperature=cfg.temperature,
         timeout=cfg.provider_timeout(output_tokens=cfg.max_output_tokens),
-        max_tokens=cfg.max_output_tokens,
         max_retries=cfg.max_retries,
+        **cfg.chat_request_options(),
     )
     lit_context = "\n\n".join(
         f"[{item['source']}]\n{item['content'][:1500]}" for item in retrieved_literature
@@ -724,8 +724,8 @@ def _llm_generate_rule_code(
         model=cfg.model_name,
         temperature=cfg.temperature,
         timeout=cfg.provider_timeout(output_tokens=cfg.max_output_tokens),
-        max_tokens=cfg.max_output_tokens,
         max_retries=cfg.max_retries,
+        **cfg.chat_request_options(),
     )
     prompt = (
         "Write a pure Python function `ai_select_candidate(candidates, instance, rng=None)` "
