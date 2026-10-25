@@ -71,6 +71,11 @@ class ParallelMaintenanceEnv:
     def mode(self):
         return self._mode
 
+    @property
+    def machine_tails(self) -> tuple[int, ...]:
+        """Detached exact clocks for real machines; never reconstructed from features."""
+        return tuple(self._tails)
+
     def reset(self) -> ConstructionObservation:
         self._status, self._steps, self._tardiness = 'ACTIVE', 0, 0
         self._scheduled = [False] * len(self.data.tasks)
