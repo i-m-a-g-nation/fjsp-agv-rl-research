@@ -1,6 +1,6 @@
 # Graduation G1 data, metric and checker implementation plan
 
-> **For agentic workers:** Plan only. Implementation requires explicit release beyond current Phase2A scope. On release, use executing-plans inline and TDD, with one fresh final review.
+> **For agentic workers:** User explicitly released G1 on2026-10-25. Use executing-plans inline and TDD, with one fresh final review.
 
 **Goal:** Make the confirmed first-edition maintenance assumptions executable as data/metric/legality contracts, without an optimizer.
 **Architecture:** Keep existing FJSP ScheduleResult/checker behavior; adapt each production task to one operation on identical machines. Add separate maintenance records and domain validation, never fake production jobs for maintenance.
@@ -10,7 +10,7 @@
 ## Authorization and scope
 - User confirmed priority graduation, identical machines, exactly one mandatory maintenance per machine including idle machines, and full-interval window containment.
 - Proposed first-edition defaults: one nonpreemptive operation/job, release0, no shared maintenance crew, no setup/transport/fault dynamics. These are explicit design bounds, not facts proven by the screenshot.
-- Current AGENTS still says Phase2A dynamic FJSP minimum foundation. This file does not itself authorize G1 implementation or change runtime human approvals.
+- Current AGENTS still says Phase2A dynamic FJSP minimum foundation. The user's subsequent explicit answer “允许，按首版范围实现 G1” releases only this G1 exception. This does not authorize G2 optimization, AGV/RL/transport, or change runtime human approvals.
 - G1 excludes CP-SAT models, optimization heuristics, RL and comparative research conclusions. Mathematical examples become manually constructed validation fixtures only.
 
 ## Review focus
@@ -30,16 +30,16 @@ Interfaces:
 - to_fjsp_instance(data)->FJSPInstance, oneop/job and each machine option uses the same p_j.
 - MaintenanceRecord(machine_id,start,end,duration); MaintenanceScheduleResult(ScheduleResult) adds maintenance_records:list and total_tardiness:int|None. Maintain all inherited production fields and makespan semantics.
 
-- [ ] RED tests for invalid/duplicate/missing data, mandatory idle-machine maintenance specs, full-window fit, identical production mapping and isinstance(result,ScheduleResult).
-- [ ] Implement pure data/result contracts; GREEN targeted tests. No solver or auto-filled scientific result.
+- [x] RED tests for invalid/duplicate/missing data, mandatory idle-machine maintenance specs, full-window fit, identical production mapping and isinstance(result,ScheduleResult).
+- [x] Implement pure data/result contracts; GREEN targeted tests. No solver or auto-filled scientific result.
 
 ### Task2 — independently calculated total tardiness
 Files: src/graduation/metrics.py, tests/test_graduation_metrics.py.
 
 Interface: calculate_total_tardiness(data,result:ScheduleResult)->int. First verify target production-instance equality and the unmodified static feasibility checker; invalid/missing/duplicate production schedules raise ValueError. Then sum max(0,C_j-d_j), with each job's sole operation end as C_j. Do not repair makespan/records inside validation or return a partial metric.
 
-- [ ] RED witnesses: one-machine fixed scheduleT=4, jointT=0; two-machine fixedT=6,jointT=0; one early and one tardy job must not cancel (C=(4,6),d=(10,0) gives6); wrong/partial instance rejected.
-- [ ] Implement exact metric; GREEN tests using hand-constructed schedules, not a solver under test.
+- [x] RED witnesses: one-machine fixed scheduleT=4, jointT=0; two-machine fixedT=6,jointT=0; one early and one tardy job must not cancel (C=(4,6),d=(10,0) gives6); wrong/partial instance rejected.
+- [x] Implement exact metric; GREEN tests using hand-constructed schedules, not a solver under test.
 
 ### Task3 — domain legality conjunction
 Files: src/graduation/feasibility.py, tests/test_graduation_feasibility.py, docs/graduation_g1_validation.md.
@@ -48,6 +48,6 @@ Interface: check_parallel_maintenance_feasibility(result:MaintenanceScheduleResu
 
 Violation categories: INSTANCE_MISMATCH, BASE_SCHEDULE_INVALID, MISSING_MAINTENANCE, DUPLICATE_MAINTENANCE, INVALID_MAINTENANCE_MACHINE, INVALID_MAINTENANCE_TIME, MAINTENANCE_DURATION_MISMATCH, MAINTENANCE_OUTSIDE_WINDOW, MAINTENANCE_PRODUCTION_OVERLAP, FIXED_START_MISMATCH, TOTAL_TARDINESS_MISMATCH. Diagnostics may refine these without changing rejection semantics.
 
-- [ ] RED: positive hand schedules, end==window_end accepted, production end==maintenance start accepted, maintenance end==production start accepted, starts-inside/ends-outside rejected, idle-machine maintenance omission rejected, duplicate/invalid IDs, overlap, wrong fixed start, wrong total and malformed/nonfinite times rejected with diagnostics.
-- [ ] Implement domain checks plus human-readable fixture report; GREEN targeted and whole suite. This does not certify optimized maintenance decisions or research completion.
-- [ ] On authorized completion: native001/002, full coverage>=80%, one fresh review, important fixes with regressions, commit tested work; leave AGV/RL/transport scope unchanged and document that G2 optimization remains future work.
+- [x] RED: positive hand schedules, end==window_end accepted, production end==maintenance start accepted, maintenance end==production start accepted, starts-inside/ends-outside rejected, idle-machine maintenance omission rejected, duplicate/invalid IDs, overlap, wrong fixed start, wrong total and malformed/nonfinite times rejected with diagnostics.
+- [x] Implement domain checks plus human-readable fixture report; GREEN targeted and whole suite. This does not certify optimized maintenance decisions or research completion.
+- [x] On authorized completion: native001/002, full coverage>=80%, one fresh review, important fixes with regressions, commit tested work; leave AGV/RL/transport scope unchanged and document that G2 optimization remains future work.

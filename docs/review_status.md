@@ -1,5 +1,15 @@
 # Platform Review Status
 
+## Graduation G1 implementation 2026-10-25
+
+- User explicitly released G1 only: identical machines, one nonpreemptive operation per job, release0, exactly one mandatory maintenance per machine including idle machines, full-interval windows and no shared crew. Existing AGENTS, research contracts and runtime approval decisions are unchanged.
+- `src/graduation/` adds immutable task/maintenance data, a production-only FJSP adapter, a ScheduleResult-compatible maintenance result, exact total tardiness and a separate domain checker. It composes the unchanged static checker with mandatory maintenance, full windows, duration, production overlap, fixed-start and reported-T checks. Invalid production yields no valid metric; validation does not repair results.
+- G1 tests observed RED before implementation, then **73 passed**. Literal manual schedules give total tardiness4/0 and6/0; they are calculation/legality fixtures, not optimizer outcomes or scientific comparison results.
+- Complete Windows suite: **437 passed**, **88.37%** coverage with unchanged80% threshold;13 upstream deprecation warnings. Native001/002 pass with toy CP-SAT makespan11 OPTIMAL. Their tracked CSV/Gantt artifacts were restored byte-for-byte;019/020 protocol/evidence and original static/dynamic checkers are unchanged.
+- One fresh read-only review found no Critical/Important issues; its Declined-to-judge list was empty. Deferred minor: deleting a required attribute from an already constructed mutable MaintenanceRecord can raise AttributeError rather than return diagnostics. No invalid schedule is accepted through this path; ordinary malformed values/containers are covered.
+- G2 maintenance optimization and formal comparisons remain unimplemented. The LangGraph route has not been connected to the new domain checker and cannot automatically certify G1 or graduation acceptance. Prior runtime sessions bind older source fingerprints; no approvals were replayed or generated. Both research tracks remain not achieved.
+- [G1 scope, interfaces and rerunnable fixtures](graduation_g1_validation.md); [execution ledger](superpowers/plans/2026-10-25-graduation-g1-progress.md).
+
 ## Graduation design confirmation 2026-10-25
 
 - User selected graduation as the priority and confirmed the first-edition assumptions: identical machines, one mandatory maintenance per machine including idle machines, and complete maintenance intervals inside their windows.
