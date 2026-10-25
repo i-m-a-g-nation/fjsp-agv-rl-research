@@ -33,3 +33,11 @@ User explicitly answered the evidence-specific question: “批准 evidence，�
 Native resume exit3/WAITING_HUMAN/conclusion; approved review stages exactlyscope/evidence, provider0, active8.422/120s. Fixed plan: maintenance0..2,J1production2..4,J0production4..6,T4,Cmax6. Joint: J0production0..2,J1production2..4,maintenance4..6,T0,Cmax4. BothOPTIMAL,raw objectives/bounds4/0,gap0; independently recomputed sum of positive tardiness and verified stored domain/metadata and all registered hashes.
 
 Manifest hash a3426e17a5b868c3c9a299a4146ff82b395fb244b4787b4853d2cc8cea0fc42e, pendingconclusion9b3a96b2645e397a528ccc4e5df2e955590477265fb5c9a2b641625ef56474b7. Researchnot_achieved and formal comparison/final algorithm/taskbook gates preserved. Documentation only; no source changes or unnecessary repeated full suite.
+
+## Actual conclusion approval and terminal closeout
+
+User explicitly answered “批准 conclusion，仅确认本次参考运行” for9b3a96b2645e397a528ccc4e5df2e955590477265fb5c9a2b641625ef56474b7. Verified exact pending stage/hash, source/request identity and immutable manifest/domain results before writing conclusion-user-approval-20261025.json with reviewerhuman_user_via_chat and that limited authorization.
+
+NativeCLI returned2 as designed: statusCOMPLETED,overallGRADUATION_REFERENCE,researchnot_achieved,no pending_review, exactscope/evidence/conclusion real approvals,provider0,active10.984/120s. Exportedreport.json agrees and contains3reviews. Manifest hash unchanged a3426e17a5b868c3c9a299a4146ff82b395fb244b4787b4853d2cc8cea0fc42e; saved results revalidated after terminal completion, fixed/joint4/0OPTIMAL. Final report appends human-run acknowledgment while preserving research gaps.
+
+Closeout only updates documentation and local ignored session artifacts. No runtime/source changes, no repeated full suite, no new implementation phase or scientific acceptance. Completed session cannot inherit/replay old approvals into another run. Remaining work is G3 formal protocol, final algorithm/taskbook confirmation and innovation logistics/RL/research outcomes.

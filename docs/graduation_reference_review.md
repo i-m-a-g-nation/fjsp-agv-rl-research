@@ -1,8 +1,8 @@
 # 当前毕设参考会话：人审摘要
 
-本地会话：`experiments/ai_memory/graduation/g2-reference-v1`。本页帮助理解待审JSON，不替代原始材料和绑定哈希。2026-10-25用户先明确批准scope，再明确批准evidence运行两份参考求解。真实决定均已记录，现已求解并停在conclusion，尚未批准结论，模型调用0。后续状态以原始[待审材料](../experiments/ai_memory/graduation/g2-reference-v1/review-request.json)为准。
+本地会话：`experiments/ai_memory/graduation/g2-reference-v1`。2026-10-25用户分别明确批准scope、evidence和conclusion，真实决定均已记录；会话现为COMPLETED/GRADUATION_REFERENCE，研究状态仍为not_achieved，模型调用0。本页解释已审材料与结果，不替代原始哈希和记录；见[最终报告](../experiments/ai_memory/graduation/g2-reference-v1/report.md)、[最终结构化记录](../experiments/ai_memory/graduation/g2-reference-v1/report.json)。
 
-## 当前conclusion材料：实际结果
+## 已审核的实际结果
 
 | 模式 | 实际生产计划 | 实际维护 | 总延期 | 生产makespan | 状态/下界/gap |
 |---|---|---|---:|---:|---|
@@ -11,11 +11,13 @@
 
 固定方案中J1按期完成，J0延期6−2=4；联合方案两任务均按期完成。每任务一次、每机一次必需维护、完整窗口、互斥、时长及总延期重算均通过；原始目标与独立延期一致。固定方案与此前另一任务顺序的手算计划不同，但最优总延期相同。
 
-[本地原始报告](../experiments/ai_memory/graduation/g2-reference-v1/graduation_run/report.md)、[固定计划](../experiments/ai_memory/graduation/g2-reference-v1/graduation_run/fixed.json)、[联合计划](../experiments/ai_memory/graduation/g2-reference-v1/graduation_run/joint.json)已保存，manifest及四份登记产物的字节哈希、保存计划的领域/元数据检查已重新核对。全部当前主动执行累计约8.422秒，原预算120秒；模型/供应商调用0。
+[本地原始报告](../experiments/ai_memory/graduation/g2-reference-v1/graduation_run/report.md)、[固定计划](../experiments/ai_memory/graduation/g2-reference-v1/graduation_run/fixed.json)、[联合计划](../experiments/ai_memory/graduation/g2-reference-v1/graduation_run/joint.json)已保存，manifest及四份登记产物的字节哈希、保存计划的领域/元数据检查在结论恢复前后重新核对。最终累计主动执行约10.984秒，原预算120秒；模型/供应商调用0。
 
-当前conclusion哈希为`9b3a96b2645e397a528ccc4e5df2e955590477265fb5c9a2b641625ef56474b7`，manifest哈希为`a3426e17a5b868c3c9a299a4146ff82b395fb244b4787b4853d2cc8cea0fc42e`。批准本阶段只确认本次参考运行记录，不把一例4对0外推为普遍性能优势、创新性或毕设/大创验收完成；研究状态仍为not_achieved。
+已批准conclusion哈希为`9b3a96b2645e397a528ccc4e5df2e955590477265fb5c9a2b641625ef56474b7`，manifest哈希为`a3426e17a5b868c3c9a299a4146ff82b395fb244b4787b4853d2cc8cea0fc42e`。用户明确选择“批准 conclusion，仅确认本次参考运行”，不把一例4对0外推为普遍性能优势、创新性或毕设/大创验收完成；研究状态仍为not_achieved。
 
-## 现在审核什么
+真实审核顺序为scope→evidence→conclusion，三份决定的reviewer均为human_user_via_chat，依据本会话逐项明确确认记录。最终CLI返回2，含义是本次参考运行完成但课题尚未达成，不是执行失败。已完成会话不能重放旧批准；遗留review-request.json/decision-template.json是最后一轮材料，是否待审应以status.json和真实检查点为准。
+
+## 本次审核范围
 
 | 项目 | 本次具体内容 |
 |---|---|
