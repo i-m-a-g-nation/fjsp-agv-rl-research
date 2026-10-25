@@ -25,3 +25,11 @@ User requested continuation; independently add the previously deferred tests wit
 The user explicitly answered the scope-specific async question: “批准当前 scope，仅进入下一道审核”. Recorded reviewerhuman_user_via_chat and scope hashd92891e077170e6f79493bd90a90464df42256bec5edb062f61223a896228fff in the local scope-user-approval-20261025.json. CLI resumed only that gate, exit3,WAITING_HUMAN/evidence; exactly one real approved review(scope), provider0, no graduation_run output. Pending evidence hashff6ff76f3f863a53ab87213892b9d9f05c16627c6de824097236e4af97ea61c5; model/request/code identity unchanged. Evidence question remains separate and does not infer approval from the scope answer.
 
 Follow-up complete: `python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80 -q` ->538passed,13upstream warnings,88.82%coverage,290.77s,exit0. Deferred regression-protection item resolved with existing behavior intact, no runtime implementation change or additional feature review required. Actual evidence approval remains pending; no solver invocation in the real session and no fabricated decision. Tests/docs commit preserves the session code fingerprint.
+
+## Actual evidence decision and reference execution
+
+User explicitly answered the evidence-specific question: “批准 evidence，运行两份参考求解”. Verified exactff6ff76f3f863a53ab87213892b9d9f05c16627c6de824097236e4af97ea61c5, original request hash and current source identity, then wrote evidence-user-approval-20261025.json with reviewerhuman_user_via_chat and the exact authorization scope. No conclusion approval.
+
+Native resume exit3/WAITING_HUMAN/conclusion; approved review stages exactlyscope/evidence, provider0, active8.422/120s. Fixed plan: maintenance0..2,J1production2..4,J0production4..6,T4,Cmax6. Joint: J0production0..2,J1production2..4,maintenance4..6,T0,Cmax4. BothOPTIMAL,raw objectives/bounds4/0,gap0; independently recomputed sum of positive tardiness and verified stored domain/metadata and all registered hashes.
+
+Manifest hash a3426e17a5b868c3c9a299a4146ff82b395fb244b4787b4853d2cc8cea0fc42e, pendingconclusion9b3a96b2645e397a528ccc4e5df2e955590477265fb5c9a2b641625ef56474b7. Researchnot_achieved and formal comparison/final algorithm/taskbook gates preserved. Documentation only; no source changes or unnecessary repeated full suite.

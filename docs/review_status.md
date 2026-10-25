@@ -1,5 +1,11 @@
 # Platform Review Status
 
+## Actual evidence approval and reference execution 2026-10-25
+
+- User explicitly approved evidenceff6ff76f… through this chat, authorizing exactly two fixed/joint references and a pause atconclusion. Recorded the actual human_user_via_chat decision; no conclusion approval inferred.
+- Native persistent CLI resumed with unchanged input/source identity and returned3/WAITING_HUMAN/conclusion. Actual fixedT4/makespan6 and jointT0/makespan4, bothOPTIMAL, bounds4/0,gaps0. Original objectives match independent tardiness; all saved artifacts and reconstructed plans rechecked. Provider0, cumulative active time8.422s of120s.
+- Pending conclusion9b3a96b2645e397a528ccc4e5df2e955590477265fb5c9a2b641625ef56474b7 binds manifesta3426e17a5b868c3c9a299a4146ff82b395fb244b4787b4853d2cc8cea0fc42e. Research remainsnot_achieved. [Current review and actual plans](graduation_reference_review.md). This operation changes only local session state and documentation; latest code verification remains538passed/88.82%, not a new full test run.
+
 ## Boundary follow-up and actual scope decision 2026-10-25
 
 - Addressed the previous review's deferred test-strengthening item with13new regression cases: valid-but->1MiB JSON,51tasks/11machines, numeric horizon/due limits, missing/extra artifacts, and saved maintenance/objective/tardiness corruption after recomputing synthetic fixture hashes. These tests exercise existing guards; no src/, solver, CLI, contract or archived scientific evidence changed.

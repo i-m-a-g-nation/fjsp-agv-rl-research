@@ -48,10 +48,12 @@ $workflowPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'pyth
 
 ## 验证记录
 
-本轮backend、graph/session、CLI测试及完整回归、独立审查见`review_status.md`和`superpowers/plans/2026-10-25-graduation-workflow-progress.md`。真实会话首次停scope；后续用户明确批准scope后仅恢复到evidence，尚未求解、供应商调用0。完整三审此前仅在测试中使用临时synthetic决定，不能视为真实会话放行。
+本轮backend、graph/session、CLI测试及完整回归、独立审查见`review_status.md`和`superpowers/plans/2026-10-25-graduation-workflow-progress.md`。真实会话首次停scope；后续用户分别明确批准scope、evidence，现已完成两份参考求解并停在conclusion，尚未批准结论、供应商调用0。临时synthetic测试决定不构成真实会话放行。
 
 接入阶段完整回归525项通过、覆盖率88.71%；随后补强13项边界反例，最新完整回归538项通过、覆盖率88.82%（门槛80%）。运行代码未改，基础001/002的前轮通过记录和既有证据保留。
 
 已用已测源码`516f067`创建本地演示会话`experiments/ai_memory/graduation/g2-reference-v1`，退出码3，WAITING_HUMAN/scope，供应商调用0，尚未求解且决定模板为空。原始请求哈希、会话code_hash及scope中的session_spec_hash均核对一致。阅读[本地scope待审材料](../experiments/ai_memory/graduation/g2-reference-v1/review-request.json)；该目录为本地忽略产物，其他机器应按上文新建会话，不能假定随Git克隆存在。
+
+上述为首次创建记录；当前待审阶段已是conclusion。实际固定/联合总延期4/0，均OPTIMAL、下界4/0、gap0，保存计划已重检；详见[当前人审摘要](graduation_reference_review.md)。本地review-request.json始终表示最新待审阶段，不是旧scope材料的固定文件名。
 
 独立审查未发现Critical/Important问题。此前低优先级回归保护建议已在用户要求继续后补入13项反例：超限输入、缺失/额外文件、重算临时测试哈希后的非法维护/目标元数据/延期；后端30项专项及上述538项完整回归已通过，运行代码未变。
