@@ -18,6 +18,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from experiments.common import record_from_run, run_solver_once, write_results_csv
 from src.data.instance import create_toy_instance
 from src.solvers.heuristics import (
+    earliest_available_machine_solve,
     fifo_solve,
     spt_solve,
     earliest_finish_time_solve,
@@ -41,6 +42,7 @@ def main() -> None:
     methods = [
         ("FIFO", lambda: fifo_solve(instance)),
         ("SPT", lambda: spt_solve(instance)),
+        ("EarliestAvailableMachine", lambda: earliest_available_machine_solve(instance)),
         ("EarliestFinishTime", lambda: earliest_finish_time_solve(instance)),
     ]
     for seed in [42, 123, 999]:

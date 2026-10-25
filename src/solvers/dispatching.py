@@ -16,6 +16,7 @@ _SelectFn = Callable[[List[_Candidate], FJSPInstance, random.Random | None], _Ca
 __all__ = [
     "dispatch_fifo_solve",
     "dispatch_spt_solve",
+    "dispatch_eam_solve",
     "dispatch_eft_solve",
     "dispatch_mwkr_solve",
     "dispatch_mopnr_solve",
@@ -106,6 +107,22 @@ def dispatch_fifo_solve(instance: FJSPInstance) -> ScheduleResult:
         return min(op_candidates, key=lambda c: (c[5], c[6], c[2]))
 
     return _dispatch_solve(instance, _fifo_select)
+
+
+def dispatch_eam_solve(instance: FJSPInstance) -> ScheduleResult:
+    """Project EAM variant: FIFO operation, then earliest feasible machine start.
+
+    Select the operation by (ready_time, job_id, op_id), then its machine by
+    (max(job_ready, machine_ready), machine_id). Processing time does not rank
+    machines; tied feasible starts use machine ID even if raw idle times differ.
+    """
+
+    def _eam_select(candidates, _inst, _rng):
+        operation = min((c[3], c[0], c[1]) for c in candidates)
+        choices = [c for c in candidates if (c[3], c[0], c[1]) == operation]
+        return min(choices, key=lambda c: (c[4], c[2]))
+
+    return _dispatch_solve(instance, _eam_select)
 
 
 def dispatch_spt_solve(instance: FJSPInstance) -> ScheduleResult:

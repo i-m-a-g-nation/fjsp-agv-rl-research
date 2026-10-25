@@ -10,6 +10,7 @@ Algorithms:
 
 - FIFO
 - SPT
+- EarliestAvailableMachine (FIFO operation, then earliest feasible start / machine-ID tie)
 - EarliestFinishTime
 - Random with seeds 42, 123, and 999
 
@@ -25,6 +26,7 @@ Expected output:
 |---|---:|
 | FIFO | 14 |
 | SPT | 13 |
+| EarliestAvailableMachine | 11 |
 | EarliestFinishTime | 13 |
 | Random(s=42) | 14 |
 | Random(s=123) | 14 |
@@ -54,6 +56,7 @@ Expected output:
 |---|---:|---|
 | FIFO | 14 | HEURISTIC |
 | SPT | 13 | HEURISTIC |
+| EarliestAvailableMachine | 11 | HEURISTIC |
 | EarliestFinishTime | 13 | HEURISTIC |
 | Random(42) | 14 | HEURISTIC |
 | CP-SAT(tl=30s) | 11 | CP-SAT optimal |

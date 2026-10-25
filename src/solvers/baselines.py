@@ -10,6 +10,7 @@ __all__ = [
     "fifo_solve",
     "spt_solve",
     "earliest_finish_time_solve",
+    "earliest_available_machine_solve",
     "random_solve",
 ]
 
@@ -60,6 +61,13 @@ def spt_solve(instance: FJSPInstance) -> ScheduleResult:
             assignment.append((job_id, op_id, best_machine))
 
     return _decode_and_validate(assignment, instance, "spt_solve")
+
+
+def earliest_available_machine_solve(instance: FJSPInstance) -> ScheduleResult:
+    """FIFO-ready operation plus earliest feasible start/machine-ID EAM variant."""
+    from src.solvers.dispatching import dispatch_eam_solve
+
+    return dispatch_eam_solve(instance)
 
 
 def earliest_finish_time_solve(instance: FJSPInstance) -> ScheduleResult:

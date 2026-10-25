@@ -1,5 +1,14 @@
 # Platform Review Status
 
+## Phase 2A closeout and EAM correction 2026-10-25
+
+- Audit found the required EAM baseline was previously absent; EFT did not satisfy that separate requirement. Added the declared FIFO-operation / earliest feasible start / machine-ID-tie variant through existing dispatch and checker APIs, public facades and001/002.
+- Five new EAM regressions observed failing before implementation; targeted heuristic suite36 passed. Final full suite **364 passed**, **88.11%** coverage, unchanged80% threshold;13 upstream deprecation warnings, no failures/skips.
+- Native001/002 pass, toy EAM11 matches CP-SAT-certified optimum11 for this instance only. EAM remains HEURISTIC. Native CSV and best Gantt intentionally refreshed;019/020 archives/protocols and checkers unchanged.
+- Fresh read-only code/domain review found no Critical/Important issues. Independent200-seeded-instance probes verified FIFO/EAM semantics, option-order invariance and legality; checker refusal propagated. Builder check found no consequential questions beyond the explicitly pending model assumptions/taskbook.
+- Deferred minor suggestions: add explicit optimal-value-preservation prose to the correct graduation horizon H; add a persistent EAM FIFO-ready-order witness. Current implementation and horizon value checked correct; no future-model code implemented.
+- Re-read original proposal and verified saved artifacts. Engineering self-check is separate from human approval, original simulation/publication outcomes and both research acceptances. [Closeout](phase2a_acceptance.md); [unconfirmed graduation draft](graduation_model_draft.md).
+
 ## Sequential event replay 2026-10-25
 
 - Final Windows full suite: **359 passed**, **88.08%** source coverage, unchanged **80%** threshold. Thirteen upstream Matplotlib/pyparsing deprecation warnings; no failed or skipped tests.

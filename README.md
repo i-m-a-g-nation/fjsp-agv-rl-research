@@ -107,12 +107,13 @@ If you use `FJSP_CONDA_ENV`, replace `.\.conda-env\python.exe` with the Python e
 |---|---:|---|
 | FIFO | 14 | PASS |
 | SPT | 13 | PASS |
+| EarliestAvailableMachine | 11 | PASS |
 | EarliestFinishTime | 13 | PASS |
 | Random(s=42) | 14 | PASS |
 | Random(s=123) | 14 | PASS |
 | Random(s=999) | 20 | PASS |
 
-Best heuristic result on the toy instance: makespan 13.
+Best heuristic result on the toy instance: makespan 11, from the newly registered EAM baseline. This matches this toy instance's CP-SAT-certified optimum, without proving general optimality of EAM.
 
 ### Experiment 002: Heuristics vs CP-SAT
 
@@ -120,6 +121,7 @@ Best heuristic result on the toy instance: makespan 13.
 |---|---:|---|
 | FIFO | 14 | HEURISTIC |
 | SPT | 13 | HEURISTIC |
+| EarliestAvailableMachine | 11 | HEURISTIC |
 | EarliestFinishTime | 13 | HEURISTIC |
 | Random(42) | 14 | HEURISTIC |
 | CP-SAT(tl=30s) | 11 | CP-SAT optimal |
@@ -386,11 +388,13 @@ refreshes the Phase 2A dynamic report chain, and runs core coverage:
 python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 ```
 
-The 2026-10-25 local suite has 359 passing tests and 88.08% coverage across all of `src`, including the research workflow and supervised subprocesses. The CI minimum remains 80%. The research CLI pauses for durable scope, evidence, and conclusion review, enforces cumulative per-session execution/call budgets, and traces individual claims to target-text quotations and supported PDF page locations. Literal matching still requires scientific review; caches are bound to the requested paper.
+The 2026-10-25 local suite has 364 passing tests and 88.11% coverage across all of `src`, including the research workflow and supervised subprocesses. The CI minimum remains 80%. The research CLI pauses for durable scope, evidence, and conclusion review, enforces cumulative per-session execution/call budgets, and traces individual claims to target-text quotations and supported PDF page locations. Literal matching still requires scientific review; caches are bound to the requested paper.
 
 The fixed [Phase 2A protocol](docs/phase2a_experiment_protocol.md) runs existing dynamic FIFO/SPT/EFT baselines with complete input, event, schedule and failure evidence. The saved matrix has 243 feasible runs, 27 declared configurations and 23 distinct snapshots; an independent directory replay matches the deterministic digest. [Research acceptance](docs/research_acceptance_map.md) remains separate from baseline success.
 
 [Sequential replay validation](docs/phase2a_sequential_validation.md) additionally checks 9 small episodes / 18 timestamp groups, preserving the preceding plan's frozen history at every event. It uses the existing rules and reports failures without accepting partial episode results.
+
+The [Phase 2A closeout checklist](docs/phase2a_acceptance.md) records engineering evidence separately from human acceptance. It corrects the previously missing EAM requirement and identifies the proposal's remaining logistics/RL/publication outcomes. The [graduation model draft](docs/graduation_model_draft.md) is an unimplemented candidate with unconfirmed assumptions; current code remains Phase 2A.
 
 ## Threats to Validity
 
