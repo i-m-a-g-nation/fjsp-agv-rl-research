@@ -1,5 +1,14 @@
 # Platform Review Status
 
+## G3 reference protocol and RL direction draft 2026-10-25
+
+- User requested next-stage continuation and clarified “暂不清楚，但最好加强化学习”. RL is the preferred research direction, while the full taskbook requirement remains unconfirmed. No RL implementation/training or formal G3 result inferred.
+- Prepared [G3A paired reference protocol](graduation_g3_protocol_draft.md) and [machine-readable unapproved proposal](graduation_g3_protocol_draft.json):160primary plus80sensitivity pairs,480CP-SAT calls at1s, predeclared fixed policies and independent input/solver seeds. Separate pilot90s and main600s active ceilings, provider/token0; total planned active ceilings690s. Current single-request workflow cannot execute this matrix; new bounded backend and fresh human gates remain required.
+- Exact generation, same-input pairing, common random streams, duplicate identities, failure/NOT_RUN rows, zero denominators and bound-based optimal-difference intervals are specified. Ten root workloads are not240independent samples. No statistical/general performance claim made.
+- [RL draft](graduation_rl_design_draft.md) proposes maskedPPO as a candidate, finite append-only task/mandatory-maintenance actions,100padded action slots,n+msteps and undiscounted return=-T/100. It includes an optimal-value-preserving construction argument, no-training R1 tests, rules before training and separate methods×modes/data-isolation requirements. Candidate libraries were checked only against primary documentation/paper; no dependency installation or model training.
+- One fresh independent builder check returned“nothing important left” for planning G3A/R1. Dedicated-environment arithmetic check passed160+80pairs/480calls, valid existing BudgetLimits90/600, pilot12pairs and oracle upper9504states. JSON draft SHA2568ee2a4291f3274744e39ab14db1cbfe0d553893a017c2545357f3ce7e94558a1. This validates design consistency, not experimental outcomes.
+- Draft documentation only; source/checkers/solvers/contracts/AGENTS/dependencies and archived evidence remain unchanged. Last runtime verification is538passed/88.82%, not a repeated full suite. Both research tracks remain not_achieved; completed G2 human decisions do not authorize new batch or training runs.
+
 ## Actual three-review session closeout 2026-10-25
 
 - User explicitly approved conclusion9b3a96b2… solely for this reference run. Before recording and resuming, checked pending hash, unchanged source/request and saved artifact/domain metadata. Decision reviewerhuman_user_via_chat reflects actual chat authorization, not a synthetic test review.

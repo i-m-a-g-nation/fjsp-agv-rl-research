@@ -1,0 +1,86 @@
+{
+  "protocol_id": "graduation-g3a-reference-draft-v0.1",
+  "approval_status": "draft_unapproved",
+  "execution_supported": false,
+  "purpose": "paired_reference_model_comparison_not_final_algorithm_evaluation",
+  "model": "graduation_g2_identical_singleop_v1",
+  "generator": {
+    "id": "g3a-integer-generator-proposal-v1",
+    "rng": "python_random_Random_randint_runtime_version_pinned",
+    "seed_key_template": "graduation-g3a-v1|n={n}|seed={instance_seed}|field={field}",
+    "seed_derivation": "sha256_utf8_first_8_bytes_big_endian_unsigned",
+    "processing_time_range": [1, 20],
+    "due_quantile_percent_range": [50, 150],
+    "maintenance_start_quantile_percent_range": [0, 25],
+    "base_load": "W=ceil(sum(p)/m)",
+    "maintenance_duration": "q_i=max(1,ceil(alpha_percent*W/100))",
+    "maintenance_slack": "s_i=ceil(beta_percent*W/100)",
+    "window_start": "L_i=floor(start_quantile_i*W/100)",
+    "window_end": "U_i=L_i+q_i+s_i",
+    "due_date": "d_j=ceil(tau_percent*W*due_quantile_j/10000)"
+  },
+  "primary": {
+    "num_tasks": [8, 24],
+    "num_machines": [2, 4],
+    "alpha_percent": [10, 30],
+    "beta_percent": [25, 75],
+    "tau_percent": [75, 125],
+    "instance_seeds": [101, 202, 303, 404, 505],
+    "fixed_policies": ["window_midpoint"],
+    "modes": ["fixed", "joint"],
+    "condition_cells": 32,
+    "paired_requests": 160,
+    "solver_calls": 320
+  },
+  "sensitivity": {
+    "subset": {"num_tasks": [8], "num_machines": [2]},
+    "other_factors": "inherit_primary_alpha_beta_tau_and_seeds",
+    "additional_fixed_policies": ["window_earliest", "window_latest"],
+    "modes": ["fixed", "joint"],
+    "base_cases": 40,
+    "paired_requests": 80,
+    "solver_calls": 160
+  },
+  "pilot": {
+    "num_tasks": [3],
+    "num_machines": [2],
+    "processing_time_range": [1, 4],
+    "alpha_percent": [10, 30],
+    "beta_percent": [25, 75],
+    "tau_percent": [100],
+    "instance_seeds": [11, 22, 33],
+    "fixed_policies": ["window_midpoint"],
+    "modes": ["fixed", "joint"],
+    "paired_requests": 12,
+    "solver_calls": 24,
+    "oracle_max_states": 200000,
+    "oracle_per_case_state_upper_bound": 9504,
+    "max_active_seconds": 90,
+    "provider_calls": 0,
+    "output_tokens": 0
+  },
+  "solver": {"time_limit": 1.0, "num_workers": 1, "seed": 42, "timing_repetitions": 1},
+  "main_budget": {
+    "paired_requests": 240,
+    "solver_calls": 480,
+    "solver_seconds_ceiling_sum": 480,
+    "max_active_seconds": 600,
+    "provider_calls": 0,
+    "output_tokens": 0,
+    "retry_failed_runs": false,
+    "timeout_status": "BUDGET_EXHAUSTED_with_unfinished_rows_NOT_RUN"
+  },
+  "required_review_gates": ["scope", "evidence", "conclusion"],
+  "session_structure": {
+    "pilot_and_main_are_separate_sessions": true,
+    "combined_planned_active_seconds_ceiling": 690,
+    "pilot_pass_does_not_auto_approve_main": true
+  },
+  "final_algorithm": {
+    "taskbook_requirement": "unconfirmed",
+    "user_preference": "prefer_reinforcement_learning",
+    "candidate": "masked_PPO_proposal_not_selected_or_implemented",
+    "training_authorized_by_this_file": false,
+    "separate_algorithm_evaluation_protocol_required": true
+  }
+}

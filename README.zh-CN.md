@@ -10,6 +10,8 @@ Phase 2A 在已经验证的 Phase 1 静态 FJSP 底座上加入动态事件和�
 
 用户已批准毕设G1数据/延期/维护检查、G2固定/联合参考求解及独立枚举。现有`--graduation-request`专用离线路线已将参考后端接入三道人审，重新核对保存的维护计划，不经过RAG/模型/代码生成。见[毕设三审使用说明](docs/graduation_workflow.md)、[G2验证](docs/graduation_g2_validation.md)。
 
+后续已起草[G3参考对照协议](docs/graduation_g3_protocol_draft.md)及[RL建模与验收方案](docs/graduation_rl_design_draft.md)。用户偏好加入RL，完整任务书算法要求仍待核对；这些是未冻结/未执行的设计，不是现已具备训练能力或课题达标证据。
+
 ## 当前范围
 
 Phase 1 已覆盖：

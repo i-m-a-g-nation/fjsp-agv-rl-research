@@ -1,0 +1,15 @@
+# G3 protocol and RL design drafting ledger
+
+Baseline37f3c70, clean managed branch at start. User requested continuation after the completed actual three-review reference session; this turn delivers the next G3 protocol design. User answered algorithm-requirement question “暂不清楚，但最好加强化学习”. Treat RL as preferred direction, not a verified taskbook mandate. No dataset/compute parameters silently attributed to the user.
+
+Deliverables: docs/graduation_g3_protocol_draft.md and.json (unapproved, execution_supported=false), docs/graduation_rl_design_draft.md. Current implementation/solver/checkers, frozen contracts/AGENTS, dependency declarations and existing018–021 evidence untouched. No formal G3 run, RL dependency installation, environment implementation or training.
+
+Protocol decisions proposed by this design: primary32cells×5seeds=160paired requests; predeclared early/latest sensitivity80pairs;480fixed/joint solver calls at1s each. Separate pilot12pairs/24calls with independent tiny oracle and90sactive cap; main600sactive cap, bothzero providers/tokens, combined690splanned active ceilings. Common random streams imply10base workloads, not240independent samples; exact hashes and duplicate aliases required. Bound-based optimal-difference interval and honest failed/FEASIBLE reporting specified.
+
+RL proposal: 100slot masked-PPO candidate with n_max24/m_max4, task-machine or mandatory-maintenance append actions, exactlyn+msteps, reward-Tj/100 and gamma1 so complete return=-T/100. First-edition optimal-value-preserving left-shift argument and R1 no-training acceptance listed; separate methods×modes evaluation and train/dev/test identities prevent mixed-factor or leakage claims. Candidate choice is not a performance result. Primary MaskablePPO docs and action-masking paper checked2026-10-25; actual package versions/CPU-GPU/train budgets remain for later R3 freeze.
+
+Fresh independent builder check, authorized by brainstorming skill, returned “nothing important left” for planning G3A and R1. It did not implement or run anything. No additional human-only questions beyond already declared taskbook/hardware/training-stage decisions. Self-check clarified four maintenance RNG quantiles per base workload, explicit two-pass run order and separate pilot/main sessions.
+
+Dedicated-environment arithmetic/configuration check verified160+80pairs,480calls/480solver-seconds, main BudgetLimits600s valid, pilot12pairs and oracle264states-per-maintenance-combination×36=9504 <=200000; action slots24×4+4=100. This is a design consistency check, not experimental results. Docs-only change; last source verification remains538passed/88.82%, no redundant full suite.
+
+Final JSON draft SHA2568ee2a4291f3274744e39ab14db1cbfe0d553893a017c2545357f3ce7e94558a1. Pilot/main are separate90/600s sessions (combined690planned ceiling), each new review cycle; pilot pass never starts/approves main automatically. All numeric choices remain proposed, not frozen. Deliver drafts on current branch and suggest R1no-training environment as the next implementation milestone; do not claim G3/RL execution complete.
