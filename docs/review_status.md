@@ -1,5 +1,12 @@
 # Platform Review Status
 
+## Boundary follow-up and actual scope decision 2026-10-25
+
+- Addressed the previous review's deferred test-strengthening item with13new regression cases: valid-but->1MiB JSON,51tasks/11machines, numeric horizon/due limits, missing/extra artifacts, and saved maintenance/objective/tardiness corruption after recomputing synthetic fixture hashes. These tests exercise existing guards; no src/, solver, CLI, contract or archived scientific evidence changed.
+- Backend30passed; complete dedicated-environment Windows run **538 passed**, **88.82%** coverage with unchanged80% gate,13upstream warnings,290.77s. Existing implementation was already correct; no runtime fix or repeated source review was necessary. Earlier525pass/88.71% is the integration-stage record.
+- User explicitly approved the concrete scope request through this chat, limited to entering the next review. Actual local decision recorded with reviewerhuman_user_via_chat and scoped92891e0…; native resume returned3/WAITING_HUMAN/evidence. One real approved stage(scope), provider0, no solver output. Evidenceff6ff76f… awaits separate approval; no evidence/conclusion decision inferred.
+- [Human-readable current review](graduation_reference_review.md) explains the exact2job/1machine request, fixed/joint fairness,10second/one-worker/seed42 limits and remaining research gates. Code identity remains compatible with the real pending session because only tests/docs changed. G3 and innovation research are unaffected.
+
 ## Graduation supervised backend integration 2026-10-25
 
 - Added a dedicated offline `--graduation-request` route for the approved G1/G2 reference model. It reuses persistent SQLite checkpoints, scope/evidence/conclusion interrupts, cumulative budgets, source/runtime identity and process supervision; no RAG/network/model/codegen or fabricated human decisions. Existing paper/selector and dynamic protocol routes retain their scope.

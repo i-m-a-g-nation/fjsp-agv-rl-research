@@ -77,3 +77,72 @@ def test_backend_rechecks_domain_metadata_and_preserves_feasible_status(graduati
     else:
         assert result['status'] == 'FAILED' and result['accepted_runs'] == 0
         assert all(row['total_tardiness'] is None for row in result['results'].values())
+
+
+@pytest.mark.parametrize('boundary', ['file_bytes', 'tasks', 'machines', 'horizon', 'due_date'])
+def test_request_resource_limits_reject_otherwise_well_formed_models(graduation_request, boundary):
+    from src.ai_workflow.graduation_backend import describe_graduation_request
+    value = json.loads(graduation_request.read_text())
+    if boundary == 'tasks':
+        value['tasks'] = [{'job_id': j, 'processing_time': 1, 'due_date': 1} for j in range(51)]
+    if boundary == 'machines':
+        value['num_machines'] = 11
+        value['maintenance'] = [{**value['maintenance'][0], 'machine_id': m} for m in range(11)]
+    if boundary == 'horizon': value['tasks'][0]['processing_time'] = 2**49
+    if boundary == 'due_date': value['tasks'][0]['due_date'] = 2**50 + 1
+    raw = json.dumps(value).encode('utf-8')
+    if boundary == 'file_bytes':
+        # Valid JSON plus whitespace: without the size guard parsing would succeed.
+        raw += b' ' * (1048577 - len(raw))
+    graduation_request.write_bytes(raw)
+    with pytest.raises(ValueError): describe_graduation_request(graduation_request)
+
+
+@pytest.mark.parametrize('change', ['missing_plan', 'missing_report', 'extra_file', 'extra_registered_file'])
+def test_artifact_inventory_rejects_missing_or_additional_files(graduation_request, tmp_path, change):
+    from src.ai_workflow.graduation_backend import describe_graduation_request, run_graduation_request, verify_graduation_artifacts
+    output = tmp_path / 'out'
+    run_graduation_request(graduation_request, output,
+                          expected_request_hash=describe_graduation_request(graduation_request)['request_hash'])
+    if change.startswith('missing'):
+        (output / ('fixed.json' if change == 'missing_plan' else 'report.md')).unlink()
+    else:
+        extra = output / 'extra.json'
+        extra.write_text('{}', encoding='utf-8')
+        if change == 'extra_registered_file':
+            manifest = json.loads((output / 'manifest.json').read_text(encoding='utf-8'))
+            manifest['artifacts']['extra.json'] = hashlib.sha256(extra.read_bytes()).hexdigest()
+            (output / 'manifest.json').write_text(json.dumps(manifest), encoding='utf-8')
+    digest = hashlib.sha256((output / 'manifest.json').read_bytes()).hexdigest()
+    with pytest.raises(ValueError): verify_graduation_artifacts(output, digest)
+
+
+@pytest.mark.parametrize('change', ['overlap', 'missing_maintenance', 'objective_metadata', 'forged_tardiness'])
+def test_saved_plan_semantics_are_rechecked_after_synthetic_hashes_match(graduation_request, tmp_path, change):
+    """Rehash only temporary fixtures to reach the independent semantic layer.
+
+    Real session approvals pin the original manifest hash; no actual reviewed
+    artifact or human decision is edited by this test.
+    """
+    from src.ai_workflow.graduation_backend import describe_graduation_request, run_graduation_request, verify_graduation_artifacts
+    output = tmp_path / 'out'
+    manifest = run_graduation_request(graduation_request, output,
+                          expected_request_hash=describe_graduation_request(graduation_request)['request_hash'])
+    plan_path = output / 'fixed.json'
+    saved = json.loads(plan_path.read_text(encoding='utf-8'))
+    result = saved['result']
+    if change == 'overlap':
+        result['maintenance_records'][0].update(start=1, end=3)
+    if change == 'missing_maintenance': result['maintenance_records'].clear()
+    if change in ('objective_metadata', 'forged_tardiness'):
+        for field in ('solver_objective_value', 'solver_objective_bound'):
+            result[field] += 1
+            manifest['results']['fixed'][field] = result[field]
+    if change == 'forged_tardiness':
+        result['total_tardiness'] += 1
+        manifest['results']['fixed']['total_tardiness'] = result['total_tardiness']
+    plan_path.write_text(json.dumps(saved), encoding='utf-8')
+    manifest['artifacts']['fixed.json'] = hashlib.sha256(plan_path.read_bytes()).hexdigest()
+    (output / 'manifest.json').write_text(json.dumps(manifest), encoding='utf-8')
+    digest = hashlib.sha256((output / 'manifest.json').read_bytes()).hexdigest()
+    with pytest.raises(ValueError): verify_graduation_artifacts(output, digest)
