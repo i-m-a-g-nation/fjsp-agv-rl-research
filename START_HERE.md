@@ -29,6 +29,6 @@ R1/R2 目前通过独立 API 和 `exp_022` 开发验证使用，尚未接入三�
 
 同日已切换并验证[max 思考及引用反馈](docs/model_api_max_validation_2026-10-26.md)：真实请求 enabled/max，两个短样本通过；在线引用缺项最多纠正一次，仍不完整即停止代码生成。每次请求明确采用 8192 tokens / 60 秒，累计会话预算不变。
 
-最新[状态提取与模型复核](docs/paper_state_semantic_validation.md)：两组提取/复核、四次max调用正常结束，状态事实引用2/2定位完整，模型判为支持，仍待人审。[28×13编码候选](docs/graduation_state_encoding_candidate.md)已明确，尚未实现或训练。此前[奖励/动作提取](docs/paper_field_validation.md)和[整页失败](docs/real_paper_code_validation.md)保留，现有维护模型保持。
+最新[28×13纯编码器](docs/graduation_state_encoding_validation.md)已实现：观察可无损还原，两次R2轨迹回放各24/24通过，零模型调用；尚无策略消费矩阵或训练。此前[状态提取/复核](docs/paper_state_semantic_validation.md)、[奖励/动作提取](docs/paper_field_validation.md)及[整页失败](docs/real_paper_code_validation.md)保留，现有维护模型保持。
 
 完整背景、历史实验表和环境说明仍在 [中文 README](README.zh-CN.md) / [English README](README.md)。

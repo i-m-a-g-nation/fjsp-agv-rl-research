@@ -1,5 +1,7 @@
 # 项目结构导航
 
+最新数据接口：[28×13编码器](graduation_state_encoding_validation.md)，代码在`src/graduation/state_encoding.py`，回放入口`experiments/exp_024_state_encoding_check.py`。直接导入该模块；原R1/R2环境、规则及包导出保持。
+
 最新增量：[状态提取/语义复核](paper_state_semantic_validation.md)，共享JSON调用在`src/ai_workflow/model_json.py`，复核在`src/ai_workflow/semantic_review.py`；[编码候选](graduation_state_encoding_candidate.md)仍为方案。
 
 最新工具入口：[单字段真实提取](paper_field_validation.md)，程序在 `experiments/exp_023_paper_code_validation.py`，来源工具在 `src/ai_workflow/source_bundle.py`，小结构提取在 `src/ai_workflow/field_extraction.py`。两条短片段max提取及引用定位通过；语义待审，尚无原方法执行或候选应用。此前[整页失败记录](real_paper_code_validation.md)保留。
@@ -15,7 +17,7 @@
 | 改动态重调度 | [`src/dynamic/`](../src/dynamic/) | Phase 2A 事件、状态、冻结记录及剩余工序重调度 |
 | 改毕设领域模型 | [`src/graduation/`](../src/graduation/) | 同质平行机、交期/总延期、维护；G1/G2、R1 环境和 R2 规则 |
 | 改科研执行流程 | [`src/ai_workflow/`](../src/ai_workflow/) | 要求契约、文献/RAG、受限候选、预算、会话与人工审核；不等于算法训练器 |
-| 找可执行实验 | [`experiments/`](../experiments/) | `exp_001`–`exp_022` 分别处理不同阶段；按下表挑入口 |
+| 找可执行实验 | [`experiments/`](../experiments/) | `exp_001`–`exp_024` 分别处理不同阶段；按下表挑入口 |
 | 找输入 | [`instances/`](../instances/)、[`experiments/protocols/`](../experiments/protocols/)、[`experiments/requests/`](../experiments/requests/) | 静态算例、动态固定协议、毕设参考请求 |
 | 找保存的实验依据 | [`experiments/results/`](../experiments/results/) | CSV、报告、计划、manifest；结合输入、源码身份和检查结果阅读 |
 | 验证变更 | [`tests/`](../tests/)、[`scripts/`](../scripts/) | pytest、专用环境与检查脚本；规则见[AGENTS.md](../AGENTS.md) |
@@ -41,6 +43,7 @@
 | 连续动态事件 | [`exp_020`](../experiments/exp_020_sequential_reschedule.py) | [顺序重放验证](phase2a_sequential_validation.md)；`results/exp_020_sequential_reschedule_v1/` |
 | 毕设 G2 参考解 | [`exp_021`](../experiments/exp_021_graduation_solver_check.py) | [G2 验证](graduation_g2_validation.md)；`results/exp_021_graduation_g2_v1/` |
 | 毕设 R2 规则开发验证 | [`exp_022`](../experiments/exp_022_graduation_rule_smoke.py) | [R2 验证](graduation_r2_validation.md)；`results/exp_022_graduation_rules_v1/`；小例不是正式性能实验 |
+| 毕设观察编码与轨迹回放 | [`exp_024`](../experiments/exp_024_state_encoding_check.py) | [编码器验证](graduation_state_encoding_validation.md)；`results/exp_024_state_encoding_v1/` |
 | 受监督三审入口 | [`exp_018`](../experiments/exp_018_ai_rag_workflow.py) | [通用工作流](research_workflow.md) / [毕设 G1/G2 路线](graduation_workflow.md) |
 
 上表 `results/` 均相对于 `experiments/`。运行产生的 `experiments/runs/`、`experiments/ai_memory/` 是本地忽略目录，不保证随 Git 克隆存在；每次运行使用新目录，保留已有证据。

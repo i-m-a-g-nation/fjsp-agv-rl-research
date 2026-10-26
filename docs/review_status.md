@@ -1,5 +1,12 @@
 # Platform Review Status
 
+## Lossless typed state encoding and R2 replay 2026-10-26
+
+- [Codec usage/evidence](graduation_state_encoding_validation.md): new direct-import state_encoding module, immutable version1 rows28x13 plus original auxfields/mask; finitebuilt-infloat/tuple/strictbool/shape/flag/padding/version validation at both boundaries. Literal independent row/decode fixtures, signed-zero/fractional preservation, lifecycle/bounds and corruption tests. No environment/rules/checkers/__init__/contracts/reward/action/dependency changes.
+- New exp024 reuses four R2 inputs,2modes,3rules,seed42. Saves raw+encoded pre/postsnapshots/exactintegerclocks and saved-action replay; independent originalG1,TT/return,certificate and schedule checks. No matrix-consuming policy/training/performance claim. Failure rows retain diagnostics and null accepted payloads. Fresh independent reviewP2(non-string rejected-dict keys) reproducedRED and fixed to structured diagnostic mapping; full regression verifies fix, no deferred finding.
+- Two native24/24 runs with identicalresults bytes/digestf1464209a5d885f419e06e00d5f3e342a693b52f434ea486f719d9ce2494a107; parent independently restores48rows/624snapshots/96plans. Model/networkcalls0; researchnot_achieved. Shared results copy with both manifests underexp_024_state_encoding_v1, historical proposal archive unchanged.
+- TDD55codecRED->55GREEN; runner initial12RED plusNaN/rejected-key regression fixes, combined70GREEN. Frozen-source dedicated full suite **1075passed,2skipped,13warnings,89.99%coverage,351.82s**;80%gate unchanged, twoWindows-symlink skips. New codec100%statement coverage. Main/prior evidence/originaldomain files unchanged; no merge/push.
+
 ## State facts and same-model semantic review 2026-10-26
 
 - [Actual result/usage](paper_state_semantic_validation.md): optional exp023 semantic_review explicitly requires field-only/no-repair/minimum complete call-token budget. Located extraction persists before separate same-model review; strict verdict/quote schema with fresh exact-span checks and claim/source hashes. Partial/unsupported/insufficient stops later units; errors/deadlines/source changes preserve extraction. supported remainsmodel_supported_unreviewed/human_approvalfalse/evidence_statusunverified. Old location-only requests and keyless0model preview retained.

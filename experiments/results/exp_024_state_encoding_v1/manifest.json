@@ -1,0 +1,11 @@
+{
+  "files_sha256": {
+    "independent_check.json": "39a04b2d59b522dc489683e255d6fa5d9a20a9e71ffdca9ef1288dd2b0b3f3f1",
+    "results.json": "e3f98391dd62feca2bd48dbd59e15ea0dfcadf238c92f8bf89fe50b2a554fe70",
+    "run_1_manifest.json": "5233552577d4344e5631cac67f49166ddb920d94a022410600dcf2add7e542d8",
+    "run_2_manifest.json": "5233552577d4344e5631cac67f49166ddb920d94a022410600dcf2add7e542d8",
+    "runtime_before.json": "ef581365aecc617f1a97c7b30af53e0b3222c3637e9689e3f10dbebe875651fe",
+    "summary.json": "42c799ec916571360cde2b424075b5e482374c093065f066bb0dacca1d4f8ba5"
+  },
+  "kind": "state_encoding_transport_evidence_archive"
+}
