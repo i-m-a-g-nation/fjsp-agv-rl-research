@@ -5,7 +5,7 @@ This small NumPy baseline makes no claim to be PPO or the final research model.
 """
 
 from copy import deepcopy
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import hashlib
 import json
 import math
@@ -19,6 +19,7 @@ from src.graduation.feasibility import check_parallel_maintenance_feasibility
 from src.graduation.metrics import calculate_total_tardiness
 from src.graduation.neural_policy import MaskedMLP, PolicySample, policy_features
 from src.graduation.result import MaintenanceScheduleResult
+from src.graduation.return_baseline import RunningReturnBaseline
 from src.graduation.rl_environment import (
     ACTION_COUNT, REWARD_SCALE, EpisodeInvariantError, ParallelMaintenanceEnv,
 )
@@ -140,7 +141,7 @@ def train_policy(
     training_instances: tuple, validation_instances: tuple, *, mode: str, seed: int,
     episodes: int = 64, validation_every: int = 16, learning_rate: float = .01,
     hidden_size: int = 16, check_budget: Callable[[], None] | None = None,
-    on_progress: Callable[[dict], None] | None = None,
+    on_progress: Callable[[dict], None] | None = None, return_baseline: str = 'none',
 ) -> dict:
     """Train at most 64 full on-policy episodes; pick the earliest best validation.
 
@@ -148,6 +149,8 @@ def train_policy(
     model. Training data rotate in input order; validation never supplies a
     gradient. Every returned/checkpoint state is a detached parameter copy.
     """
+    if type(return_baseline) is not str or return_baseline not in ('none', 'running_mean'):
+        raise ValueError('return_baseline must be none or running_mean')
     _integer(seed, 'seed', 0, 2**32 - 1)
     _integer(episodes, 'episodes', 1, 64)
     _integer(validation_every, 'validation_every', 1)
@@ -174,6 +177,7 @@ def train_policy(
     selected_episode, best_mean = 0, math.inf
     logs, validation_history = [], []
     training_steps = 0
+    baseline = RunningReturnBaseline() if return_baseline == 'running_mean' else None
 
     def validate(episode_number):
         nonlocal selected_state, selected_episode, best_mean
@@ -199,8 +203,11 @@ def train_policy(
         if on_progress is not None:
             # These validated rollouts and selection already completed. Persist
             # them before a boundary deadline can stop subsequent work.
-            on_progress(dict(kind='validation', **deepcopy(history), current_state=current_state,
-                             selected_state={name: value.copy() for name, value in selected_state.items()}))
+            event = dict(kind='validation', **deepcopy(history), current_state=current_state,
+                         selected_state={name: value.copy() for name, value in selected_state.items()})
+            if baseline is not None:
+                event['baseline_state'] = baseline.snapshot()
+            on_progress(event)
         budget()
 
     validate(0)
@@ -211,16 +218,28 @@ def train_policy(
         completed = run_policy_episode(training_instances[index], mode=mode, actor=actor, seed=episode_seed,
                                        check_budget=budget)
         budget()
+        gradient_samples = completed.samples
+        centered = None
+        if baseline is not None:
+            raw_returns = tuple(sample.return_value for sample in completed.samples)
+            centered = baseline.center(f'train:{index}', raw_returns)
+            gradient_samples = tuple(replace(sample, return_value=advantage)
+                for sample, advantage in zip(completed.samples, centered['advantages']))
         before = actor.state_dict()
-        update = actor.reinforce_update(completed.samples, learning_rate=float(learning_rate), max_grad_norm=1.0)
+        update = actor.reinforce_update(gradient_samples, learning_rate=float(learning_rate), max_grad_norm=1.0)
         after = actor.state_dict()
         changed = any(not np.array_equal(before[name], after[name]) for name in before)
         if type(update) is not dict or update.get('changed') is not changed:
             raise EpisodeInvariantError('Optimizer parameter-change evidence disagrees with actual parameters')
+        if baseline is not None:
+            baseline.observe(f'train:{index}', raw_returns)
         training_steps += len(completed.actions)
         log = dict(episode=episode_number, training_index=index, instance_identity=training_ids[index], seed=episode_seed,
                    actions=completed.actions, rewards=completed.rewards, total_tardiness=completed.result.total_tardiness,
                    total_reward=completed.total_reward, update=deepcopy(update))
+        if centered is not None:
+            log['return_baseline'] = dict(raw_returns=raw_returns, baselines=centered['baselines'],
+                advantages=centered['advantages'], baseline_count=centered['count'])
         logs.append(log)
         if on_progress is not None:
             on_progress(dict(kind='episode', episode=episode_number, training_steps=training_steps, log=deepcopy(log)))

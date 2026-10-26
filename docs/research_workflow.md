@@ -1,5 +1,7 @@
 # 科研辅助工作流运行与审核
 
+当前训练侧已有[exp026诊断—单候选对照—决定](graduation_validation_iteration.md)：在声明预算内自动完成一次开发对照，不能改善就保留原方法。它面向预设候选，不自动查论文/写补丁，也不改变018三审或课题验收状态。
+
 新增只读[状态提取/模型语义复核](paper_state_semantic_validation.md)使用exp023独立入口；语义flag会停止其后续单元，supported仍unverified。它尚未自动接入下面018的全部节点，不改变三审批准机制。
 
 ## 先理解一次运行能得到什么

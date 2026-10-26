@@ -29,6 +29,6 @@ R1/R2 目前通过独立 API 和 `exp_022` 开发验证使用，尚未接入三�
 
 同日已切换并验证[max 思考及引用反馈](docs/model_api_max_validation_2026-10-26.md)：真实请求 enabled/max，两个短样本通过；在线引用缺项最多纠正一次，仍不完整即停止代码生成。每次请求明确采用 8192 tokens / 60 秒，累计会话预算不变。
 
-最新[神经策略试训](docs/graduation_neural_policy_pilot.md)已完成：372维输入消费编码矩阵，四个分支共1536训练步、96份合法探测计划，CPU约10.6秒、API调用0；保留全部权重和初始选模情况，当前效果仍弱于EDD。此前[纯编码器](docs/graduation_state_encoding_validation.md)、[状态提取/复核](docs/paper_state_semantic_validation.md)及历史失败保留，现有维护模型保持。
+最新[诊断—单候选对照—决定](docs/graduation_validation_iteration.md)已能一条命令运行：历史均值候选在两模式验证均值均未改善，程序保留原方法；8分支3072步、80合法验证计划、约22.2秒，未评估探测集。此前[首次神经策略试训](docs/graduation_neural_policy_pilot.md)、[纯编码器](docs/graduation_state_encoding_validation.md)及文献/失败记录保留，原维护目标保持。
 
 完整背景、历史实验表和环境说明仍在 [中文 README](README.zh-CN.md) / [English README](README.md)。
