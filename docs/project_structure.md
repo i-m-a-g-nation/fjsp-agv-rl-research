@@ -1,5 +1,7 @@
 # 项目结构导航
 
+最新训练入口：[神经策略试训](graduation_neural_policy_pilot.md)，`src/graduation/neural_policy.py`为网络/掩码/梯度，`policy_training.py`为完整回合训练与验证选模，`experiments/exp_025_neural_policy_pilot.py`为固定预算对照及检查点保存。
+
 最新数据接口：[28×13编码器](graduation_state_encoding_validation.md)，代码在`src/graduation/state_encoding.py`，回放入口`experiments/exp_024_state_encoding_check.py`。直接导入该模块；原R1/R2环境、规则及包导出保持。
 
 最新增量：[状态提取/语义复核](paper_state_semantic_validation.md)，共享JSON调用在`src/ai_workflow/model_json.py`，复核在`src/ai_workflow/semantic_review.py`；[编码候选](graduation_state_encoding_candidate.md)仍为方案。
@@ -17,7 +19,7 @@
 | 改动态重调度 | [`src/dynamic/`](../src/dynamic/) | Phase 2A 事件、状态、冻结记录及剩余工序重调度 |
 | 改毕设领域模型 | [`src/graduation/`](../src/graduation/) | 同质平行机、交期/总延期、维护；G1/G2、R1 环境和 R2 规则 |
 | 改科研执行流程 | [`src/ai_workflow/`](../src/ai_workflow/) | 要求契约、文献/RAG、受限候选、预算、会话与人工审核；不等于算法训练器 |
-| 找可执行实验 | [`experiments/`](../experiments/) | `exp_001`–`exp_024` 分别处理不同阶段；按下表挑入口 |
+| 找可执行实验 | [`experiments/`](../experiments/) | `exp_001`–`exp_025` 分别处理不同阶段；按下表挑入口 |
 | 找输入 | [`instances/`](../instances/)、[`experiments/protocols/`](../experiments/protocols/)、[`experiments/requests/`](../experiments/requests/) | 静态算例、动态固定协议、毕设参考请求 |
 | 找保存的实验依据 | [`experiments/results/`](../experiments/results/) | CSV、报告、计划、manifest；结合输入、源码身份和检查结果阅读 |
 | 验证变更 | [`tests/`](../tests/)、[`scripts/`](../scripts/) | pytest、专用环境与检查脚本；规则见[AGENTS.md](../AGENTS.md) |
@@ -44,6 +46,7 @@
 | 毕设 G2 参考解 | [`exp_021`](../experiments/exp_021_graduation_solver_check.py) | [G2 验证](graduation_g2_validation.md)；`results/exp_021_graduation_g2_v1/` |
 | 毕设 R2 规则开发验证 | [`exp_022`](../experiments/exp_022_graduation_rule_smoke.py) | [R2 验证](graduation_r2_validation.md)；`results/exp_022_graduation_rules_v1/`；小例不是正式性能实验 |
 | 毕设观察编码与轨迹回放 | [`exp_024`](../experiments/exp_024_state_encoding_check.py) | [编码器验证](graduation_state_encoding_validation.md)；`results/exp_024_state_encoding_v1/` |
+| 毕设神经策略有界试训 | [`exp_025`](../experiments/exp_025_neural_policy_pilot.py) | [试训结果/使用](graduation_neural_policy_pilot.md)；`results/exp_025_neural_policy_v1/`，含NPZ权重 |
 | 受监督三审入口 | [`exp_018`](../experiments/exp_018_ai_rag_workflow.py) | [通用工作流](research_workflow.md) / [毕设 G1/G2 路线](graduation_workflow.md) |
 
 上表 `results/` 均相对于 `experiments/`。运行产生的 `experiments/runs/`、`experiments/ai_memory/` 是本地忽略目录，不保证随 Git 克隆存在；每次运行使用新目录，保留已有证据。

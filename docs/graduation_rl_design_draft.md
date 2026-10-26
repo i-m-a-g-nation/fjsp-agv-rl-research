@@ -1,5 +1,7 @@
 # 毕设 RL 建模与验收草案
 
+最新工程增量：[NumPy MLP/REINFORCE试训](graduation_neural_policy_pilot.md)已完成，零新依赖，1536训练步并保存权重；当前仍弱于EDD。这是独立小基线，下面PPO方案仍未实现或被确定为最终算法，旧阶段与三审会话授权不改写。
+
 状态：**R1纯Python无训练环境及R2规则基线已实现；PPO/训练及算法评价仍是设计提案**。依据用户“暂不清楚，但最好加强化学习”及随后对R1/R2建议的“继续”：RL是优先方向，最终任务书算法要求仍待确认。未安装新依赖、训练模型或扩大已完成参考会话的批准范围；与[G3A参考协议](graduation_g3_protocol_draft.md)分开验收。[R1接口与验证](graduation_rl_environment_validation.md)、[R2规则与开发验证](graduation_r2_validation.md)。
 
 ## 1. 候选方案与边界

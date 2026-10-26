@@ -1,0 +1,39 @@
+# Masked neural policy and bounded REINFORCE pilot
+
+> **For agentic workers:** TDD, separate ownership and fresh final review. Existing worktree, no merge/push.
+
+**Goal / authorization:** User continued after the concrete next step of matrix-consuming policy and small training comparison; earlier explicitly requested RL. Implement a minimal neural RL engineering baseline using existing NumPy, without installing Torch/Gym/SB3 or changing domain assumptions. Choosing REINFORCE is the developer's implementation choice, not the user's final algorithm selection; PPO remains a separate future candidate.
+
+**Sources:** Williams1992 DOI10.1007/BF00992696; Huang/Ontanon arXiv2006.14171v3 for action masking; NumPy2.4 Generator/tanh docs. These provide method/API context, not project performance proof or a reproduction claim.
+
+## Shared interfaces and architecture
+
+Parent owns src/graduation/neural_policy.py and tests/test_neural_policy.py:
+
+- `policy_features(encoded:TypedStateEncoding)->tuple[float,...]`: first364 entries flatten28x13, then mode one-hot(fixed,joint), status one-hot(ACTIVE,TERMINATED,TRUNCATED,FAILED), steps/28, log1p(scale)/log1p(2**50), total372. Validate codec/version and scale<=2**50; do not alter the source observation. Actor decisions require ACTIVE and a nonempty exact100bool mask; auxmode/status are explicit. Policy normalization is a separate documented input transform, not a codec change.
+- `masked_probabilities(logits:np.ndarray,mask:tuple[bool,...])->np.ndarray`: exact100float64 finite logits, stable softmax only over legal actions, invalid probability exactly0, reject empty/malformed mask/nonfinite scores; no fallback/random legal substitution.
+- frozen `PolicySample(features:tuple[float,...],action_mask:tuple[bool,...],action:int,return_value:float)`.
+- `MaskedMLP(*,seed:int,hidden_size:int=16)` uses localPCG64 float64,372->hidden(tanh)->100; hidden1..16, seeduint32. `probabilities(encoded)->tuple[float,...]`; `select_action(encoded,*,rng:np.random.Generator,deterministic:bool=False)->int` (greedy ties lowestaction).
+- `log_probability_gradient(sample:PolicySample)->(log_probability:float,gradients:dict[str,np.ndarray])`; analytic derivative of maskedlogsoftmax through tanh. Illegal actions rejected, invalid-logit gradients0. Gradient does not mutate parameters.
+- `reinforce_update(samples:tuple[PolicySample,...],*,learning_rate:float=.01,max_grad_norm:float=1.)->dict`: ascent mean(G*gradlogp), gamma1 returns provided by trainer; no shaping/baseline/entropy. Global gradient clipping before atomic finite parameter update. Return loss,gradient_norm,applied_gradient_norm,changed,samples. Reject invalid batch before mutation.
+- `state_dict()->dict[str,np.ndarray]` detachedcopies keysw1,b1,w2,b2; `MaskedMLP.from_state(state)->MaskedMLP` validates exactkeys,float64finite shapes, hidden1..16 and copies. No pickle/external code execution.
+
+Training worker owns src/graduation/policy_training.py and tests/test_policy_training.py:
+
+- `base_instance_identity(data)->str` binds task(p,d) list independent of maintenance/machine conditions; same underlying tasks across splits rejected.
+- `run_policy_episode(data,*,mode,actor,seed,deterministic=False,check_budget=None)->PolicyEpisode`. Frozen wrapper: actions,rewards,total_reward,result,samples (tuple PolicySample reward-to-go gamma1), transitions (tuple dicts containing action/mask/probabilities/reward and feature hash or features). Use existing env/codec+actor, one local Generator, no actor mutation. Alln+m transitions legal; originalG1+independentTT and return check before accepted result. Terminal/truncated/failed never fabricate a plan. Call check_budget before each step and after terminal checks. No masked action repair.
+- `train_policy(training_instances:tuple,validation_instances:tuple,*,mode,seed,episodes=64,validation_every=16,learning_rate=.01,hidden_size=16,check_budget=None,on_progress=None)->dict`. At most64episodes; training<=16instances,validation<=4; stricttypes and disjoint base task identities. Round-robin traininginstances, sampling seed derived from trainingseed+episode deterministically; one update after each complete checked on-policy episode. Initial greedy validation at episode0 and each validation interval/final; best lowest meanTT, earliest tie (initial may win). Return initial_state/final_state/selected_state, logs,validation_history,selected_episode,episodes_completed,training_steps. Log actual parameter-change evidence; selected0 remains labeled untrained. No test/probe input. Internal120s guard plus caller globalbudget. on_progress(eventdict) after each episode and validation; validation event includes selected/current state and metadata for durable checkpointing.
+
+Pilot worker owns experiments/exp_025_neural_policy_pilot.py and tests/test_neural_policy_pilot.py:
+
+- `build_splits()` returns train8/validation4/probe4 frozen data. Own versioned SHA256 field RNG streams; seedsets1001..1008,2001..2004,3001..3004 disjoint, alln4/m2/p1..6, d0..W inclusive, per-machineq1..3,L0..W//3,U=L+q+max(1,W//2), fixed midpoint. Record fullinputs/seed/stream identity and reject duplicate base(p,d) identities across splits. This engineering probe is not finalG3test.
+- `run_experiment(output_dir:Path,*,episodes=64,max_active_seconds=120)->manifest`, freshdir only; exact4runs=2modes(fixed,joint)x2trainingseeds(17,29), samearchitecture/hyperparameters/budget. Oneprocess, nativeBLAS/OMP threads1 set before NumPy import. Global hard120s cap with monotonicchecks including before finalsuccess; zeroAPI/networkcalls. Max1536trainingsteps default, no autonomoushyperparametersearch or retries.
+- On train progress persist logs and selected/current checkpoint arrays (`np.savez_compressed`, loadallow_pickleFalse), initial/final/selected checkpoint and metadata/source/data hashes. Initial-best checkpoint must remain explicitlyuntrained. Preserve partial checkpoints/logs onfailure/budgetstop; do not markcomplete.
+- Per4problems/mode probe: compareinitial/final/selected greedy actor and EDD/SPT/Random(seed trainingseed). Save all96policy/rule plans/actions/masks/metrics/failed denominators, no cherry-picking. Eight existing G2CP references (1s,1worker,seed42,within budget); OPTIMAL only certifiesoptimum. Every accepted plan originalG1+independentTT; actorTT<CP_OPTIMAL fails. CPFEASIBLE actorbetter is not error. Allsolverstatuses/bounds retained. Require full planneddenominator forCOMPLETED. Outcomes need notimprove.
+- Deterministic outcome digest excludespaths/time/git/runtime; artifacts source/data/config/checkpoint/plan hashes and repeatable validation. Tests use tinyepisodes1/interval1 asneeded but preserve4runs/splits/methods. Native once bounded default64; no extra paid model calls. Checkpoint reloadpredict matches savedselectedplans. No `.env`, keys or dependencies.
+
+## Constraints / review
+
+OriginalR1/R2/codec/G1/G2/contracts/AGENTS/dependencies/prior archives unchanged; allnewmodules directimports, no __init__ modification. Objective sumtardiness, mandatory all-machine maintenance and completewindow, reward=-TT/100 and gamma1 unchanged. NumPyMLP/REINFORCE is a baseline, not PPO/Transformer reproduction or innovation. Bothresearchtargets remainnot_achieved. Same-mode comparisons only; maintenance-mode gains are separate. Probe never used for selection/tuning; report degradation/selected-initial honestly.
+
+Review finite-difference gradients/sign/mask, on-policy update timing, seed/globalRNG isolation, completeepisode before learning, data overlap/leakage, checkpoint type/hash/replay, failure-denominator retention, deadline/resource exhaustion, no reward/mask weakening, no proof/performance inflation. Parent runs allnew targetedtests then freshreview/fixes, nativepilot, independent checkpoint/plan audit and full dedicated regression80% gate. Record all rulings and actualoutcomes in ledger.

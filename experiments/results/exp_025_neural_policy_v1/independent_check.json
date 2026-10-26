@@ -1,0 +1,60 @@
+{
+  "checkpoint_files_checked": 52,
+  "training_updates_replayed": 256,
+  "training_steps_replayed": 1536,
+  "validation_selections_checked": 4,
+  "probe_plans_checked": 96,
+  "cp_plans_checked": 8,
+  "greedy_checkpoint_actions_checked": 288,
+  "runs": [
+    {
+      "mode": "fixed",
+      "seed": 17,
+      "selected_episode": 16,
+      "changed_updates": 61,
+      "final_parameters_changed": true
+    },
+    {
+      "mode": "fixed",
+      "seed": 29,
+      "selected_episode": 64,
+      "changed_updates": 61,
+      "final_parameters_changed": true
+    },
+    {
+      "mode": "joint",
+      "seed": 17,
+      "selected_episode": 0,
+      "changed_updates": 54,
+      "final_parameters_changed": true
+    },
+    {
+      "mode": "joint",
+      "seed": 29,
+      "selected_episode": 64,
+      "changed_updates": 57,
+      "final_parameters_changed": true
+    }
+  ],
+  "probe_mean_tardiness": {
+    "fixed": {
+      "initial": 17.5,
+      "final": 13.125,
+      "selected": 16.125,
+      "EDD": 3.5,
+      "SPT": 6.75,
+      "Random": 23.0,
+      "CP": 3.25
+    },
+    "joint": {
+      "initial": 10.75,
+      "final": 9.5,
+      "selected": 10.75,
+      "EDD": 2.25,
+      "SPT": 3.0,
+      "Random": 13.0,
+      "CP": 2.25
+    }
+  },
+  "research_status": "not_achieved"
+}

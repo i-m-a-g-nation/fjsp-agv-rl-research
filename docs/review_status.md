@@ -1,5 +1,12 @@
 # Platform Review Status
 
+## Matrix-consuming neural policy and bounded REINFORCE pilot 2026-10-26
+
+- [Actual results/usage](graduation_neural_policy_pilot.md): new direct-import NumPyMLP372->16tanh->100(7668float64params), exactsameactionmask atsampling/gradient/greedyeval, gamma1REINFORCE aftercompleteR1/G1/TT-checkedepisodes. Fixeddisjoint train8/validation4/probe4; onlyvalidationselectsearliestbest includinginitial0. No newdependencies or originalcore/codec/contracts changes, no PPO/Transformer or finaltestclaim.
+- Parent29actorGREEN inclcentraldifference/sign/mask/updateatomicity; trainingworker38GREEN, pilot20GREEN. Combined87GREEN beforefreshreviewP2(completedvalidationlostbeforecallbackatdeadline); targetedRED->GREEN fix, combined88GREEN. Existingbudgetchecks retained; completedvalidation nowpersistedfirst. Remainingengineeringlimit: logs betweenvalidationintervals can exceedlastpersistedparameters; no implicitexactresume.
+- Native singleprocess/thread-env1,4runsx64episodes/1536steps within120s: actual10.578s,96/96legalprobeplans and8/8OPTIMALCPreferenceplans, no model/networkcalls. All4finalstateschanged. Validationselectedepisodesfixed17=16,fixed29=64,joint17=0,joint29=64. SelectedmeanTT fixed16.125/joint10.75 vsEDD3.5/2.25; no RL superiority, joint17selectedinitial remainsuntrained. Probe didnotselectmodels and no extra tuning.
+- Parent independently reloads52checkpoints, replays256updates/1536steps, reconstructs4selections, verifies288greedycheckpointactions and96+8plans/hash/TT. Archive exp_025_neural_policy_v1 includesallweights/logs/failuredenominators/config/source/data/planhashes. Frozen-source full dedicated suite **1163passed,2skipped,13warnings,90.15%coverage,463.07s**,80%gateunchanged; twoWindowssymlinkskips. Main/priorarchives/AGENTS/originalR1/R2/G1/G2/checkers/contracts/dependencies unchanged; no merge/push. Bothresearchtargetsnot_achieved and fullouterautonomousloopincomplete.
+
 ## Lossless typed state encoding and R2 replay 2026-10-26
 
 - [Codec usage/evidence](graduation_state_encoding_validation.md): new direct-import state_encoding module, immutable version1 rows28x13 plus original auxfields/mask; finitebuilt-infloat/tuple/strictbool/shape/flag/padding/version validation at both boundaries. Literal independent row/decode fixtures, signed-zero/fractional preservation, lifecycle/bounds and corruption tests. No environment/rules/checkers/__init__/contracts/reward/action/dependency changes.
