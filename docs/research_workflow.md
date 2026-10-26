@@ -16,6 +16,8 @@
 
 用户明确要求的下一目标见[自动科研迭代需求](autonomous_research_loop_requirements.md)。下面保留的是现有执行器的实际用法，不能把它当作上述目标已实现。
 
+新增独立的[真实论文/作者代码验证入口exp023](real_paper_code_validation.md)：运行时获取或验证来源，默认模型调用0；`--extract`明确启用有界提取。它保留提交、文件、物理页码和原始失败，未接入018的全部流程，不生成算法或审批。本次来源成功但真实max提取失败，不能据此说自动科研目标已完成。
+
 原文献/生成选择器路线仍限于Phase2A基础实验。用户已放行的毕设G1/G2现通过独立`--graduation-request`路线接入三审会话，离线运行固定/联合参考求解及维护检查；不经过RAG、模型或生成代码。详见[毕设路线使用与人审](graduation_workflow.md)。AGV、运输、RL、GNN、G3正式研究和最终验收仍不在该路线内；长期要求不自动授予实现权限。
 
 新增固定 Phase 2A 协议路线：`--experiment-protocol experiments/protocols/phase2a_v1.json`，通过相同三道人审运行已有动态规则批量实验。这条路线不建立 RAG、不调用模型、不生成代码。协议、算例及结果指纹均参与审核；参见 [固定实验协议](phase2a_experiment_protocol.md) 和 [双课题验收对照](research_acceptance_map.md)。

@@ -1,0 +1,260 @@
+[EXCERPT: complete selected physical PDF pages; other pages are outside this context.]
+
+[Physical PDF page 13]
+Journal of Intelligent Manufacturing (2025) 36:4735–4768 4747
+Fig. 5 Overall scheduling framework
+Fig. 6 V ariable-length state matrix with only jobs information
+Fig. 7 V ariable-length state matrix with global information of all jobs
+and all machines
+Action representation
+To realize the end-to-end scheduling manner, the agent
+should calculate a priority for each job at each decision time
+point, based on which the job could be selected directly with-
+out any pre-deﬁned rules. Therefore, we deﬁne the action
+representation as the priorities of all available jobs in the
+current environment. Assuming that the number of available
+jobs at time point t is nt , so the action of the DRL agent is
+an nt -dimensional vector. Just like the state space, the action
+space also decreases with the selection of jobs and increases
+with the arrival of new jobs.
+Then we apply the Softmax function to the output of the
+DRL agent, to convert the priorities into a probability distri-
+bution. In the training process, we conduct the job selection
+based on this probability distribution, where the job with
+higher priority corresponds to a higher probability of being
+selected. While during testing, we make the agent greedily
+select the job with the highest priority.
+Training algorithm and neural network structure
+In this work, we adopt the PPO algorithm (Schulman et al.,
+2017) as the learning algorithm, which is realized by actor-
+critic architecture. The actor network takes the current state
+as input, then executes the previously mentioned task of cal-
+culating the priority for each available job. The critic network
+also takes the current state as input but estimates the value of
+the states based on the current policy, which is a scalar and
+utilized for updating the actor network. Algorithm 1 illus-
+trates the interaction mechanism between the actor network
+and the critic network.
+We leverage the Transformer model V aswani et al. (2017)
+to construct both the actor network and the critic network,
+which can process variable-length matrix in a parallel man-
+ner. To be more speciﬁc, the Transformer model utilized in
+this work employs solely the encoder component and dis-
+cards the positional encoding. This modiﬁcation ensures that
+the sequence of jobs in the state matrix does not impact per-
+formance, which is key in applying the Transformer model
+to the PMSP .
+The architecture of the actor network is shown in Fig. 8.
+In the actor network, the Transformer model is composed
+123
+
+[Physical PDF page 15]
+Journal of Intelligent Manufacturing (2025) 36:4735–4768 4749
+work to deﬁne the reward as the negative of tardiness.
+However, this direct approach, where the reward function
+is solely dependent on the negative of total tardiness, can
+present challenges in the learning process of the agent. Since
+due dates are sampled from an identical distribution for a
+particular instance, tardiness tend to incur in the later stages
+of the scheduling process. Therefore the agent will struggle
+to evaluate a long sequence of decisions from the rewards
+that are given only at the end of those decisions.
+Algorithm 2 Reward calculation of the second training stage
+1: Initialization: st ← s0, nt ← n, reward ← 0, Ta rdin e ss ←
+0, TT ← 0
+2: while nt ⁄= 0 do
+3: at ← πθ (st )
+4: i ← at
+5: if fi = fM then
+6: for j ← 0t o nt do
+7: if f j ⁄= fM then
+8: reward ← reward + Rshape
+9: break
+10: end if
+11: end for
+12: else
+13: for j ← 0t o nt do
+14: if f j = fM then
+15: reward ← reward − Rshape
+16: break
+17: end if
+18: end for
+19: end if
+20: if t + pi /vM > di then
+21: Ta rdin e ss ← (t + pi /vM − di )
+22: else
+23: Ta rdin e ss ← 0
+24: end if
+25: reward ← reward + Ta rdin e ss
+26: TT ← TT + Ta rdin e ss
+27: st ← st+1, nt ← nt − 1
+28: end while
+29: if To ta l Ta rdin e ss = 0 then
+30: reward ← reward + Ropt
+31: end if
+To address this challenge and enhance the learning efﬁ-
+ciency of the agent, we adopt the technique of reward shaping
+(Ng et al., 1999). Reward shaping involves incorporating
+intermediate rewards to the original reward function to pro-
+vide more frequent and informative feedback to the agent,
+ensuring a effective and stable learning process. The Algo-
+rithm 2 illustrates the procedure to calculate the reward.
+The rationale behind our reward shaping strategy is rooted
+in the observation that frequent changes in setup state conse-
+quently lead to increased processing time. Hence, a schedule
+of high quality intuitively features fewer setup changes, as
+each additional setup can heighten the probability of incur-
+ring tardiness for the subsequent jobs. In particular, the agent
+receives a positive shaping reward Rshape when it selects
+a job that identical to the setup state among jobs from
+different families, thereby avoiding additional setup time;
+Conversely, the agent is penalized with a negative shaping
+reward −Rshape if it chooses a job from a different family,
+despite the availability of same-family jobs. Moreover, when
+the total tardiness remains 0, imply an optimal schedule, an
+additional positive reward Ropt is granted. In this work, we
+set Rshape and Ropt to constants with values of 1 and 200,
+respectively.
+Numerical experiments
+In this section, we ﬁrst provide the details of the training
+process of the agent. The training process is then compared
+with two agents with a one-head attention mechanism and
+a four-head attention mechanism, respectively, to show the
+superiority of the two-head attention mechanism. To demon-
+strate the generalization capacity of the proposed agent, it is
+further applied on larger instances without re-training. Mean-
+while, the aforementioned comparative agents with different
+number of attention heads, together with an RNN-based DRL
+method (Li et al., 2024), a metaheuristics method (Rolf et al.,
+2020), and a dispatching rule, are taken into comparison.
+The training process of the agent
+We develop our DRL agent in PyTorch. The proposed agent
+is trained in an RL environment that simulates a PMSP . We
+construct the environment based on OpenAI Gym (Brockman
+et al., 2016) and a Python-based Discrete-Event Simulation
+(DES) library called Salabim (van der Ham,2018). The train-
+ing process and the comparison process that follows are
+conducted on a PC with Intel Core i911900KF@3.50GHz
+CPU, 16GB RAM, and a single Nvidia RTX 3080 GPU. The
+entire training process takes 9028.87 sec on this PC, with the
+neural network updating process executed on the GPU and
+lasting for 2473.29 sec.
+A production environment of a manufacturing company
+in Baden-Wuerttemberg, Germany, is selected as the instance
+for training the DRL agent. To maintain conﬁdentiality, spe-
+ciﬁc values such as processing times and due dates have been
+reasonably modiﬁed. Details of this environment are outlined
+in Table 3.
+This production environment contains 12 machines with
+2 different speeds and 80 initial jobs from 8 families. New
+jobs enter the production environment in batches of 10 at a
+constant time interval of 10 time units after the 20th time
+unit. A total of 5 such batches are added to simulate dynamic
+and ﬂuctuating production demands that commonly occur in
+the company mentioned above.
+We utilize the parameters due date tightnessr and due date
+range R to generate the modiﬁed due date for all jobs accord-
+123
+
+[Physical PDF page 16]
+4750 Journal of Intelligent Manufacturing (2025) 36:4735–4768
+Table 3 Parameter settings of production environment for training
+Parameter V alue
+Total number of machines m 12
+Number of initial jobs n0 80
+Number of batches NB 5
+Number of new jobs per batch nnew 10
+Total number of families of jobs NF 8
+Speed of machines vi {1, 1.25}
+Processing time of a job p j Unif [5, 15]
+Average tardiness factor r 0.1
+Relative range of due dates R 0.5
+Setup time S 10
+ing to the following uniform distribution, which is proposed
+by Potts and V an Wassenhove (1985):
+U
+(
+MP
+(
+1 − r − R2 ), MP (1 − r + R2 )) , (18)
+where the indicator MP could be considered as the modiﬁed
+cumulative processing time of all jobs and is calculated as:
+MP =
+n∑
+j=1
+p j/m + (Ns · S) /m, (19)
+where Ns is the total number of setups. And n is the total
+number of jobs, which is calculated as n = n0 + NB ∗ nnew.
+However, the precise value of Ns cannot be known until the
+end of the scheduling process. Since its maximum possi-
+ble value and minimum possible value are equal to the total
+number of jobs n (each job is not from the same family
+as the previous one) and the number of families NF (not
+changing families until all jobs from one family have been
+processed), respectively. Therefore, the value of Ns is deter-
+mined as Ns = n+NF2 , i.e., the average of the maximum
+possible value and the minimum possible value.
+Since the due date of a new job cannot be earlier than its
+arrival time, we modify the uniform distribution in ( 18)t o
+generate the due dates of the new jobs as follows:
+U
+(
+max
+(
+(r j + pmax + S), MP
+(
+1 − r − R2 )) ,
+MP
+(
+1 − r + R2 )) ,
+(20)
+where the pmax is the longest possible processing time and
+S is the setup time. This distribution ensures that every new
+job must not incur tardiness if it is processed immediately
+after it arrives in the production environment.
+Table 4 Hyperparameter Settings for Training
+Hyperparameter V alue
+Number of episodes 12,000
+Learning rate before optimal solution found η1 1e−4
+Learning rate after optimal solution found η2 1e−5
+Discount factor γ 0.99
+Clip range ϵ 0.2
+Batch size 64
+Optimizer Adam
+Table 5 Architecture for the transformer model and the MLP utilized
+in the actor and critic networks
+Architecture of the transformer model
+Number of Transformer blocks NBlock 2
+Transformer model dimension k 128
+Number of heads 2
+Discount factor γ 0.99
+Clip range ϵ 0.2
+Batch size 64
+Optimizer Adam
+Architecture of the MLP
+Number of layers 2
+Number of neurons in the output layer 1
+In the training instance, the r and R are set to be 0.1 and
+0.5, respectively. A relatively small due date tightness and
+a relatively large due date range guarantee that a effective
+policy yields an optimal solution with 0 total tardiness, while
+a poor policy yields large total tardiness.
+Table 4 gives the hyperparameter setting for the training
+process. It is noticeable that we utilize a smaller learning
+rate after an optimal solution with 0 total tardiness is found
+in order to achieve a stable training process (Bengio, 2012).
+Table 5 gives the architecture for the Transformer model
+and the MLP utilized in the actor and critic networks. Since
+the dimension in the Transformer model is 128 and the num-
+ber of heads is 2, each attention head contains 64 dimensions.
+To verify the effectiveness of this two-head attention
+mechanism, we train two comparative Transformer-based
+agents: one with a one-head mechanism and another with
+a four-head mechanism, keeping all other hyperparameters,
+including the model dimension, consistent. As a result, each
+attention head in the one-head and four-head mechanisms
+contains 128 and 32 dimensions, respectively. The proposed
+agent, the comparative agents with one-head and four-head
+mechanisms are denoted in this work as Two-Head Agent,
+One-Head Agent, and Four-Head Agent, respectively.
+123

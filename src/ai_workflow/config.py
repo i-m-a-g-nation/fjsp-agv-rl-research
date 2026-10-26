@@ -86,6 +86,9 @@ class LLMConfig:
     max_retries: int = 0
     extraction_repair_attempts: int = 1
     budget: RunBudget | None = field(default=None, repr=False, compare=False)
+    # Larger paper excerpts require an explicit caller-owned cumulative budget;
+    # environment settings cannot opt into this request profile.
+    request_profile: Literal["bounded", "paper_excerpt"] = "bounded"
 
     def provider_timeout(self, *, output_tokens: int) -> float:
         if self.budget is None:
@@ -94,14 +97,19 @@ class LLMConfig:
         return min(self.request_timeout_seconds, self.budget.remaining_seconds())
 
     def __post_init__(self) -> None:
+        if type(self.request_profile) is not str or self.request_profile not in ("bounded", "paper_excerpt"):
+            raise ValueError("request_profile must be bounded or paper_excerpt")
+        if self.request_profile == "paper_excerpt" and not isinstance(self.budget, RunBudget):
+            raise ValueError("paper_excerpt request_profile requires a RunBudget")
+        max_timeout, max_tokens = ((120, 16384) if self.request_profile == "paper_excerpt" else (60, 8192))
         if self.thinking_mode not in ("enabled", "disabled"):
             raise ValueError("thinking_mode must be enabled or disabled")
         if self.reasoning_effort not in ("low", "high", "max"):
             raise ValueError("reasoning_effort must be low, high, or max")
         if type(self.extraction_repair_attempts) is not int or not 0 <= self.extraction_repair_attempts <= 1:
             raise ValueError("extraction_repair_attempts must be an integer from 0 to 1")
-        if (not math.isfinite(self.request_timeout_seconds) or not 0 < self.request_timeout_seconds <= 60
-                or type(self.max_output_tokens) is not int or not 1 <= self.max_output_tokens <= 8192
+        if (not math.isfinite(self.request_timeout_seconds) or not 0 < self.request_timeout_seconds <= max_timeout
+                or type(self.max_output_tokens) is not int or not 1 <= self.max_output_tokens <= max_tokens
                 or type(self.max_retries) is not int or not 0 <= self.max_retries <= 1):
             raise ValueError("Model call budget exceeds allowed timeout, token, or retry bounds")
 

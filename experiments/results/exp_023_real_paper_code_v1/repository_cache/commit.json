@@ -1,0 +1,35 @@
+{
+  "sha": "b4b46b92aa67556391b7e2613ac1213dafe16c60",
+  "node_id": "C_kwDOMJG3j9oAKGI0YjQ2YjkyYWE2NzU1NjM5MWI3ZTI2MTNhYzEyMTNkYWZlMTZjNjA",
+  "url": "https://api.github.com/repos/ASnowbow/Transformer4PMSP/git/commits/b4b46b92aa67556391b7e2613ac1213dafe16c60",
+  "html_url": "https://github.com/ASnowbow/Transformer4PMSP/commit/b4b46b92aa67556391b7e2613ac1213dafe16c60",
+  "author": {
+    "name": "Jifeng Zhou",
+    "email": "38467442+zjf592996468@users.noreply.github.com",
+    "date": "2025-10-14T20:09:01Z"
+  },
+  "committer": {
+    "name": "Jifeng Zhou",
+    "email": "38467442+zjf592996468@users.noreply.github.com",
+    "date": "2025-10-14T20:31:03Z"
+  },
+  "tree": {
+    "sha": "a74db1b7e90424b4c85452b95409fe1c3a8f1d65",
+    "url": "https://api.github.com/repos/ASnowbow/Transformer4PMSP/git/trees/a74db1b7e90424b4c85452b95409fe1c3a8f1d65"
+  },
+  "message": "Add .gitattributes, CITATION.cff and update .gitignore, README.md\n\n1. Added .gitattributes file for file type handling and normalization.\n2. Updated .gitignore to include OS-specific, IDE-specific, and Python-related ignores.\n3. Added CITATION.cff to provide citation information for the project.\n4. Update README.md to make citation information up to date.",
+  "parents": [
+    {
+      "sha": "7a50c284b7d19efc0ce6ecbc322246d1d4a5e8fc",
+      "url": "https://api.github.com/repos/ASnowbow/Transformer4PMSP/git/commits/7a50c284b7d19efc0ce6ecbc322246d1d4a5e8fc",
+      "html_url": "https://github.com/ASnowbow/Transformer4PMSP/commit/7a50c284b7d19efc0ce6ecbc322246d1d4a5e8fc"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

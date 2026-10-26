@@ -1,0 +1,697 @@
+{
+  "kind": "real_paper_author_code_validation",
+  "status": "SOURCES_VERIFIED_UNREVIEWED",
+  "research_status": "not_achieved",
+  "reproduction_status": "not_executed",
+  "candidate_application_status": "not_applied",
+  "request": {
+    "version": 1,
+    "track": "graduation",
+    "paper": {
+      "title": "A transformer-based deep reinforcement learning approach for dynamic parallel machine scheduling problem with family setups",
+      "doi": "10.1007/s10845-024-02470-8",
+      "pdf_url": "https://link.springer.com/content/pdf/10.1007/s10845-024-02470-8.pdf",
+      "sha256": "50ff0f7d470550cf3c13c5234538a7f9c80a84aae8a70ee3454b6de3b1b24993",
+      "license": "CC-BY-4.0"
+    },
+    "repository": {
+      "name": "ASnowbow/Transformer4PMSP",
+      "commit": "b4b46b92aa67556391b7e2613ac1213dafe16c60",
+      "license": "MIT",
+      "files": [
+        {
+          "path": "LICENSE",
+          "blob_sha1": "84f600d15b541daa21d172c79b294ec1c2ee2b9b"
+        },
+        {
+          "path": "README.md",
+          "blob_sha1": "5f3148cc78b14b23f1ec6f1115e7576e73a9ac9a"
+        },
+        {
+          "path": "env_PMSP.py",
+          "blob_sha1": "9600ee65e1ca80021a54ddc91e7d466a3002c456"
+        },
+        {
+          "path": "brain_Transformer.py",
+          "blob_sha1": "56b93af1bb6510e52f8462d9853a86acee640a66"
+        },
+        {
+          "path": "config.py",
+          "blob_sha1": "30b610d7ad322dce0890bb588fc2f68d956ff1c6"
+        },
+        {
+          "path": "main.py",
+          "blob_sha1": "72e2d79e9cdec17d0eeb90136ffd1dd53902362e"
+        },
+        {
+          "path": "Validation/config_val.py",
+          "blob_sha1": "97cedd8608242b03db09251a01837bf43b214079"
+        },
+        {
+          "path": "Validation/env_val.py",
+          "blob_sha1": "bd67f1b0fab72b925861d42ba6eb1c8a15343fff"
+        },
+        {
+          "path": "requirements.txt",
+          "blob_sha1": "b2b67e30aa59bb798b85adf6bdb9822ec581e920"
+        }
+      ]
+    },
+    "units": [
+      {
+        "id": "state_action",
+        "pages": [
+          10,
+          12,
+          13
+        ],
+        "goal": "Targeted original-paper extraction: problem type, one objective, at most two state claims, one action claim and one masking claim. Leave unrelated math-model lists and reward/network fields empty if outside these pages. Do not reconstruct missing equations or derive a maintenance model. External author code is comparative context only; flag incompatibilities in codebase_alignment.",
+        "code_ranges": [
+          {
+            "path": "env_PMSP.py",
+            "start": 131,
+            "end": 160
+          },
+          {
+            "path": "env_PMSP.py",
+            "start": 161,
+            "end": 190
+          },
+          {
+            "path": "brain_Transformer.py",
+            "start": 204,
+            "end": 221
+          }
+        ]
+      },
+      {
+        "id": "reward_network",
+        "pages": [
+          14,
+          15,
+          16
+        ],
+        "goal": "Targeted original-paper extraction: one objective, exact stated reward components/values, network architecture and at most two constraints needed to interpret reward. Leave other lists empty. Keep PAPER constants separate from external CODE constants in codebase_alignment, especially zero-tardiness bonus. No claim that shaping preserves our total-tardiness objective.",
+        "code_ranges": [
+          {
+            "path": "config.py",
+            "start": 44,
+            "end": 59
+          },
+          {
+            "path": "env_PMSP.py",
+            "start": 95,
+            "end": 126
+          },
+          {
+            "path": "env_PMSP.py",
+            "start": 127,
+            "end": 146
+          },
+          {
+            "path": "env_PMSP.py",
+            "start": 200,
+            "end": 206
+          },
+          {
+            "path": "Validation/config_val.py",
+            "start": 12,
+            "end": 27
+          }
+        ]
+      }
+    ],
+    "limits": {
+      "max_active_seconds": 300,
+      "max_provider_calls": 4,
+      "max_output_tokens": 32768
+    },
+    "notice": "Real-source validation and partial-method review only; no external execution, model loading, training, candidate application or research acceptance."
+  },
+  "target_contract": {
+    "track": "graduation",
+    "title": "毕设生产与维护协同",
+    "source": "用户提供的毕设课题描述截图；完整任务书待核对",
+    "problem": "Parallel machines with production and maintenance timing decisions",
+    "objective": "minimize sum_j max(0, completion_j - due_date_j)",
+    "required_capabilities": [
+      "parallel_machine_model",
+      "due_dates",
+      "maintenance_windows",
+      "maintenance_decisions",
+      "total_tardiness",
+      "fixed_vs_joint_maintenance"
+    ],
+    "version": "2026-10-24-v1",
+    "contract_hash": "f1e8c65576849aa468ea60bf7ef0fc1f3193191022aea861df109d537aa27b7e",
+    "current_phase": "Phase 2A"
+  },
+  "limits": {
+    "max_active_seconds": 300,
+    "max_provider_calls": 0,
+    "max_output_tokens": 0
+  },
+  "units": [
+    {
+      "id": "state_action",
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "reward_network",
+      "status": "NOT_RUN"
+    }
+  ],
+  "notice": "Source integrity and citation locations do not certify semantic agreement or research completion.",
+  "controller_sha256": "d03da3472684561fd12fb752cb20c32fb71674253e4a0eae525a881977264884",
+  "sources": {
+    "version": 1,
+    "status": "COMPLETED",
+    "files_sha256": {
+      "request.json": "da563ba697fbe22ae2f6e239468a395065259daaae376f16aaed6117f7551074",
+      "commit.json": "32555cf04b908e87a1b250696ccdb0b9b82db65b9bd47c232c32885c1397aff8",
+      "tree.json": "8c72b3ab57d672c3d95b1b9593db37862e192f220a4ed209878e14e134655b9f",
+      "code/LICENSE": "33d1630dc54235d7638ccc15b75e36a340b3aedb335cd8d94de22a1db392f60f",
+      "code/README.md": "d2d270c9da574f8517b02abd805b08b3517f23110cf13871e6b3320bc2a9c360",
+      "code/env_PMSP.py": "b3a129613e8887fa710fadc7702a0c7b5cf655dec15896e0816320971ef3d3d2",
+      "code/brain_Transformer.py": "2add29472df583de2a35890327c51a0655b5b903eab83ac8a71d830d7a253563",
+      "code/config.py": "2e3b489457b8fe34187b98d91d2a9d5557fe1b9d1b6ace9f100642b3a49a3cd9",
+      "code/main.py": "7c14e46b2aed2510d024a8de33539c2d518d162613e8e64054d159cfdbd485e6",
+      "code/Validation/config_val.py": "95f658d873ffb1955d51fc7368b80b3bdfb58a5ff4b4b1e1e28ebed647755b97",
+      "code/Validation/env_val.py": "7ebfb2e9dec23ea7328816feff3fcab7175188b21df37579af6898a8fe50e6c5",
+      "code/requirements.txt": "bf2589007490b16bd60477ece0dd7f49639ae6e553104467f89c1decbe7e4f7a",
+      "paper.pdf": "50ff0f7d470550cf3c13c5234538a7f9c80a84aae8a70ee3454b6de3b1b24993",
+      "paper.txt": "cfccee6b24da0077a2c4931c3407b80f8a93d9e966a536a5ba42ed37aa929e6e",
+      "pages.json": "080f9b87896a883b688860e190becea8f5b0e91bcabf835d5fe768e14af5940c"
+    },
+    "errors": [],
+    "request": {
+      "limits": {
+        "max_active_seconds": 300,
+        "max_output_tokens": 32768,
+        "max_provider_calls": 4
+      },
+      "notice": "Real-source validation and partial-method review only; no external execution, model loading, training, candidate application or research acceptance.",
+      "paper": {
+        "doi": "10.1007/s10845-024-02470-8",
+        "license": "CC-BY-4.0",
+        "pdf_url": "https://link.springer.com/content/pdf/10.1007/s10845-024-02470-8.pdf",
+        "sha256": "50ff0f7d470550cf3c13c5234538a7f9c80a84aae8a70ee3454b6de3b1b24993",
+        "title": "A transformer-based deep reinforcement learning approach for dynamic parallel machine scheduling problem with family setups"
+      },
+      "repository": {
+        "commit": "b4b46b92aa67556391b7e2613ac1213dafe16c60",
+        "files": [
+          {
+            "blob_sha1": "84f600d15b541daa21d172c79b294ec1c2ee2b9b",
+            "path": "LICENSE"
+          },
+          {
+            "blob_sha1": "5f3148cc78b14b23f1ec6f1115e7576e73a9ac9a",
+            "path": "README.md"
+          },
+          {
+            "blob_sha1": "9600ee65e1ca80021a54ddc91e7d466a3002c456",
+            "path": "env_PMSP.py"
+          },
+          {
+            "blob_sha1": "56b93af1bb6510e52f8462d9853a86acee640a66",
+            "path": "brain_Transformer.py"
+          },
+          {
+            "blob_sha1": "30b610d7ad322dce0890bb588fc2f68d956ff1c6",
+            "path": "config.py"
+          },
+          {
+            "blob_sha1": "72e2d79e9cdec17d0eeb90136ffd1dd53902362e",
+            "path": "main.py"
+          },
+          {
+            "blob_sha1": "97cedd8608242b03db09251a01837bf43b214079",
+            "path": "Validation/config_val.py"
+          },
+          {
+            "blob_sha1": "bd67f1b0fab72b925861d42ba6eb1c8a15343fff",
+            "path": "Validation/env_val.py"
+          },
+          {
+            "blob_sha1": "b2b67e30aa59bb798b85adf6bdb9822ec581e920",
+            "path": "requirements.txt"
+          }
+        ],
+        "license": "MIT",
+        "name": "ASnowbow/Transformer4PMSP"
+      },
+      "track": "graduation",
+      "units": [
+        {
+          "code_ranges": [
+            {
+              "end": 160,
+              "path": "env_PMSP.py",
+              "start": 131
+            },
+            {
+              "end": 190,
+              "path": "env_PMSP.py",
+              "start": 161
+            },
+            {
+              "end": 221,
+              "path": "brain_Transformer.py",
+              "start": 204
+            }
+          ],
+          "goal": "Targeted original-paper extraction: problem type, one objective, at most two state claims, one action claim and one masking claim. Leave unrelated math-model lists and reward/network fields empty if outside these pages. Do not reconstruct missing equations or derive a maintenance model. External author code is comparative context only; flag incompatibilities in codebase_alignment.",
+          "id": "state_action",
+          "pages": [
+            10,
+            12,
+            13
+          ]
+        },
+        {
+          "code_ranges": [
+            {
+              "end": 59,
+              "path": "config.py",
+              "start": 44
+            },
+            {
+              "end": 126,
+              "path": "env_PMSP.py",
+              "start": 95
+            },
+            {
+              "end": 146,
+              "path": "env_PMSP.py",
+              "start": 127
+            },
+            {
+              "end": 206,
+              "path": "env_PMSP.py",
+              "start": 200
+            },
+            {
+              "end": 27,
+              "path": "Validation/config_val.py",
+              "start": 12
+            }
+          ],
+          "goal": "Targeted original-paper extraction: one objective, exact stated reward components/values, network architecture and at most two constraints needed to interpret reward. Leave other lists empty. Keep PAPER constants separate from external CODE constants in codebase_alignment, especially zero-tardiness bonus. No claim that shaping preserves our total-tardiness objective.",
+          "id": "reward_network",
+          "pages": [
+            14,
+            15,
+            16
+          ]
+        }
+      ],
+      "version": 1
+    },
+    "request_sha256": "da563ba697fbe22ae2f6e239468a395065259daaae376f16aaed6117f7551074",
+    "repository": {
+      "name": "ASnowbow/Transformer4PMSP",
+      "commit": "b4b46b92aa67556391b7e2613ac1213dafe16c60",
+      "license": "MIT",
+      "tree_sha1": "a74db1b7e90424b4c85452b95409fe1c3a8f1d65",
+      "files": [
+        {
+          "path": "LICENSE",
+          "blob_sha1": "84f600d15b541daa21d172c79b294ec1c2ee2b9b",
+          "sha256": "33d1630dc54235d7638ccc15b75e36a340b3aedb335cd8d94de22a1db392f60f",
+          "source_url": "https://raw.githubusercontent.com/ASnowbow/Transformer4PMSP/b4b46b92aa67556391b7e2613ac1213dafe16c60/LICENSE",
+          "line_count": 21
+        },
+        {
+          "path": "README.md",
+          "blob_sha1": "5f3148cc78b14b23f1ec6f1115e7576e73a9ac9a",
+          "sha256": "d2d270c9da574f8517b02abd805b08b3517f23110cf13871e6b3320bc2a9c360",
+          "source_url": "https://raw.githubusercontent.com/ASnowbow/Transformer4PMSP/b4b46b92aa67556391b7e2613ac1213dafe16c60/README.md",
+          "line_count": 147
+        },
+        {
+          "path": "env_PMSP.py",
+          "blob_sha1": "9600ee65e1ca80021a54ddc91e7d466a3002c456",
+          "sha256": "b3a129613e8887fa710fadc7702a0c7b5cf655dec15896e0816320971ef3d3d2",
+          "source_url": "https://raw.githubusercontent.com/ASnowbow/Transformer4PMSP/b4b46b92aa67556391b7e2613ac1213dafe16c60/env_PMSP.py",
+          "line_count": 302
+        },
+        {
+          "path": "brain_Transformer.py",
+          "blob_sha1": "56b93af1bb6510e52f8462d9853a86acee640a66",
+          "sha256": "2add29472df583de2a35890327c51a0655b5b903eab83ac8a71d830d7a253563",
+          "source_url": "https://raw.githubusercontent.com/ASnowbow/Transformer4PMSP/b4b46b92aa67556391b7e2613ac1213dafe16c60/brain_Transformer.py",
+          "line_count": 413
+        },
+        {
+          "path": "config.py",
+          "blob_sha1": "30b610d7ad322dce0890bb588fc2f68d956ff1c6",
+          "sha256": "2e3b489457b8fe34187b98d91d2a9d5557fe1b9d1b6ace9f100642b3a49a3cd9",
+          "source_url": "https://raw.githubusercontent.com/ASnowbow/Transformer4PMSP/b4b46b92aa67556391b7e2613ac1213dafe16c60/config.py",
+          "line_count": 96
+        },
+        {
+          "path": "main.py",
+          "blob_sha1": "72e2d79e9cdec17d0eeb90136ffd1dd53902362e",
+          "sha256": "7c14e46b2aed2510d024a8de33539c2d518d162613e8e64054d159cfdbd485e6",
+          "source_url": "https://raw.githubusercontent.com/ASnowbow/Transformer4PMSP/b4b46b92aa67556391b7e2613ac1213dafe16c60/main.py",
+          "line_count": 152
+        },
+        {
+          "path": "Validation/config_val.py",
+          "blob_sha1": "97cedd8608242b03db09251a01837bf43b214079",
+          "sha256": "95f658d873ffb1955d51fc7368b80b3bdfb58a5ff4b4b1e1e28ebed647755b97",
+          "source_url": "https://raw.githubusercontent.com/ASnowbow/Transformer4PMSP/b4b46b92aa67556391b7e2613ac1213dafe16c60/Validation/config_val.py",
+          "line_count": 83
+        },
+        {
+          "path": "Validation/env_val.py",
+          "blob_sha1": "bd67f1b0fab72b925861d42ba6eb1c8a15343fff",
+          "sha256": "7ebfb2e9dec23ea7328816feff3fcab7175188b21df37579af6898a8fe50e6c5",
+          "source_url": "https://raw.githubusercontent.com/ASnowbow/Transformer4PMSP/b4b46b92aa67556391b7e2613ac1213dafe16c60/Validation/env_val.py",
+          "line_count": 454
+        },
+        {
+          "path": "requirements.txt",
+          "blob_sha1": "b2b67e30aa59bb798b85adf6bdb9822ec581e920",
+          "sha256": "bf2589007490b16bd60477ece0dd7f49639ae6e553104467f89c1decbe7e4f7a",
+          "source_url": "https://raw.githubusercontent.com/ASnowbow/Transformer4PMSP/b4b46b92aa67556391b7e2613ac1213dafe16c60/requirements.txt",
+          "line_count": 6
+        }
+      ],
+      "transport": "cached_github_records"
+    },
+    "paper": {
+      "title": "A transformer-based deep reinforcement learning approach for dynamic parallel machine scheduling problem with family setups",
+      "doi": "10.1007/s10845-024-02470-8",
+      "pdf_url": "https://link.springer.com/content/pdf/10.1007/s10845-024-02470-8.pdf",
+      "sha256": "50ff0f7d470550cf3c13c5234538a7f9c80a84aae8a70ee3454b6de3b1b24993",
+      "license": "CC-BY-4.0",
+      "metadata": {
+        "/Author": "Funing Li ",
+        "/CreationDate": "D:20240808063917+05'30'",
+        "/Creator": "Springer",
+        "/CrossMarkDomains[1]": "springer.com",
+        "/CrossMarkDomains[2]": "springerlink.com",
+        "/CrossmarkDomainExclusive": "true",
+        "/CrossmarkMajorVersionDate": "2010-04-23",
+        "/Keywords": "Deep reinforcement learning; Dynamic parallel machine scheduling; New job arrivals; Family setups; Multi-head attention",
+        "/ModDate": "D:20250830094402+05'30'",
+        "/Producer": "Acrobat Distiller 10.1.8 (Windows)",
+        "/Subject": "Journal of Intelligent Manufacturing, https://doi.org/10.1007/s10845-024-02470-8",
+        "/Title": "A transformer-based deep reinforcement learning approach for dynamic parallel machine scheduling problem with family setups",
+        "/doi": "10.1007/s10845-024-02470-8",
+        "/robots": "noindex"
+      },
+      "page_count": 34
+    },
+    "linkage": {
+      "status": "VERIFIED_TEXT_LINKS",
+      "readme_doi": true,
+      "pdf_doi": true,
+      "pdf_repository_url": "https://github.com/ASnowbow/Transformer4PMSP",
+      "notice": "Text links do not authenticate authors or establish paper/code equivalence."
+    },
+    "function_index": {
+      "env_PMSP.py": [
+        {
+          "name": "one_hot",
+          "start": 26,
+          "end": 29
+        },
+        {
+          "name": "jobs_in_matrix",
+          "start": 32,
+          "end": 41
+        },
+        {
+          "name": "EnvPMSP.__init__",
+          "start": 50,
+          "end": 80
+        },
+        {
+          "name": "EnvPMSP._new_jobs_arrival",
+          "start": 82,
+          "end": 87
+        },
+        {
+          "name": "EnvPMSP.step",
+          "start": 89,
+          "end": 212
+        },
+        {
+          "name": "EnvPMSP.reset",
+          "start": 214,
+          "end": 283
+        }
+      ],
+      "brain_Transformer.py": [
+        {
+          "name": "setup_seed",
+          "start": 19,
+          "end": 24
+        },
+        {
+          "name": "PPOMemory.__init__",
+          "start": 34,
+          "end": 43
+        },
+        {
+          "name": "PPOMemory.generate_batches",
+          "start": 45,
+          "end": 59
+        },
+        {
+          "name": "PPOMemory.store_memory",
+          "start": 61,
+          "end": 67
+        },
+        {
+          "name": "PPOMemory.clear_memory",
+          "start": 69,
+          "end": 75
+        },
+        {
+          "name": "SharedNetwork.__init__",
+          "start": 79,
+          "end": 91
+        },
+        {
+          "name": "SharedNetwork.forward",
+          "start": 93,
+          "end": 95
+        },
+        {
+          "name": "SharedNetwork.save_checkpoint",
+          "start": 97,
+          "end": 98
+        },
+        {
+          "name": "SharedNetwork.load_checkpoint",
+          "start": 100,
+          "end": 101
+        },
+        {
+          "name": "SelfAttention.__init__",
+          "start": 105,
+          "end": 140
+        },
+        {
+          "name": "SelfAttention.forward",
+          "start": 142,
+          "end": 174
+        },
+        {
+          "name": "ActorNetwork.__init__",
+          "start": 179,
+          "end": 202
+        },
+        {
+          "name": "ActorNetwork.forward",
+          "start": 204,
+          "end": 222
+        },
+        {
+          "name": "ActorNetwork.save_checkpoint",
+          "start": 224,
+          "end": 225
+        },
+        {
+          "name": "ActorNetwork.load_checkpoint",
+          "start": 227,
+          "end": 228
+        },
+        {
+          "name": "ActorNetwork.learning_rate_reduce",
+          "start": 230,
+          "end": 231
+        },
+        {
+          "name": "CriticNetwork.__init__",
+          "start": 235,
+          "end": 261
+        },
+        {
+          "name": "CriticNetwork.forward",
+          "start": 263,
+          "end": 276
+        },
+        {
+          "name": "CriticNetwork.save_checkpoint",
+          "start": 278,
+          "end": 279
+        },
+        {
+          "name": "CriticNetwork.load_checkpoint",
+          "start": 281,
+          "end": 282
+        },
+        {
+          "name": "CriticNetwork.learning_rate_reduce",
+          "start": 284,
+          "end": 285
+        },
+        {
+          "name": "Agent.__init__",
+          "start": 289,
+          "end": 306
+        },
+        {
+          "name": "Agent.remember",
+          "start": 308,
+          "end": 309
+        },
+        {
+          "name": "Agent.learning_rate_change",
+          "start": 311,
+          "end": 316
+        },
+        {
+          "name": "Agent.save_models",
+          "start": 318,
+          "end": 321
+        },
+        {
+          "name": "Agent.load_models",
+          "start": 324,
+          "end": 327
+        },
+        {
+          "name": "Agent.choose_action",
+          "start": 330,
+          "end": 345
+        },
+        {
+          "name": "Agent.learn",
+          "start": 347,
+          "end": 413
+        }
+      ],
+      "config.py": [
+        {
+          "name": "plot_learning_curve",
+          "start": 62,
+          "end": 69
+        },
+        {
+          "name": "plot_tardiness_curve",
+          "start": 72,
+          "end": 79
+        },
+        {
+          "name": "plot_each_step",
+          "start": 82,
+          "end": 86
+        },
+        {
+          "name": "experi_dir",
+          "start": 89,
+          "end": 96
+        }
+      ],
+      "main.py": [],
+      "Validation/config_val.py": [
+        {
+          "name": "experi_dir",
+          "start": 7,
+          "end": 12
+        }
+      ],
+      "Validation/env_val.py": [
+        {
+          "name": "one_hot",
+          "start": 22,
+          "end": 25
+        },
+        {
+          "name": "jobs_in_matrix",
+          "start": 28,
+          "end": 37
+        },
+        {
+          "name": "Env_4_RNN.__init__",
+          "start": 92,
+          "end": 118
+        },
+        {
+          "name": "Env_4_RNN._new_jobs_arrival",
+          "start": 120,
+          "end": 125
+        },
+        {
+          "name": "Env_4_RNN.step",
+          "start": 127,
+          "end": 243
+        },
+        {
+          "name": "Env_4_RNN.reset",
+          "start": 245,
+          "end": 306
+        },
+        {
+          "name": "Job.setup",
+          "start": 311,
+          "end": 318
+        },
+        {
+          "name": "Job.process",
+          "start": 320,
+          "end": 325
+        },
+        {
+          "name": "MachHigh.setup",
+          "start": 329,
+          "end": 334
+        },
+        {
+          "name": "MachHigh.process",
+          "start": 336,
+          "end": 346
+        },
+        {
+          "name": "MachLow.setup",
+          "start": 350,
+          "end": 355
+        },
+        {
+          "name": "MachLow.process",
+          "start": 357,
+          "end": 367
+        }
+      ]
+    },
+    "function_index_errors": {}
+  },
+  "budget": {
+    "limits": {
+      "max_active_seconds": 300,
+      "max_output_tokens": 0,
+      "max_provider_calls": 0
+    },
+    "active_seconds": 1.7189999999827705,
+    "active_seconds_charged": 1.7189999999827705,
+    "active_seconds_reserved": 0,
+    "provider_calls": 0,
+    "output_tokens_reserved": 0
+  }
+}

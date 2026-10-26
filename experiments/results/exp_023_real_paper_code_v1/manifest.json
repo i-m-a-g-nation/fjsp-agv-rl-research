@@ -1,0 +1,30 @@
+{
+  "kind": "read_only_real_paper_code_validation_evidence",
+  "files_sha256": {
+    "ATTRIBUTION.json": "90d909ad3891efbb228337c289aa5c85238692dacbde33cd67bf4d2dda77e192",
+    "batch_summary.json": "ae96086b1024507c487ebdfc59455b6c2f53e6caddf4af002504a1cd0cb8b550",
+    "paper_code_alignment.json": "5c07ba29336c6326a09dbd66d0a8e0aa515adf3cd69b004e32700a9b0820fea7",
+    "paper_pages_13_15_16.txt": "770a1b851aa03365cffb73d01062ac65c36eb1eb8709636c4b65b4f528b2b79f",
+    "repository_cache/code/brain_Transformer.py": "2add29472df583de2a35890327c51a0655b5b903eab83ac8a71d830d7a253563",
+    "repository_cache/code/config.py": "2e3b489457b8fe34187b98d91d2a9d5557fe1b9d1b6ace9f100642b3a49a3cd9",
+    "repository_cache/code/env_PMSP.py": "b3a129613e8887fa710fadc7702a0c7b5cf655dec15896e0816320971ef3d3d2",
+    "repository_cache/code/LICENSE": "33d1630dc54235d7638ccc15b75e36a340b3aedb335cd8d94de22a1db392f60f",
+    "repository_cache/code/main.py": "7c14e46b2aed2510d024a8de33539c2d518d162613e8e64054d159cfdbd485e6",
+    "repository_cache/code/README.md": "d2d270c9da574f8517b02abd805b08b3517f23110cf13871e6b3320bc2a9c360",
+    "repository_cache/code/requirements.txt": "bf2589007490b16bd60477ece0dd7f49639ae6e553104467f89c1decbe7e4f7a",
+    "repository_cache/code/Validation/config_val.py": "95f658d873ffb1955d51fc7368b80b3bdfb58a5ff4b4b1e1e28ebed647755b97",
+    "repository_cache/code/Validation/env_val.py": "7ebfb2e9dec23ea7328816feff3fcab7175188b21df37579af6898a8fe50e6c5",
+    "repository_cache/commit.json": "32555cf04b908e87a1b250696ccdb0b9b82db65b9bd47c232c32885c1397aff8",
+    "repository_cache/tree.json": "8c72b3ab57d672c3d95b1b9593db37862e192f220a4ed209878e14e134655b9f",
+    "run_1_result.json": "af097734e90d2431c176fd7f99534c3398b0c09f88b5b5a3e721ca2ae824de0a",
+    "run_1_source_manifest.json": "80681acff629b0e24d3071bf95636532570fed61078048384374be05c144f48c",
+    "run_2_result.json": "a68bda89b0f74e193de958e9e0290bd53d31dfb9ef09e66cbac7f106f00044dc",
+    "run_2_source_manifest.json": "34aa374476d84f463e32e350335fa915db0772c54f7cc79b9572e47d69519b3c",
+    "run_3_result.json": "e32beb4801155c6dc5e0739530cd2ae4d16f65b2808f143a6ceb5d6287cb7673",
+    "run_4_result.json": "0a811bbeb295ba77dd4fdd212f82b91ef826896f4889f8e7f07771914a29e979",
+    "run_5_result.json": "0cff1d092ff6571607a12754472561514dbd40a91e1e9861c23c8441cac8b41d",
+    "source_bundle_manifest.json": "8f00177e1c545efe97a0f65eff609e4190b30e90ac7e06f90703b98c4f018f6c",
+    "source_only_replay_result.json": "96982893b6c085c788d7d1a40077e3341cbf0daa6a54b92b7b14f5231777cb19"
+  },
+  "notice": "Repository cache can replay with the pinned PDF; source_bundle_manifest is provenance only, not a complete bundle at this archive root."
+}

@@ -6,6 +6,7 @@ import os
 import pytest
 
 from src.ai_workflow.config import LLMConfig
+from src.ai_workflow.runtime_budget import BudgetLimits, RunBudget
 
 
 @pytest.fixture(autouse=True)
@@ -13,6 +14,7 @@ def clean_model_environment(monkeypatch):
     for name in ('OPENAI_API_KEY', 'OPENAI_BASE_URL', 'LLM_MODEL_NAME',
                  'LLM_THINKING_MODE', 'LLM_REASONING_EFFORT',
                  'LLM_MAX_OUTPUT_TOKENS', 'LLM_REQUEST_TIMEOUT_SECONDS',
+                 'LLM_REQUEST_PROFILE',
                  'RAG_EMBEDDING_BACKEND', 'EMBEDDING_MODEL_NAME'):
         # Register even initially absent keys: the .env loader writes directly
         # to os.environ and must not leave synthetic credentials for later tests.
@@ -27,6 +29,7 @@ def test_official_default_uses_flash_alias_and_explicit_bounded_call_mode():
     assert cfg.thinking_mode == 'disabled'
     assert cfg.reasoning_effort == 'max'
     assert cfg.extraction_repair_attempts == 1
+    assert cfg.request_profile == 'bounded'
     assert cfg.chat_request_options() == {'max_tokens': None,
         'extra_body': {'thinking': {'type': 'disabled'}, 'max_tokens': 4096}}
     assert cfg.max_output_tokens == 4096 and cfg.max_retries == 0
@@ -56,6 +59,74 @@ def test_invalid_timeout_environment_profile_is_rejected(monkeypatch, value):
     monkeypatch.setenv('LLM_REQUEST_TIMEOUT_SECONDS', value)
     with pytest.raises(ValueError):
         LLMConfig()
+
+
+@pytest.mark.parametrize('options', [
+    {'max_output_tokens': 8193}, {'request_timeout_seconds': 61},
+])
+def test_default_request_profile_keeps_existing_constructor_caps(options):
+    with pytest.raises(ValueError, match='bounds'):
+        LLMConfig(**options)
+
+
+def test_paper_excerpt_profile_requires_explicit_constructor_opt_in(monkeypatch):
+    monkeypatch.setenv('LLM_REQUEST_PROFILE', 'paper_excerpt')
+    assert LLMConfig().request_profile == 'bounded'
+    with pytest.raises(ValueError, match='bounds'):
+        LLMConfig(max_output_tokens=16384, request_timeout_seconds=120)
+
+
+@pytest.mark.parametrize('budget', [None, True, object()])
+def test_paper_excerpt_profile_requires_real_run_budget(budget):
+    with pytest.raises(ValueError, match='RunBudget'):
+        LLMConfig(request_profile='paper_excerpt', budget=budget,
+                  max_output_tokens=16384, request_timeout_seconds=120)
+
+
+@pytest.mark.parametrize('profile', ['', 'paper', 'PAPER_EXCERPT', True, False, None, 1])
+def test_unknown_or_non_string_request_profile_is_rejected(profile):
+    with pytest.raises(ValueError, match='request_profile'):
+        LLMConfig(request_profile=profile)
+
+
+@pytest.mark.parametrize('options', [
+    {'max_output_tokens': 16385}, {'request_timeout_seconds': 120.01},
+    {'max_output_tokens': 0}, {'max_output_tokens': True},
+    {'request_timeout_seconds': float('inf')}, {'max_retries': 2},
+    {'max_retries': True},
+])
+def test_paper_excerpt_profile_keeps_finite_token_timeout_and_retry_caps(tmp_path, options):
+    budget = RunBudget(tmp_path / 'budget.sqlite', BudgetLimits())
+    with pytest.raises(ValueError, match='bounds'):
+        LLMConfig(request_profile='paper_excerpt', budget=budget, **options)
+
+
+def test_paper_excerpt_profile_preserves_budget_reservation_and_timeout_clamp(tmp_path):
+    from src.ai_workflow.runtime_budget import BudgetExceeded
+
+    budget = RunBudget(tmp_path / 'budget.sqlite', BudgetLimits(
+        max_active_seconds=50, max_provider_calls=2, max_output_tokens=32768))
+    cfg = LLMConfig(request_profile='paper_excerpt', budget=budget,
+                    max_output_tokens=16384, request_timeout_seconds=120, max_retries=1)
+    assert cfg.provider_timeout(output_tokens=16384) == 50
+    snapshot = budget.snapshot()
+    assert snapshot['provider_calls'] == 2
+    assert snapshot['output_tokens_reserved'] == 32768
+    with pytest.raises(BudgetExceeded):
+        cfg.provider_timeout(output_tokens=16384)
+
+
+def test_paper_excerpt_profile_is_part_of_identity_without_exposing_key(tmp_path):
+    from src.ai_workflow.sessions import _config_values
+
+    budget = RunBudget(tmp_path / 'budget.sqlite', BudgetLimits())
+    bounded = LLMConfig(api_key='sk-offline-sentinel', budget=budget)
+    paper = LLMConfig(api_key='sk-offline-sentinel', budget=budget, request_profile='paper_excerpt')
+    assert bounded != paper
+    assert _config_values(bounded) != _config_values(paper)
+    assert _config_values(paper)['request_profile'] == 'paper_excerpt'
+    assert 'api_key' not in _config_values(paper)
+    assert 'sk-offline-sentinel' not in repr(paper)
 
 
 def test_thinking_environment_is_explicit_and_options_are_detached(monkeypatch):
@@ -131,8 +202,10 @@ def test_key_does_not_appear_in_config_repr_or_session_identity():
 @pytest.mark.parametrize('operation', ['extract', 'generate'])
 @pytest.mark.parametrize('mode', ['enabled', 'disabled'])
 @pytest.mark.parametrize('effort', ['max', 'high', 'low'])
-@pytest.mark.parametrize('tokens, timeout', [(4096, 30.0), (8192, 60.0)])
-def test_both_pipeline_calls_serialize_official_chat_payload_in_memory(monkeypatch, operation, mode, effort, tokens, timeout):
+@pytest.mark.parametrize('tokens, timeout, profile', [
+    (4096, 30.0, 'bounded'), (8192, 60.0, 'bounded'), (16384, 120.0, 'paper_excerpt'),
+])
+def test_both_pipeline_calls_serialize_official_chat_payload_in_memory(monkeypatch, tmp_path, operation, mode, effort, tokens, timeout, profile):
     import httpx
     import langchain_openai
     from src.ai_workflow.langgraph_pipeline import _llm_extract_paper, _llm_generate_rule_code
@@ -156,7 +229,11 @@ def test_both_pipeline_calls_serialize_official_chat_payload_in_memory(monkeypat
 
     with httpx.Client(transport=httpx.MockTransport(respond)) as client:
         monkeypatch.setattr(langchain_openai, 'ChatOpenAI', lambda **kw: original(http_client=client, **kw))
-        cfg = LLMConfig(api_key='sk-offline-sentinel', thinking_mode=mode, reasoning_effort=effort)
+        budget = (RunBudget(tmp_path / 'budget.sqlite', BudgetLimits(
+            max_active_seconds=300, max_provider_calls=4, max_output_tokens=32768))
+            if profile == 'paper_excerpt' else None)
+        cfg = LLMConfig(api_key='sk-offline-sentinel', thinking_mode=mode, reasoning_effort=effort,
+                        request_profile=profile, budget=budget)
         if operation == 'extract':
             report = _llm_extract_paper(cfg, 'Paper', 'An input paragraph.', 'full_text', [], '', [], [], [])
             assert report.title == 'Paper' and report.evidence_status == 'unverified'

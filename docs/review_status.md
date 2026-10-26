@@ -1,5 +1,13 @@
 # Platform Review Status
 
+## First real-paper/author-code pilot 2026-10-26
+
+- User started the real-source milestone. Added read-only source_bundle and exp023: pinned DOI/PDF/commit/tree/selected blobs, MIT/CC-BY metadata, function index and exact physical-page/code-line contexts. Default fetches/validates sources with0models; explicit extract invokes bounded max. No author execution/checkpoint load/training/application/approval.
+- [Actual result and usage](real_paper_code_validation.md): SOURCE_VALIDATED_MODEL_EXTRACTION_FAILED. Anonymous403 and wrong-root-tree cache were rejected with0models. Correct connected-source cache passes and archived cache replays0models. Three real model attempts consume original32768reservation/204.141s; first JSON error lacked telemetry, later length failures show8192/16384reasoning tokens and empty finals. All failures retained; no extra calls after output exhaustion.
+- Normal bounded request defaults4096/30 and caps8192/60 unchanged. Explicit constructor-only paper_excerpt binds a real RunBudget and caps16384/120; continuation only redistributes remaining original4call/32768/300 envelope. Paper facts separated from target contract. Redacted final-output diagnostics reject empty/incomplete finishes and exclude reasoning text.
+- Static original-page/code comparison finds R_opt200 vs final_reward100, objective-changing setup shaping, no mandatory maintenance, and default1Head vs proposed2Head validation. Reject direct reward/environment transplant; representation-only candidate unimplemented. Both research tracks remainnot_achieved and exp023 is not full018/research-loop integration.
+- Source/controller/profile TDD plus fresh review; fixed credential-bearing rejected-request persistence and terminal deadline success regressions. Final dedicated frozen-source Windows suite **904passed,1skipped,89.72%coverage**,80% gate,13upstream warnings,253.90s. Skip is Windows symlink permission. Main/prior archives/AGENTS/contracts/domain checkers/solvers/dependencies untouched; no merge/push.
+
 ## Max thinking and bounded extraction feedback 2026-10-26
 
 - User requested improvement and challenged whether max thinking was enabled. Previous evidence remains explicitly nonthinking. Official docs rechecked; new local/example profile enabled/max with8192tokens/60s. Numeric env settings retain defaults4096/30 and original hard limits8192/60; config identity and default cumulative session budgets remain enforced.

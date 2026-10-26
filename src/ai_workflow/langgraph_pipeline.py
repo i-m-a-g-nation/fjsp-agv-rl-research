@@ -4,7 +4,7 @@ import json
 import hashlib
 from pathlib import Path
 import re
-from typing import Any, TypedDict
+from typing import Any, Callable, TypedDict
 
 from langgraph.graph import END, StateGraph
 from langgraph.types import interrupt
@@ -28,6 +28,10 @@ from src.ai_workflow.schemas import (
     PaperExtractionReport,
     RLFormulationSpec,
 )
+
+
+class ModelOutputIncompleteError(RuntimeError):
+    """The final answer was absent, filtered, aborted or token-truncated."""
 
 
 class ResearchWorkflowState(TypedDict, total=False):
@@ -632,6 +636,7 @@ def _llm_extract_paper(
     retrieved_codebase: list[dict[str, Any]],
     lit_sources: list[str],
     feedback: str = "",
+    on_response: Callable[[dict], None] | None = None,
 ) -> PaperExtractionReport:
     from langchain_openai import ChatOpenAI
 
@@ -702,11 +707,32 @@ def _llm_extract_paper(
         ("human", prompt),
     ])
     raw_content = str(response.content).strip()
+    metadata = getattr(response, 'response_metadata', None) or {}
+    reason = metadata.get('finish_reason')
+    reasons = {'stop', 'length', 'content_filter', 'tool_calls', 'insufficient_system_resource', 'aborted'}
+    reason = reason if isinstance(reason, str) and reason in reasons else 'unknown'
+    raw_usage = metadata.get('token_usage') or {}
+    usage = {name: value for name in ('prompt_tokens', 'completion_tokens', 'total_tokens')
+             if type(value := raw_usage.get(name)) is int and value >= 0}
+    details = raw_usage.get('completion_tokens_details') or {}
+    if type(details.get('reasoning_tokens')) is int and details['reasoning_tokens'] >= 0:
+        usage['reasoning_tokens'] = details['reasoning_tokens']
+    diagnostic = {'finish_reason': reason, 'usage': usage, 'final_text_characters': len(raw_content),
+                  'final_text': raw_content.replace(cfg.api_key, '<redacted>') if cfg.api_key else raw_content}
+    if on_response is not None:
+        on_response({**diagnostic, 'usage': dict(usage)})
+    if not raw_content or reason in reasons - {'stop'}:
+        error = ModelOutputIncompleteError('Model final answer was empty or did not finish normally')
+        error.model_response = diagnostic
+        raise error
     json_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw_content, re.DOTALL)
     json_str = json_match.group(1) if json_match else raw_content
-    parsed_dict = json.loads(json_str)
-
-    result = PaperExtractionReport(**parsed_dict)
+    try:
+        parsed_dict = json.loads(json_str)
+        result = PaperExtractionReport(**parsed_dict)
+    except (ValueError, TypeError) as exc:
+        exc.model_response = diagnostic
+        raise
     result.extraction_method = "llm"
     result.evidence_status = "unverified"
     result.source_quotes = [q for q in result.source_quotes if q and q in paper_text]

@@ -1,0 +1,12 @@
+{
+  "paper_title": "A transformer-based deep reinforcement learning approach for dynamic parallel machine scheduling problem with family setups",
+  "authors": "Funing Li, Sebastian Lang, Yuan Tian, Bingyuan Hong, Benjamin Rolf, Ruben Noortwyck, Robert Schulz, Tobias Reggelin",
+  "paper_doi": "https://doi.org/10.1007/s10845-024-02470-8",
+  "paper_license": "CC-BY-4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "changes": "PDF text extracted and selected by physical pages; not an alteration of the original article. Full PDF retained locally only.",
+  "code_license": "MIT",
+  "code_copyright": "2024 Funing Li",
+  "code_license_file": "repository_cache/code/LICENSE",
+  "code_changes": "Selected author source files are byte-identical, unexecuted evidence; no weights or third-party dependencies included."
+}
