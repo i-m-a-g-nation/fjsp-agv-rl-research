@@ -1,0 +1,9 @@
+{
+  "src/ai_workflow/runtime_budget.py": "d623544cd8969c1e24d88dadb009f9beb35cd6ded48326eb143407700bb0149d",
+  "src/ai_workflow/source_bundle.py": "ce0772f3b42cf589ed4c0b63e580eec949e2d35ef53f7713bfbba338b76bdc41",
+  "src/ai_workflow/contracts.py": "c2bd5bcb27ed8e3e2c637eeee16e3767e93e5ce8521c6bf5524b614bfab55265",
+  "src/ai_workflow/field_extraction.py": "31d6dd5a36cc84ec47781815e3bf27fe5f856aa4612519530bc4f074f0334de5",
+  "experiments/exp_023_paper_code_validation.py": "178b440d535fe1ba5ac4c2bc832a2ac82f5c9feb453757f8e251fc7bcc0a2e4f",
+  "src/ai_workflow/config.py": "bdf7ca185e3d57086754a9411a4b5758a5db651018277581f355ed88c8af4e5a",
+  "src/ai_workflow/evidence.py": "bddc957d696160e150ebb5745915f40ec8946958b547c1490689c38d08130c21"
+}

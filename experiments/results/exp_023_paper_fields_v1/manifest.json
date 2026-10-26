@@ -1,0 +1,16 @@
+{
+  "kind": "partial_field_validation_evidence_archive",
+  "complete_source_bundle": false,
+  "source_cache": "../exp_023_real_paper_code_v1/repository_cache",
+  "files_sha256": {
+    "ATTRIBUTION.json": "dc68649f30840dd7fadb8d4a284a20ebfbeba53c4e5d52265e21ed449118c010",
+    "batch_summary.json": "26497aa5917a6962cc7239ad01fb6149951f31a810ed72157828554de685837a",
+    "contexts/action_representation.txt": "16f06184c72b60db61651fa22f6aee2d96ef2c0f833d55914159d1ebbe220e98",
+    "contexts/reward_constants.txt": "ec179e2a506039159e2b421609d50a9234d5df37c18af798ba733dde8bf25fcb",
+    "live_result.json": "c7e870f6405eb3582a331b89630701feec0805ee6591687536f1c94af3b486f9",
+    "paper_code_comparison.json": "9595304a4f68c8e93c008bf008dc0c05c6ecd647403209c0c2e396c1c0cf58d8",
+    "preview_result.json": "72571031ac0e719b77e118c4d0b628e117064435a18154211ab2630be4ee468b",
+    "request.json": "dd0d2982ce1b49f208761ed9f1a1f511b1b8519b60d4f674e0003d30a22fe5ef",
+    "runtime_sha256.json": "5db37c925a352d62649dfaf88a31cd5e94e2c4c88cac897d5fd3ef4bd4be96a7"
+  }
+}

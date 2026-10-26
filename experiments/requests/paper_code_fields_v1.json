@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "track": "graduation",
+  "paper": {
+    "title": "A transformer-based deep reinforcement learning approach for dynamic parallel machine scheduling problem with family setups",
+    "doi": "10.1007/s10845-024-02470-8",
+    "pdf_url": "https://link.springer.com/content/pdf/10.1007/s10845-024-02470-8.pdf",
+    "sha256": "50ff0f7d470550cf3c13c5234538a7f9c80a84aae8a70ee3454b6de3b1b24993",
+    "license": "CC-BY-4.0"
+  },
+  "repository": {
+    "name": "ASnowbow/Transformer4PMSP",
+    "commit": "b4b46b92aa67556391b7e2613ac1213dafe16c60",
+    "license": "MIT",
+    "files": [
+      {
+        "path": "LICENSE",
+        "blob_sha1": "84f600d15b541daa21d172c79b294ec1c2ee2b9b"
+      },
+      {
+        "path": "README.md",
+        "blob_sha1": "5f3148cc78b14b23f1ec6f1115e7576e73a9ac9a"
+      },
+      {
+        "path": "env_PMSP.py",
+        "blob_sha1": "9600ee65e1ca80021a54ddc91e7d466a3002c456"
+      },
+      {
+        "path": "brain_Transformer.py",
+        "blob_sha1": "56b93af1bb6510e52f8462d9853a86acee640a66"
+      },
+      {
+        "path": "config.py",
+        "blob_sha1": "30b610d7ad322dce0890bb588fc2f68d956ff1c6"
+      },
+      {
+        "path": "main.py",
+        "blob_sha1": "72e2d79e9cdec17d0eeb90136ffd1dd53902362e"
+      },
+      {
+        "path": "Validation/config_val.py",
+        "blob_sha1": "97cedd8608242b03db09251a01837bf43b214079"
+      },
+      {
+        "path": "Validation/env_val.py",
+        "blob_sha1": "bd67f1b0fab72b925861d42ba6eb1c8a15343fff"
+      },
+      {
+        "path": "requirements.txt",
+        "blob_sha1": "b2b67e30aa59bb798b85adf6bdb9822ec581e920"
+      }
+    ]
+  },
+  "units": [
+    {
+      "id": "reward_constants",
+      "field": "rl_formulation.reward_function",
+      "pages": [
+        15
+      ],
+      "excerpts": [
+        {
+          "page": 15,
+          "start": 2546,
+          "end": 2635,
+          "page_sha256": "624b3c2487fb6b019f96fab83f5b967c06b0317481d7b8c31318936058e3b3b8"
+        }
+      ],
+      "goal": "Extract only the explicitly stated Rshape and Ropt constant values. Do not reconstruct the full reward formula.",
+      "code_ranges": [
+        {
+          "path": "config.py",
+          "start": 44,
+          "end": 59
+        }
+      ]
+    },
+    {
+      "id": "action_representation",
+      "field": "rl_formulation.action_space",
+      "pages": [
+        13
+      ],
+      "excerpts": [
+        {
+          "page": 13,
+          "start": 481,
+          "end": 722,
+          "page_sha256": "8edbcac853c21d2d14adf59e2513edac42060bfb9da3a5d0342a323180148889"
+        }
+      ],
+      "goal": "What is the action representation and its dimension, as stated in this excerpt? One short fact.",
+      "code_ranges": [
+        {
+          "path": "env_PMSP.py",
+          "start": 131,
+          "end": 160
+        }
+      ]
+    }
+  ],
+  "limits": {
+    "max_active_seconds": 150,
+    "max_provider_calls": 2,
+    "max_output_tokens": 16384
+  },
+  "notice": "New field-only batch; prior real-paper batch exhausted and immutable. One fact per request. No external execution, training, adaptation, approval or research acceptance.",
+  "model_request": {
+    "profile": "bounded",
+    "max_output_tokens": 8192,
+    "request_timeout_seconds": 60,
+    "repair_attempts": 0
+  },
+  "batch_id": "field-evidence-20261026-v1"
+}

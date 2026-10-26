@@ -19,11 +19,14 @@ if str(ROOT) not in sys.path:
 from src.ai_workflow.config import LLMConfig, load_dotenv_if_present
 from src.ai_workflow.contracts import get_research_contract
 from src.ai_workflow.evidence_sources import assert_source_files_unchanged
+from src.ai_workflow.evidence import CLAIM_FIELDS
 from src.ai_workflow.extraction_quality import extract_with_feedback
+from src.ai_workflow.field_extraction import extract_paper_field
 from src.ai_workflow.langgraph_pipeline import _llm_extract_paper
 from src.ai_workflow.runtime_budget import BudgetExceeded, BudgetLimits, RunBudget
 from src.ai_workflow.source_bundle import (
-    acquire_source_bundle, make_paper_context, validate_source_request, verify_source_bundle,
+    acquire_source_bundle, make_paper_context, make_paper_excerpt, validate_excerpt_selection,
+    validate_source_request, verify_source_bundle,
 )
 
 
@@ -49,6 +52,12 @@ def _limits(request: dict) -> BudgetLimits:
                 or any(type(p) is not int or not 1 <= p <= 100 for p in pages)
                 or pages != sorted(set(pages))):
             raise ValueError('Select sorted unique physical PDF pages')
+        if 'field' in unit or 'excerpts' in unit:
+            if unit.get('field') not in CLAIM_FIELDS or not unit['goal'].strip():
+                raise ValueError('Select one supported paper field and a nonempty question')
+            validate_excerpt_selection(unit.get('excerpts'))
+            if pages != sorted({span['page'] for span in unit['excerpts']}):
+                raise ValueError('Field pages must match exact excerpt selectors')
         ranges = unit['code_ranges']
         if not isinstance(ranges, list) or len(ranges) > 8:
             raise ValueError('Too many code evidence ranges')
@@ -160,21 +169,33 @@ def run_validation(request: dict, output_dir: Path, *, extract: bool = False,
             verify_source_bundle(bundle)
             budget.remaining_seconds()
             record['status'] = 'SOURCES_VERIFIED_UNREVIEWED'
-            if extract:
+            if extract or any('field' in unit for unit in request['units']):
                 for unit, current in zip(request['units'], record['units']):
+                    if not extract and 'field' not in unit:
+                        continue
                     budget.remaining_seconds()
-                    text, source_map = make_paper_context(bundle, unit['pages'])
+                    text, source_map = (make_paper_excerpt(bundle, unit['excerpts']) if 'field' in unit
+                                        else make_paper_context(bundle, unit['pages']))
                     assert_source_files_unchanged(source_map)
                     context = _code_context(bundle, request, unit['code_ranges'])
                     budget.remaining_seconds()
-                    current.update(status='EXTRACTING', source_map=source_map, code_context=context)
+                    current.update(status='EXTRACTING' if extract else 'PREVIEW_READY',
+                                   source_map=source_map, code_context=context)
+                    if 'field' in unit:
+                        current['field'] = unit['field']
                     save()
+                    if not extract:
+                        continue
 
                     def response_snapshot(diagnostic):
                         current.setdefault('responses', []).append(diagnostic)
                         save()
 
                     def once(feedback):
+                        if 'field' in unit:
+                            return extract_paper_field(cfg=cfg, paper_title=request['paper']['title'],
+                                paper_text=text, source_map=source_map, field=unit['field'],
+                                question=unit['goal'], feedback=feedback, on_response=response_snapshot)
                         return _llm_extract_paper(cfg=cfg, paper_title=request['paper']['title'], paper_text=text,
                             content_depth='full_text', resolution_log=[
                                 f'Selected complete physical PDF pages {unit["pages"]}; not the entire article.',
@@ -196,8 +217,9 @@ def run_validation(request: dict, output_dir: Path, *, extract: bool = False,
                                    extraction=report.model_dump(), quality=quality)
                     save()
                 budget.remaining_seconds()
-                record['status'] = ('EVIDENCE_READY_UNREVIEWED' if all(
-                    item['status'] == 'COMPLETE' for item in record['units']) else 'EVIDENCE_INCOMPLETE')
+                if extract:
+                    record['status'] = ('EVIDENCE_READY_UNREVIEWED' if all(
+                        item['status'] == 'COMPLETE' for item in record['units']) else 'EVIDENCE_INCOMPLETE')
     except Exception as exc:
         record['status'] = 'BUDGET_EXHAUSTED' if isinstance(exc, BudgetExceeded) else 'FAILED'
         record['error'] = {'type': type(exc).__name__}

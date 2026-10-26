@@ -1,5 +1,11 @@
 # Platform Review Status
 
+## Field-level real-paper extraction 2026-10-26
+
+- [Actual result and usage](paper_field_validation.md): new source-only single-field route in exp023, exact verified PDF character spans with original offsets/page hashes; one tiny found/missing schema per call, deterministic claim locations remainunverified. Default preview saves contexts/code comparison with0models; old whole-page mode preserved. JSON mode sent through extra_body so SDK does not hide length diagnostics with eager parse().
+- Native offline preview0models; real new batch2calls/16384reservation/150s envelope, enabled/max8192/60/retries0/repairs0. Bothstop,2/2located,10.765active seconds; actual515completion tokens including436reasoning. Paper reward constants1/200 and action-priority vector extracted; state/fullmethod not extracted. Author codefinal_reward100 remains separate. Old failed batch immutable; no source-code execution/training/adaptation/acceptance or domain changes.
+- TDD source/extractor/controller and fresh independent review: no blocking findings. P3 deferred: malformed provider usage schema can make SDK raise before final-output callback; still failure, possibly missing final diagnostic. Final frozen-source dedicated suite **973passed,2skipped,89.78%coverage**,13upstream warnings,246.02s;80%gate unchanged. Both skipsWindows symlink permission. No main merge/push; bothresearch tracksnot_achieved.
+
 ## First real-paper/author-code pilot 2026-10-26
 
 - User started the real-source milestone. Added read-only source_bundle and exp023: pinned DOI/PDF/commit/tree/selected blobs, MIT/CC-BY metadata, function index and exact physical-page/code-line contexts. Default fetches/validates sources with0models; explicit extract invokes bounded max. No author execution/checkpoint load/training/application/approval.

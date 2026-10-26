@@ -1,0 +1,39 @@
+{
+  "batch_id": "field-evidence-20261026-v1",
+  "status": "EVIDENCE_READY_UNREVIEWED",
+  "budget": {
+    "limits": {
+      "max_active_seconds": 150,
+      "max_output_tokens": 16384,
+      "max_provider_calls": 2
+    },
+    "active_seconds": 10.764999999984866,
+    "active_seconds_charged": 10.764999999984866,
+    "active_seconds_reserved": 0,
+    "provider_calls": 2,
+    "output_tokens_reserved": 16384
+  },
+  "actual_usage": {
+    "prompt_tokens": 783,
+    "completion_tokens": 515,
+    "total_tokens": 1298,
+    "reasoning_tokens": 436
+  },
+  "model_profile": {
+    "model": "deepseek-flash",
+    "thinking": "enabled",
+    "reasoning_effort": "max",
+    "max_output_tokens": 8192,
+    "request_timeout_seconds": 60,
+    "max_retries": 0,
+    "request_profile": "bounded",
+    "repair_attempts": 0
+  },
+  "preview_provider_calls": 0,
+  "prior_batch": "exp_023_real_paper_code_v1 (exhausted; immutable)",
+  "claims_located": 2,
+  "claims_total": 2,
+  "semantic_status": "unreviewed",
+  "research_status": "not_achieved",
+  "notice": "Narrow original-paper facts only; no autonomous discovery, full-method reproduction, training, candidate application or acceptance."
+}

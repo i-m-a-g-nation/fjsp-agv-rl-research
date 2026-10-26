@@ -29,6 +29,6 @@ R1/R2 目前通过独立 API 和 `exp_022` 开发验证使用，尚未接入三�
 
 同日已切换并验证[max 思考及引用反馈](docs/model_api_max_validation_2026-10-26.md)：真实请求 enabled/max，两个短样本通过；在线引用缺项最多纠正一次，仍不完整即停止代码生成。每次请求明确采用 8192 tokens / 60 秒，累计会话预算不变。
 
-最新[真实论文与代码验证](docs/real_paper_code_validation.md)：已固定论文和作者代码版本，来源复跑通过；真实 max 提取在本轮额度内失败并停止。已核实论文奖励200与代码100的差异，保留现有维护模型；尚无训练或算法应用。
+最新[单字段真实提取](docs/paper_field_validation.md)：短片段下 Flash enabled/max 两次正常返回，奖励常数及动作表示引用2/2定位完整；仍待语义审核，无训练或算法应用。此前[整页提取失败](docs/real_paper_code_validation.md)及预算完整保留，现有维护模型保持。
 
 完整背景、历史实验表和环境说明仍在 [中文 README](README.zh-CN.md) / [English README](README.md)。

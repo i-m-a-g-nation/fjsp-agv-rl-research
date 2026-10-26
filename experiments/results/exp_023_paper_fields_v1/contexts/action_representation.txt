@@ -1,0 +1,8 @@
+[EXCERPT: selected character spans from physical PDF pages; other text is outside this context.]
+
+[Physical PDF page 13; source characters 481:722; page text SHA256 8edbcac853c21d2d14adf59e2513edac42060bfb9da3a5d0342a323180148889]
+Therefore, we deﬁne the action
+representation as the priorities of all available jobs in the
+current environment. Assuming that the number of available
+jobs at time point t is nt , so the action of the DRL agent is
+an nt -dimensional vector.

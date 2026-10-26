@@ -419,6 +419,93 @@ def verify_source_bundle(folder: Path) -> dict:
         raise ValueError("Malformed or missing source bundle artifact") from exc
 
 
+def validate_excerpt_selection(excerpts: list[dict]) -> None:
+    """Validate one or two ordered character spans without reading any files.
+
+    Pages are physical PDF page numbers starting at one; character offsets are
+    zero-based and half-open. Page existence, bounds and hashes need the bundle
+    and are checked separately by :func:`make_paper_excerpt`.
+    """
+    if not isinstance(excerpts, list) or not 1 <= len(excerpts) <= 2:
+        raise ValueError("Select one or two character excerpts")
+    previous = None
+    total = 0
+    for item in excerpts:
+        if not isinstance(item, dict) or set(item) != {"page", "start", "end", "page_sha256"}:
+            raise ValueError("Each excerpt requires exactly page, start, end and page_sha256")
+        page, start, end, digest = (item[key] for key in ("page", "start", "end", "page_sha256"))
+        if (any(type(value) is not int for value in (page, start, end))
+                or page < 1 or start < 0 or not 1 <= end - start <= 2400
+                or not isinstance(digest, str) or not _HEX64.fullmatch(digest)):
+            raise ValueError("Invalid excerpt page, character bounds or page SHA256")
+        if previous is not None and ((page, start) < previous[:2]
+                                     or (page == previous[0] and start < previous[2])):
+            raise ValueError("Excerpts must be ordered by page and start without overlap")
+        previous = (page, start, end)
+        total += end - start
+    if total > 4800:
+        raise ValueError("Selected excerpts exceed 4800 characters")
+
+
+def make_paper_excerpt(folder: Path, excerpts: list[dict]) -> tuple[str, dict]:
+    """Build immutable, bounded context from exact spans in a verified bundle.
+
+    Each page row maps a context span to its original extracted-page character
+    span. Repeated text is never searched for or assigned inferred coordinates.
+    """
+    validate_excerpt_selection(excerpts)
+    folder = Path(folder)
+    manifest = verify_source_bundle(folder)
+    page_data = _read(folder, "pages.json", _API_LIMIT)
+    if _sha(page_data) != manifest["files_sha256"]["pages.json"]:
+        raise ValueError("Source page index changed after bundle verification")
+    indexed = json.loads(page_data)
+    context = "[EXCERPT: selected character spans from physical PDF pages; other text is outside this context.]\n"
+    coordinates = []
+    for item in excerpts:
+        page, source_start, source_end = (item[key] for key in ("page", "start", "end"))
+        if page > manifest["paper"]["page_count"]:
+            raise ValueError("Select existing physical PDF pages")
+        text = indexed[page - 1]["text"]
+        digest = _sha(text.encode("utf-8"))
+        if source_end > len(text) or digest != item["page_sha256"]:
+            raise ValueError("Excerpt exceeds its source page or page text SHA256 changed")
+        context += (f"\n[Physical PDF page {page}; source characters {source_start}:{source_end}; "
+                    f"page text SHA256 {digest}]\n")
+        start = len(context)
+        context += text[source_start:source_end]
+        coordinates.append({"page": page, "start": start, "end": len(context),
+                            "source_start": source_start, "source_end": source_end,
+                            "page_text_sha256": digest})
+        context += "\n"
+    if len(context) > 6000:
+        raise ValueError("Selected excerpt context exceeds 6000 characters")
+    data = context.encode("utf-8")
+    digest = _sha(data)
+    relative = f"excerpt-{digest}.txt"
+    target = folder / relative
+    if _is_link(target):
+        raise ValueError("Unsafe excerpt output path")
+    if target.exists():
+        if _read(folder, relative, 24000) != data:
+            raise ValueError("Existing excerpt artifact conflicts with selected spans")
+    else:
+        try:
+            with target.open("xb") as handle:
+                handle.write(data)
+        except FileExistsError:
+            if _read(folder, relative, 24000) != data:
+                raise ValueError("Existing excerpt artifact conflicts with selected spans") from None
+        except OSError:
+            raise ValueError("Cannot safely create excerpt artifact") from None
+    return context, {"source_kind": "pdf_backed_text", "source_path": str(target.resolve()),
+                     "raw_sha256": digest, "text_sha256": digest, "text_length": len(context),
+                     "pdf_source_path": str((folder / "paper.pdf").resolve()),
+                     "pdf_raw_sha256": manifest["paper"]["sha256"], "pages": coordinates,
+                     "selected_pages": list(dict.fromkeys(item["page"] for item in excerpts)),
+                     "is_excerpt": True, "warnings": []}
+
+
 def make_paper_context(folder: Path, pages: list[int]) -> tuple[str, dict]:
     """Return complete selected physical pages with explicit excerpt coordinates."""
     folder = Path(folder)

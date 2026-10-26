@@ -84,6 +84,8 @@ $modelPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.
 
 ## 5. Flash1017 适不适合这个项目
 
+最新[单字段试验](paper_field_validation.md)实际以enabled/max完成奖励常数及动作表示两次短片段提取，引用2/2定位完整；状态仍unverified。此前整页请求失败保留。小结构JSON模式由专用提取器发送，不改变 `.env`、全局预算或其他请求类型，尚无完整论文准确率评测。
+
 **可以继续作为受检查的工作助手，但当前非思考模式未通过首次小样本全部验收。** [2026-10-26 真实接口诊断](model_api_validation_2026-10-26.md)已确认连通；同时发现一个调度数值/计划不一致，以及 4 条缺少逐项引用的提取陈述。这不是完整模型评测，尚无模型对比实验支持：
 
 后续 [max 档诊断](model_api_max_validation_2026-10-26.md)用相同输入验证，调度答案一致、引用 7/7 可定位，未触发纠正；实际请求均为 enabled/max。输出与时间预算同时调整，两个样本不构成受控模型对比，也不验证真实论文质量。

@@ -205,3 +205,79 @@ def test_paper_profile_cannot_expand_the_declared_batch_or_hidden_caps(monkeypat
     with pytest.raises(ValueError):
         module.run_validation(request,tmp_path/'run',extract=True,config=live_config())
     assert calls==[] and not (tmp_path/'run').exists()
+
+
+def setup_field_driver(monkeypatch, tmp_path, missing=False):
+    module, request, legacy_calls = setup_driver(monkeypatch, tmp_path)
+    calls = []
+    request['model_request'] = {'profile':'bounded', 'max_output_tokens':8192,
+        'request_timeout_seconds':60, 'repair_attempts':0}
+    for unit in request['units']:
+        unit['field'] = 'rl_formulation.reward_function'
+        unit['pages'] = [15]
+        unit['excerpts'] = [{'page':15, 'start':0, 'end':len(TEXT),
+                             'page_sha256':hashlib.sha256(TEXT.encode()).hexdigest()}]
+    old_context = module.make_paper_context
+    monkeypatch.setattr(module, 'make_paper_excerpt', lambda folder, spans: old_context(folder, [15]))
+
+    def focused(**kwargs):
+        kwargs['cfg'].provider_timeout(output_tokens=kwargs['cfg'].max_output_tokens)
+        calls.append(kwargs)
+        if kwargs.get('on_response'):
+            kwargs['on_response']({'finish_reason':'stop', 'usage':{}, 'final_text_characters':2, 'final_text':'{}'})
+        return PaperExtractionReport(title='Fixture', problem_type='', extraction_method='llm', math_model={},
+            rl_formulation={} if missing else {'reward_function':'Paper fact'}, codebase_alignment={},
+            claim_evidence=[] if missing else [{'field':'rl_formulation.reward_function', 'quote':TEXT}])
+
+    monkeypatch.setattr(module, 'extract_paper_field', focused)
+    return module, request, calls, legacy_calls
+
+
+def test_field_preview_is_saved_without_key_or_model_calls(monkeypatch, tmp_path):
+    module, request, calls, old = setup_field_driver(monkeypatch, tmp_path)
+    monkeypatch.delenv('OPENAI_API_KEY', raising=False)
+    result = module.run_validation(request, tmp_path/'run')
+    assert result['status'] == 'SOURCES_VERIFIED_UNREVIEWED'
+    assert result['budget']['provider_calls'] == 0 and calls == [] and old == []
+    assert all(unit['status'] == 'PREVIEW_READY' and unit['field'] == 'rl_formulation.reward_function'
+               and unit['source_map']['pages'][0]['page'] == 15 and unit['code_context'] for unit in result['units'])
+    assert json.loads((tmp_path/'run'/'result.json').read_text(encoding='utf-8'))['units'][0]['source_map']
+
+
+def test_field_live_uses_small_prompt_keeps_author_code_separate_and_stays_unverified(monkeypatch, tmp_path):
+    module, request, calls, old = setup_field_driver(monkeypatch, tmp_path)
+    result = module.run_validation(request, tmp_path/'run', extract=True, config=live_config())
+    assert result['status'] == 'EVIDENCE_READY_UNREVIEWED' and old == [] and len(calls) == 2
+    assert result['budget']['provider_calls'] == 2 and result['budget']['output_tokens_reserved'] == 16384
+    for call, unit in zip(calls, result['units']):
+        assert call['paper_text'] == TEXT and call['source_map']['pages'][0]['page'] == 15
+        assert 'retrieved_codebase' not in call and 'target_contract' not in call
+        assert call['field'] == 'rl_formulation.reward_function'
+        assert unit['extraction']['evidence_status'] == 'unverified' and unit['responses'][0]['finish_reason'] == 'stop'
+    assert result['research_status'] == 'not_achieved' and result['candidate_application_status'] == 'not_applied'
+
+
+@pytest.mark.parametrize('change', [dict(field='codebase_alignment.reusable_modules'),
+    dict(excerpts=[]), dict(pages=[14]), dict(field=None), dict(goal=''),
+    dict(excerpts=[{'page':15,'start':0,'end':2401,'page_sha256':'a'*64}])])
+def test_invalid_field_selector_rejected_before_persistence(monkeypatch, tmp_path, change):
+    module, request, calls, _ = setup_field_driver(monkeypatch, tmp_path)
+    request['units'][0].update(change)
+    with pytest.raises(ValueError):
+        module.run_validation(request, tmp_path/'run', extract=True, config=live_config())
+    assert calls == [] and not (tmp_path/'run').exists()
+
+
+def test_missing_field_cannot_become_ready_or_silently_fallback(monkeypatch, tmp_path):
+    module, request, calls, old = setup_field_driver(monkeypatch, tmp_path, missing=True)
+    result = module.run_validation(request, tmp_path/'run', extract=True, config=live_config())
+    assert result['status'] == 'EVIDENCE_INCOMPLETE' and len(calls) == 2 and old == []
+    assert all(unit['quality']['status'] == 'incomplete' for unit in result['units'])
+
+
+def test_field_units_share_declared_budget(monkeypatch, tmp_path):
+    module, request, calls, old = setup_field_driver(monkeypatch, tmp_path)
+    request['limits']['max_provider_calls'] = 1
+    result = module.run_validation(request, tmp_path/'run', extract=True, config=live_config())
+    assert result['status'] == 'BUDGET_EXHAUSTED' and len(calls) == 1 and old == []
+    assert result['units'][0]['status'] == 'COMPLETE' and result['units'][1]['status'] == 'BUDGET_EXHAUSTED'

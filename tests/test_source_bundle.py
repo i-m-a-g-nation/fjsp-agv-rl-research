@@ -3,6 +3,8 @@
 import hashlib
 import importlib
 import json
+import os
+from pathlib import Path
 
 import pytest
 
@@ -461,3 +463,189 @@ def test_public_request_validation_rejects_unsafe_inputs_without_persistence(off
 
 def test_public_request_validation_accepts_the_supported_pinned_request(offline):
     assert offline[0].validate_source_request(request()) is None
+
+
+def excerpt(page=2, start=0, end=5, text="First physical page text"):
+    return {"page": page, "start": start, "end": end,
+            "page_sha256": hashlib.sha256(text.encode("utf-8")).hexdigest()}
+
+
+def test_excerpt_validation_accepts_ordered_adjacent_spans_without_file_access(offline, tmp_path):
+    validate = getattr(offline[0], "validate_excerpt_selection", None)
+    assert callable(validate), "Public pure excerpt validation is required"
+    selections = [excerpt(end=2400), excerpt(start=2400, end=4800)]
+    original = json.dumps(selections)
+    assert validate(selections) is None
+    assert json.dumps(selections) == original
+    assert not list(tmp_path.iterdir())
+
+
+@pytest.mark.parametrize("invalid", [
+    None, {}, (), [], [excerpt(), excerpt(), excerpt()], [None],
+    [{**excerpt(), "extra": "selection-secret"}],
+    [{key: value for key, value in excerpt().items() if key != "page_sha256"}],
+    [{**excerpt(), "page": True}], [{**excerpt(), "page": "2"}],
+    [{**excerpt(), "page": 0}], [{**excerpt(), "page": -1}],
+    [{**excerpt(), "start": False}], [{**excerpt(), "start": 0.0}],
+    [{**excerpt(), "start": -1}], [{**excerpt(), "end": True}],
+    [{**excerpt(), "end": "5"}], [excerpt(start=5, end=5)],
+    [excerpt(start=5, end=4)], [excerpt(end=2401)],
+    [{**excerpt(), "page_sha256": None}],
+    [{**excerpt(), "page_sha256": "A" * 64}],
+    [{**excerpt(), "page_sha256": "g" * 64}],
+    [{**excerpt(), "page_sha256": "a" * 63}],
+    [excerpt(page=3), excerpt(page=2)],
+    [excerpt(start=5, end=10), excerpt(start=0, end=5)],
+    [excerpt(start=0, end=6), excerpt(start=5, end=10)],
+    [excerpt(), excerpt()],
+])
+def test_excerpt_validation_rejects_unsafe_oversize_or_unordered_selectors(offline, invalid):
+    with pytest.raises(ValueError) as caught:
+        offline[0].validate_excerpt_selection(invalid)
+    assert "selection-secret" not in str(caught.value)
+
+
+def test_excerpt_keeps_exact_source_offsets_page_identity_and_compatible_audit(offline, tmp_path):
+    module, folder, manifest = complete(offline, tmp_path)
+    make_excerpt = getattr(module, "make_paper_excerpt", None)
+    assert callable(make_excerpt), "Public bounded excerpt context is required"
+    context, mapping = make_excerpt(folder, [excerpt(start=6, end=19),
+                                           excerpt(page=3, end=12, text="Second claim")])
+    first, second = mapping["pages"]
+    assert context[first["start"]:first["end"]] == "physical page"
+    assert context[second["start"]:second["end"]] == "Second claim"
+    assert (first["page"], first["source_start"], first["source_end"]) == (2, 6, 19)
+    assert (second["page"], second["source_start"], second["source_end"]) == (3, 0, 12)
+    assert first["page_text_sha256"] == excerpt()["page_sha256"]
+    assert second["page_text_sha256"] == excerpt(text="Second claim")["page_sha256"]
+    assert "First" not in context and DOI not in context and "return 1" not in context
+    assert len(context) <= 6000
+    assert mapping["selected_pages"] == [2, 3]
+    assert mapping["is_excerpt"] is True
+    assert mapping["source_kind"] == "pdf_backed_text"
+    assert mapping["text_length"] == len(context)
+    assert mapping["text_sha256"] == mapping["raw_sha256"] == hashlib.sha256(context.encode("utf-8")).hexdigest()
+    assert mapping["pdf_raw_sha256"] == manifest["paper"]["sha256"]
+    assert Path(mapping["pdf_source_path"]) == (folder / "paper.pdf").resolve()
+    from src.ai_workflow.evidence_sources import assert_source_files_unchanged
+    from src.ai_workflow.evidence import audit_claim_evidence
+    from src.ai_workflow.schemas import PaperExtractionReport
+    assert_source_files_unchanged(mapping)
+    report = PaperExtractionReport(title="Example", problem_type="Claim", math_model={},
+                                   rl_formulation={}, codebase_alignment={},
+                                   claim_evidence=[{"field": "problem_type", "quote": "physical page",
+                                                    "source_start": first["start"]}])
+    audited = audit_claim_evidence(report, context, source_map=mapping)
+    claim = audited.evidence_audit["claims"][0]
+    assert claim["status"] == "located_unreviewed"
+    assert claim["locations"][0]["page_start"] == claim["locations"][0]["page_end"] == 2
+    assert audited.evidence_status == "unverified"
+    assert module.verify_source_bundle(folder)["status"] == "COMPLETED"
+
+
+def test_excerpt_repeated_same_page_text_preserves_each_original_span(offline, tmp_path, monkeypatch):
+    module = offline[0]
+    text = "same exact repeated evidence | same exact repeated evidence"
+    monkeypatch.setattr(module, "_extract_pdf", lambda path: (
+        [f"{DOI} https://github.com/{REPO}", text], {}))
+    _, folder, _ = complete(offline, tmp_path)
+    context, mapping = module.make_paper_excerpt(folder, [excerpt(start=0, end=28, text=text),
+                                                         excerpt(start=31, end=59, text=text)])
+    assert mapping["selected_pages"] == [2]
+    assert [(row["page"], row["source_start"], row["source_end"]) for row in mapping["pages"]] == [
+        (2, 0, 28), (2, 31, 59)]
+    for row in mapping["pages"]:
+        assert context[row["start"]:row["end"]] == "same exact repeated evidence"
+    assert mapping["pages"][0]["end"] < mapping["pages"][1]["start"]
+
+
+def test_excerpt_offsets_count_unicode_characters_and_hash_utf8_page_text(offline, tmp_path, monkeypatch):
+    module = offline[0]
+    text = "前😀缀选中的证据后缀"
+    monkeypatch.setattr(module, "_extract_pdf", lambda path: (
+        [f"{DOI} https://github.com/{REPO}", text], {}))
+    _, folder, _ = complete(offline, tmp_path)
+    context, mapping = module.make_paper_excerpt(folder, [excerpt(start=3, end=8, text=text)])
+    row = mapping["pages"][0]
+    assert context[row["start"]:row["end"]] == "选中的证据"
+    assert row["end"] - row["start"] == 5
+    assert row["page_text_sha256"] == hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+@pytest.mark.parametrize("selections", [
+    [excerpt(page=4)], [excerpt(end=25)], [{**excerpt(), "page_sha256": "0" * 64}],
+    [excerpt(), excerpt(page=3, end=13, text="Second claim")],
+])
+def test_excerpt_rejects_missing_out_of_page_or_stale_hash_without_context_writes(offline, tmp_path, selections):
+    module, folder, _ = complete(offline, tmp_path)
+    before = set(folder.iterdir())
+    with pytest.raises(ValueError):
+        module.make_paper_excerpt(folder, selections)
+    assert set(folder.iterdir()) == before
+
+
+@pytest.mark.parametrize("artifact", ["paper.pdf", "pages.json", "paper.txt"])
+def test_excerpt_reverifies_pinned_bundle_before_using_a_page(offline, tmp_path, artifact):
+    module, folder, _ = complete(offline, tmp_path)
+    (folder / artifact).write_bytes(b"changed")
+    with pytest.raises(ValueError):
+        module.make_paper_excerpt(folder, [excerpt()])
+    assert not list(folder.glob("excerpt-*.txt"))
+
+
+def test_excerpt_accepts_maximum_selection_without_silent_truncation(offline, tmp_path, monkeypatch):
+    module = offline[0]
+    text = "a" * 2400 + "b" * 2400 + "OUTSIDE" * 30
+    monkeypatch.setattr(module, "_extract_pdf", lambda path: (
+        [f"{DOI} https://github.com/{REPO}", text], {}))
+    _, folder, _ = complete(offline, tmp_path)
+    context, mapping = module.make_paper_excerpt(folder, [excerpt(end=2400, text=text),
+                                                         excerpt(start=2400, end=4800, text=text)])
+    first, second = mapping["pages"]
+    assert context[first["start"]:first["end"]] == "a" * 2400
+    assert context[second["start"]:second["end"]] == "b" * 2400
+    assert "OUTSIDE" not in context
+    assert 4800 < len(context) <= 6000
+
+
+def test_excerpt_context_is_content_addressed_and_existing_identical_output_is_not_rewritten(offline, tmp_path):
+    module, folder, _ = complete(offline, tmp_path)
+    selections = [excerpt(start=6, end=19)]
+    context, mapping = module.make_paper_excerpt(folder, selections)
+    target = Path(mapping["source_path"])
+    assert mapping["raw_sha256"] in target.name
+    assert target.parent == folder.resolve() and target.suffix == ".txt"
+    assert target.read_bytes() == context.encode("utf-8")
+    os.utime(target, ns=(1_000_000_000, 1_000_000_000))
+    timestamp = target.stat().st_mtime_ns
+    assert module.make_paper_excerpt(folder, selections) == (context, mapping)
+    assert target.stat().st_mtime_ns == timestamp
+    another_context, another_mapping = module.make_paper_excerpt(folder, [excerpt(end=5)])
+    assert another_mapping["source_path"] != mapping["source_path"]
+    assert another_context != context
+    assert target.read_bytes() == context.encode("utf-8")
+
+
+@pytest.mark.parametrize("conflict", ["changed_file", "directory", "symlink"])
+def test_excerpt_rejects_output_conflicts_and_unsafe_links_without_overwrite(offline, tmp_path, conflict):
+    module, folder, _ = complete(offline, tmp_path)
+    _, mapping = module.make_paper_excerpt(folder, [excerpt()])
+    target = Path(mapping["source_path"])
+    target.unlink()
+    if conflict == "changed_file":
+        target.write_bytes(b"existing-conflict")
+    elif conflict == "directory":
+        target.mkdir()
+    else:
+        outside = tmp_path / "outside.txt"
+        outside.write_bytes(b"existing-conflict")
+        try:
+            target.symlink_to(outside)
+        except OSError:
+            pytest.skip("Creating Windows symlinks requires OS permission")
+    with pytest.raises(ValueError):
+        module.make_paper_excerpt(folder, [excerpt()])
+    if conflict == "directory":
+        assert target.is_dir() and not list(target.iterdir())
+    else:
+        assert target.read_bytes() == b"existing-conflict"
