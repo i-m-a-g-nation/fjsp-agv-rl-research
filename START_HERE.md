@@ -6,6 +6,7 @@
 |---|---|
 | 填模型 API | **当前工作树根目录的 `.env`**；配置方法见[模型接口说明](docs/model_interface.md) |
 | 找代码、输入和结果 | [项目结构导航](docs/project_structure.md) |
+| 一次启动有界科研批次 | [外层控制器说明](docs/research_controller_validation.md)；目前两种离线任务 |
 | 运行并理解人工审核 | [科研工作流说明](docs/research_workflow.md)；毕设参考求解看[专用使用说明](docs/graduation_workflow.md) |
 | 判断课题到底完成了什么 | [研究验收对照](docs/research_acceptance_map.md)；具体工程证据看各验证文档 |
 
@@ -17,7 +18,7 @@
 | 大创 | 要求配置、受监督文献/候选实验路线、已有动态基线协议 | 物流协同、RL 训练及课题验收 |
 | 毕设 | G1/G2；R1/R2；可逆观察编码；NumPy神经策略及有界REINFORCE试训 | 训练效果仍弱于EDD；PPO/正式G3比较及课题验收 |
 
-R1/R2 目前通过独立 API 和 `exp_022` 开发验证使用，尚未接入三审工作流。仓库程序仍是受监督执行器；聊天中的编码代理能改代码，不代表程序已经能自主读论文、改算法和训练。
+R1/R2 目前通过独立 API 和 `exp_022` 开发验证使用，尚未接入三审工作流。`exp_027` 已能自行派发已注册的文献依据核对和策略诊断，读取结果并停止；自动发现论文、生成/应用候选补丁和跨设计训练仍未贯通。聊天中的编码代理改码不计作程序自主能力。
 
 ## 先把模型配在哪里
 
@@ -29,6 +30,6 @@ R1/R2 目前通过独立 API 和 `exp_022` 开发验证使用，尚未接入三�
 
 同日已切换并验证[max 思考及引用反馈](docs/model_api_max_validation_2026-10-26.md)：真实请求 enabled/max，两个短样本通过；在线引用缺项最多纠正一次，仍不完整即停止代码生成。每次请求明确采用 8192 tokens / 60 秒，累计会话预算不变。
 
-最新[诊断—单候选对照—决定](docs/graduation_validation_iteration.md)已能一条命令运行：历史均值候选在两模式验证均值均未改善，程序保留原方法；8分支3072步、80合法验证计划、约22.2秒，未评估探测集。此前[首次神经策略试训](docs/graduation_neural_policy_pilot.md)、[纯编码器](docs/graduation_state_encoding_validation.md)及文献/失败记录保留，原维护目标保持。
+最新[外层控制器批次](docs/research_controller_validation.md)已一条命令完成两项任务：跳过已拒绝均值候选、核对论文片段、诊断编号敏感性，约9.2秒，零API调用；停在需要候选实现适配器的明确边界。[此前单候选对照](docs/graduation_validation_iteration.md)、[神经策略试训](docs/graduation_neural_policy_pilot.md)、[纯编码器](docs/graduation_state_encoding_validation.md)及失败记录保留，原维护目标保持。
 
 完整背景、历史实验表和环境说明仍在 [中文 README](README.zh-CN.md) / [English README](README.md)。

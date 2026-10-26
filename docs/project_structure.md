@@ -1,6 +1,6 @@
 # 项目结构导航
 
-当前研究迭代入口：[验证诊断/单候选对照](graduation_validation_iteration.md)，`exp_026`调用诊断、训练、检查和逐模式选择；不包含自动发现论文或改码。
+当前外层入口：[有界科研控制器](research_controller_validation.md)，`exp_027`按已有证据自动派发两种已注册离线任务并停止；自动找论文、候选改码仍未实现。训练对照工具仍见[exp026](graduation_validation_iteration.md)。
 
 数据/策略接口看[纯编码器](graduation_state_encoding_validation.md)与[神经策略](graduation_neural_policy_pilot.md)，分别在`src/graduation/state_encoding.py`、`neural_policy.py`、`policy_training.py`；原R1/R2及包导出保持。
 
@@ -17,7 +17,7 @@
 | 改动态重调度 | [`src/dynamic/`](../src/dynamic/) | Phase 2A 事件、状态、冻结记录及剩余工序重调度 |
 | 改毕设领域模型 | [`src/graduation/`](../src/graduation/) | 同质平行机、交期/总延期、维护；G1/G2、R1 环境和 R2 规则 |
 | 改科研执行流程 | [`src/ai_workflow/`](../src/ai_workflow/) | 要求契约、文献/RAG、受限候选、预算、会话与人工审核；不等于算法训练器 |
-| 找可执行实验 | [`experiments/`](../experiments/) | `exp_001`–`exp_026` 分别处理不同阶段；按下表挑入口 |
+| 找可执行实验 | [`experiments/`](../experiments/) | `exp_001`–`exp_027` 分别处理不同阶段；按下表挑入口 |
 | 找输入 | [`instances/`](../instances/)、[`experiments/protocols/`](../experiments/protocols/)、[`experiments/requests/`](../experiments/requests/) | 静态算例、动态固定协议、毕设参考请求 |
 | 找保存的实验依据 | [`experiments/results/`](../experiments/results/) | CSV、报告、计划、manifest；结合输入、源码身份和检查结果阅读 |
 | 验证变更 | [`tests/`](../tests/)、[`scripts/`](../scripts/) | pytest、专用环境与检查脚本；规则见[AGENTS.md](../AGENTS.md) |
@@ -46,6 +46,7 @@
 | 毕设观察编码与轨迹回放 | [`exp_024`](../experiments/exp_024_state_encoding_check.py) | [编码器验证](graduation_state_encoding_validation.md)；`results/exp_024_state_encoding_v1/` |
 | 毕设神经策略有界试训 | [`exp_025`](../experiments/exp_025_neural_policy_pilot.py) | [试训结果/使用](graduation_neural_policy_pilot.md)；`results/exp_025_neural_policy_v1/`，含NPZ权重 |
 | 验证诊断/单候选决定 | [`exp_026`](../experiments/exp_026_validation_iteration.py) | [本轮结果/使用](graduation_validation_iteration.md)；`results/exp_026_validation_iteration_v1/`，候选未改善 |
+| 有限注册表外层编排 | [`exp_027`](../experiments/exp_027_research_controller.py) | [启动/状态/边界](research_controller_validation.md)；`results/exp_027_research_controller_v1/` |
 | 受监督三审入口 | [`exp_018`](../experiments/exp_018_ai_rag_workflow.py) | [通用工作流](research_workflow.md) / [毕设 G1/G2 路线](graduation_workflow.md) |
 
 上表 `results/` 均相对于 `experiments/`。运行产生的 `experiments/runs/`、`experiments/ai_memory/` 是本地忽略目录，不保证随 Git 克隆存在；每次运行使用新目录，保留已有证据。

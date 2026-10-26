@@ -15,6 +15,7 @@ experiments/results/exp_023_state_semantic_v1/** -text whitespace=cr-at-eol
 experiments/results/exp_024_state_encoding_v1/** -text whitespace=cr-at-eol
 experiments/results/exp_025_neural_policy_v1/** -text whitespace=cr-at-eol
 experiments/results/exp_026_validation_iteration_v1/** -text whitespace=cr-at-eol
+experiments/results/exp_027_research_controller_v1/** -text whitespace=cr-at-eol
 experiments/results/exp_023_real_paper_code_v1/** -text whitespace=cr-at-eol
 experiments/results/exp_023_real_paper_code_v1/repository_cache/code/** whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab,cr-at-eol
 # Keep the generated empty diagnostics section byte-identical to the run.
