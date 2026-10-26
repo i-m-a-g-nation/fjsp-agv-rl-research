@@ -6,7 +6,7 @@
 |---|---|
 | 填模型 API | **当前工作树根目录的 `.env`**；配置方法见[模型接口说明](docs/model_interface.md) |
 | 找代码、输入和结果 | [项目结构导航](docs/project_structure.md) |
-| 一次启动有界科研批次 | [外层控制器说明](docs/research_controller_validation.md)；目前两种离线任务 |
+| 一次启动有界科研批次 | [控制器说明](docs/research_controller_validation.md)；审计或受限模板候选模式 |
 | 运行并理解人工审核 | [科研工作流说明](docs/research_workflow.md)；毕设参考求解看[专用使用说明](docs/graduation_workflow.md) |
 | 判断课题到底完成了什么 | [研究验收对照](docs/research_acceptance_map.md)；具体工程证据看各验证文档 |
 
@@ -18,18 +18,22 @@
 | 大创 | 要求配置、受监督文献/候选实验路线、已有动态基线协议 | 物流协同、RL 训练及课题验收 |
 | 毕设 | G1/G2；R1/R2；可逆观察编码；NumPy神经策略及有界REINFORCE试训 | 训练效果仍弱于EDD；PPO/正式G3比较及课题验收 |
 
-R1/R2 目前通过独立 API 和 `exp_022` 开发验证使用，尚未接入三审工作流。`exp_027` 已能自行派发已注册的文献依据核对和策略诊断，读取结果并停止；自动发现论文、生成/应用候选补丁和跨设计训练仍未贯通。聊天中的编码代理改码不计作程序自主能力。
+R1/R2 目前通过独立 API 和 `exp_022` 开发验证使用，尚未接入三审工作流。`exp_027` 提供审计模式与受限模板候选模式；后者执行文献核对、编号诊断、生成候选包、检查、训练比较和保留/拒绝。候选只写入批次目录，不覆盖项目源码。自动发现论文、自由生成新算法和跨设计搜索仍未贯通。
+
+首次候选批次已运行并验收：程序拒绝验证均值更差的共享评分候选，两模式均保留旧none策略。工作流工程能力增加，毕设算法效果尚未改善，大创物流协同仍未实现。下一缺口是让程序诊断拒绝原因并形成下一种可执行假设；当前仍需开发者登记新模板，详见[运行证据](docs/research_controller_validation.md)。
 
 ## 先把模型配在哪里
 
-在**当前打开的这份工作树**根目录编辑 `.env`，把密钥填入 `OPENAI_API_KEY=`。其余首选值已放在[`.env.example`](.env.example)：官方 DeepSeek 地址、`deepseek-flash`、显式开启 max 思考，以及本地 RAG。检查命令见[模型接口说明](docs/model_interface.md)。
+在**当前打开的这份工作树**根目录编辑 `.env`，把密钥填入 `OPENAI_API_KEY=`。其他配置与检查统一看[模型接口说明](docs/model_interface.md)和[模板](.env.example)。当前两个控制器模式均离线运行，不需要 API。
 
 `.env` 是本机忽略文件，不会提交，也不会随分支合并带到另一份检出目录。`.env.example` 才是版本化模板。现在无需先合并到 main 才能配置或检查这份工作树。
 
-2026-10-26 已完成[首次真实 API 诊断](docs/model_api_validation_2026-10-26.md)：接口已连通；非思考模式样本出现一个计划/指标不一致及引用缺项。检查器拒绝错误指标，算法源码未因此改变；这不表示自动科研循环已经完成。
+## 为什么有很多 Markdown
 
-同日已切换并验证[max 思考及引用反馈](docs/model_api_max_validation_2026-10-26.md)：真实请求 enabled/max，两个短样本通过；在线引用缺项最多纠正一次，仍不完整即停止代码生成。每次请求明确采用 8192 tokens / 60 秒，累计会话预算不变。
+整理前共有124份已跟踪 Markdown，其中47份是`docs/superpowers/`里的开发规格/计划/过程记录，33份是其他项目文档，其余为论文笔记、工具指令、目录说明和归档。每个小阶段都留下独立记录，重复维护进度的导航页也增加了阅读负担。
 
-最新[外层控制器批次](docs/research_controller_validation.md)已一条命令完成两项任务：跳过已拒绝均值候选、核对论文片段、诊断编号敏感性，约9.2秒，零API调用；停在需要候选实现适配器的明确边界。[此前单候选对照](docs/graduation_validation_iteration.md)、[神经策略试训](docs/graduation_neural_policy_pilot.md)、[纯编码器](docs/graduation_state_encoding_validation.md)及失败记录保留，原维护目标保持。
+本次移除4份导航页中的重复进度，当前状态只在本页维护，旧验证文档作为带源码/输入身份的历史快照。沿用已有计划、控制器说明和`exp_027`入口，没有新增 Markdown、移动原目录或删除研究证据。代码按基础调度、动态重调度、毕设模型和科研执行器划分；目前适合逐步提取复用接口，不适合整体搬迁。
+
+日常先读本页；要运行看[控制器说明](docs/research_controller_validation.md)，要核对毕设假设看[领域模型](docs/graduation_model_draft.md)。找文件再看[结构导航](docs/project_structure.md)。开发历史无需逐份阅读。
 
 完整背景、历史实验表和环境说明仍在 [中文 README](README.zh-CN.md) / [English README](README.md)。

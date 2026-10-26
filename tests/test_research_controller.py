@@ -244,3 +244,37 @@ def test_truncated_states_cannot_redefine_the_native_denominator(diagnostic_repo
     result['denominators'].update(expected_state_comparisons=64, state_comparisons=64)
     with pytest.raises(ValueError):
         tasks.validate_task_result('diagnose_identifier_permutations', result)
+
+
+def test_controlled_profile_dispatches_package_gate_and_comparison(tmp_path, monkeypatch, diagnostic_report):
+    calls = []
+    def local_worker(script, payload, timeout):
+        calls.append(payload['task_id'])
+        if payload['task_id'] == 'diagnose_identifier_permutations':
+            return diagnostic_report
+        return tasks.execute_task(payload['task_id'], payload['reference_archive'], payload['paper_archive'],
+                                  expected_inputs=payload['expected_inputs'], batch_dir=payload['batch_dir'])
+    monkeypatch.setattr(controller, 'supervised_json_process', local_worker)
+    folder = tmp_path / 'controlled'
+    state = controller.run_controller(folder, profile='shared_scorer_v1')
+    assert state['stop_reason'] == 'candidate_round_complete'
+    assert calls == ['audit_paper_evidence', 'diagnose_identifier_permutations', 'materialize_shared_scorer',
+                     'check_shared_scorer', 'compare_shared_scorer']
+    assert len(state['tasks']) == 5
+    assert (folder / 'candidate/candidate.patch').is_file()
+    assert state['next_task']['executable'] is False
+    assert state['next_task']['selected_methods'] == {'fixed': 'none', 'joint': 'none'}
+    assert state['research_status'] == 'not_achieved'
+    saved = list(calls)
+    resumed = controller.run_controller(folder, profile='shared_scorer_v1')
+    assert calls == saved and resumed['budget'] == state['budget']
+    (folder / 'candidate/policy.py').write_text('tampered', encoding='utf-8')
+    with pytest.raises(ValueError, match='identity|template'):
+        controller.run_controller(folder, profile='shared_scorer_v1')
+
+
+def test_audit_profile_does_not_enable_candidate_tasks_and_bad_profile_is_rejected(tmp_path, workers):
+    with pytest.raises(ValueError, match='profile'):
+        controller.run_controller(tmp_path / 'bad', profile='arbitrary_code')
+    state = controller.run_controller(tmp_path / 'audit')
+    assert len(state['tasks']) == 2 and state['stop_reason'] == 'implementation_required'

@@ -1,6 +1,27 @@
 ﻿# Experiments
 
-This directory contains Phase 1 experiment scripts and tracked outputs.
+This directory contains static, dynamic, graduation and research-workflow experiments. Project status and the next step are maintained in [START_HERE.md](../START_HERE.md); this page describes reproducible entry points.
+
+Use the dedicated Conda environment from the [setup guide](../README.md#environment-and-checks), never `base`. Before running the examples below, verify the interpreter:
+
+```powershell
+.\.conda-env\python.exe -c "import sys; print(sys.executable)"
+```
+
+The printed path must belong to `.conda-env` or the environment selected by `FJSP_CONDA_ENV`. For a custom environment, replace `.\.conda-env\python.exe` in the examples with that environment's Python. Run scripts from the repository root.
+
+| Purpose | Entry points | Guide |
+|---|---|---|
+| Static baselines, benchmark and solver checks | `exp_001`–`exp_013` | Detailed examples below; [Phase 1 reproduction](../docs/reproducibility_phase1.md) |
+| Dynamic smoke, event audit and report | `exp_014`–`exp_017` | Detailed examples below; [dynamic checklist](../docs/phase2a_acceptance.md) |
+| Persistent human-reviewed execution | [`exp_018`](exp_018_ai_rag_workflow.py) | [Research workflow](../docs/research_workflow.md) |
+| Fixed dynamic protocol and sequential replay | [`exp_019`](exp_019_phase2a_protocol.py), [`exp_020`](exp_020_sequential_reschedule.py) | [Protocol](../docs/phase2a_experiment_protocol.md), [sequential replay](../docs/phase2a_sequential_validation.md) |
+| Graduation reference solvers and rules | [`exp_021`](exp_021_graduation_solver_check.py), [`exp_022`](exp_022_graduation_rule_smoke.py) | [G2](../docs/graduation_g2_validation.md), [R2](../docs/graduation_r2_validation.md) |
+| Paper/code evidence extraction and review | [`exp_023`](exp_023_paper_code_validation.py) | [Field extraction](../docs/paper_field_validation.md), [state semantics](../docs/paper_state_semantic_validation.md) |
+| Observation encoding, policy pilot and validation iteration | [`exp_024`](exp_024_state_encoding_check.py), [`exp_025`](exp_025_neural_policy_pilot.py), [`exp_026`](exp_026_validation_iteration.py) | [Encoding](../docs/graduation_state_encoding_validation.md), [policy pilot](../docs/graduation_neural_policy_pilot.md), [validation iteration](../docs/graduation_validation_iteration.md) |
+| Audit / controlled-template controller | [`exp_027`](exp_027_research_controller.py) | [Profiles, commands and boundaries](../docs/research_controller_validation.md) |
+
+**Recorded result tables and validation reports are snapshots of the stated inputs, source and settings.** They are examples for reproduction, not a claim that the latest checkout has just passed validation. Timed CP-SAT results may vary; only `OPTIMAL` proves local optimality. Preserve prior outputs and use a new run directory when the script supports one. Development plans in [`docs/superpowers/`](../docs/superpowers/) are history, not required setup reading.
 
 ## `exp_001_toy_instance.py`
 
@@ -554,16 +575,49 @@ Artifact:
 The report summarizes dynamic smoke reschedules, event-file audits, and
 event-file replay reschedules in one place.
 
+## `exp_018_ai_rag_workflow.py`
+
+Persistent supervised research execution. Choose `--track foundation`, `--track innovation`, or `--track graduation`; offline is the default. The entry point returns `3` at scope, evidence and conclusion review gates. Resume with `--session-dir` and a human-completed `--decision-file`; budgets are cumulative and cannot change on resume. See [workflow commands and exit statuses](../docs/research_workflow.md); the graduation G1/G2 route has a [dedicated guide](../docs/graduation_workflow.md).
+
+## `exp_019_phase2a_protocol.py`
+
+Runs the fixed Phase 2A FIFO/SPT/EFT protocol without models and writes a unique run containing inputs, schedules, raw/aggregate CSV, manifest, report and representative Gantt images.
+
+```powershell
+.\.conda-env\python.exe experiments\exp_019_phase2a_protocol.py
+```
+
+The persistent 018 route also accepts `--experiment-protocol experiments/protocols/phase2a_v1.json`, retaining its three human reviews. See [protocol semantics and limits](../docs/phase2a_experiment_protocol.md).
+
+## `exp_020_sequential_reschedule.py`
+
+Validates sequential event timestamps with existing dynamic rules and exports each step's frozen records and schedules. It runs independently of 018's isolated-event protocol route.
+
+```powershell
+.\.conda-env\python.exe experiments\exp_020_sequential_reschedule.py
+```
+
+See [sequential replay assumptions and saved evidence](../docs/phase2a_sequential_validation.md).
+
+## `exp_021_graduation_solver_check.py` and `exp_022_graduation_rule_smoke.py`
+
+The G2 reference solver check and R2 EDD/SPT/seeded Random rule smoke test use the graduation maintenance/tardiness model. Commands, outputs and limitations are documented in [G2 validation](../docs/graduation_g2_validation.md) and [R2 validation](../docs/graduation_r2_validation.md). Development smoke cases do not substitute for a formal G3 comparison.
+
+## `exp_023_paper_code_validation.py`
+
+Paper/code evidence validation, including field extraction and state-semantic review modes. Read the [initial validation snapshot](../docs/real_paper_code_validation.md), [field-extraction guide](../docs/paper_field_validation.md) and [state-semantic review guide](../docs/paper_state_semantic_validation.md) for the appropriate mode and its evidence limits.
+
+## `exp_024_state_encoding_check.py` through `exp_026_validation_iteration.py`
+
+These independent entry points validate lossless observation transport, run a bounded NumPy policy pilot, and compare a validation-driven candidate. Commands and saved-run interpretation are in the [encoding](../docs/graduation_state_encoding_validation.md), [policy pilot](../docs/graduation_neural_policy_pilot.md) and [validation iteration](../docs/graduation_validation_iteration.md) guides. A pilot or candidate result does not establish final research acceptance.
+
+## `exp_027_research_controller.py`
+
+Runs or inspects the bounded controller for registered research tasks. Use the [controller guide](../docs/research_controller_validation.md) for commands, budgets, evidence identity and stopping boundaries. The current registered capabilities are summarized only in [START_HERE.md](../START_HERE.md).
+
 ## General Requirements
-
-Experiment 019 executes the fixed Phase 2A FIFO/SPT/EFT protocol without models. `python experiments/exp_019_phase2a_protocol.py` writes a unique new run with input/case/schedule evidence, raw/aggregate CSV, manifest, report and representative Gantt images. The persistent 018 route accepts `--experiment-protocol experiments/protocols/phase2a_v1.json` and retains three human reviews. See [protocol semantics and limits](../docs/phase2a_experiment_protocol.md).
-
-Experiment 020 independently validates sequential timestamps using the existing rules: `python experiments/exp_020_sequential_reschedule.py`. It exports per-step frozen records and schedules for 9 episodes/18 timestamp batches; it is not wired into 018's isolated-event protocol route. See [sequential validation assumptions](../docs/phase2a_sequential_validation.md).
-
-Experiment 018 is a supervised research assistant. Use an explicit `--track foundation`, `--track innovation`, or `--track graduation`; the default mode is offline. Static feasibility does not certify either research target. See [workflow requirements and exit statuses](../docs/research_workflow.md).
-
-The entry point now creates a persistent session and returns `3` at scope, evidence, and conclusion review gates. Resume with `--session-dir` and a human-completed `--decision-file`; budgets are cumulative and cannot change on resume.
 
 - Every experiment result must pass `check_feasibility()`.
 - Infeasible schedules must not be reported as valid schedules.
 - Feasibility constraints must not be weakened to make tests pass.
+- Research acceptance is separate from static feasibility or one completed workflow run; see the [acceptance map](../docs/research_acceptance_map.md).

@@ -1,0 +1,36 @@
+{
+  "command": "python -m pytest -q --cov=src --cov-report=term --cov-fail-under=80",
+  "coverage_gate_percent": 80,
+  "coverage_percent": 90.88,
+  "dedicated_conda_interpreter_verified": true,
+  "documentation_audit": {
+    "development_records": 47,
+    "four_navigation_pages_net_lines_removed": 479,
+    "markdown_added_moved_or_deleted": 0,
+    "other_docs": 33,
+    "tracked_markdown": 124
+  },
+  "full_exit_code": 0,
+  "full_seconds": 818.97,
+  "full_tests_passed": 1377,
+  "full_tests_skipped": 2,
+  "handoff": {
+    "broken_links": 0,
+    "edited_markdown": 8,
+    "local_file_links": 219,
+    "new_markdown": 0,
+    "secret_matches": 0
+  },
+  "independent_checks": 2274,
+  "independent_discrepancies": 0,
+  "new_tests": 101,
+  "research_status": "not_achieved",
+  "review_findings_fixed": [
+    "test gate receipt bypass",
+    "summary-only comparison acceptance"
+  ],
+  "review_fixes_red_green": true,
+  "terminal_resume_identical": true,
+  "verification_date": "2026-10-27",
+  "warnings": 13
+}

@@ -72,7 +72,7 @@ def _validate_results(folder, state, expected_inputs):
             if sha(path.read_bytes()) != task['result_sha256']:
                 raise ValueError('Saved task result identity changed')
             result = read_json(path)
-            validate_task_result(task['id'], result, expected_inputs)
+            validate_task_result(task['id'], result, expected_inputs, folder)
             completed[task['id']] = result
     return completed
 
@@ -105,12 +105,18 @@ def _existing_budget(path, limits):
 
 
 def run_controller(folder, *, reference_archive=None, paper_archive=None, max_active_seconds=120,
-                   max_tasks=2, steps=2, track='graduation'):
+                   max_tasks=None, steps=None, track='graduation', profile='audit_v1'):
     """Start/resume an immutable batch; steps limits this invocation, not its budget."""
     if track not in ('graduation', 'innovation'):
         raise ValueError('Unknown research track')
-    if type(max_tasks) is not int or not 1 <= max_tasks <= 2 or type(steps) is not int or not 1 <= steps <= 2:
-        raise ValueError('Task/step limits must be integers in 1..2')
+    if profile not in ('audit_v1', 'shared_scorer_v1'):
+        raise ValueError('Unknown controller profile')
+    ceiling = 2 if profile == 'audit_v1' else 5
+    max_tasks = ceiling if max_tasks is None else max_tasks
+    steps = ceiling if steps is None else steps
+    if (type(max_tasks) is not int or not 1 <= max_tasks <= ceiling
+            or type(steps) is not int or not 1 <= steps <= ceiling):
+        raise ValueError('Task/step limits exceed the declared profile')
     limits = BudgetLimits(max_active_seconds, 0, 0)
     folder = Path(folder).resolve()
     reference, paper = Path(reference_archive or DEFAULT_REFERENCE).resolve(), Path(paper_archive or DEFAULT_PAPER).resolve()
@@ -119,7 +125,7 @@ def run_controller(folder, *, reference_archive=None, paper_archive=None, max_ac
     folder.mkdir(parents=True, exist_ok=True)
     with _exclusive_lock(folder):
         spec_path, state_path = folder / 'spec.json', folder / 'state.json'
-        initialization = {'track': track, 'max_tasks': max_tasks, 'max_active_seconds': max_active_seconds,
+        initialization = {'track': track, 'profile': profile, 'max_tasks': max_tasks, 'max_active_seconds': max_active_seconds,
                           'reference_archive': str(reference), 'paper_archive': str(paper)}
         existing = spec_path.exists()
         if existing:
@@ -138,7 +144,7 @@ def run_controller(folder, *, reference_archive=None, paper_archive=None, max_ac
             budget = RunBudget(folder / 'budget.sqlite', limits)
             state = {'version': 1, 'status': 'READY', 'stop_reason': None, 'tasks': [], 'decisions': [],
                 'next_task': None, 'skipped_candidates': [], 'research_status': 'not_achieved', 'tracks': {},
-                'capability_boundary': 'Finite offline registry; no paper discovery, arbitrary patching or new training.'}
+                'capability_boundary': 'Finite offline registry; optional exact-template training; no arbitrary patching or paper discovery.'}
             _write(state_path, state)
             _write(spec_path, {'identity': None, 'initialization': initialization})
         terminal = state['status'] == 'STOPPED'
@@ -155,7 +161,7 @@ def run_controller(folder, *, reference_archive=None, paper_archive=None, max_ac
             budget.start_segment(segment)
         try:
             _run_reserved(folder, state, spec if existing else None, budget, terminal, steps,
-                          track, max_tasks, max_active_seconds, reference, paper)
+                          track, max_tasks, max_active_seconds, reference, paper, profile)
         except Exception:
             if not existing and read_json(spec_path).get('identity') is None:
                 state.update(status='STOPPED', stop_reason='initialization_failed')
@@ -168,14 +174,14 @@ def run_controller(folder, *, reference_archive=None, paper_archive=None, max_ac
 
 
 def _run_reserved(folder, state, spec, budget, terminal, steps, track, max_tasks,
-                  max_active_seconds, reference, paper):
+                  max_active_seconds, reference, paper, profile):
     """All nonterminal identity checks and dispatch happen inside the reservation."""
     preflight_done = False
     try:
         check = (lambda: None) if terminal else budget.remaining_seconds
         check()
         contracts = {name: get_research_contract(name).to_dict() for name in ('graduation', 'innovation')}
-        identity = {'version': 1, 'track': track, 'max_tasks': max_tasks,
+        identity = {'version': 2, 'track': track, 'profile': profile, 'max_tasks': max_tasks,
             'max_active_seconds': max_active_seconds, 'provider_calls': 0, 'output_tokens': 0,
             'reference_archive': str(reference), 'paper_archive': str(paper),
             'source_hashes': _source_hashes(), 'contracts': contracts,
@@ -205,7 +211,7 @@ def _run_reserved(folder, state, spec, budget, terminal, steps, track, max_tasks
             performed = 0
             while True:
                 budget.remaining_seconds()
-                choice = choose_next(observation, completed, track=track)
+                choice = choose_next(observation, completed, track=track, profile=profile)
                 state['decisions'].append(choice)
                 if 'stop_reason' in choice:
                     state.update(status='STOPPED', stop_reason=choice['stop_reason'], next_task=choice['next_task'])
@@ -223,10 +229,10 @@ def _run_reserved(folder, state, spec, budget, terminal, steps, track, max_tasks
                 _write(folder / 'state.json', state)
                 result = supervised_json_process(Path(__file__).with_name('research_worker.py'),
                     {'task_id': task_id, 'reference_archive': str(reference), 'paper_archive': str(paper),
-                     'expected_inputs': spec['input_hashes']}, timeout=budget.remaining_seconds())
+                     'expected_inputs': spec['input_hashes'], 'batch_dir': str(folder)}, timeout=budget.remaining_seconds())
                 if type(result) is dict and result.get('status') == 'FAILED':
                     task['worker_error_type'] = str(result.get('error_type', 'Unknown'))[:80]
-                validate_task_result(task_id, result, spec['input_hashes'])
+                validate_task_result(task_id, result, spec['input_hashes'], folder)
                 budget.remaining_seconds()
                 if input_hashes(reference, paper, budget.remaining_seconds) != spec['input_hashes']:
                     raise ValueError('Input identity changed during worker execution')

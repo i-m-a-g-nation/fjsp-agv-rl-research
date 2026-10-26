@@ -16,7 +16,10 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_REFERENCE = ROOT / 'experiments/results/exp_026_validation_iteration_v1'
 DEFAULT_PAPER = ROOT / 'experiments/results/exp_023_state_semantic_v1'
 TASK_KINDS = {'audit_paper_evidence': 'archived_paper_evidence_audit',
-              'diagnose_identifier_permutations': 'validation_only_permutation_diagnosis'}
+              'diagnose_identifier_permutations': 'validation_only_permutation_diagnosis',
+              'materialize_shared_scorer': 'controlled_candidate_materialization',
+              'check_shared_scorer': 'controlled_candidate_check',
+              'compare_shared_scorer': 'controlled_candidate_comparison'}
 
 
 def sha(data):
@@ -120,7 +123,7 @@ def audit_paper(paper_archive):
                           'full PDF verification, original-method reproduction or human approval.'}
 
 
-def execute_task(task_id, reference_archive, paper_archive, *, expected_inputs=None):
+def execute_task(task_id, reference_archive, paper_archive, *, expected_inputs=None, batch_dir=None):
     if task_id not in TASK_KINDS:
         raise ValueError('Task is not registered')
     before = input_hashes(reference_archive, paper_archive)
@@ -128,15 +131,25 @@ def execute_task(task_id, reference_archive, paper_archive, *, expected_inputs=N
         raise ValueError('Worker input identity changed')
     if task_id == 'audit_paper_evidence':
         result = audit_paper(paper_archive)
-    else:
+    elif task_id == 'diagnose_identifier_permutations':
         from src.graduation.permutation_diagnostics import diagnose_permutations
         result = diagnose_permutations(reference_archive)
+    else:
+        if batch_dir is None:
+            raise ValueError('Candidate task requires an owned controller batch')
+        from src.ai_workflow.controlled_candidate import materialize_candidate, check_candidate, compare_candidate
+        if task_id == 'materialize_shared_scorer':
+            result = materialize_candidate(batch_dir)
+        elif task_id == 'check_shared_scorer':
+            result = check_candidate(batch_dir, reference_archive)
+        else:
+            result = compare_candidate(batch_dir, reference_archive)
     if input_hashes(reference_archive, paper_archive) != before:
         raise ValueError('Worker inputs changed during execution')
     return result
 
 
-def validate_task_result(task_id, result, expected_inputs=None):
+def validate_task_result(task_id, result, expected_inputs=None, batch_dir=None):
     if (type(result) is not dict or result.get('kind') != TASK_KINDS[task_id]
             or result.get('status') != 'COMPLETED' or result.get('research_status') != 'not_achieved'):
         raise ValueError('Invalid registered task result envelope')
@@ -149,12 +162,17 @@ def validate_task_result(task_id, result, expected_inputs=None):
                     claim.get('human_approval') is not False or claim.get('full_pdf_reverified') is not False
                     or claim.get('status') != 'located_unreviewed' for claim in claims)):
             raise ValueError('Paper result cannot supply approval')
-    else:
+    elif task_id == 'diagnose_identifier_permutations':
         _validate_diagnostic(result)
         if expected_inputs is not None and any(result['hash_checks'][field] != expected_inputs[path]
                 for field, path in (('manifest_sha256', 'validation/manifest.json'),
                                     ('results_sha256', 'validation/results.json'))):
             raise ValueError('Diagnostic reference identity mismatch')
+    else:
+        from src.ai_workflow.controlled_candidate import verify_candidate_result
+        if batch_dir is None:
+            raise ValueError('Candidate verification requires its batch')
+        verify_candidate_result(task_id, result, batch_dir)
     encoded(result)
 
 
@@ -229,7 +247,7 @@ def _validate_plan(plan, raw, mode):
         raise ValueError('Validation complete plan replay/G1 mismatch')
 
 
-def choose_next(observation, completed, *, track):
+def choose_next(observation, completed, *, track, profile='audit_v1'):
     if track == 'innovation':
         return {'stop_reason': 'no_registered_innovation_executor', 'next_task': {
             'id': 'define_innovation_transport_milestone', 'executable': False,
@@ -243,6 +261,21 @@ def choose_next(observation, completed, *, track):
         return {'task_id': 'diagnose_identifier_permutations',
                 'reason': 'running_mean was rejected; diagnose representation sensitivity without retraining.'}
     sensitive = completed['diagnose_identifier_permutations']['sensitive_states']
+    if profile == 'shared_scorer_v1' and sensitive:
+        for task_id, reason in (
+            ('materialize_shared_scorer', 'Materialize only the registered shared scoring template into this batch.'),
+            ('check_shared_scorer', 'Verify copied candidate gradients, masks and same-state distribution symmetry.'),
+            ('compare_shared_scorer', 'Train the checked candidate and compare all frozen validation cases.')):
+            if task_id not in completed:
+                return {'task_id': task_id, 'reason': reason}
+        decisions = completed['compare_shared_scorer']['decisions']
+        selected = {mode: decision['selected_method'] for mode, decision in decisions.items()}
+        return {'stop_reason': 'candidate_round_complete', 'next_task': {
+            'id': 'diagnose_rejected_candidate' if all(v == 'none' for v in selected.values())
+                  else 'review_retained_validation_candidate',
+            'executable': False, 'selected_methods': selected,
+            'reason': 'Bounded template round ended; another hypothesis/executor must be registered.',
+            'production_default_changed': False}}
     return {'stop_reason': 'implementation_required', 'next_task': {
         'id': 'design_shared_scorer_candidate' if sensitive else 'design_next_validation_diagnostic',
         'executable': False, 'sensitive_states': sensitive,

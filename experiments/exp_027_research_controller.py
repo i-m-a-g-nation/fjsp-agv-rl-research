@@ -16,18 +16,19 @@ def main():
     parser.add_argument('command', choices=['run', 'status'])
     parser.add_argument('--output-dir', type=Path, required=True)
     parser.add_argument('--track', choices=['graduation', 'innovation'], default='graduation')
+    parser.add_argument('--profile', choices=['audit_v1', 'shared_scorer_v1'], default='audit_v1')
     parser.add_argument('--max-active-seconds', type=float, default=120)
-    parser.add_argument('--max-tasks', type=int, default=2)
-    parser.add_argument('--steps', type=int, default=2)
+    parser.add_argument('--max-tasks', type=int)
+    parser.add_argument('--steps', type=int)
     args = parser.parse_args()
     if args.command == 'status':
         result = read_controller_status(args.output_dir)
     else:
         result = run_controller(args.output_dir, track=args.track, max_active_seconds=args.max_active_seconds,
-                                max_tasks=args.max_tasks, steps=args.steps)
+                                max_tasks=args.max_tasks, steps=args.steps, profile=args.profile)
     print(json.dumps({key: result[key] for key in ('status', 'stop_reason', 'tasks', 'next_task',
                      'skipped_candidates', 'research_status', 'budget')}, ensure_ascii=False, indent=2))
-    return 0 if result['stop_reason'] in ('implementation_required', 'invocation_slice',
+    return 0 if result['stop_reason'] in ('implementation_required', 'invocation_slice', 'candidate_round_complete',
         'no_registered_innovation_executor', 'task_count_budget') else 1
 
 

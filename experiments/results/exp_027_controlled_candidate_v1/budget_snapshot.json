@@ -1,0 +1,12 @@
+{
+  "active_seconds": 36.5,
+  "active_seconds_charged": 36.5,
+  "active_seconds_reserved": 0,
+  "limits": {
+    "max_active_seconds": 120,
+    "max_output_tokens": 0,
+    "max_provider_calls": 0
+  },
+  "output_tokens_reserved": 0,
+  "provider_calls": 0
+}
