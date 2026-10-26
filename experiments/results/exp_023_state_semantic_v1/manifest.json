@@ -1,0 +1,17 @@
+{
+  "kind": "partial_state_semantic_evidence_archive",
+  "complete_source_bundle": false,
+  "source_cache": "../exp_023_real_paper_code_v1/repository_cache",
+  "files_sha256": {
+    "ATTRIBUTION.json": "b01ddcad2069a1ffb0a69491e3f44b6e0f0c638c262ab9d94003f1ae4f0ebdb2",
+    "batch_summary.json": "2db6260f8437d113edf48d8f7455549386620721e25b20e964e2fd276c249b3c",
+    "candidate_proposal.json": "a53b7f1ac250821f819ac5c7e1585d975f417aef0e6d50e056f473e4ca6640a9",
+    "contexts/all_machine_state.txt": "5fcd74904531f74ce1fabe8076e38c939fa92d159ea4c9f1dfee2ff76fbf0a32",
+    "contexts/job_state_features.txt": "3986a2221e7990f0772bf7a0c28bcd9a0d397d1623c70748452d2014fcffd3a2",
+    "live_result.json": "316f72279ce22d7de9b2bdac913043b06c62520b124f54967cdfa850bbff3f4a",
+    "preview_result.json": "6791d1133f0e4972d9713b9733f261e7efb4f491366851b5382fe5005cbab7b7",
+    "request.json": "dea85310f8fa9fce634f4dbd934942e91795d75077df5d30111d55b4ea4058a8",
+    "runtime_sha256.json": "407efb8f3a038073059f5b6774e5104d82ad420d502656253a0d36131db1176c",
+    "state_code_alignment.json": "13b8dfbf09da65abb3954b405625bf1373cfa6e4ff9e93726f4271d7076c0348"
+  }
+}

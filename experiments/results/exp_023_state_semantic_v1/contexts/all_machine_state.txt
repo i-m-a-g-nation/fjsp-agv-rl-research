@@ -1,0 +1,6 @@
+[EXCERPT: selected character spans from physical PDF pages; other text is outside this context.]
+
+[Physical PDF page 12; source characters 3310:3431; page text SHA256 5ade0e88ac3817b730ef96a643eb7a1833f89a66dc3f0dbb758e64e06e91b3e5]
+As shown in the ﬁgure, a new
+matrix containing the information of all machines is concate-
+nated to the matrix in Fig. 6.

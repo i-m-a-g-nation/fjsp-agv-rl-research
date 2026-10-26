@@ -1,5 +1,12 @@
 # Platform Review Status
 
+## State facts and same-model semantic review 2026-10-26
+
+- [Actual result/usage](paper_state_semantic_validation.md): optional exp023 semantic_review explicitly requires field-only/no-repair/minimum complete call-token budget. Located extraction persists before separate same-model review; strict verdict/quote schema with fresh exact-span checks and claim/source hashes. Partial/unsupported/insufficient stops later units; errors/deadlines/source changes preserve extraction. supported remainsmodel_supported_unreviewed/human_approvalfalse/evidence_statusunverified. Old location-only requests and keyless0model preview retained.
+- New batch4calls/32768reservation/300s, enabled/max8192/60/retries0/repairs0: two physicalpage12 state facts (jobfeature list and all-machine concatenation),2/2located and2model-supported;14.188active seconds,988completion/779reasoning tokens. One extraction reports0reasoning tokens despite explicitmax; exactusage retained. Only positive tiny samples, not semanticaccuracy evaluation. Prior archives/budgets unchanged.
+- Read-only audit confirms R1 already exposes all task/machine information. [Concrete28x13 representation proposal](graduation_state_encoding_candidate.md) preserves IDs/presence/actionmask/maintenance/reward/checkers and omits sourcefamily/speed/arrivals. Proposal unimplemented; no network/training/application/novelty claim. No source code/weights executed. Full research loop/018 integration and both research acceptances remain incomplete.
+- TDD17RED then33GREEN; controller/marker13RED then76GREEN, deadline/source-change verification78GREEN. Fresh independent reviewer no actionable finding and78GREEN. Frozen-source full dedicated suite **1005passed,2skipped,13warnings,89.84%coverage,255.36s**;80%gate unchanged, bothWindows-symlink skips. Main/domain/contracts/checkers/dependencies unchanged; no merge/push.
+
 ## Field-level real-paper extraction 2026-10-26
 
 - [Actual result and usage](paper_field_validation.md): new source-only single-field route in exp023, exact verified PDF character spans with original offsets/page hashes; one tiny found/missing schema per call, deterministic claim locations remainunverified. Default preview saves contexts/code comparison with0models; old whole-page mode preserved. JSON mode sent through extra_body so SDK does not hide length diagnostics with eager parse().

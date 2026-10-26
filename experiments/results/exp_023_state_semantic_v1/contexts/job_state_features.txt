@@ -1,0 +1,6 @@
+[EXCERPT: selected character spans from physical PDF pages; other text is outside this context.]
+
+[Physical PDF page 12; source characters 1817:1875; page text SHA256 5ade0e88ac3817b730ef96a643eb7a1833f89a66dc3f0dbb758e64e06e91b3e5]
+Job features Processing time p j
+Due date d j
+Family f J j

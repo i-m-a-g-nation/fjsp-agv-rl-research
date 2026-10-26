@@ -1,0 +1,89 @@
+{
+  "kind": "developer_authored_adaptation_proposal",
+  "status": "proposed_unimplemented",
+  "candidate_id": "graduation_typed_state_encoding_v1",
+  "track": "graduation",
+  "contract_snapshot": {
+    "track": "graduation",
+    "title": "毕设生产与维护协同",
+    "source": "用户提供的毕设课题描述截图；完整任务书待核对",
+    "problem": "Parallel machines with production and maintenance timing decisions",
+    "objective": "minimize sum_j max(0, completion_j - due_date_j)",
+    "required_capabilities": [
+      "parallel_machine_model",
+      "due_dates",
+      "maintenance_windows",
+      "maintenance_decisions",
+      "total_tardiness",
+      "fixed_vs_joint_maintenance"
+    ],
+    "version": "2026-10-24-v1",
+    "contract_hash": "f1e8c65576849aa468ea60bf7ef0fc1f3193191022aea861df109d537aa27b7e",
+    "current_phase": "Phase 2A"
+  },
+  "source_facts": [
+    "job_state_features",
+    "all_machine_state"
+  ],
+  "source_commit": "b4b46b92aa67556391b7e2613ac1213dafe16c60",
+  "source_paper_sha256": "50ff0f7d470550cf3c13c5234538a7f9c80a84aae8a70ee3454b6de3b1b24993",
+  "input": "ConstructionObservation (unchanged)",
+  "rows": 28,
+  "columns": 13,
+  "task_rows": [
+    0,
+    23
+  ],
+  "machine_rows": [
+    24,
+    27
+  ],
+  "payload_task_columns": [
+    0,
+    2
+  ],
+  "payload_machine_columns": [
+    3,
+    9
+  ],
+  "row_type_columns": [
+    10,
+    11
+  ],
+  "presence_column": 12,
+  "separate_original_fields": [
+    "mode",
+    "status",
+    "steps",
+    "scale",
+    "action_mask"
+  ],
+  "information_status": "R1 already has all task and machine information; only encoding is proposed.",
+  "omitted_source_features": [
+    "family",
+    "setup",
+    "machine_speed",
+    "dynamic_arrivals",
+    "source_terminal_bonus"
+  ],
+  "invariants": [
+    "stable IDs and presence",
+    "100 existing actions/masks",
+    "mandatory maintenance for every machine",
+    "complete maintenance window",
+    "production reward=-tardiness/100",
+    "maintenance reward=0",
+    "undiscounted return=-TT/100",
+    "exact integer clocks retained in environment",
+    "original G1 checker and total-tardiness recomputation"
+  ],
+  "future_acceptance": [
+    "lossless observation round trip",
+    "unchanged R2 action trace outcomes",
+    "later same-information same-budget within-mode representation comparison"
+  ],
+  "code_applied": false,
+  "training_executed": false,
+  "human_approval": false,
+  "research_status": "not_achieved"
+}

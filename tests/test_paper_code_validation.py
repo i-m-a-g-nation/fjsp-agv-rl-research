@@ -281,3 +281,106 @@ def test_field_units_share_declared_budget(monkeypatch, tmp_path):
     result = module.run_validation(request, tmp_path/'run', extract=True, config=live_config())
     assert result['status'] == 'BUDGET_EXHAUSTED' and len(calls) == 1 and old == []
     assert result['units'][0]['status'] == 'COMPLETE' and result['units'][1]['status'] == 'BUDGET_EXHAUSTED'
+
+
+def setup_semantic_driver(monkeypatch,tmp_path,verdict='supported',missing=False):
+    module,request,extractions,old=setup_field_driver(monkeypatch,tmp_path,missing=missing)
+    request['semantic_review']=True
+    request['limits']={'max_active_seconds':300,'max_provider_calls':4,'max_output_tokens':32768}
+    reviews=[]
+    def reviewer(**kw):
+        kw['cfg'].provider_timeout(output_tokens=kw['cfg'].max_output_tokens)
+        reviews.append(kw)
+        kw['on_response']({'finish_reason':'stop','usage':{},'final_text_characters':2,'final_text':'{}'})
+        if verdict=='error': raise RuntimeError('sk-private-sentinel-private-provider-body')
+        return {'verdict':verdict,'status':'model_supported_unreviewed' if verdict=='supported' else 'model_flagged_unreviewed',
+                'human_approval':False,'evidence_status':'unverified'}
+    monkeypatch.setattr(module,'review_paper_claim',reviewer)
+    return module,request,extractions,reviews,old
+
+
+def test_semantic_opt_in_runs_four_budgeted_stages_and_never_approves(monkeypatch,tmp_path):
+    module,request,extractions,reviews,old=setup_semantic_driver(monkeypatch,tmp_path)
+    result=module.run_validation(request,tmp_path/'run',extract=True,config=live_config())
+    assert result['status']=='EVIDENCE_READY_UNREVIEWED' and len(extractions)==len(reviews)==2 and old==[]
+    assert result['budget']['provider_calls']==4 and result['budget']['output_tokens_reserved']==32768
+    for original,reviewed,unit in zip(extractions,reviews,result['units']):
+        assert original['cfg'].budget is reviewed['cfg'].budget
+        assert reviewed['report'].evidence_status=='unverified'
+        assert 'code_context' not in reviewed and 'target_contract' not in reviewed
+        assert unit['semantic_review']['human_approval'] is False
+        assert unit['extraction']['evidence_status']=='unverified' and len(unit['semantic_responses'])==1
+    assert result['research_status']=='not_achieved' and result['candidate_application_status']=='not_applied'
+
+
+@pytest.mark.parametrize('verdict',['partial','unsupported','insufficient_evidence'])
+def test_semantic_flag_preserves_extraction_and_stops_later_units(monkeypatch,tmp_path,verdict):
+    module,request,extractions,reviews,_=setup_semantic_driver(monkeypatch,tmp_path,verdict)
+    result=module.run_validation(request,tmp_path/'run',extract=True,config=live_config())
+    assert result['status']=='SEMANTIC_REVIEW_FLAGGED' and len(extractions)==len(reviews)==1
+    assert result['units'][0]['extraction']['evidence_audit']['summary']['all_claims_located']
+    assert result['units'][0]['semantic_review']['verdict']==verdict and result['units'][1]['status']=='NOT_RUN'
+    assert result['budget']['provider_calls']==2
+
+
+def test_semantic_error_does_not_discard_successful_extraction(monkeypatch,tmp_path):
+    module,request,extractions,reviews,_=setup_semantic_driver(monkeypatch,tmp_path,'error')
+    result=module.run_validation(request,tmp_path/'run',extract=True,config=live_config())
+    assert result['status']=='FAILED' and len(extractions)==len(reviews)==1
+    assert result['units'][0]['extraction']['evidence_audit']['summary']['all_claims_located']
+    assert result['units'][0]['semantic_responses'][0]['finish_reason']=='stop'
+    assert result['units'][1]['status']=='NOT_RUN' and result['budget']['provider_calls']==2
+    saved=(tmp_path/'run'/'result.json').read_text(encoding='utf-8')
+    assert 'private-provider-body' not in saved and 'sk-private-sentinel' not in saved
+
+
+def test_missing_extraction_skips_semantic_call_and_stops(monkeypatch,tmp_path):
+    module,request,extractions,reviews,_=setup_semantic_driver(monkeypatch,tmp_path,missing=True)
+    result=module.run_validation(request,tmp_path/'run',extract=True,config=live_config())
+    assert result['status']=='EVIDENCE_INCOMPLETE' and len(extractions)==1 and reviews==[]
+    assert result['units'][1]['status']=='NOT_RUN' and result['budget']['provider_calls']==1
+
+
+def test_semantic_preview_still_uses_no_key_or_model(monkeypatch,tmp_path):
+    module,request,extractions,reviews,_=setup_semantic_driver(monkeypatch,tmp_path)
+    result=module.run_validation(request,tmp_path/'run')
+    assert result['status']=='SOURCES_VERIFIED_UNREVIEWED' and extractions==reviews==[]
+    assert result['budget']['provider_calls']==0
+
+
+@pytest.mark.parametrize('change',['not_bool','whole_page','repairs','calls','tokens'])
+def test_semantic_plan_must_fit_before_persistence(monkeypatch,tmp_path,change):
+    module,request,extractions,reviews,_=setup_semantic_driver(monkeypatch,tmp_path)
+    if change=='not_bool': request['semantic_review']='true'
+    if change=='whole_page': request['units'][0].pop('field');request['units'][0].pop('excerpts')
+    if change=='repairs': request['model_request']['repair_attempts']=1
+    if change=='calls': request['limits']['max_provider_calls']=3
+    if change=='tokens': request['limits']['max_output_tokens']=24576
+    with pytest.raises(ValueError):
+        module.run_validation(request,tmp_path/'run',extract=True,config=live_config())
+    assert not (tmp_path/'run').exists() and extractions==reviews==[]
+
+
+@pytest.mark.parametrize('failure',['deadline','changed_source'])
+def test_completed_review_cannot_hide_expiry_or_source_change(monkeypatch,tmp_path,failure):
+    from src.ai_workflow.runtime_budget import BudgetExceeded
+    module,request,extractions,reviews,_=setup_semantic_driver(monkeypatch,tmp_path)
+    expired=[False]
+    original_budget=module.RunBudget
+    class DeadlineBudget(original_budget):
+        def remaining_seconds(self):
+            if expired[0]: raise BudgetExceeded('Expired during review')
+            return super().remaining_seconds()
+    monkeypatch.setattr(module,'RunBudget',DeadlineBudget)
+    original_review=module.review_paper_claim
+    def late_review(**kw):
+        result=original_review(**kw)
+        if failure=='deadline': expired[0]=True
+        else: Path(kw['source_map']['source_path']).write_text('changed',encoding='utf-8')
+        return result
+    monkeypatch.setattr(module,'review_paper_claim',late_review)
+    result=module.run_validation(request,tmp_path/'run',extract=True,config=live_config())
+    assert result['status']==('BUDGET_EXHAUSTED' if failure=='deadline' else 'FAILED')
+    assert result['units'][0]['semantic_review']['verdict']=='supported'
+    assert result['units'][0]['extraction']['evidence_status']=='unverified'
+    assert result['units'][1]['status']=='NOT_RUN' and len(extractions)==len(reviews)==1

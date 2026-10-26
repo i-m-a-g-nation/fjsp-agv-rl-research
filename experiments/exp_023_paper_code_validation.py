@@ -24,6 +24,7 @@ from src.ai_workflow.extraction_quality import extract_with_feedback
 from src.ai_workflow.field_extraction import extract_paper_field
 from src.ai_workflow.langgraph_pipeline import _llm_extract_paper
 from src.ai_workflow.runtime_budget import BudgetExceeded, BudgetLimits, RunBudget
+from src.ai_workflow.semantic_review import review_paper_claim
 from src.ai_workflow.source_bundle import (
     acquire_source_bundle, make_paper_context, make_paper_excerpt, validate_excerpt_selection,
     validate_source_request, verify_source_bundle,
@@ -117,6 +118,15 @@ def run_validation(request: dict, output_dir: Path, *, extract: bool = False,
     validate_source_request(request)
     limits = _limits(request)
     model_request = _model_profile(request, limits, extract=extract)
+    semantic = request.get('semantic_review', False)
+    if type(semantic) is not bool:
+        raise ValueError('semantic_review must be an explicit boolean')
+    if semantic:
+        planned = 2 * len(request['units'])
+        if (any('field' not in unit for unit in request['units']) or model_request['repair_attempts'] != 0
+                or limits.max_provider_calls < planned
+                or limits.max_output_tokens < planned * model_request['max_output_tokens']):
+            raise ValueError('Semantic batches require field units, no repairs, and a complete declared call/token envelope')
     cfg = config
     if extract:
         cfg = cfg or LLMConfig()
@@ -216,8 +226,30 @@ def run_validation(request: dict, output_dir: Path, *, extract: bool = False,
                     current.update(status='COMPLETE' if quality['status'] == 'complete' else 'EVIDENCE_INCOMPLETE',
                                    extraction=report.model_dump(), quality=quality)
                     save()
+                    if semantic:
+                        if quality['status'] != 'complete':
+                            break
+                        current.update(status='REVIEWING_SEMANTICS', stage='semantic_review')
+                        save()
+
+                        def semantic_snapshot(diagnostic):
+                            current.setdefault('semantic_responses', []).append(diagnostic)
+                            save()
+
+                        reviewed = review_paper_claim(cfg=cfg, report=report, paper_text=text,
+                            source_map=source_map, on_response=semantic_snapshot)
+                        current['semantic_review'] = reviewed
+                        save()
+                        assert_source_files_unchanged(source_map)
+                        budget.remaining_seconds()
+                        if reviewed['status'] != 'model_supported_unreviewed':
+                            current['status'] = record['status'] = 'SEMANTIC_REVIEW_FLAGGED'
+                            save()
+                            break
+                        current['status'] = 'COMPLETE'
+                        save()
                 budget.remaining_seconds()
-                if extract:
+                if extract and record['status'] != 'SEMANTIC_REVIEW_FLAGGED':
                     record['status'] = ('EVIDENCE_READY_UNREVIEWED' if all(
                         item['status'] == 'COMPLETE' for item in record['units']) else 'EVIDENCE_INCOMPLETE')
     except Exception as exc:
@@ -242,6 +274,8 @@ def run_validation(request: dict, output_dir: Path, *, extract: bool = False,
         for unit in record['units']:
             summary = unit.get('extraction', {}).get('evidence_audit', {}).get('summary', {})
             lines.append(f'- {unit["id"]}: {unit["status"]}; located {summary.get("claims_located", 0)}/{summary.get("claims_total", 0)}')
+            if 'semantic_review' in unit:
+                lines.append(f'  Model semantic judgment: {unit["semantic_review"]["verdict"]}; human approval: false.')
         (output_dir / 'report.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
     return record
 

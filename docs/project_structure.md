@@ -1,5 +1,7 @@
 # 项目结构导航
 
+最新增量：[状态提取/语义复核](paper_state_semantic_validation.md)，共享JSON调用在`src/ai_workflow/model_json.py`，复核在`src/ai_workflow/semantic_review.py`；[编码候选](graduation_state_encoding_candidate.md)仍为方案。
+
 最新工具入口：[单字段真实提取](paper_field_validation.md)，程序在 `experiments/exp_023_paper_code_validation.py`，来源工具在 `src/ai_workflow/source_bundle.py`，小结构提取在 `src/ai_workflow/field_extraction.py`。两条短片段max提取及引用定位通过；语义待审，尚无原方法执行或候选应用。此前[整页失败记录](real_paper_code_validation.md)保留。
 
 日常入口是[START_HERE](../START_HERE.md)。本次整理增加导航，不搬动研究目录、数据或历史结果。
