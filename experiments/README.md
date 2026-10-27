@@ -23,6 +23,8 @@ The printed path must belong to `.conda-env` or the environment selected by `FJS
 
 **Recorded result tables and validation reports are snapshots of the stated inputs, source and settings.** They are examples for reproduction, not a claim that the latest checkout has just passed validation. Timed CP-SAT results may vary; only `OPTIMAL` proves local optimality. Preserve prior outputs and use a new run directory when the script supports one. Development plans in [`docs/superpowers/`](../docs/superpowers/) are history, not required setup reading.
 
+After Phase 1 hardening, `exp_001`–`exp_004` default to a fresh directory under `experiments/runs/`; use `--output-dir` to choose a new directory. Their artifact names below are relative to that directory. Schedule CSVs now have a sibling `.evidence.json` containing the original instance, complete schedule, configuration and provenance. Existing CSV/evidence pairs are never overwritten. For later scripts with historical default paths, select fresh `--output`, `--runs-output` and/or `--summary-output` paths as exposed by `--help`; the [Phase 1 guide](../docs/reproducibility_phase1.md) gives a complete example.
+
 ## `exp_001_toy_instance.py`
 
 Runs heuristic baselines on the toy 3 jobs x 3 machines FJSP instance.
@@ -55,9 +57,9 @@ Expected output:
 
 Artifacts:
 
-- `exp_001_gantt_latest.png`: fixed Gantt output, overwritten on each run
-- `exp_001_gantt_*.png`: historical Gantt outputs retained for traceability
-- `results/exp_001_toy_instance.csv`: normalized experiment records
+- `exp_001_gantt_latest.png`: Gantt output within this run's directory
+- `exp_001_toy_instance.csv`: normalized experiment records
+- `exp_001_toy_instance.evidence.json`: complete saved schedules and provenance
 
 Exit code: `0` when all schedules pass feasibility checking, `1` otherwise.
 
@@ -86,7 +88,7 @@ If CP-SAT returns `FEASIBLE` rather than `OPTIMAL`, the experiment reports it as
 
 CSV artifact:
 
-- `results/exp_002_solver_check.csv`
+- `exp_002_solver_check.csv` and `exp_002_solver_check.evidence.json`
 
 Exit code: `0` when all algorithms pass feasibility checking and no solver errors occur, `1` otherwise.
 
@@ -122,7 +124,7 @@ Expected output:
 
 CSV artifact:
 
-- `results/exp_003_dispatching_rules.csv`
+- `exp_003_dispatching_rules.csv` and `exp_003_dispatching_rules.evidence.json`
 
 Exit code: `0` when all strict dispatching rules pass feasibility checking, `1` otherwise.
 
@@ -151,7 +153,7 @@ Expected behavior:
 
 CSV artifact:
 
-- `results/exp_004_benchmark_smoke.csv`
+- `exp_004_benchmark_smoke.csv` and `exp_004_benchmark_smoke.evidence.json`
 
 Exit code: `0` when all benchmark smoke schedules pass feasibility checking, `1` otherwise.
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from src.data.instance import FJSPInstance
+from src.data.instance import FJSPInstance, validate_instance
 from src.scheduling.encoding import ScheduleRecord, ScheduleResult
 
 
@@ -13,6 +13,37 @@ class Violation:
 
     def __repr__(self) -> str:
         return f"Violation({self.code}: {self.message})"
+
+
+_MISSING = object()
+
+
+def _record_has_integer_fields(rec, index: int, violations: list[Violation]) -> bool:
+    """Reject malformed records before indexing, arithmetic, sorting or hashing."""
+
+    if not isinstance(rec, ScheduleRecord):
+        violations.append(Violation("INVALID_RECORD", f"Record {index} must be a ScheduleRecord"))
+        return False
+
+    valid = True
+    for field, code in (
+        ("job_id", "INVALID_JOB_ID"),
+        ("op_id", "INVALID_OP_ID"),
+        ("machine_id", "INVALID_MACHINE_ID"),
+        ("start", "INVALID_TIME"),
+        ("end", "INVALID_TIME"),
+        ("processing_time", "INVALID_TIME"),
+    ):
+        value = getattr(rec, field, _MISSING)
+        if value is _MISSING:
+            violations.append(Violation("INVALID_RECORD", f"Record {index} is missing {field}"))
+            valid = False
+        elif type(value) is not int:
+            # Python integers are finite; excluding floats also excludes NaN,
+            # infinity and numerically equal values such as 0.0 or True.
+            violations.append(Violation(code, f"Record {index}: {field} must be a Python int (not bool)"))
+            valid = False
+    return valid
 
 
 def _record_is_ident_valid(rec, instance: FJSPInstance, violations: list[Violation]) -> bool:
@@ -102,11 +133,23 @@ def _validate_record_machine(rec, instance: FJSPInstance, violations: list[Viola
             ))
 
 
-def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
-    """Check the core static FJSP feasibility constraints."""
+def check_feasibility(
+    result: ScheduleResult,
+    *,
+    expected_instance: FJSPInstance | None = None,
+) -> tuple[bool, list[Violation]]:
+    """Check integer static FJSP data and all seven schedule constraints.
+
+    Malformed data is reported as violations, without repairing or coercing it.
+    Supplying expected_instance binds the result to the caller's problem data;
+    independently reconstructed but equal instances are accepted.
+    """
 
     violations: list[Violation] = []
-    instance = result.instance
+    if not isinstance(result, ScheduleResult):
+        return False, [Violation("INVALID_RESULT", "Result must be a ScheduleResult")]
+
+    instance = getattr(result, "instance", None)
 
     # A schedule without an instance cannot be validated against operation
     # counts, eligible machines, or processing times.
@@ -114,8 +157,37 @@ def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
         violations.append(Violation("NO_INSTANCE", "ScheduleResult has no instance reference"))
         return False, violations
 
-    if not result.records:
+    try:
+        validate_instance(instance)
+    except (TypeError, ValueError) as exc:
+        return False, [Violation("INVALID_INSTANCE", str(exc))]
+
+    if expected_instance is not None:
+        try:
+            validate_instance(expected_instance)
+        except (TypeError, ValueError) as exc:
+            return False, [Violation("INVALID_EXPECTED_INSTANCE", str(exc))]
+        if instance != expected_instance:
+            violations.append(Violation("INSTANCE_MISMATCH", "Result instance differs from the expected problem"))
+
+    records = getattr(result, "records", None)
+    if not isinstance(records, (list, tuple)):
+        violations.append(Violation("INVALID_RECORDS", "ScheduleResult.records must be a list or tuple"))
+        return False, violations
+
+    makespan = getattr(result, "makespan", None)
+    if type(makespan) is not int or makespan < 0:
+        violations.append(Violation("INVALID_MAKESPAN", "makespan must be a nonnegative Python int (not bool)"))
+
+    if not records:
         violations.append(Violation("NO_RECORDS", "ScheduleResult has no records"))
+        return False, violations
+
+    records_well_formed = True
+    for index, rec in enumerate(records):
+        if not _record_has_integer_fields(rec, index, violations):
+            records_well_formed = False
+    if not records_well_formed:
         return False, violations
 
     # First pass: local record sanity. This collects as many issues as possible
@@ -195,7 +267,7 @@ def check_feasibility(result: ScheduleResult) -> tuple[bool, list[Violation]]:
 
     # Keep the stored makespan honest; experiments and comparisons depend on it.
     computed_makespan = max(r.end for r in result.records) if result.records else 0
-    if result.makespan != computed_makespan:
+    if type(makespan) is int and makespan != computed_makespan:
         violations.append(Violation(
             "MAKESPAN_MISMATCH",
             f"Result makespan={result.makespan} != computed={computed_makespan}",

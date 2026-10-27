@@ -27,7 +27,7 @@ from experiments.exp_006_cpsat_time_limit_sweep import (  # noqa: E402
     print_sweep_runs,
 )
 from src.data.instance import FJSPInstance  # noqa: E402
-from src.data.loader import load_benchmark_file  # noqa: E402
+from src.data.loader import load_project_benchmark_file as load_benchmark_file  # noqa: E402
 from src.scheduling.encoding import ScheduleResult  # noqa: E402
 from src.solvers.ortools_solver import ortools_solve  # noqa: E402
 
@@ -99,7 +99,8 @@ def run_worker_sweep(
             worker_counts,
             time_limit=time_limit,
             solver_fn=solver_fn,
-        )
+        ),
+        expected_instance=instance,
     )
     print_sweep_runs(runs, algorithm_width=34)
 

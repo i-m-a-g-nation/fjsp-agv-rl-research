@@ -31,6 +31,7 @@ class ScheduleResult:
     solver_objective_bound: float | None = None
     solver_gap: float | None = None
     solver_wall_time: float | None = None
+    solver_config: dict | None = None
 
     def add_record(
         self,

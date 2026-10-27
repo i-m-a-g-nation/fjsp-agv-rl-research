@@ -36,7 +36,7 @@ from src.dynamic import (  # noqa: E402
 from src.scheduling.encoding import ScheduleResult  # noqa: E402
 
 
-def machine_breakdown_solver() -> ScheduleResult:
+def _prepare_machine_breakdown():
     """Return a rescheduled result after one machine breakdown."""
 
     instance = FJSPInstance.from_jobs_array([
@@ -48,10 +48,10 @@ def machine_breakdown_solver() -> ScheduleResult:
     state = DynamicFJSPState.from_instance(instance, current_time=3)
     state = state.apply_event(MachineBreakdown(time=3, machine_id=0, repair_time=10))
     frozen = frozen_records_at_time(initial, current_time=3)
-    return reschedule_from_state(state, frozen_records=frozen, rule="eft")
+    return state, frozen
 
 
-def job_arrival_solver() -> ScheduleResult:
+def _prepare_job_arrival():
     """Return a rescheduled result after one new job arrives."""
 
     instance = FJSPInstance.from_jobs_array([
@@ -59,10 +59,10 @@ def job_arrival_solver() -> ScheduleResult:
     ])
     state = DynamicFJSPState.from_instance(instance, current_time=5)
     state = state.apply_event(JobArrival(time=5, operations=(((0, 3),),)))
-    return reschedule_from_state(state, rule="eft")
+    return state, ()
 
 
-def multi_event_solver() -> ScheduleResult:
+def _prepare_multi_event():
     """Return a rescheduled result after a small sequence of dynamic events."""
 
     instance = FJSPInstance.from_jobs_array([
@@ -78,6 +78,21 @@ def multi_event_solver() -> ScheduleResult:
         state,
         load_event_specs_json(event_path),
     )
+    return state, frozen
+
+
+def machine_breakdown_solver() -> ScheduleResult:
+    state, frozen = _prepare_machine_breakdown()
+    return reschedule_from_state(state, frozen_records=frozen, rule="eft")
+
+
+def job_arrival_solver() -> ScheduleResult:
+    state, frozen = _prepare_job_arrival()
+    return reschedule_from_state(state, frozen_records=frozen, rule="eft")
+
+
+def multi_event_solver() -> ScheduleResult:
+    state, frozen = _prepare_multi_event()
     return reschedule_from_state(state, frozen_records=frozen, rule="eft")
 
 
@@ -110,8 +125,11 @@ def run_dynamic_smoke_experiment(
 
     runs = []
     records: list[ExperimentRecord] = []
+    preparers = {machine_breakdown_solver: _prepare_machine_breakdown,
+                 job_arrival_solver: _prepare_job_arrival, multi_event_solver: _prepare_multi_event}
     for instance_name, algorithm, solver_fn in build_dynamic_smoke_solvers():
-        run = run_solver_once(algorithm, solver_fn, success_note="DYNAMIC_PASS")
+        expected, _ = preparers[solver_fn]()
+        run = run_solver_once(algorithm, solver_fn, success_note="DYNAMIC_PASS", expected_instance=expected.instance)
         runs.append(run)
         records.append(record_from_run(experiment_id, instance_name, run))
     return runs, records

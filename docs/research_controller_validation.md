@@ -101,3 +101,7 @@ $controllerPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'py
 独立审查找出的“只写两个计数即可跳过检查”和“摘要无真实训练也可验收”两处漏洞均先复现失败，再用任务收据、来源/输入绑定及完整产物/分母核验修复。新增101项测试，全量 **1377通过、2跳过、13条第三方警告，覆盖率90.88%**，818.97秒。独立重放全部256次更新/1536步、52检查点、80区间验证计划、32所选策略计划、56规则/CP计划和384分布比较，2274项核对零差异。
 
 [候选批次摘要](../experiments/results/exp_027_controlled_candidate_v1/summary.json)、[程序决定及完整记录](../experiments/results/exp_027_controlled_candidate_v1/task_05.json)、[独立重放](../experiments/results/exp_027_controlled_candidate_v1/independent_check.json)、[验证记录](../experiments/results/exp_027_controlled_candidate_v1/validation_record.json)、[归档哈希](../experiments/results/exp_027_controlled_candidate_v1/archive_manifest.json)。原审计快照及所有旧证据保留。
+
+## Phase 1 加固后的参考版本说明
+
+2026-10-27基础层改为严格不可变实例并加固检查器。源码身份检查保持不变；当前默认参考为 `experiments/results/exp_026_validation_iteration_phase1_v2/`，其来源是重新运行的 `exp_025_neural_policy_phase1_v2/`。36份初始/最终/选中参数与176条策略及规则轨迹同旧版一致。新控制器批次可正常执行；旧批次继续保留原源码绑定，不直接续跑。上文原批次数字及v1路径仍属于历史快照；本次加固与复验见[Phase 1记录](reproducibility_phase1.md)。

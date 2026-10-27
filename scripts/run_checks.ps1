@@ -26,14 +26,18 @@ function Invoke-Check {
     Write-Host ""
     Write-Host "==> $Title"
     & $PythonExe @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Title failed with exit code $LASTEXITCODE"
+    }
 }
 
 Write-Host "Project root: $ProjectRoot"
 Write-Host "Python executable: $PythonExe"
 Write-Host "Temporary result directory: $TempResults"
 
-Invoke-Check "Audit benchmark metadata" @("experiments\exp_012_benchmark_metadata_audit.py")
-Invoke-Check "Build CP-SAT report" @("experiments\exp_013_cpsat_report.py")
+Invoke-Check "Verify dedicated Python" @("-c", "import sys; print(sys.executable)")
+Invoke-Check "Audit benchmark metadata" @("experiments\exp_012_benchmark_metadata_audit.py", "--output", (Join-Path $TempResults "metadata.csv"))
+Invoke-Check "Build CP-SAT report" @("experiments\exp_013_cpsat_report.py", "--output", (Join-Path $TempResults "cpsat_report.md"))
 Invoke-Check "Run Phase 2A dynamic smoke" @(
     "experiments\exp_014_dynamic_reschedule_smoke.py",
     "--output-dir",
@@ -71,6 +75,7 @@ Invoke-Check "Run pytest with core coverage" @(
 Write-Host ""
 Write-Host "==> Check diff whitespace"
 git diff --check
+if ($LASTEXITCODE -ne 0) { throw "git diff --check failed with exit code $LASTEXITCODE" }
 
 Write-Host ""
 Write-Host "All local checks completed successfully."

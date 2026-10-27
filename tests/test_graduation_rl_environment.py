@@ -115,7 +115,11 @@ def test_result_and_reset_are_detached_and_duplicate_or_postterminal_steps_do_no
     accepted = deepcopy(env.get_result())
     terminal.result.records.clear()
     changed = env.get_result()
-    changed.instance.jobs.clear()
+    with pytest.raises(AttributeError):
+        changed.instance.jobs.clear()
+    # Even bypassing normal immutability on this returned copy must not touch
+    # the environment's internal instance.
+    object.__setattr__(changed.instance, 'jobs', ())
     assert env.get_result() == accepted
     with pytest.raises(RuntimeError): env.step(96)
     assert env.reset() == initial

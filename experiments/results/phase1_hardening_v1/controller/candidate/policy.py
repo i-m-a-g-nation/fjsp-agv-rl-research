@@ -1,0 +1,173 @@
+"""Versioned 545-parameter shared action scorer over original policy features.
+
+Each action receives local task3 (zero for maintenance), local machine7,
+action-kind2, original auxiliary8, present-only mean task3 and mean machine7,
+and slack2. Production slack is due-tail-processing (zero for maintenance).
+Maintenance slack is latest-start-tail, using fixed_start in fixed mode and
+window_end-duration in joint mode. These are normalized policy inputs only;
+the original environment alone determines exact clocks, legality and reward.
+"""
+import math
+
+import numpy as np
+
+from src.graduation.neural_policy import (
+    ACTION_COUNT, PARAMETER_KEYS, MaskedMLP, PolicySample, _features, _validate_sample,
+    masked_probabilities, policy_features,
+)
+from src.graduation.rl_environment import MAINTENANCE_OFFSET, MAX_MACHINES, MAX_TASKS
+
+ACTION_FEATURE_COUNT = 32
+HIDDEN_SIZE = 16
+
+
+def _validate_parameters(state):
+    shapes = {'w1': (ACTION_FEATURE_COUNT, HIDDEN_SIZE), 'b1': (HIDDEN_SIZE,),
+              'w2': (HIDDEN_SIZE,), 'b2': (1,)}
+    if type(state) is not dict or set(state) != set(PARAMETER_KEYS):
+        raise ValueError('Shared checkpoint must contain exactly w1,b1,w2,b2')
+    if any(type(state[key]) is not np.ndarray or state[key].dtype != np.float64
+           or state[key].shape != shape or not np.isfinite(state[key]).all()
+           for key, shape in shapes.items()):
+        raise ValueError('Shared checkpoint requires finite float64 arrays in the 32/16/1 schema')
+    return HIDDEN_SIZE
+
+
+def action_features(features: tuple[float, ...]) -> np.ndarray:
+    """Map original 372 features to 100 ID-free action feature rows."""
+    _features(features)
+    rows = np.asarray(features[:364], dtype=np.float64).reshape(28, 13)
+    tasks, machines = rows[:MAX_TASKS], rows[MAX_TASKS:]
+    present_tasks = [row[:3] for row in tasks if row[12] == 1.]
+    present_machines = [row[3:10] for row in machines if row[12] == 1.]
+    if not present_tasks or not present_machines:
+        raise ValueError('Shared policy needs present task and machine rows')
+    try:
+        task_mean = tuple(math.fsum(row[column] for row in present_tasks)/len(present_tasks) for column in range(3))
+        machine_mean = tuple(math.fsum(row[column] for row in present_machines)/len(present_machines) for column in range(7))
+        auxiliary = features[364:]
+        result = np.empty((ACTION_COUNT, ACTION_FEATURE_COUNT), dtype=np.float64)
+        for action in range(ACTION_COUNT):
+            maintenance = action >= MAINTENANCE_OFFSET
+            job, machine = (0, action-MAINTENANCE_OFFSET) if maintenance else divmod(action, MAX_MACHINES)
+            task = (0., 0., 0.) if maintenance else tuple(tasks[job, :3])
+            local_machine = tuple(machines[machine, 3:10])
+            tail, duration, _, window_end, fixed_start, _, _ = local_machine
+            production_slack = 0. if maintenance else task[1]-tail-task[0]
+            latest = fixed_start if auxiliary[0] == 1. else window_end-duration
+            result[action] = (task + local_machine + (float(not maintenance), float(maintenance))
+                + auxiliary + task_mean + machine_mean + (production_slack, latest-tail))
+    except (OverflowError, FloatingPointError) as exc:
+        raise ValueError('Shared action features are numerically invalid') from exc
+    if not np.isfinite(result).all():
+        raise ValueError('Shared action features must remain finite')
+    return result
+
+
+class SharedScorer(MaskedMLP):
+    """One learned tanh network scores each action, followed by original masking."""
+
+    policy_kind = 'shared_scorer_v1'
+
+    def __init__(self, *, seed: int, hidden_size: int = HIDDEN_SIZE):
+        if (type(seed) is not int or not 0 <= seed <= 2**32-1
+                or type(hidden_size) is not int or hidden_size != HIDDEN_SIZE):
+            raise ValueError('Shared scorer requires a uint32 seed and hidden_size=16')
+        rng = np.random.Generator(np.random.PCG64(seed))
+        self._parameters = {
+            'w1': rng.normal(0., 1/math.sqrt(ACTION_FEATURE_COUNT), (ACTION_FEATURE_COUNT, HIDDEN_SIZE)),
+            'b1': np.zeros(HIDDEN_SIZE, dtype=np.float64),
+            'w2': rng.normal(0., 1/math.sqrt(HIDDEN_SIZE), HIDDEN_SIZE),
+            'b2': np.zeros(1, dtype=np.float64)}
+
+    @property
+    def hidden_size(self):
+        return _validate_parameters(self._parameters)
+
+    def state_dict(self) -> dict[str, np.ndarray]:
+        _validate_parameters(self._parameters)
+        return {name: value.copy() for name, value in self._parameters.items()}
+
+    @classmethod
+    def from_state(cls, state):
+        _validate_parameters(state)
+        actor = cls(seed=0)
+        actor._parameters = {name: value.copy() for name, value in state.items()}
+        return actor
+
+    def _forward(self, features):
+        x = action_features(features)
+        _validate_parameters(self._parameters)
+        try:
+            with np.errstate(over='raise', invalid='raise'):
+                hidden = np.tanh(x @ self._parameters['w1'] + self._parameters['b1'])
+                logits = hidden @ self._parameters['w2'] + self._parameters['b2'][0]
+        except FloatingPointError as exc:
+            raise ValueError('Shared policy forward pass is numerically invalid') from exc
+        if not np.isfinite(hidden).all() or not np.isfinite(logits).all():
+            raise ValueError('Shared policy forward pass must remain finite')
+        return x, hidden, logits
+
+    def probabilities(self, encoded) -> tuple[float, ...]:
+        features = policy_features(encoded)
+        if encoded.status != 'ACTIVE':
+            raise ValueError('Only an ACTIVE observation can request a policy action')
+        _, _, logits = self._forward(features)
+        return tuple(masked_probabilities(logits, encoded.action_mask).tolist())
+
+    def select_action(self, encoded, *, rng: np.random.Generator, deterministic: bool = False) -> int:
+        if not isinstance(rng, np.random.Generator) or type(deterministic) is not bool:
+            raise ValueError('Use a caller-owned Generator and explicit boolean selection mode')
+        probabilities = self.probabilities(encoded)
+        return int(np.argmax(probabilities) if deterministic else rng.choice(ACTION_COUNT, p=probabilities))
+
+    def log_probability_gradient(self, sample: PolicySample):
+        _validate_sample(sample)
+        x, hidden, logits = self._forward(sample.features)
+        probabilities = masked_probabilities(logits, sample.action_mask)
+        legal_logits = logits[np.asarray(sample.action_mask, dtype=bool)]
+        maximum = float(np.max(legal_logits))
+        logp = float(logits[sample.action]-maximum-np.log(np.exp(legal_logits-maximum).sum()))
+        dz = -probabilities
+        dz[sample.action] += 1.
+        try:
+            with np.errstate(over='raise', invalid='raise'):
+                dh = dz[:, None]*self._parameters['w2'][None, :]*(1.-hidden*hidden)
+                gradients = {'w1': x.T @ dh, 'b1': dh.sum(axis=0),
+                             'w2': hidden.T @ dz, 'b2': np.asarray([dz.sum()], dtype=np.float64)}
+        except FloatingPointError as exc:
+            raise ValueError('Shared policy gradient is numerically invalid') from exc
+        if not math.isfinite(logp) or any(not np.isfinite(value).all() for value in gradients.values()):
+            raise ValueError('Shared policy gradient must remain finite')
+        return logp, gradients
+
+    def reinforce_update(self, samples: tuple[PolicySample, ...], *, learning_rate: float = .01,
+                         max_grad_norm: float = 1.) -> dict:
+        if (type(samples) is not tuple or not 1 <= len(samples) <= 28
+                or type(learning_rate) is not float or not math.isfinite(learning_rate) or not 0 < learning_rate <= 1
+                or type(max_grad_norm) is not float or not math.isfinite(max_grad_norm) or not 0 < max_grad_norm <= 10):
+            raise ValueError('Invalid bounded shared REINFORCE update configuration')
+        _validate_parameters(self._parameters)
+        for sample in samples:
+            _validate_sample(sample)
+        total = {name: np.zeros_like(value) for name, value in self._parameters.items()}
+        loss = 0.
+        try:
+            with np.errstate(over='raise', invalid='raise'):
+                for sample in samples:
+                    logp, gradient = self.log_probability_gradient(sample)
+                    loss -= sample.return_value*logp/len(samples)
+                    for name in total:
+                        total[name] += (sample.return_value/len(samples))*gradient[name]
+                norm = math.sqrt(math.fsum(float(np.sum(g*g)) for g in total.values()))
+                if not math.isfinite(norm) or not math.isfinite(loss):
+                    raise ValueError('Shared update loss/norm must remain finite')
+                factor = min(1., max_grad_norm/norm) if norm else 1.
+                candidate = {name: value+learning_rate*factor*total[name] for name, value in self._parameters.items()}
+        except (FloatingPointError, OverflowError) as exc:
+            raise ValueError('Shared policy update is numerically invalid') from exc
+        _validate_parameters(candidate)
+        changed = any(not np.array_equal(value, candidate[name]) for name, value in self._parameters.items())
+        self._parameters = candidate
+        return {'loss': float(loss), 'gradient_norm': float(norm), 'applied_gradient_norm': float(norm*factor),
+                'changed': bool(changed), 'samples': len(samples)}

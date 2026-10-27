@@ -13,7 +13,7 @@ import sys
 from typing import Callable
 
 from src.data.instance import create_toy_instance
-from src.data.loader import load_benchmark_file
+from src.data.loader import load_project_benchmark_file as load_benchmark_file
 from src.scheduling.encoding import ScheduleRecord, ScheduleResult
 from src.scheduling.feasibility import check_feasibility
 from src.solvers.dispatching import dispatch_eft_solve, dispatch_fifo_solve, dispatch_mwkr_solve, dispatch_spt_solve

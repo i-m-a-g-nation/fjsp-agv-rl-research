@@ -28,7 +28,7 @@ from experiments import exp_025_neural_policy_pilot as pilot
 from src.graduation.validation_diagnostics import diagnose_validation, _raw_fields, _decode, _path_inside, _instances
 
 
-DEFAULT_REFERENCE = ROOT / 'experiments/results/exp_025_neural_policy_v1'
+DEFAULT_REFERENCE = ROOT / 'experiments/results/exp_025_neural_policy_phase1_v2'
 PLAN_FILE = 'docs/superpowers/plans/2026-10-26-validation-baseline-iteration.md'
 PURPOSE = 'validation_only_return_baseline_iteration'
 LIMITATION = ('Development selection on reused validation data; no independent performance proof, '

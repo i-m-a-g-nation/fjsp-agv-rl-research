@@ -20,6 +20,7 @@ from experiments.common import (
     run_solver_suite,
     write_results_csv,
 )
+from experiments.common import experiment_output_dir
 from src.data.instance import create_toy_instance
 from src.scheduling.encoding import ScheduleResult
 from src.solvers.heuristics import (
@@ -32,9 +33,10 @@ from src.solvers.heuristics import (
 )
 
 
-def main() -> None:
+def main(argv=None) -> None:
     root = Path(__file__).parent.parent
     experiment_id = "exp_003_dispatching_rules"
+    output_dir = experiment_output_dir(experiment_id, argv)
     instance_name = "toy_3x3"
     instance = create_toy_instance()
     print(f"Instance: {instance.num_jobs} jobs x {instance.num_machines} machines, {instance.total_ops} ops")
@@ -49,7 +51,7 @@ def main() -> None:
         ("DispatchRandom(42)", lambda: dispatch_random_solve(instance, seed=42)),
     ]
 
-    runs = run_solver_suite(solvers)
+    runs = run_solver_suite(solvers, expected_instance=instance)
     print_solver_runs(runs, algorithm_width=24)
 
     failures = [f"{run.algorithm}: {run.note}" for run in runs if not run.feasible]
@@ -58,7 +60,7 @@ def main() -> None:
         for run in runs
     ]
 
-    output_path = root / "experiments" / "results" / f"{experiment_id}.csv"
+    output_path = output_dir / f"{experiment_id}.csv"
     write_results_csv(output_path, records)
     print()
     print(f"CSV results written to: {output_path}")

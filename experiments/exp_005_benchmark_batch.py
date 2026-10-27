@@ -24,7 +24,7 @@ from experiments.common import (  # noqa: E402
     write_results_csv,
 )
 from src.data.instance import FJSPInstance  # noqa: E402
-from src.data.loader import load_benchmark_file  # noqa: E402
+from src.data.loader import load_project_benchmark_file as load_benchmark_file  # noqa: E402
 from src.scheduling.encoding import ScheduleResult  # noqa: E402
 from src.solvers.heuristics import (  # noqa: E402
     dispatch_eft_solve,
@@ -135,7 +135,7 @@ def run_benchmark_batch(
             (name, lambda fn=solver_fn, inst=instance: fn(inst))
             for name, solver_fn in solvers
         ]
-        runs = run_solver_suite(instance_solvers)
+        runs = run_solver_suite(instance_solvers, expected_instance=instance)
         print_solver_runs(runs, algorithm_width=20)
         records.extend(
             record_from_run(experiment_id, instance_name, run)

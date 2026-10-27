@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import math
+from numbers import Real
 from typing import Tuple
 
 from ortools.sat.python import cp_model
 
-from src.data.instance import FJSPInstance
+from src.data.instance import FJSPInstance, validate_instance
 from src.scheduling.encoding import ScheduleResult
 from src.scheduling.feasibility import check_feasibility
 
@@ -31,12 +32,38 @@ def _compute_horizon(instance: FJSPInstance) -> int:
 def ortools_solve(
     instance: FJSPInstance,
     time_limit: float = 60.0,
-    num_workers: int = 0,
+    num_workers: int = 1,
+    *,
+    seed: int = 42,
 ) -> ScheduleResult:
-    """Solve a static FJSP instance with an OR-Tools CP-SAT baseline model."""
+    """Solve static FJSP with reproducible single-worker defaults.
+
+    ``num_workers=0`` explicitly requests OR-Tools' automatic worker selection.
+    Multiple workers and wall-clock stopping can affect reproducibility.
+    """
+
+    validate_instance(instance)
+    if isinstance(time_limit, bool) or not isinstance(time_limit, Real):
+        raise ValueError("time_limit must be a finite positive real number")
+    try:
+        time_limit = float(time_limit)
+    except (OverflowError, ValueError) as exc:
+        raise ValueError("time_limit must be a finite positive real number") from exc
+    if not math.isfinite(time_limit) or time_limit <= 0:
+        raise ValueError("time_limit must be a finite positive real number")
+    # Both OR-Tools parameters are represented by signed 32-bit integers.
+    if type(num_workers) is not int or not 0 <= num_workers <= 2**31 - 1:
+        raise ValueError("num_workers must be an integer in [0, 2**31 - 1] (0 means auto)")
+    if type(seed) is not int or not 0 <= seed <= 2**31 - 1:
+        raise ValueError("seed must be an integer in [0, 2**31 - 1]")
+    solver_config = {"time_limit": time_limit, "num_workers": num_workers, "seed": seed}
 
     model = cp_model.CpModel()
     horizon = _compute_horizon(instance)
+    # CP-SAT domains are limited to half the signed 64-bit integer range.
+    # Its validator below also checks interval arithmetic and aggregate domains.
+    if horizon > cp_model.INT_MAX // 2:
+        raise ValueError("CP-SAT horizon exceeds its supported integer range")
 
     start_vars: dict[Tuple[int, int, int], cp_model.IntVar] = {}
     end_vars: dict[Tuple[int, int, int], cp_model.IntVar] = {}
@@ -105,11 +132,16 @@ def ortools_solve(
             )
 
     model.Minimize(makespan_var)
+    validation_error = model.Validate()
+    if validation_error:
+        raise ValueError(
+            "CP-SAT model exceeds its supported integer range: " + validation_error
+        )
 
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = time_limit
-    if num_workers > 0:
-        solver.parameters.num_search_workers = num_workers
+    solver.parameters.num_search_workers = num_workers
+    solver.parameters.random_seed = seed
     solver.parameters.log_search_progress = False
 
     status = solver.Solve(model)
@@ -128,6 +160,7 @@ def ortools_solve(
             end_vars,
             presence_vars,
             status_name,
+            solver_config,
         )
 
     raise OrtoolsSolverError(f"CP-SAT returned unexpected status: {status_name}")
@@ -140,6 +173,7 @@ def _extract_result(
     end_vars: dict,
     presence_vars: dict,
     status_name: str,
+    solver_config: dict,
 ) -> ScheduleResult:
     """Extract and validate a ScheduleResult from a CP-SAT solution."""
 
@@ -149,6 +183,7 @@ def _extract_result(
         solver_status=solver_status,
         solver_objective_bound=float(solver.BestObjectiveBound()),
         solver_wall_time=float(solver.WallTime()),
+        solver_config=solver_config,
     )
 
     # Extract exactly the active interval for each operation and convert it to
@@ -180,7 +215,7 @@ def _extract_result(
 
     # CP-SAT constraints and the independent feasibility checker should agree.
     # Keeping both checks makes model mistakes visible during development.
-    feasible, violations = check_feasibility(result)
+    feasible, violations = check_feasibility(result, expected_instance=instance)
     if not feasible:
         raise OrtoolsSolverError(
             f"CP-SAT ({solver_status}) produced infeasible schedule: {violations}"

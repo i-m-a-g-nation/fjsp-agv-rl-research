@@ -1,0 +1,1238 @@
+............................F.F........FF..............................F [  4%]
+....FF.................................................................. [  8%]
+........................................................................ [ 12%]
+........................................................................ [ 16%]
+........................................................................ [ 21%]
+........................................................................ [ 25%]
+........................................................................ [ 29%]
+.............................F.......................................... [ 33%]
+........................................................................ [ 38%]
+........................................................................ [ 42%]
+........................................................................ [ 46%]
+........................................................................ [ 50%]
+........................................................................ [ 55%]
+........................................................................ [ 59%]
+........................................................................ [ 63%]
+........................................................................ [ 67%]
+........................................................................ [ 72%]
+...............................EEEEEFFEEEEEEEF.EEEE..EEE................ [ 76%]
+........................................................................ [ 80%]
+..............................................................s......... [ 84%]
+.........................................s.............................. [ 89%]
+..................................................................FFF... [ 93%]
+............F.F....FFF.................................................. [ 97%]
+..........................................                               [100%]
+=================================== ERRORS ====================================
+_ ERROR at setup of test_one_start_dispatches_two_tasks_and_stops_from_new_evidence _
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+_ ERROR at setup of test_slice_resume_and_terminal_resume_do_not_repeat_or_reset_budget _
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+__ ERROR at setup of test_result_tampering_and_changed_limits_refuse_resume ___
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+________ ERROR at setup of test_source_and_input_changes_refuse_resume ________
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+__ ERROR at setup of test_crash_does_not_refund_reservation_or_restart_task ___
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+________ ERROR at setup of test_task_cap_and_innovation_scope_boundary ________
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+_ ERROR at setup of test_bad_configuration_is_rejected_before_execution[max_tasks-True] _
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+_ ERROR at setup of test_bad_configuration_is_rejected_before_execution[max_tasks-3] _
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+_ ERROR at setup of test_bad_configuration_is_rejected_before_execution[steps-0] _
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+_ ERROR at setup of test_bad_configuration_is_rejected_before_execution[track-unknown] _
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+_ ERROR at setup of test_bad_configuration_is_rejected_before_execution[max_active_seconds-nan] _
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+______________ ERROR at setup of test_lock_refuses_second_writer ______________
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+_____ ERROR at setup of test_partial_or_overlapping_output_folder_refused _____
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+_ ERROR at setup of test_missing_or_empty_budget_never_reinitializes_on_resume _
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+________ ERROR at setup of test_deleted_budget_row_cannot_reset_spend _________
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+_ ERROR at setup of test_active_budget_includes_nonterminal_identity_preflight _
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+_ ERROR at setup of test_truncated_states_cannot_redefine_the_native_denominator _
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+_ ERROR at setup of test_controlled_profile_dispatches_package_gate_and_comparison _
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+_ ERROR at setup of test_audit_profile_does_not_enable_candidate_tasks_and_bad_profile_is_rejected _
+
+    @pytest.fixture(scope='session')
+    def diagnostic_report():
+        from src.graduation.permutation_diagnostics import diagnose_permutations
+>       return diagnose_permutations(REFERENCE)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\graduation\permutation_diagnostics.py:232: in diagnose_permutations
+    manifest, manifest_hash, validation_rows, validation, runs, saved_rows = _read(archive, budget)
+                                                                             ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+================================== FAILURES ===================================
+_ test_native_bounded_comparison_has_complete_replay_training_and_artifact_counts _
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_native_bounded_comparison0')
+
+    def test_native_bounded_comparison_has_complete_replay_training_and_artifact_counts(tmp_path):
+        from src.ai_workflow.candidate_comparison import run_comparison
+        batch = tmp_path / 'batch'
+        actor = _batch_actor(batch)
+        before = {p: p.stat().st_mtime_ns for p in NATIVE.rglob('*') if p.is_file()}
+>       report = run_comparison(batch, NATIVE, actor)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_candidate_comparison.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\ai_workflow\candidate_comparison.py:294: in run_comparison
+    manifest, manifest_hash, validation_rows, validation, controls, saved_rows = _read(archive, budget)
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+______ test_deadline_keeps_partial_progress_without_accepting_comparison ______
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_deadline_keeps_partial_pr0')
+
+    def test_deadline_keeps_partial_progress_without_accepting_comparison(tmp_path):
+        from src.ai_workflow.candidate_comparison import run_comparison
+        batch = tmp_path / 'batch'
+    
+        def budget():
+            logs = list((batch / 'candidate_run/logs').glob('*.jsonl'))
+            if logs and '"kind":"episode"' in logs[0].read_text():
+                raise TimeoutError('test cap')
+    
+        with pytest.raises(TimeoutError, match='test cap'):
+>           run_comparison(batch, NATIVE, _batch_actor(batch), check_budget=budget)
+
+tests\test_candidate_comparison.py:156: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\ai_workflow\candidate_comparison.py:294: in run_comparison
+    manifest, manifest_hash, validation_rows, validation, controls, saved_rows = _read(archive, budget)
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+________ test_original_checker_rejection_propagates_without_retention _________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_original_checker_rejectio0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB4BE256D0>
+
+    def test_original_checker_rejection_propagates_without_retention(tmp_path, monkeypatch):
+        from src.ai_workflow import candidate_comparison as module
+        monkeypatch.setattr(module, 'check_parallel_maintenance_feasibility', lambda *args, **kwargs: (False, []))
+        batch = tmp_path / 'batch'
+        with pytest.raises(ValueError, match='Original G1'):
+>           module.run_comparison(batch, NATIVE, _batch_actor(batch))
+
+tests\test_candidate_comparison.py:222: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\ai_workflow\candidate_comparison.py:294: in run_comparison
+    manifest, manifest_hash, validation_rows, validation, controls, saved_rows = _read(archive, budget)
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_original_checker_rejectio0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB4BE256D0>
+
+    def test_original_checker_rejection_propagates_without_retention(tmp_path, monkeypatch):
+        from src.ai_workflow import candidate_comparison as module
+        monkeypatch.setattr(module, 'check_parallel_maintenance_feasibility', lambda *args, **kwargs: (False, []))
+        batch = tmp_path / 'batch'
+>       with pytest.raises(ValueError, match='Original G1'):
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'Original G1'
+E         Actual message: 'Current original source hash mismatch: src/data/instance.py'
+
+tests\test_candidate_comparison.py:221: AssertionError
+_____________ test_incomplete_training_cannot_retain_a_candidate ______________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_incomplete_training_canno0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB4BEFB750>
+
+    def test_incomplete_training_cannot_retain_a_candidate(tmp_path, monkeypatch):
+        from src.ai_workflow import candidate_comparison as module
+        monkeypatch.setattr(module, 'train_shared_policy', lambda *args, **kwargs:
+                            {'episodes_completed': 63, 'training_steps': 378})
+        batch = tmp_path / 'batch'
+        with pytest.raises(ValueError, match='Incomplete candidate training'):
+>           module.run_comparison(batch, NATIVE, _batch_actor(batch))
+
+tests\test_candidate_comparison.py:232: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\ai_workflow\candidate_comparison.py:294: in run_comparison
+    manifest, manifest_hash, validation_rows, validation, controls, saved_rows = _read(archive, budget)
+                                                                                 ^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_incomplete_training_canno0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB4BEFB750>
+
+    def test_incomplete_training_cannot_retain_a_candidate(tmp_path, monkeypatch):
+        from src.ai_workflow import candidate_comparison as module
+        monkeypatch.setattr(module, 'train_shared_policy', lambda *args, **kwargs:
+                            {'episodes_completed': 63, 'training_steps': 378})
+        batch = tmp_path / 'batch'
+>       with pytest.raises(ValueError, match='Incomplete candidate training'):
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'Incomplete candidate training'
+E         Actual message: 'Current original source hash mismatch: src/data/instance.py'
+
+tests\test_candidate_comparison.py:231: AssertionError
+___ test_runtime_gate_exercises_copied_code_and_preserves_checkpoint_schema ___
+
+batch = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_runtime_gate_exercises_co0/batch')
+
+    def test_runtime_gate_exercises_copied_code_and_preserves_checkpoint_schema(batch):
+        candidate.materialize_candidate(batch)
+>       result = candidate.check_candidate(batch)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_controlled_candidate.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\ai_workflow\controlled_candidate.py:133: in check_candidate
+    reference_manifest, reference_hash, _, validation, _, _ = _read(Path(reference_archive).resolve(), budget)
+                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+__ test_declared_counts_and_materialization_hashes_are_not_training_evidence __
+
+batch = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_declared_counts_and_mater0/batch')
+
+    def test_declared_counts_and_materialization_hashes_are_not_training_evidence(batch):
+        materialized = candidate.materialize_candidate(batch)
+>       _record_gate(batch, candidate.check_candidate(batch))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_controlled_candidate.py:123: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\ai_workflow\controlled_candidate.py:133: in check_candidate
+    reference_manifest, reference_hash, _, validation, _, _ = _read(Path(reference_archive).resolve(), budget)
+                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+__ test_check_receipt_requires_identical_saved_checks_and_all_gate_artifacts __
+
+batch = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_check_receipt_requires_id0/batch')
+
+    def test_check_receipt_requires_identical_saved_checks_and_all_gate_artifacts(batch):
+        candidate.materialize_candidate(batch)
+>       result = candidate.check_candidate(batch)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_controlled_candidate.py:139: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\ai_workflow\controlled_candidate.py:133: in check_candidate
+    reference_manifest, reference_hash, _, validation, _, _ = _read(Path(reference_archive).resolve(), budget)
+                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\graduation\permutation_diagnostics.py:92: in _read
+    _require(_sha(_path_inside(ROOT, relative).read_bytes()) == digest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+condition = False
+message = 'Current original source hash mismatch: src/data/instance.py'
+
+    def _require(condition, message):
+        if not condition:
+>           raise ValueError(message)
+E           ValueError: Current original source hash mismatch: src/data/instance.py
+
+src\graduation\validation_diagnostics.py:37: ValueError
+_ test_result_and_reset_are_detached_and_duplicate_or_postterminal_steps_do_not_mutate _
+
+    def test_result_and_reset_are_detached_and_duplicate_or_postterminal_steps_do_not_mutate():
+        from src.graduation.rl_environment import ParallelMaintenanceEnv
+        data, _ = one_machine()
+        env = ParallelMaintenanceEnv(data, mode='joint')
+        initial = env.observe()
+        env.step(0)
+        before = env.observe()
+        with pytest.raises(ValueError): env.step(0)
+        assert env.observe() == before
+        env.step(4)
+        terminal = env.step(96)
+        accepted = deepcopy(env.get_result())
+        terminal.result.records.clear()
+        changed = env.get_result()
+>       changed.instance.jobs.clear()
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'tuple' object has no attribute 'clear'
+
+tests\test_graduation_rl_environment.py:118: AttributeError
+______________ test_timeout_fails_closed_and_never_auto_retries _______________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_timeout_fails_closed_and_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB51DB3510>
+
+    def test_timeout_fails_closed_and_never_auto_retries(tmp_path, monkeypatch):
+        calls = []
+    
+        def timeout(*args, **kwargs):
+            calls.append(True)
+            raise subprocess.TimeoutExpired('worker', 1)
+    
+        monkeypatch.setattr(controller, 'supervised_json_process', timeout)
+        folder = tmp_path / 'batch'
+        result = controller.run_controller(folder)
+>       assert result['stop_reason'] == 'task_timeout'
+E       AssertionError: assert 'task_failed' == 'task_timeout'
+E         
+E         - task_timeout
+E         + task_failed
+
+tests\test_research_controller.py:116: AssertionError
+_________________ test_malformed_worker_result_cannot_advance _________________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_malformed_worker_result_c0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB507AC1D0>
+
+    def test_malformed_worker_result_cannot_advance(tmp_path, monkeypatch):
+        monkeypatch.setattr(controller, 'supervised_json_process', lambda *a, **k: {'status': 'COMPLETED'})
+        result = controller.run_controller(tmp_path / 'batch')
+        assert result['stop_reason'] == 'task_failed'
+>       assert result['tasks'][0]['status'] == 'FAILED'
+               ^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests\test_research_controller.py:126: IndexError
+____ test_actual_evidence_audit_preserves_unapproved_partial_source_status ____
+
+    def test_actual_evidence_audit_preserves_unapproved_partial_source_status():
+>       observation = tasks.inspect_inputs(REFERENCE, PAPER)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_research_controller.py:156: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+reference_archive = WindowsPath('D:/UserData/.codex/worktrees/research-workflow-guards/fjsp-agv-rl-research/experiments/results/exp_026_validation_iteration_v1')
+paper_archive = WindowsPath('D:/UserData/.codex/worktrees/research-workflow-guards/fjsp-agv-rl-research/experiments/results/exp_023_state_semantic_v1')
+check_budget = <function <lambda> at 0x000001BB49E73600>
+
+    def inspect_inputs(reference_archive, paper_archive, check_budget=lambda: None):
+        """Recompute the archived validation decision, rather than trust a summary."""
+        from experiments.exp_026_validation_iteration import _decisions
+    
+        input_hashes(reference_archive, paper_archive, check_budget)
+        root = Path(reference_archive).resolve()
+        manifest = read_json(root / 'manifest.json')
+        if manifest.get('status') != 'COMPLETED':
+            raise ValueError('A completed validation reference is required')
+        for relative, expected in manifest['source_hashes'].items():
+            check_budget()
+            if sha(_path_inside(ROOT, relative).read_bytes()) != expected:
+>               raise ValueError('Archived validation source differs from current code')
+E               ValueError: Archived validation source differs from current code
+
+src\ai_workflow\research_tasks.py:74: ValueError
+_____ test_tiny_iteration_checks_80_validation_plans_and_eight_references _____
+
+tiny = (WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/validation-iteration0/tiny'), {'accepted_cp...rue, 'mean_validation_tardiness': None, 'per_seed': [], 'selected_method': None, ...}}, 'diagnosis_sha256': None, ...})
+
+    def test_tiny_iteration_checks_80_validation_plans_and_eight_references(tiny):
+        from experiments import exp_026_validation_iteration as module
+        from src.graduation.policy_training import run_policy_episode
+    
+        output, manifest, evidence = tiny
+>       assert manifest['status'] == 'COMPLETED'
+E       AssertionError: assert 'FAILED' == 'COMPLETED'
+E         
+E         - COMPLETED
+E         + FAILED
+
+tests\test_validation_iteration.py:27: AssertionError
+_______ test_probe_sentinel_is_never_read_and_new_metadata_omits_probe ________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_probe_sentinel_is_never_r0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB51EA4810>
+
+    def test_probe_sentinel_is_never_read_and_new_metadata_omits_probe(tmp_path, monkeypatch):
+        from experiments import exp_026_validation_iteration as module
+    
+        class ForbiddenProbe:
+            def __iter__(self):
+                raise AssertionError('probe must remain untouched')
+    
+            def __getitem__(self, key):
+                raise AssertionError('probe must remain untouched')
+    
+        original = module._read_reference
+    
+        def guarded(*args):
+            reference = original(*args)
+            reference['splits']['probe'] = ForbiddenProbe()
+            return reference
+    
+        def forbidden_generator():
+            raise AssertionError('even generating probe inputs is forbidden')
+    
+        monkeypatch.setattr(module, '_read_reference', guarded)
+        monkeypatch.setattr(module.pilot, 'build_splits', forbidden_generator)
+        output = tmp_path / 'safe'
+        manifest = module.run_experiment(output, episodes=1)
+>       assert manifest['status'] == 'COMPLETED'
+E       AssertionError: assert 'FAILED' == 'COMPLETED'
+E         
+E         - COMPLETED
+E         + FAILED
+
+tests\test_validation_iteration.py:99: AssertionError
+_ test_none_runner_matches_default_training_parameters_and_same_initial_candidate _
+
+tiny = (WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/validation-iteration0/tiny'), {'accepted_cp...rue, 'mean_validation_tardiness': None, 'per_seed': [], 'selected_method': None, ...}}, 'diagnosis_sha256': None, ...})
+
+    def test_none_runner_matches_default_training_parameters_and_same_initial_candidate(tiny):
+        import numpy as np
+        from experiments import exp_026_validation_iteration as module
+        from src.graduation.policy_training import train_policy
+    
+        output, _, evidence = tiny
+        splits = module.build_splits()
+        for run in evidence['training_runs']:
+            if run['method'] != 'none':
+                continue
+            default = train_policy(splits['training'], splits['validation'], mode=run['mode'], seed=run['seed'],
+                                   episodes=1, validation_every=1, hidden_size=16, learning_rate=.01)
+            candidate = next(item for item in evidence['training_runs'] if item['method'] == 'running_mean' and
+                             (item['mode'], item['seed']) == (run['mode'], run['seed']))
+>           assert candidate['checkpoints']['initial']['state_sha256'] == run['checkpoints']['initial']['state_sha256']
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'initial'
+
+tests\test_validation_iteration.py:119: KeyError
+____ test_failed_training_retains_all_rows_and_completed_callback_evidence ____
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_failed_training_retains_a0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB519DF050>
+
+    def test_failed_training_retains_all_rows_and_completed_callback_evidence(tmp_path, monkeypatch):
+        from experiments import exp_026_validation_iteration as module
+        from src.graduation import policy_training
+    
+        real = policy_training.train_policy
+    
+        def interrupted(*args, **kwargs):
+            callback = kwargs['on_progress']
+    
+            def progress(event):
+                callback(event)
+                if event['kind'] == 'episode':
+                    raise RuntimeError('private details are not archived')
+    
+            kwargs['on_progress'] = progress
+            return real(*args, **kwargs)
+    
+        monkeypatch.setattr(policy_training, 'train_policy', interrupted)
+        output = tmp_path / 'failure'
+        manifest = module.run_experiment(output, episodes=1)
+        evidence = _read(output)
+        assert manifest['status'] == 'FAILED' and manifest['completed_training_runs'] == 0
+>       assert manifest['accepted_validation_rows'] == 48
+E       assert 0 == 48
+
+tests\test_validation_iteration.py:219: AssertionError
+____________ test_timeout_callback_preserves_just_completed_update ____________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_timeout_callback_preserve0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB510FFD50>
+
+    def test_timeout_callback_preserves_just_completed_update(tmp_path, monkeypatch):
+        from experiments import exp_026_validation_iteration as module
+        from src.graduation import policy_training
+    
+        class Clock:
+            now = 0.
+    
+            def monotonic(self):
+                return self.now
+    
+        clock = Clock()
+        monkeypatch.setattr(module.time, 'monotonic', clock.monotonic)
+        real = policy_training.train_policy
+    
+        def delayed(*args, **kwargs):
+            callback = kwargs['on_progress']
+    
+            def progress(event):
+                if event['kind'] == 'episode':
+                    clock.now = 121.
+                callback(event)
+    
+            kwargs['on_progress'] = progress
+            return real(*args, **kwargs)
+    
+        monkeypatch.setattr(policy_training, 'train_policy', delayed)
+        output = tmp_path / 'timeout'
+        manifest = module.run_experiment(output, episodes=1)
+        evidence = _read(output)
+>       assert manifest['status'] == 'BUDGET_STOP'
+E       AssertionError: assert 'FAILED' == 'BUDGET_STOP'
+E         
+E         - BUDGET_STOP
+E         + FAILED
+
+tests\test_validation_iteration.py:271: AssertionError
+________ test_unknown_cp_status_retains_references_and_stops_selection ________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_unknown_cp_status_retains0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB51AED150>
+
+    def test_unknown_cp_status_retains_references_and_stops_selection(tmp_path, monkeypatch):
+        from experiments import exp_026_validation_iteration as module
+        from src.graduation.solver import GraduationSolverError
+    
+        def unknown(*args, **kwargs):
+            raise GraduationSolverError('CP-SAT returned UNKNOWN; no accepted schedule')
+    
+        monkeypatch.setattr(module, 'solve_parallel_maintenance', unknown)
+        output = tmp_path / 'unknown'
+        manifest = module.run_experiment(output, episodes=1)
+        evidence = _read(output)
+        assert manifest['status'] == 'FAILED' and manifest['accepted_cp_rows'] == 0
+>       assert manifest['accepted_validation_rows'] == 80
+E       assert 0 == 80
+
+tests\test_validation_iteration.py:360: AssertionError
+_ test_candidate_beating_cp_optimal_fails_but_feasible_is_not_optimal[OPTIMAL] _
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_candidate_beating_cp_opti0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB50F56CD0>
+status = 'OPTIMAL'
+
+    @pytest.mark.parametrize('status', ['OPTIMAL', 'FEASIBLE'])
+    def test_candidate_beating_cp_optimal_fails_but_feasible_is_not_optimal(tmp_path, monkeypatch, status):
+        from experiments import exp_026_validation_iteration as module
+        from src.graduation.rules import run_maintenance_rule_episode
+    
+        def poor_reference(data, *, mode, time_limit, num_workers, seed):
+            assert 0 < time_limit <= 1 and num_workers == 1 and seed == 42
+            result = max((run_maintenance_rule_episode(data, mode=mode, rule='Random', seed=s).result
+                          for s in range(16)), key=lambda item: item.total_tardiness)
+            result.solver_status = status
+            result.solver_objective_value = float(result.total_tardiness)
+            result.solver_objective_bound = float(result.total_tardiness) if status == 'OPTIMAL' else 0.
+            result.solver_gap = 0. if status == 'OPTIMAL' else result.total_tardiness / max(1, result.total_tardiness)
+            result.solver_wall_time = .001
+            return result
+    
+        monkeypatch.setattr(module, 'solve_parallel_maintenance', poor_reference)
+        output = tmp_path / status
+        manifest = module.run_experiment(output, episodes=1)
+        evidence = _read(output)
+>       better = [row for row in evidence['validation_rows'] if row['cp_comparison']['tardiness_difference'] < 0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_validation_iteration.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+.0 = <list_iterator object at 0x000001BB51106AA0>
+
+>   better = [row for row in evidence['validation_rows'] if row['cp_comparison']['tardiness_difference'] < 0]
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   TypeError: 'NoneType' object is not subscriptable
+
+tests\test_validation_iteration.py:387: TypeError
+_ test_candidate_beating_cp_optimal_fails_but_feasible_is_not_optimal[FEASIBLE] _
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-338/test_candidate_beating_cp_opti1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB51B0DA90>
+status = 'FEASIBLE'
+
+    @pytest.mark.parametrize('status', ['OPTIMAL', 'FEASIBLE'])
+    def test_candidate_beating_cp_optimal_fails_but_feasible_is_not_optimal(tmp_path, monkeypatch, status):
+        from experiments import exp_026_validation_iteration as module
+        from src.graduation.rules import run_maintenance_rule_episode
+    
+        def poor_reference(data, *, mode, time_limit, num_workers, seed):
+            assert 0 < time_limit <= 1 and num_workers == 1 and seed == 42
+            result = max((run_maintenance_rule_episode(data, mode=mode, rule='Random', seed=s).result
+                          for s in range(16)), key=lambda item: item.total_tardiness)
+            result.solver_status = status
+            result.solver_objective_value = float(result.total_tardiness)
+            result.solver_objective_bound = float(result.total_tardiness) if status == 'OPTIMAL' else 0.
+            result.solver_gap = 0. if status == 'OPTIMAL' else result.total_tardiness / max(1, result.total_tardiness)
+            result.solver_wall_time = .001
+            return result
+    
+        monkeypatch.setattr(module, 'solve_parallel_maintenance', poor_reference)
+        output = tmp_path / status
+        manifest = module.run_experiment(output, episodes=1)
+        evidence = _read(output)
+>       better = [row for row in evidence['validation_rows'] if row['cp_comparison']['tardiness_difference'] < 0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_validation_iteration.py:387: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+.0 = <list_iterator object at 0x000001BB50EB1FF0>
+
+>   better = [row for row in evidence['validation_rows'] if row['cp_comparison']['tardiness_difference'] < 0]
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   TypeError: 'NoneType' object is not subscriptable
+
+tests\test_validation_iteration.py:387: TypeError
+============================== warnings summary ===============================
+tests/test_phase2a_batch.py::test_representative_plots_are_selected_by_protocol_not_best_result
+tests/test_phase2a_batch.py::test_representative_plots_are_selected_by_protocol_not_best_result
+tests/test_phase2a_batch.py::test_representative_plots_are_selected_by_protocol_not_best_result
+tests/test_phase2a_batch.py::test_representative_plots_are_selected_by_protocol_not_best_result
+tests/test_phase2a_batch.py::test_representative_plots_are_selected_by_protocol_not_best_result
+tests/test_phase2a_batch.py::test_representative_plots_are_selected_by_protocol_not_best_result
+  D:\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+tests/test_phase2a_batch.py::test_representative_plots_are_selected_by_protocol_not_best_result
+tests/test_phase2a_batch.py::test_representative_plots_are_selected_by_protocol_not_best_result
+tests/test_phase2a_batch.py::test_representative_plots_are_selected_by_protocol_not_best_result
+tests/test_phase2a_batch.py::test_representative_plots_are_selected_by_protocol_not_best_result
+tests/test_phase2a_batch.py::test_representative_plots_are_selected_by_protocol_not_best_result
+tests/test_phase2a_batch.py::test_representative_plots_are_selected_by_protocol_not_best_result
+  D:\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+tests/test_phase2a_batch.py::test_representative_plots_are_selected_by_protocol_not_best_result
+  D:\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=============================== tests coverage ================================
+______________ coverage: platform win32, python 3.11.15-final-0 _______________
+
+Name                                                  Stmts   Miss  Cover   Missing
+-----------------------------------------------------------------------------------
+src\ai_workflow\__init__.py                               8      0   100%
+src\ai_workflow\campus_auth.py                          209    130    38%   38-39, 42-48, 62-149, 187-244, 288-289, 321-322, 328-337, 341-372, 376
+src\ai_workflow\candidate_comparison.py                 271    193    29%   56-59, 86-87, 120-121, 132-148, 152-158, 165, 170-171, 179-197, 201-269, 283, 295-477
+src\ai_workflow\candidate_evidence.py                    80     80     0%   2-98
+src\ai_workflow\config.py                                72      3    96%   23, 34-35
+src\ai_workflow\contracts.py                             33      0   100%
+src\ai_workflow\controlled_candidate.py                 195     91    53%   41, 47, 50, 88, 91, 104-106, 114, 131, 134-185, 191-194, 202-216, 225, 231, 233, 235, 237-246, 248-265
+src\ai_workflow\evidence.py                             103      5    95%   36, 78, 126, 142, 151
+src\ai_workflow\evidence_sources.py                      41      2    95%   47-48
+src\ai_workflow\extraction_quality.py                    48      7    85%   52-56, 59, 73-75, 85
+src\ai_workflow\field_extraction.py                      57      3    95%   44, 49, 63
+src\ai_workflow\graduation_backend.py                   158     15    91%   50, 59, 64, 71, 106, 109, 120, 131, 196, 203-207, 214, 217
+src\ai_workflow\langgraph_pipeline.py                   409     18    96%   121, 124, 130, 136, 224, 227, 230, 267, 270, 297-298, 440, 442, 445, 491, 618, 817, 827
+src\ai_workflow\model_json.py                            41      1    98%   52
+src\ai_workflow\paper_fetcher.py                        216     53    75%   114-115, 127-128, 237-240, 336-339, 362-364, 380-390, 417-418, 422-433, 437-454
+src\ai_workflow\process_supervisor.py                    94     13    86%   46-47, 51-52, 69-70, 84-85, 92-94, 99, 114
+src\ai_workflow\rag_store.py                            223     15    93%   53, 69-74, 76, 100, 162, 245, 290, 295, 303, 372-373, 376-377
+src\ai_workflow\research_controller.py                  199     91    54%   39-42, 50, 70-76, 82-104, 111, 113, 119, 124, 132-140, 143, 156-160, 165-168, 195-198, 207, 210-245, 248, 250
+src\ai_workflow\research_tasks.py                       177    118    33%   37, 52, 57, 70, 75-84, 90-114, 129-149, 155, 167-176, 186-221, 226-247, 251-279
+src\ai_workflow\research_worker.py                       16     16     0%   3-25
+src\ai_workflow\review.py                                22      1    95%   12
+src\ai_workflow\runtime_budget.py                        95      6    94%   80, 94, 100, 104, 109, 122
+src\ai_workflow\sandbox.py                              113     17    85%   48, 51-52, 71, 73, 95, 103, 105-106, 126-127, 129, 138, 145, 154, 160-161
+src\ai_workflow\sandbox_worker.py                        65      5    92%   24-26, 56, 58
+src\ai_workflow\schemas.py                               51      0   100%
+src\ai_workflow\semantic_review.py                       63      4    94%   29, 36, 38, 55
+src\ai_workflow\session_watchdog.py                      16      4    75%   13, 17-18, 23
+src\ai_workflow\session_worker.py                        83      9    89%   16-22, 82, 85
+src\ai_workflow\sessions.py                             160     17    89%   41-44, 52, 105, 118, 120, 125, 129, 135, 138, 147, 162, 167, 192-193
+src\ai_workflow\source_bundle.py                        412     43    90%   48, 67, 69, 82, 94, 122, 128, 136, 143, 153-154, 158-165, 202-203, 244, 273, 317, 324, 336, 383, 389, 392, 397, 399, 405, 407, 447, 461, 482, 488, 496-500, 530, 533
+src\data\__init__.py                                      3      0   100%
+src\data\instance.py                                    130      1    99%   116
+src\data\loader.py                                      109      9    92%   46, 76, 100, 103, 109, 118, 123, 126, 130
+src\dynamic\__init__.py                                  10      0   100%
+src\dynamic\event_specs.py                               53      5    91%   65, 72, 79, 85, 90
+src\dynamic\events.py                                    53     10    81%   16, 29, 31, 43, 55, 58, 61, 63, 78, 80
+src\dynamic\feasibility.py                               39      2    95%   49-53
+src\dynamic\remaining.py                                 32      2    94%   29, 31
+src\dynamic\reschedule.py                                86      8    91%   83, 95, 102, 121, 142, 144, 146, 149
+src\dynamic\rolling.py                                   67      1    99%   61
+src\dynamic\snapshot.py                                  13      0   100%
+src\dynamic\state.py                                     84     13    85%   27, 44, 46, 48, 50, 52, 54, 73, 97, 148, 150, 163, 167
+src\dynamic\timeline.py                                  13      0   100%
+src\graduation\__init__.py                                9      0   100%
+src\graduation\_production.py                            27      6    78%   11, 13, 18, 20, 29-30
+src\graduation\candidate_templates\shared_scorer.py     126     12    90%   44, 60-61, 63, 105-106, 108, 120, 138-139, 141, 164
+src\graduation\candidate_training.py                     76      1    99%   97
+src\graduation\data.py                                   59      4    93%   58-59, 63, 75
+src\graduation\enumeration.py                            63      4    94%   29, 45, 66, 77
+src\graduation\feasibility.py                            62      1    98%   30
+src\graduation\metrics.py                                 9      0   100%
+src\graduation\neural_policy.py                         142     15    89%   47-48, 50, 67, 84, 97, 107, 129-130, 132, 145, 162, 184, 187-188
+src\graduation\permutation_diagnostics.py               179      4    98%   44, 46, 103, 115
+src\graduation\policy_training.py                       173      6    97%   44, 83, 93, 102, 109, 233
+src\graduation\result.py                                 13      0   100%
+src\graduation\return_baseline.py                        34      1    97%   42
+src\graduation\rl_environment.py                        135      5    96%   102-103, 146, 150, 165
+src\graduation\rules.py                                  54      1    98%   73
+src\graduation\solver.py                                 86      5    94%   66, 83, 86, 103-104
+src\graduation\state_encoding.py                         69      0   100%
+src\graduation\validation_diagnostics.py                286      6    98%   105-106, 138, 206-208
+src\research\batch.py                                   184      7    96%   48-49, 71, 75, 196, 214, 262
+src\research\protocol.py                                 84      2    98%   70, 106
+src\scheduling\__init__.py                                4      0   100%
+src\scheduling\decoding.py                               41      0   100%
+src\scheduling\encoding.py                               34      0   100%
+src\scheduling\feasibility.py                           135      1    99%   121
+src\solvers\__init__.py                                   3      0   100%
+src\solvers\baselines.py                                 76      2    97%   31, 108
+src\solvers\dispatching.py                               84      3    96%   62, 79, 234
+src\solvers\heuristics.py                                 4      0   100%
+src\solvers\ortools_solver.py                           120      4    97%   153, 166, 199, 207
+src\vis\gantt.py                                         39      1    97%   81
+-----------------------------------------------------------------------------------
+TOTAL                                                  6832   1102    84%
+
+4 empty files skipped.
+Required test coverage of 80% reached. Total coverage: 83.87%
+=========================== short test summary info ===========================
+FAILED tests/test_candidate_comparison.py::test_native_bounded_comparison_has_complete_replay_training_and_artifact_counts
+FAILED tests/test_candidate_comparison.py::test_deadline_keeps_partial_progress_without_accepting_comparison
+FAILED tests/test_candidate_comparison.py::test_original_checker_rejection_propagates_without_retention
+FAILED tests/test_candidate_comparison.py::test_incomplete_training_cannot_retain_a_candidate
+FAILED tests/test_controlled_candidate.py::test_runtime_gate_exercises_copied_code_and_preserves_checkpoint_schema
+FAILED tests/test_controlled_candidate.py::test_declared_counts_and_materialization_hashes_are_not_training_evidence
+FAILED tests/test_controlled_candidate.py::test_check_receipt_requires_identical_saved_checks_and_all_gate_artifacts
+FAILED tests/test_graduation_rl_environment.py::test_result_and_reset_are_detached_and_duplicate_or_postterminal_steps_do_not_mutate
+FAILED tests/test_research_controller.py::test_timeout_fails_closed_and_never_auto_retries
+FAILED tests/test_research_controller.py::test_malformed_worker_result_cannot_advance
+FAILED tests/test_research_controller.py::test_actual_evidence_audit_preserves_unapproved_partial_source_status
+FAILED tests/test_validation_iteration.py::test_tiny_iteration_checks_80_validation_plans_and_eight_references
+FAILED tests/test_validation_iteration.py::test_probe_sentinel_is_never_read_and_new_metadata_omits_probe
+FAILED tests/test_validation_iteration.py::test_none_runner_matches_default_training_parameters_and_same_initial_candidate
+FAILED tests/test_validation_iteration.py::test_failed_training_retains_all_rows_and_completed_callback_evidence
+FAILED tests/test_validation_iteration.py::test_timeout_callback_preserves_just_completed_update
+FAILED tests/test_validation_iteration.py::test_unknown_cp_status_retains_references_and_stops_selection
+FAILED tests/test_validation_iteration.py::test_candidate_beating_cp_optimal_fails_but_feasible_is_not_optimal[OPTIMAL]
+FAILED tests/test_validation_iteration.py::test_candidate_beating_cp_optimal_fails_but_feasible_is_not_optimal[FEASIBLE]
+ERROR tests/test_research_controller.py::test_one_start_dispatches_two_tasks_and_stops_from_new_evidence
+ERROR tests/test_research_controller.py::test_slice_resume_and_terminal_resume_do_not_repeat_or_reset_budget
+ERROR tests/test_research_controller.py::test_result_tampering_and_changed_limits_refuse_resume
+ERROR tests/test_research_controller.py::test_source_and_input_changes_refuse_resume
+ERROR tests/test_research_controller.py::test_crash_does_not_refund_reservation_or_restart_task
+ERROR tests/test_research_controller.py::test_task_cap_and_innovation_scope_boundary
+ERROR tests/test_research_controller.py::test_bad_configuration_is_rejected_before_execution[max_tasks-True]
+ERROR tests/test_research_controller.py::test_bad_configuration_is_rejected_before_execution[max_tasks-3]
+ERROR tests/test_research_controller.py::test_bad_configuration_is_rejected_before_execution[steps-0]
+ERROR tests/test_research_controller.py::test_bad_configuration_is_rejected_before_execution[track-unknown]
+ERROR tests/test_research_controller.py::test_bad_configuration_is_rejected_before_execution[max_active_seconds-nan]
+ERROR tests/test_research_controller.py::test_lock_refuses_second_writer - Va...
+ERROR tests/test_research_controller.py::test_partial_or_overlapping_output_folder_refused
+ERROR tests/test_research_controller.py::test_missing_or_empty_budget_never_reinitializes_on_resume
+ERROR tests/test_research_controller.py::test_deleted_budget_row_cannot_reset_spend
+ERROR tests/test_research_controller.py::test_active_budget_includes_nonterminal_identity_preflight
+ERROR tests/test_research_controller.py::test_truncated_states_cannot_redefine_the_native_denominator
+ERROR tests/test_research_controller.py::test_controlled_profile_dispatches_package_gate_and_comparison
+ERROR tests/test_research_controller.py::test_audit_profile_does_not_enable_candidate_tasks_and_bad_profile_is_rejected
+19 failed, 1658 passed, 2 skipped, 13 warnings, 19 errors in 460.26s (0:07:40)

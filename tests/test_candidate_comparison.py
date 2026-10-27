@@ -10,7 +10,7 @@ import sys
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-NATIVE = ROOT / 'experiments/results/exp_026_validation_iteration_v1'
+NATIVE = ROOT / 'experiments/results/exp_026_validation_iteration_phase1_v2'
 
 
 def _rows(candidate=9, control=10):

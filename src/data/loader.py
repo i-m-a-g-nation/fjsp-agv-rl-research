@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import List, Tuple
 from dataclasses import dataclass
+from math import isfinite
 from pathlib import Path
 
 from src.data.instance import FJSPInstance, MachineOption
@@ -44,20 +45,22 @@ def _normalize_machine_options(
     if not machine_ids:
         raise ValueError("Benchmark instance contains no machine options")
 
-    if machine_index_base == "auto":
-        # Many FJSP datasets use 1-based machines, while local toy instances
-        # use 0-based ids. The minimum id is enough for the supported formats.
-        if min(machine_ids) == 0:
-            offset = 0
-        elif min(machine_ids) == 1:
-            offset = 1
-        else:
+    if type(machine_index_base) is str and machine_index_base == "auto":
+        # Infer only when the full range permits exactly one interpretation.
+        # An id of 0 proves 0-based; an id of num_machines proves 1-based.
+        valid_bases = [
+            base for base in (0, 1)
+            if all(base <= machine_id < num_machines + base for machine_id in machine_ids)
+        ]
+        if len(valid_bases) == 2:
             raise ValueError(
-                "Cannot infer machine index base: minimum machine id is "
-                f"{min(machine_ids)}"
+                "Machine index base is ambiguous; set machine_index_base explicitly to 0 or 1"
             )
-    elif machine_index_base in (0, 1):
-        offset = int(machine_index_base)
+        if not valid_bases:
+            raise ValueError("Machine ids are outside the valid range for both 0-based and 1-based indexing")
+        offset = valid_bases[0]
+    elif type(machine_index_base) is int and machine_index_base in (0, 1):
+        offset = machine_index_base
     else:
         raise ValueError("machine_index_base must be 0, 1, or 'auto'")
 
@@ -66,6 +69,7 @@ def _normalize_machine_options(
         normalized_ops: List[List[MachineOption]] = []
         for op_options in job_ops:
             normalized_options: List[MachineOption] = []
+            seen: set[int] = set()
             for m_id, pt in op_options:
                 normalized_id = m_id - offset
                 if normalized_id < 0 or normalized_id >= num_machines:
@@ -75,6 +79,9 @@ def _normalize_machine_options(
                     )
                 if pt <= 0:
                     raise ValueError(f"Processing time must be positive, got {pt}")
+                if normalized_id in seen:
+                    raise ValueError(f"Operation has duplicate machine id {m_id}")
+                seen.add(normalized_id)
                 normalized_options.append((normalized_id, pt))
             normalized_ops.append(normalized_options)
         normalized.append(normalized_ops)
@@ -100,6 +107,8 @@ def parse_brandimarte_line(
     mean_machines = float(parts[2])
     if num_jobs <= 0 or num_machines <= 0:
         raise ValueError("Number of jobs and machines must be positive")
+    if not isfinite(mean_machines) or mean_machines <= 0:
+        raise ValueError("Header mean machines per operation must be finite and positive")
 
     idx = 3
 
@@ -176,6 +185,18 @@ def load_benchmark_file(
 
     text = Path(path).read_text(encoding=encoding)
     return load_benchmark_instance(text, machine_index_base=machine_index_base)
+
+
+def load_project_benchmark_file(path: str | Path, *, encoding: str = "utf-8") -> FJSPInstance:
+    """Use the project's declared 1-based FJSPLib source convention.
+
+    Generic/external files retain strict auto detection. This is an explicit
+    repository dataset adapter, not a guess based on an instance filename.
+    """
+    path = Path(path)
+    known_root = Path(__file__).resolve().parents[2] / "instances" / "fjsplib"
+    base = 1 if path.resolve().is_relative_to(known_root.resolve()) else "auto"
+    return load_benchmark_file(path, machine_index_base=base, encoding=encoding)
 
 
 TOY_INSTANCES: dict[str, str] = {

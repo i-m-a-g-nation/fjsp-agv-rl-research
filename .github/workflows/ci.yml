@@ -27,17 +27,19 @@ jobs:
           python -m pip install -e ".[dev,research]"
 
       - name: Audit benchmark metadata
-        run: python experiments/exp_012_benchmark_metadata_audit.py
+        run: python experiments/exp_012_benchmark_metadata_audit.py --output experiments/runs/ci/metadata.csv
 
       - name: Build CP-SAT report
-        run: python experiments/exp_013_cpsat_report.py
+        run: python experiments/exp_013_cpsat_report.py --output experiments/runs/ci/cpsat_report.md
 
       - name: Run Phase 2A dynamic smoke checks
         run: |
-          python experiments/exp_014_dynamic_reschedule_smoke.py
-          python experiments/exp_015_dynamic_event_file_check.py
-          python experiments/exp_016_dynamic_event_file_reschedule.py
-          python experiments/exp_017_phase2a_dynamic_report.py
+          python experiments/exp_001_toy_instance.py --output-dir experiments/runs/ci
+          python experiments/exp_002_solver_check.py --output-dir experiments/runs/ci
+          python experiments/exp_014_dynamic_reschedule_smoke.py --output-dir experiments/runs/ci
+          python experiments/exp_015_dynamic_event_file_check.py --output experiments/runs/ci/exp_015_dynamic_event_file_check.csv
+          python experiments/exp_016_dynamic_event_file_reschedule.py --output-dir experiments/runs/ci
+          python experiments/exp_017_phase2a_dynamic_report.py --smoke-input experiments/runs/ci/exp_014_dynamic_reschedule_smoke.csv --audit-input experiments/runs/ci/exp_015_dynamic_event_file_check.csv --replay-input experiments/runs/ci/exp_016_dynamic_event_file_reschedule.csv --output experiments/runs/ci/exp_017_phase2a_dynamic_report.md
 
       - name: Run tests with core coverage
         run: python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80

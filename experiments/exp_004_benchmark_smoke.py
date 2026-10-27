@@ -20,8 +20,9 @@ from experiments.common import (
     run_solver_suite,
     write_results_csv,
 )
+from experiments.common import experiment_output_dir
 from src.data.instance import FJSPInstance
-from src.data.loader import load_benchmark_file
+from src.data.loader import load_project_benchmark_file as load_benchmark_file
 from src.scheduling.encoding import ScheduleResult
 from src.solvers.heuristics import (
     dispatch_eft_solve,
@@ -34,9 +35,10 @@ from src.solvers.heuristics import (
 from src.solvers.ortools_solver import ortools_solve
 
 
-def main() -> None:
+def main(argv=None) -> None:
     root = Path(__file__).parent.parent
     experiment_id = "exp_004_benchmark_smoke"
+    output_dir = experiment_output_dir(experiment_id, argv)
     benchmark_files = [
         root / "instances" / "toy_3x3_0based.fjs",
         root / "instances" / "tiny_2x2_1based.fjs",
@@ -61,7 +63,7 @@ def main() -> None:
             (name, lambda fn=solver_fn, inst=instance: fn(inst))
             for name, solver_fn in solvers
         ]
-        runs = run_solver_suite(instance_solvers)
+        runs = run_solver_suite(instance_solvers, expected_instance=instance)
         print_solver_runs(runs, algorithm_width=18)
 
         records.extend(
@@ -75,7 +77,7 @@ def main() -> None:
         )
         print()
 
-    output_path = root / "experiments" / "results" / f"{experiment_id}.csv"
+    output_path = output_dir / f"{experiment_id}.csv"
     write_results_csv(output_path, records)
     print(f"CSV results written to: {output_path}")
 

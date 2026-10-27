@@ -14,6 +14,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from experiments.common import record_from_run, run_solver_once, write_results_csv
+from experiments.common import experiment_output_dir
 from src.data.instance import create_toy_instance
 from src.solvers.heuristics import (
     earliest_available_machine_solve,
@@ -25,9 +26,10 @@ from src.solvers.heuristics import (
 from src.solvers.ortools_solver import ortools_solve
 
 
-def main() -> None:
+def main(argv=None) -> None:
     root = Path(__file__).parent.parent
     experiment_id = "exp_002_solver_check"
+    output_dir = experiment_output_dir(experiment_id, argv)
     instance_name = "toy_3x3"
     instance = create_toy_instance()
     print(f"Instance: {instance.num_jobs} jobs x {instance.num_machines} machines, {instance.total_ops} ops")
@@ -54,7 +56,7 @@ def main() -> None:
     failures: list[str] = []
 
     for name, fn in solvers:
-        run = run_solver_once(name, fn)
+        run = run_solver_once(name, fn, expected_instance=instance)
         note = "HEURISTIC"
         if run.error:
             note = f"ERROR: {run.error[:40]}"
@@ -76,7 +78,7 @@ def main() -> None:
 
     print()
 
-    csv_path = root / "experiments" / "results" / f"{experiment_id}.csv"
+    csv_path = output_dir / f"{experiment_id}.csv"
     write_results_csv(csv_path, records)
     print(f"CSV results written to: {csv_path}")
     print()

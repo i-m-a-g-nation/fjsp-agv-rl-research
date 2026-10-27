@@ -27,7 +27,7 @@ from experiments.exp_008_cpsat_worker_repeats import (  # noqa: E402
     run_repeated_worker_sweep,
     validate_repeats,
 )
-from src.data.loader import load_benchmark_file  # noqa: E402
+from src.data.loader import load_project_benchmark_file as load_benchmark_file  # noqa: E402
 from src.solvers.ortools_solver import ortools_solve  # noqa: E402
 
 

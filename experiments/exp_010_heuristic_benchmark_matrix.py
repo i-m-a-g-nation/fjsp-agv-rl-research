@@ -30,7 +30,7 @@ from experiments.common import (  # noqa: E402
 )
 from experiments.exp_005_benchmark_batch import discover_benchmark_files  # noqa: E402
 from src.data.instance import FJSPInstance  # noqa: E402
-from src.data.loader import load_benchmark_file  # noqa: E402
+from src.data.loader import load_project_benchmark_file as load_benchmark_file  # noqa: E402
 from src.scheduling.encoding import ScheduleResult  # noqa: E402
 from src.solvers.heuristics import (  # noqa: E402
     dispatch_eft_solve,
@@ -271,7 +271,8 @@ def run_heuristic_benchmark_matrix(
             [
                 (spec.run_label, lambda fn=spec.solver_fn, inst=instance: fn(inst))
                 for spec in specs
-            ]
+            ],
+            expected_instance=instance,
         )
         print_solver_runs(runs, algorithm_width=28)
         records.extend(

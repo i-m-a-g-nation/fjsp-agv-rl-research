@@ -13,7 +13,7 @@ from src.graduation.validation_diagnostics import _raw_fields, _decode, _path_in
 
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_REFERENCE = ROOT / 'experiments/results/exp_026_validation_iteration_v1'
+DEFAULT_REFERENCE = ROOT / 'experiments/results/exp_026_validation_iteration_phase1_v2'
 DEFAULT_PAPER = ROOT / 'experiments/results/exp_023_state_semantic_v1'
 TASK_KINDS = {'audit_paper_evidence': 'archived_paper_evidence_audit',
               'diagnose_identifier_permutations': 'validation_only_permutation_diagnosis',

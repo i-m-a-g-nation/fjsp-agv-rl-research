@@ -36,7 +36,7 @@ from experiments.exp_007_cpsat_worker_sweep import (  # noqa: E402
     worker_label,
 )
 from src.data.instance import FJSPInstance  # noqa: E402
-from src.data.loader import load_benchmark_file  # noqa: E402
+from src.data.loader import load_project_benchmark_file as load_benchmark_file  # noqa: E402
 from src.scheduling.encoding import ScheduleResult  # noqa: E402
 from src.solvers.ortools_solver import ortools_solve  # noqa: E402
 
@@ -261,7 +261,7 @@ def run_repeated_worker_sweep(
         f"({instance.num_jobs} jobs x {instance.num_machines} machines, "
         f"{instance.total_ops} ops)"
     )
-    runs = run_solver_suite(solvers)
+    runs = run_solver_suite(solvers, expected_instance=instance)
     print_sweep_runs(runs, algorithm_width=44)
     aggregates = aggregate_worker_runs(runs, worker_counts, repeats)
     print()

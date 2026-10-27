@@ -1,7 +1,120 @@
+import math
+
+import pytest
+from ortools.sat.python import cp_model
+
 from src.data.instance import create_toy_instance, FJSPInstance
 from src.scheduling.feasibility import check_feasibility
 from src.scheduling.encoding import ScheduleResult
 from src.solvers.ortools_solver import ortools_solve, OrtoolsSolverError
+
+
+@pytest.mark.parametrize(
+    "time_limit", [True, False, 0, -1, math.nan, math.inf, -math.inf, "1", None, 1j, 10**400]
+)
+def test_rejects_invalid_time_limit(time_limit):
+    instance = FJSPInstance.from_jobs_array([[[(0, 1)]]])
+    with pytest.raises(ValueError, match="time_limit"):
+        ortools_solve(instance, time_limit=time_limit)
+
+
+@pytest.mark.parametrize("num_workers", [True, False, -1, 1.5, 1.0, "1", None, 2**40])
+def test_rejects_invalid_worker_count(num_workers):
+    instance = FJSPInstance.from_jobs_array([[[(0, 1)]]])
+    with pytest.raises(ValueError, match="num_workers"):
+        ortools_solve(instance, num_workers=num_workers)
+
+
+@pytest.mark.parametrize("seed", [True, False, -1, 1.5, 1.0, "42", None, 2**31])
+def test_rejects_invalid_seed(seed):
+    instance = FJSPInstance.from_jobs_array([[[(0, 1)]]])
+    with pytest.raises(ValueError, match="seed"):
+        ortools_solve(instance, seed=seed)
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "expected"),
+    [
+        ({}, {"time_limit": 60.0, "num_workers": 1, "seed": 42}),
+        ({"time_limit": 2, "num_workers": 0, "seed": 0},
+         {"time_limit": 2.0, "num_workers": 0, "seed": 0}),
+        ({"time_limit": 3.5, "num_workers": 2, "seed": 2**31 - 1},
+         {"time_limit": 3.5, "num_workers": 2, "seed": 2**31 - 1}),
+    ],
+)
+def test_records_configuration_actually_passed_to_solver(monkeypatch, kwargs, expected):
+    # Observe the real solver boundary; all solving and extraction remain real.
+    observed = []
+    real_solver = cp_model.CpSolver
+
+    class ObservedSolver(real_solver):
+        def Solve(self, model):
+            observed.append({
+                "time_limit": self.parameters.max_time_in_seconds,
+                "num_workers": self.parameters.num_search_workers,
+                "seed": self.parameters.random_seed,
+            })
+            return super().Solve(model)
+
+    monkeypatch.setattr(cp_model, "CpSolver", ObservedSolver)
+    instance = FJSPInstance.from_jobs_array([[[(0, 2), (1, 1)]]])
+    result = ortools_solve(instance, **kwargs)
+    assert observed == [expected]
+    assert result.solver_config == expected
+    assert type(result.solver_config["time_limit"]) is float
+    assert result.makespan == 1
+
+
+@pytest.mark.parametrize("duration", [2**61, 2**62, 2**63, 10**100])
+def test_unsupported_integer_horizon_is_clear_input_error(duration):
+    instance = FJSPInstance.from_jobs_array([[[(0, duration)]]])
+    with pytest.raises(ValueError, match="(?i)(horizon|overflow|integer range)"):
+        ortools_solve(instance)
+
+
+def test_aggregate_domain_overflow_is_clear_input_error():
+    # Each individual time fits, but the model's combined domains do not.
+    instance = FJSPInstance.from_jobs_array([
+        [[(0, 2**58), (1, 2**58)]],
+        [[(0, 2**58), (1, 2**58)]],
+        [[(0, 2**58), (1, 2**58)]],
+    ])
+    with pytest.raises(ValueError, match="(?i)(horizon|overflow|integer range)"):
+        ortools_solve(instance)
+
+
+def test_revalidates_instance_at_solver_entry():
+    instance = FJSPInstance.from_jobs_array([[[(0, 1)]]])
+    # Bypass even frozen dataclass protection to exercise the public boundary.
+    object.__setattr__(instance, "num_jobs", 9)
+    with pytest.raises(ValueError):
+        ortools_solve(instance)
+
+
+def test_solver_validation_is_bound_to_original_instance(monkeypatch):
+    import src.solvers.ortools_solver as solver_module
+
+    original = FJSPInstance.from_jobs_array([[[(0, 2)]]])
+    replacement = FJSPInstance.from_jobs_array([[[(0, 2)]]], num_machines=2)
+    real_checker = check_feasibility
+
+    def substitute_instance_before_check(result, *, expected_instance=None):
+        result.instance = replacement
+        return real_checker(result, expected_instance=expected_instance)
+
+    monkeypatch.setattr(solver_module, "check_feasibility", substitute_instance_before_check)
+    with pytest.raises(OrtoolsSolverError, match="infeasible"):
+        ortools_solve(original)
+
+
+def test_default_single_worker_reproduces_records():
+    instance = create_toy_instance()
+    first = ortools_solve(instance)
+    second = ortools_solve(instance)
+    assert first.records == second.records
+    assert first.solver_config == second.solver_config == {
+        "time_limit": 60.0, "num_workers": 1, "seed": 42,
+    }
 
 
 class TestOrtoolsSolver:

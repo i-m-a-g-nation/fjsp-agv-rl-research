@@ -16,6 +16,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from experiments.common import record_from_run, run_solver_once, write_results_csv
+from experiments.common import experiment_output_dir
 from src.data.instance import create_toy_instance
 from src.solvers.heuristics import (
     earliest_available_machine_solve,
@@ -27,9 +28,10 @@ from src.solvers.heuristics import (
 from src.vis.gantt import plot_gantt
 
 
-def main() -> None:
+def main(argv=None) -> None:
     root = Path(__file__).parent.parent
     experiment_id = "exp_001_toy_instance"
+    output_dir = experiment_output_dir(experiment_id, argv)
     instance_name = "toy_3x3"
     instance = create_toy_instance()
     print(f"Instance: {instance.num_jobs} jobs x {instance.num_machines} machines, {instance.total_ops} ops")
@@ -49,7 +51,7 @@ def main() -> None:
         methods.append((f"Random(s={seed})", lambda s=seed: random_solve(instance, seed=s)))
 
     for name, solver_fn in methods:
-        run = run_solver_once(name, solver_fn)
+        run = run_solver_once(name, solver_fn, expected_instance=instance)
         if run.result is None:
             print(f"  {name:25s}  makespan=N/A  feasible=FAIL")
             records.append(record_from_run(experiment_id, instance_name, run))
@@ -68,7 +70,7 @@ def main() -> None:
     successful_results = [item for item in all_results if item[1] is not None and item[2]]
     failed = [name for name, _, f in all_results if not f]
 
-    csv_path = root / "experiments" / "results" / f"{experiment_id}.csv"
+    csv_path = output_dir / f"{experiment_id}.csv"
     write_results_csv(csv_path, records)
     print(f"CSV results written to: {csv_path}")
 
@@ -81,7 +83,6 @@ def main() -> None:
     print()
     print("All schedules passed feasibility check.")
 
-    output_dir = Path(__file__).parent
     save_path = output_dir / "exp_001_gantt_latest.png"
     plot_gantt(best_result, title=f"Best Schedule: {best_name} (makespan={best_result.makespan})",
                save_path=str(save_path))

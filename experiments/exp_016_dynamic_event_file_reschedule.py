@@ -102,6 +102,7 @@ def solver_from_event_file_scenario(
             rule=scenario.rule,
         )
 
+    solve.expected_instance = apply_events(scenario.state, load_event_specs_json(root / scenario.event_file)).instance
     return solve
 
 
@@ -130,7 +131,7 @@ def run_event_file_reschedule_experiment(
     runs = []
     records: list[ExperimentRecord] = []
     for instance_name, algorithm, solver_fn in build_event_file_solvers(root):
-        run = run_solver_once(algorithm, solver_fn, success_note="EVENT_FILE_DYNAMIC_PASS")
+        run = run_solver_once(algorithm, solver_fn, success_note="EVENT_FILE_DYNAMIC_PASS", expected_instance=solver_fn.expected_instance)
         runs.append(run)
         records.append(record_from_run(experiment_id, instance_name, run))
     return runs, records

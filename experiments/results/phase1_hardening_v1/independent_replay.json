@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "schedules": 484,
+  "operations": 40913,
+  "solver_diagnostics": 34,
+  "discrepancies": 0,
+  "method": "Standard-library raw instance/plan replay; no project checker, decoder or solver imported.",
+  "limitation": "Feasibility and diagnostic consistency, not independent general optimality proof.",
+  "driver_sha256": "22b8da390dcfb3a12616255330d1845952f17b146e3741653b1fc074990854d6"
+}

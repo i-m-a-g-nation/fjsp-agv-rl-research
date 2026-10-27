@@ -14,7 +14,7 @@ from src.ai_workflow import research_tasks as tasks
 
 
 ROOT = Path(__file__).resolve().parents[1]
-REFERENCE = ROOT / 'experiments/results/exp_026_validation_iteration_v1'
+REFERENCE = ROOT / 'experiments/results/exp_026_validation_iteration_phase1_v2'
 PAPER = ROOT / 'experiments/results/exp_023_state_semantic_v1'
 
 

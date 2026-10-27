@@ -24,7 +24,7 @@ from experiments.exp_011_heuristic_quality_report import (  # noqa: E402
     BenchmarkReference,
     load_benchmark_references,
 )
-from src.data.loader import load_benchmark_file  # noqa: E402
+from src.data.loader import load_project_benchmark_file as load_benchmark_file  # noqa: E402
 
 
 @dataclass(frozen=True)

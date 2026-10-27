@@ -41,12 +41,15 @@ def _prepare(protocol_path, project_root):
     inputs = []
     for item in protocol.instances:
         path = instance_path(project_root, item.path)
+        known_root = Path(__file__).resolve().parents[2] / "instances" / "fjsplib"
+        index_base = 1 if path.resolve().is_relative_to(known_root.resolve()) else "auto"
         try:
             data, error = path.read_bytes(), ""
         except OSError as exc:
             data, error = None, f"{type(exc).__name__}: {exc}"
         inputs.append({"id": item.id, "path": str(path), "relative_path": item.path,
-                       "sha256": _hash(data) if data is not None else None, "data": data, "error": error})
+                       "sha256": _hash(data) if data is not None else None, "data": data, "error": error,
+                       "machine_index_base": index_base})
     return protocol, raw, inputs
 
 
@@ -177,7 +180,8 @@ def run_protocol(protocol_path: Path, output_dir: Path, project_root: Path, *,
     rows, plot_errors, case_hashes = [], [], {}
     manifest = {"protocol_id": protocol.protocol_id, "protocol_hash": digest, "status": "RUNNING",
                 "expected_runs": protocol.expected_runs, "case_count": len(inputs) * len(protocol.event_types) * len(protocol.seeds),
-                "input_hashes": {item["id"]: item["sha256"] for item in inputs}, "runtime": _runtime_metadata()}
+                "input_hashes": {item["id"]: item["sha256"] for item in inputs},
+                "input_index_bases": {item["id"]: item["machine_index_base"] for item in inputs}, "runtime": _runtime_metadata()}
     _write_json(output_dir / "manifest.json", manifest)
     for item in inputs:
         snapshot = output_dir / "inputs" / f"{item['id']}.fjs"
@@ -190,7 +194,7 @@ def run_protocol(protocol_path: Path, output_dir: Path, project_root: Path, *,
                 try:
                     if case_error:
                         raise ValueError(case_error)
-                    case = build_case(load_benchmark_file(snapshot), event_type, seed)
+                    case = build_case(load_benchmark_file(snapshot, machine_index_base=item["machine_index_base"]), event_type, seed)
                     case_data = _case_data(case)
                     case_hashes[case_id] = _hash(_encoded(case_data))
                     _write_json(output_dir / "cases" / f"{case_id}.json", case_data)

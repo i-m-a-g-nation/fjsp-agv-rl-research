@@ -90,7 +90,7 @@ def test_run_solver_once_success_builds_valid_run():
         result.compute_makespan()
         return result
 
-    run = run_solver_once("manual", solver)
+    run = run_solver_once("manual", solver, expected_instance=instance)
 
     assert run.algorithm == "manual"
     assert run.result is not None
@@ -103,7 +103,7 @@ def test_run_solver_once_exception_builds_failed_run():
     def solver():
         raise RuntimeError("boom")
 
-    run = run_solver_once("bad", solver)
+    run = run_solver_once("bad", solver, expected_instance=create_toy_instance())
 
     assert run.algorithm == "bad"
     assert run.result is None
@@ -119,7 +119,7 @@ def test_run_solver_once_marks_infeasible_result_as_failed():
     result.add_record(0, 0, 0, start=0, processing_time=3)
     result.compute_makespan()
 
-    run = run_solver_once("incomplete", lambda: result)
+    run = run_solver_once("incomplete", lambda: result, expected_instance=instance)
 
     assert run.result is result
     assert not run.feasible
@@ -143,14 +143,14 @@ def test_run_solver_suite_preserves_order():
         result.compute_makespan()
         return result
 
-    runs = run_solver_suite([("first", solver), ("second", solver)])
+    runs = run_solver_suite([("first", solver), ("second", solver)], expected_instance=instance)
 
     assert [run.algorithm for run in runs] == ["first", "second"]
     assert all(run.feasible for run in runs)
 
 
 def test_print_solver_runs_outputs_table(capsys):
-    run = run_solver_once("bad", lambda: (_ for _ in ()).throw(RuntimeError("boom")))
+    run = run_solver_once("bad", lambda: (_ for _ in ()).throw(RuntimeError("boom")), expected_instance=create_toy_instance())
 
     print_solver_runs([run], algorithm_width=10)
 
@@ -172,7 +172,7 @@ def test_record_from_run_copies_solver_metadata():
     )
     result.add_record(0, 0, 0, start=0, processing_time=3)
     result.compute_makespan()
-    run = run_solver_once("metadata", lambda: result)
+    run = run_solver_once("metadata", lambda: result, expected_instance=instance)
 
     record = record_from_run("exp", "toy", run, note="custom")
 
