@@ -65,11 +65,16 @@ FJSPInstance
 | 规则 | 选择逻辑 |
 |---|---|
 | `DispatchFIFO` | 最早 ready 的工序，然后选 earliest-finish 机器 |
+| `EarliestAvailableMachine` / `DispatchEAM` | 最小 `(ready_time, job_id, op_id)` 工序，然后选最小 `(start, machine_id)` 机器 |
 | `DispatchSPT` | processing time 最短的 ready operation-machine pair |
 | `DispatchEFT` | finish time 最早的 ready operation-machine pair |
 | `DispatchMWKR` | 剩余路线工作量最大的 ready job，然后选 earliest-finish 机器 |
 | `DispatchMOPNR` | 剩余工序数最多的 ready job，然后选 earliest-finish 机器 |
 | `DispatchRandom` | 从 ready operation-machine pairs 中按 seed 随机选择 |
+
+EAM 的 `start = max(job_ready, machine_ready)`，同一最早可开始时刻按机器编号打破平局，不按加工时间或完成时间排序。它与EFT不同：两台机器都在0时刻可用、加工时间分别9和2时，EAM选编号0机器，完成时刻9；EFT选另一台，完成时刻2。EAM是明确约定的规则基线，不承诺优于其他规则。003使用名称`DispatchEAM`，004/005/010及011报告使用`EarliestAvailableMachine`，二者调用同一实现；矩阵只计一个EAM族，避免重复计数。
+
+当前实例不可变，实验必须传原始`expected_instance`并保存完整计划；复跑与证据入口以[Phase 1复现清单](reproducibility_phase1.md)为准。
 
 ## CP-SAT 模型阅读重点
 

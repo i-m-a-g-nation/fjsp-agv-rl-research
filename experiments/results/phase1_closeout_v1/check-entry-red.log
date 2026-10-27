@@ -1,0 +1,59 @@
+FF.                                                                      [100%]
+================================== FAILURES ===================================
+__ test_checks_run_static_dynamic_and_explicit_matrix_into_one_new_directory __
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-344/test_checks_run_static_dynamic0')
+
+    def test_checks_run_static_dynamic_and_explicit_matrix_into_one_new_directory(tmp_path):
+        output = tmp_path / 'checks'
+        run = subprocess.run([sys.executable, str(SCRIPT), '--output-dir', str(output),
+                              '--heavy', '--benchmark-dir',
+                              str(ROOT / 'instances/fjsplib/FattahiMehrabadJolai2007'),
+                              '--max-files', '1'], capture_output=True, text=True, timeout=90)
+>       assert run.returncode == 0, run.stdout + run.stderr
+E       AssertionError: D:\2-Dev\Environments\Conda\fjsp-agv-rl\python.exe: can't open file 'D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\scripts\\check_experiments.py': [Errno 2] No such file or directory
+E         
+E       assert 2 == 0
+E        +  where 2 = CompletedProcess(args=['D:\\2-Dev\\Environments\\Conda\\fjsp-agv-rl\\python.exe', 'D:\\UserData\\.codex\\worktrees\\re...ch-workflow-guards\\\\fjsp-agv-rl-research\\\\scripts\\\\check_experiments.py': [Errno 2] No such file or directory\n").returncode
+
+tests\test_experiment_checks.py:18: AssertionError
+_________ test_checks_stop_on_child_failure_and_save_failure_receipt __________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-344/test_checks_stop_on_child_fail0')
+
+    def test_checks_stop_on_child_failure_and_save_failure_receipt(tmp_path):
+        scripts = tmp_path / 'scripts'
+        scripts.mkdir()
+        experiments = tmp_path / 'experiments'
+        experiments.mkdir()
+        copied = scripts / SCRIPT.name
+>       copied.write_bytes(SCRIPT.read_bytes())
+                           ^^^^^^^^^^^^^^^^^^^
+
+tests\test_experiment_checks.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+D:\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\pathlib.py:1050: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('D:/UserData/.codex/worktrees/research-workflow-guards/fjsp-agv-rl-research/scripts/check_experiments.py')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: 'D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\scripts\\check_experiments.py'
+
+D:\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\pathlib.py:1044: FileNotFoundError
+=========================== short test summary info ===========================
+FAILED tests/test_experiment_checks.py::test_checks_run_static_dynamic_and_explicit_matrix_into_one_new_directory
+FAILED tests/test_experiment_checks.py::test_checks_stop_on_child_failure_and_save_failure_receipt
+2 failed, 1 passed in 0.42s

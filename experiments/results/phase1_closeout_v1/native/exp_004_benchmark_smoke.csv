@@ -1,0 +1,17 @@
+experiment_id,instance_name,algorithm,makespan,feasible,runtime_s,note,objective_bound,gap,solver_wall_time
+exp_004_benchmark_smoke,toy_3x3_0based.fjs,FIFO,14,PASS,0.000153,PASS,,,
+exp_004_benchmark_smoke,toy_3x3_0based.fjs,SPT,13,PASS,0.000127,PASS,,,
+exp_004_benchmark_smoke,toy_3x3_0based.fjs,EarliestAvailableMachine,11,PASS,0.000164,PASS,,,
+exp_004_benchmark_smoke,toy_3x3_0based.fjs,DispatchSPT,13,PASS,0.000164,PASS,,,
+exp_004_benchmark_smoke,toy_3x3_0based.fjs,DispatchEFT,13,PASS,0.000145,PASS,,,
+exp_004_benchmark_smoke,toy_3x3_0based.fjs,DispatchMWKR,12,PASS,0.000187,PASS,,,
+exp_004_benchmark_smoke,toy_3x3_0based.fjs,DispatchMOPNR,12,PASS,0.000159,PASS,,,
+exp_004_benchmark_smoke,toy_3x3_0based.fjs,CP-SAT(tl=10s),11,PASS,0.007094,OPTIMAL,11.000000,0.000000,0.004644
+exp_004_benchmark_smoke,tiny_2x2_1based.fjs,FIFO,4,PASS,0.000074,PASS,,,
+exp_004_benchmark_smoke,tiny_2x2_1based.fjs,SPT,4,PASS,0.000075,PASS,,,
+exp_004_benchmark_smoke,tiny_2x2_1based.fjs,EarliestAvailableMachine,4,PASS,0.000099,PASS,,,
+exp_004_benchmark_smoke,tiny_2x2_1based.fjs,DispatchSPT,4,PASS,0.000086,PASS,,,
+exp_004_benchmark_smoke,tiny_2x2_1based.fjs,DispatchEFT,4,PASS,0.000085,PASS,,,
+exp_004_benchmark_smoke,tiny_2x2_1based.fjs,DispatchMWKR,4,PASS,0.000089,PASS,,,
+exp_004_benchmark_smoke,tiny_2x2_1based.fjs,DispatchMOPNR,4,PASS,0.000089,PASS,,,
+exp_004_benchmark_smoke,tiny_2x2_1based.fjs,CP-SAT(tl=10s),4,PASS,0.001377,OPTIMAL,4.000000,0.000000,0.000822

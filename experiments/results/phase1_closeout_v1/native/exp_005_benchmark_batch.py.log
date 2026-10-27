@@ -1,0 +1,362 @@
+Instance: Brandimarte1993/mk01.fjs (10 jobs x 6 machines, 55 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      172      PASS      0.0006  PASS
+SPT                       119      PASS      0.0005  PASS
+EarliestAvailableMachine       50      PASS      0.0010  PASS
+DispatchFIFO               46      PASS      0.0010  PASS
+DispatchSPT                86      PASS      0.0008  PASS
+DispatchEFT                56      PASS      0.0009  PASS
+DispatchMWKR               44      PASS      0.0031  PASS
+DispatchMOPNR              47      PASS      0.0012  PASS
+
+Instance: Brandimarte1993/mk02.fjs (10 jobs x 6 machines, 58 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      124      PASS      0.0006  PASS
+SPT                       103      PASS      0.0006  PASS
+EarliestAvailableMachine       39      PASS      0.0015  PASS
+DispatchFIFO               31      PASS      0.0015  PASS
+DispatchSPT                69      PASS      0.0010  PASS
+DispatchEFT                62      PASS      0.0011  PASS
+DispatchMWKR               30      PASS      0.0074  PASS
+DispatchMOPNR              32      PASS      0.0017  PASS
+
+Instance: Brandimarte1993/mk03.fjs (15 jobs x 8 machines, 150 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                     1264      PASS      0.0013  PASS
+SPT                       671      PASS      0.0014  PASS
+EarliestAvailableMachine      227      PASS      0.0037  PASS
+DispatchFIFO              204      PASS      0.0039  PASS
+DispatchSPT               503      PASS      0.0027  PASS
+DispatchEFT               322      PASS      0.0027  PASS
+DispatchMWKR              204      PASS      0.0279  PASS
+DispatchMOPNR             222      PASS      0.0045  PASS
+
+Instance: Brandimarte1993/mk04.fjs (15 jobs x 8 machines, 90 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      310      PASS      0.0007  PASS
+SPT                       262      PASS      0.0008  PASS
+EarliestAvailableMachine       83      PASS      0.0017  PASS
+DispatchFIFO               77      PASS      0.0017  PASS
+DispatchSPT               184      PASS      0.0016  PASS
+DispatchEFT                91      PASS      0.0015  PASS
+DispatchMWKR               79      PASS      0.0064  PASS
+DispatchMOPNR              88      PASS      0.0022  PASS
+
+Instance: Brandimarte1993/mk05.fjs (15 jobs x 4 machines, 106 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      598      PASS      0.0008  PASS
+SPT                       515      PASS      0.0009  PASS
+EarliestAvailableMachine      189      PASS      0.0020  PASS
+DispatchFIFO              185      PASS      0.0020  PASS
+DispatchSPT               328      PASS      0.0017  PASS
+DispatchEFT               237      PASS      0.0017  PASS
+DispatchMWKR              187      PASS      0.0077  PASS
+DispatchMOPNR             187      PASS      0.0024  PASS
+
+Instance: Brandimarte1993/mk06.fjs (10 jobs x 15 machines, 150 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      668      PASS      0.0013  PASS
+SPT                       312      PASS      0.0014  PASS
+EarliestAvailableMachine      107      PASS      0.0053  PASS
+DispatchFIFO               73      PASS      0.0053  PASS
+DispatchSPT               214      PASS      0.0043  PASS
+DispatchEFT                88      PASS      0.0049  PASS
+DispatchMWKR               67      PASS      0.0469  PASS
+DispatchMOPNR              71      PASS      0.0062  PASS
+
+Instance: Brandimarte1993/mk07.fjs (20 jobs x 5 machines, 100 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      859      PASS      0.0014  PASS
+SPT                       535      PASS      0.0015  PASS
+EarliestAvailableMachine      212      PASS      0.0051  PASS
+DispatchFIFO              164      PASS      0.0052  PASS
+DispatchSPT               293      PASS      0.0035  PASS
+DispatchEFT               207      PASS      0.0034  PASS
+DispatchMWKR              168      PASS      0.0209  PASS
+DispatchMOPNR             160      PASS      0.0056  PASS
+
+Instance: Brandimarte1993/mk08.fjs (20 jobs x 10 machines, 225 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                     2456      PASS      0.0031  PASS
+SPT                      2221      PASS      0.0028  PASS
+EarliestAvailableMachine      523      PASS      0.0077  PASS
+DispatchFIFO              531      PASS      0.0078  PASS
+DispatchSPT              1244      PASS      0.0062  PASS
+DispatchEFT               648      PASS      0.0059  PASS
+DispatchMWKR              566      PASS      0.0369  PASS
+DispatchMOPNR             565      PASS      0.0093  PASS
+
+Instance: Brandimarte1993/mk09.fjs (20 jobs x 10 machines, 240 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                     1959      PASS      0.0032  PASS
+SPT                      1643      PASS      0.0035  PASS
+EarliestAvailableMachine      345      PASS      0.0102  PASS
+DispatchFIFO              341      PASS      0.0102  PASS
+DispatchSPT              1328      PASS      0.0072  PASS
+DispatchEFT               436      PASS      0.0075  PASS
+DispatchMWKR              366      PASS      0.0836  PASS
+DispatchMOPNR             377      PASS      0.0129  PASS
+
+Instance: Brandimarte1993/mk10.fjs (20 jobs x 15 machines, 240 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                     1867      PASS      0.0033  PASS
+SPT                      1368      PASS      0.0034  PASS
+EarliestAvailableMachine      304      PASS      0.0119  PASS
+DispatchFIFO              257      PASS      0.0120  PASS
+DispatchSPT              1074      PASS      0.0077  PASS
+DispatchEFT               439      PASS      0.0082  PASS
+DispatchMWKR              243      PASS      0.1034  PASS
+DispatchMOPNR             251      PASS      0.0152  PASS
+
+Instance: ChambersBarnes1996/mt10c1.fjs (10 jobs x 11 machines, 100 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                     3394      PASS      0.0012  PASS
+SPT                      3394      PASS      0.0013  PASS
+EarliestAvailableMachine     1234      PASS      0.0025  PASS
+DispatchFIFO             1234      PASS      0.0026  PASS
+DispatchSPT              2604      PASS      0.0021  PASS
+DispatchEFT              1296      PASS      0.0021  PASS
+DispatchMWKR             1252      PASS      0.0068  PASS
+DispatchMOPNR            1225      PASS      0.0024  PASS
+
+Instance: ChambersBarnes1996/mt10cc.fjs (10 jobs x 12 machines, 100 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                     3394      PASS      0.0014  PASS
+SPT                      3394      PASS      0.0013  PASS
+EarliestAvailableMachine     1194      PASS      0.0023  PASS
+DispatchFIFO             1194      PASS      0.0023  PASS
+DispatchSPT              2618      PASS      0.0020  PASS
+DispatchEFT              1306      PASS      0.0020  PASS
+DispatchMWKR             1121      PASS      0.0071  PASS
+DispatchMOPNR            1160      PASS      0.0025  PASS
+
+Instance: ChambersBarnes1996/mt10x.fjs (10 jobs x 11 machines, 100 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                     3394      PASS      0.0014  PASS
+SPT                      3394      PASS      0.0017  PASS
+EarliestAvailableMachine     1258      PASS      0.0025  PASS
+DispatchFIFO             1258      PASS      0.0027  PASS
+DispatchSPT              2648      PASS      0.0022  PASS
+DispatchEFT              1173      PASS      0.0021  PASS
+DispatchMWKR             1253      PASS      0.0076  PASS
+DispatchMOPNR            1222      PASS      0.0026  PASS
+
+Instance: DauzerePeresPaulli1994/01a.fjs (10 jobs x 5 machines, 196 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                    10258      PASS      0.0024  PASS
+SPT                     10258      PASS      0.0027  PASS
+EarliestAvailableMachine     3056      PASS      0.0043  PASS
+DispatchFIFO             3056      PASS      0.0044  PASS
+DispatchSPT              8164      PASS      0.0038  PASS
+DispatchEFT              3294      PASS      0.0038  PASS
+DispatchMWKR             3352      PASS      0.0236  PASS
+DispatchMOPNR            3181      PASS      0.0050  PASS
+
+Instance: DauzerePeresPaulli1994/02a.fjs (10 jobs x 5 machines, 196 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                     9896      PASS      0.0048  PASS
+SPT                      9896      PASS      0.0027  PASS
+EarliestAvailableMachine     2443      PASS      0.0058  PASS
+DispatchFIFO             2443      PASS      0.0053  PASS
+DispatchSPT              7762      PASS      0.0045  PASS
+DispatchEFT              2868      PASS      0.0043  PASS
+DispatchMWKR             2695      PASS      0.0343  PASS
+DispatchMOPNR            2765      PASS      0.0062  PASS
+
+Instance: DauzerePeresPaulli1994/03a.fjs (10 jobs x 5 machines, 196 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                    10688      PASS      0.0029  PASS
+SPT                     10688      PASS      0.0028  PASS
+EarliestAvailableMachine     2413      PASS      0.0064  PASS
+DispatchFIFO             2413      PASS      0.0067  PASS
+DispatchSPT              6280      PASS      0.0034  PASS
+DispatchEFT              3088      PASS      0.0076  PASS
+DispatchMWKR             2487      PASS      0.0554  PASS
+DispatchMOPNR            2527      PASS      0.0070  PASS
+
+Instance: DauzerePeresPaulli1994/04a.fjs (10 jobs x 5 machines, 196 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                    10236      PASS      0.0022  PASS
+SPT                     10437      PASS      0.0024  PASS
+EarliestAvailableMachine     3059      PASS      0.0045  PASS
+DispatchFIFO             3119      PASS      0.0046  PASS
+DispatchSPT              8242      PASS      0.0067  PASS
+DispatchEFT              3104      PASS      0.0041  PASS
+DispatchMWKR             3125      PASS      0.0334  PASS
+DispatchMOPNR            3070      PASS      0.0050  PASS
+
+Instance: FattahiMehrabadJolai2007/fattahi1.fjs (2 jobs x 2 machines, 4 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      123      PASS      0.0001  PASS
+SPT                        91      PASS      0.0001  PASS
+EarliestAvailableMachine       86      PASS      0.0002  PASS
+DispatchFIFO               86      PASS      0.0002  PASS
+DispatchSPT                91      PASS      0.0001  PASS
+DispatchEFT                91      PASS      0.0001  PASS
+DispatchMWKR               66      PASS      0.0002  PASS
+DispatchMOPNR              86      PASS      0.0002  PASS
+
+Instance: FattahiMehrabadJolai2007/fattahi2.fjs (2 jobs x 2 machines, 4 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      171      PASS      0.0001  PASS
+SPT                       171      PASS      0.0001  PASS
+EarliestAvailableMachine      107      PASS      0.0002  PASS
+DispatchFIFO              107      PASS      0.0002  PASS
+DispatchSPT               128      PASS      0.0002  PASS
+DispatchEFT               128      PASS      0.0002  PASS
+DispatchMWKR              107      PASS      0.0002  PASS
+DispatchMOPNR             128      PASS      0.0002  PASS
+
+Instance: FattahiMehrabadJolai2007/fattahi3.fjs (3 jobs x 2 machines, 6 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      361      PASS      0.0002  PASS
+SPT                       298      PASS      0.0002  PASS
+EarliestAvailableMachine      221      PASS      0.0003  PASS
+DispatchFIFO              221      PASS      0.0002  PASS
+DispatchSPT               298      PASS      0.0002  PASS
+DispatchEFT               298      PASS      0.0002  PASS
+DispatchMWKR              255      PASS      0.0003  PASS
+DispatchMOPNR             221      PASS      0.0002  PASS
+
+Instance: FattahiMehrabadJolai2007/fattahi4.fjs (3 jobs x 2 machines, 6 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      409      PASS      0.0002  PASS
+SPT                       396      PASS      0.0002  PASS
+EarliestAvailableMachine      367      PASS      0.0002  PASS
+DispatchFIFO              367      PASS      0.0002  PASS
+DispatchSPT               542      PASS      0.0002  PASS
+DispatchEFT               531      PASS      0.0002  PASS
+DispatchMWKR              367      PASS      0.0002  PASS
+DispatchMOPNR             367      PASS      0.0002  PASS
+
+Instance: FattahiMehrabadJolai2007/fattahi5.fjs (3 jobs x 2 machines, 6 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      241      PASS      0.0002  PASS
+SPT                       192      PASS      0.0002  PASS
+EarliestAvailableMachine      143      PASS      0.0006  PASS
+DispatchFIFO              119      PASS      0.0002  PASS
+DispatchSPT               176      PASS      0.0002  PASS
+DispatchEFT               144      PASS      0.0002  PASS
+DispatchMWKR              145      PASS      0.0003  PASS
+DispatchMOPNR             144      PASS      0.0002  PASS
+
+Instance: FattahiMehrabadJolai2007/fattahi6.fjs (3 jobs x 3 machines, 9 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      547      PASS      0.0002  PASS
+SPT                       547      PASS      0.0002  PASS
+EarliestAvailableMachine      360      PASS      0.0003  PASS
+DispatchFIFO              360      PASS      0.0003  PASS
+DispatchSPT               397      PASS      0.0003  PASS
+DispatchEFT               330      PASS      0.0003  PASS
+DispatchMWKR              360      PASS      0.0003  PASS
+DispatchMOPNR             360      PASS      0.0003  PASS
+
+Instance: FattahiMehrabadJolai2007/fattahi7.fjs (3 jobs x 5 machines, 9 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      678      PASS      0.0002  PASS
+SPT                       567      PASS      0.0003  PASS
+EarliestAvailableMachine      407      PASS      0.0003  PASS
+DispatchFIFO              397      PASS      0.0003  PASS
+DispatchSPT               397      PASS      0.0003  PASS
+DispatchEFT               397      PASS      0.0002  PASS
+DispatchMWKR              464      PASS      0.0004  PASS
+DispatchMOPNR             397      PASS      0.0003  PASS
+
+Instance: FattahiMehrabadJolai2007/fattahi8.fjs (3 jobs x 4 machines, 9 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      430      PASS      0.0002  PASS
+SPT                       342      PASS      0.0002  PASS
+EarliestAvailableMachine      280      PASS      0.0003  PASS
+DispatchFIFO              280      PASS      0.0003  PASS
+DispatchSPT               413      PASS      0.0003  PASS
+DispatchEFT               273      PASS      0.0006  PASS
+DispatchMWKR              283      PASS      0.0004  PASS
+DispatchMOPNR             337      PASS      0.0003  PASS
+
+Instance: HurinkJurischThole1994/edata/ft06.fjs (6 jobs x 6 machines, 36 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      152      PASS      0.0005  PASS
+SPT                       152      PASS      0.0005  PASS
+EarliestAvailableMachine       55      PASS      0.0008  PASS
+DispatchFIFO               55      PASS      0.0008  PASS
+DispatchSPT                84      PASS      0.0008  PASS
+DispatchEFT                86      PASS      0.0007  PASS
+DispatchMWKR               60      PASS      0.0014  PASS
+DispatchMOPNR              59      PASS      0.0008  PASS
+
+Instance: KacemHammadiBorne2002/kacem1.fjs (4 jobs x 5 machines, 12 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                       49      PASS      0.0003  PASS
+SPT                        24      PASS      0.0003  PASS
+EarliestAvailableMachine       17      PASS      0.0004  PASS
+DispatchFIFO               11      PASS      0.0004  PASS
+DispatchSPT                22      PASS      0.0004  PASS
+DispatchEFT                12      PASS      0.0004  PASS
+DispatchMWKR               12      PASS      0.0009  PASS
+DispatchMOPNR              12      PASS      0.0005  PASS
+
+Instance: KacemHammadiBorne2002/kacem2.fjs (10 jobs x 7 machines, 29 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      174      PASS      0.0006  PASS
+SPT                        36      PASS      0.0008  PASS
+EarliestAvailableMachine       30      PASS      0.0018  PASS
+DispatchFIFO               14      PASS      0.0018  PASS
+DispatchSPT                22      PASS      0.0013  PASS
+DispatchEFT                17      PASS      0.0013  PASS
+DispatchMWKR               12      PASS      0.0062  PASS
+DispatchMOPNR              14      PASS      0.0019  PASS
+
+Instance: KacemHammadiBorne2002/kacem3.fjs (10 jobs x 10 machines, 30 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      156      PASS      0.0007  PASS
+SPT                        17      PASS      0.0007  PASS
+EarliestAvailableMachine       29      PASS      0.0022  PASS
+DispatchFIFO                8      PASS      0.0065  PASS
+DispatchSPT                11      PASS      0.0017  PASS
+DispatchEFT                 9      PASS      0.0018  PASS
+DispatchMWKR                8      PASS      0.0145  PASS
+DispatchMOPNR               8      PASS      0.0097  PASS
+
+Instance: KacemHammadiBorne2002/kacem4.fjs (15 jobs x 10 machines, 56 ops)
+Algorithm            makespan  feasible   runtime_s  note
+---------------------------------------------------------
+FIFO                      287      PASS      0.0013  PASS
+SPT                        48      PASS      0.0014  PASS
+EarliestAvailableMachine       39      PASS      0.0050  PASS
+DispatchFIFO               14      PASS      0.0054  PASS
+DispatchSPT                23      PASS      0.0044  PASS
+DispatchEFT                15      PASS      0.0041  PASS
+DispatchMWKR               12      PASS      0.0436  PASS
+DispatchMOPNR              13      PASS      0.0043  PASS
+
+CSV results written to: D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\experiments\runs\phase1-closeout-native-v1\batch.csv
+All batch benchmark schedules passed feasibility check.

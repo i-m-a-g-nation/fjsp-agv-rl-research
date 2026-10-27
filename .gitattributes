@@ -18,6 +18,9 @@ experiments/results/exp_026_validation_iteration_v1/** -text whitespace=cr-at-eo
 experiments/results/exp_027_research_controller_v1/** -text whitespace=cr-at-eol
 experiments/results/exp_027_controlled_candidate_v1/** -text whitespace=cr-at-eol
 experiments/results/phase1_hardening_v1/** -text whitespace=cr-at-eol
+experiments/results/phase1_closeout_v1/** -text whitespace=cr-at-eol
+experiments/results/phase1_closeout_v1/**/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
+experiments/results/phase1_closeout_v1/**/*.md whitespace=-blank-at-eof,cr-at-eol
 # Preserve original pytest traceback whitespace in this historical failure log.
 experiments/results/phase1_hardening_v1/integration_first_attempt.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 experiments/results/exp_025_neural_policy_phase1_v2/** -text whitespace=cr-at-eol

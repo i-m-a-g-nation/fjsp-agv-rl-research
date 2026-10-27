@@ -1,8 +1,22 @@
 # Experiment Results
 
-This directory stores normalized CSV outputs produced by Phase 1 experiment scripts.
+This directory stores versioned evidence for static FJSP, dynamic scheduling, graduation experiments and research-workflow validation. Current project status is maintained in [START_HERE](../../START_HERE.md); archive contents describe the source and environment recorded at their run time.
 
-Current generated files:
+| Evidence | Location / guide |
+|---|---|
+| Phase 1 contract hardening (`fd89472`) | [`phase1_hardening_v1/`](phase1_hardening_v1/) |
+| EAM benchmark, shared checks and environment reconstruction | [`phase1_closeout_v1/`](phase1_closeout_v1/); [acceptance guide](../../docs/reproducibility_phase1.md) |
+| Dynamic protocol and sequential replay | `exp_019_phase2a_protocol_v1/`, `exp_020_sequential_reschedule_v1/` |
+| Graduation reference and rules | `exp_021_graduation_g2_v1/`, `exp_022_graduation_rules_v1/` |
+| Paper/code and state encoding evidence | `exp_023_*`, `exp_024_state_encoding_v1/` |
+| Current source-bound training references | `exp_025_neural_policy_phase1_v2/`, `exp_026_validation_iteration_phase1_v2/` |
+| Controller candidate evidence | `exp_027_controlled_candidate_v1/`; [controller guide](../../docs/research_controller_validation.md) |
+
+New static schedule CSVs have a sibling `.evidence.json` containing the original instance, complete plan, configuration, source hashes and installed versions. Recheck these with `experiments.artifacts.recheck_results_csv`; old metric-only CSVs cannot be certified as complete-plan evidence. Domain checks for maintenance and dynamic events remain separate. New runs belong under ignored `experiments/runs/`; promote a completed, verified batch to a new archive, never overwrite an old one.
+
+## Historical flat-file index
+
+The early Phase 1 / Phase 2A snapshots below remain available. Their dates, algorithms and results have not been rewritten to match newer runs:
 
 - `exp_001_toy_instance.csv`
 - `exp_002_solver_check.csv`

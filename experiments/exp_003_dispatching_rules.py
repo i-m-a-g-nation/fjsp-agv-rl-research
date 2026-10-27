@@ -24,6 +24,7 @@ from experiments.common import experiment_output_dir
 from src.data.instance import create_toy_instance
 from src.scheduling.encoding import ScheduleResult
 from src.solvers.heuristics import (
+    dispatch_eam_solve,
     dispatch_eft_solve,
     dispatch_fifo_solve,
     dispatch_mopnr_solve,
@@ -44,6 +45,7 @@ def main(argv=None) -> None:
 
     solvers: list[tuple[str, Callable[[], ScheduleResult]]] = [
         ("DispatchFIFO", lambda: dispatch_fifo_solve(instance)),
+        ("DispatchEAM", lambda: dispatch_eam_solve(instance)),
         ("DispatchSPT", lambda: dispatch_spt_solve(instance)),
         ("DispatchEFT", lambda: dispatch_eft_solve(instance)),
         ("DispatchMWKR", lambda: dispatch_mwkr_solve(instance)),

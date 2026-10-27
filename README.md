@@ -16,11 +16,15 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 
 The default environment is the project's `.conda-env`. Set `FJSP_CONDA_ENV` before setup to use a custom local location; local environment paths do not belong in tracked files.
 
+For the recorded Python/dependency versions, use [`environment-phase1-repro.yml`](environment-phase1-repro.yml) with a new dedicated prefix instead of the rolling setup. It includes core, dev and research dependencies. See the [reconstruction instructions and tested boundary](docs/reproducibility_phase1.md). Version constraints are not a cross-platform binary lock.
+
 Run the local CI-style checks:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1
 ```
+
+Local checks and CI use `scripts/check_experiments.py` for static 001–004 and the dynamic smoke chain. Add `-Heavy` to the PowerShell entry for the complete benchmark/report chain; the full test suite runs in either mode. The CI workflow also has an explicit `full_benchmarks` manual input. Each experiment batch uses a new output directory.
 
 For individual checks, verify the interpreter before running Python:
 

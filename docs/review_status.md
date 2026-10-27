@@ -1,5 +1,11 @@
 # Platform Review Status
 
+## Phase 1 review closeout 2026-10-27
+
+Current Phase 1 evidence and commands are maintained in [the reproduction and acceptance guide](reproducibility_phase1.md). The `fd89472` hardening run completed 1696 tests with two skips and 91.16% core coverage; its 484 schedules were rechecked using two implementations. That remains a historical run, not a claim about future revisions.
+
+This follow-up adds the existing EAM rule to static CLI/batch/matrix/report coverage, aligns local and CI experiment entry points, and rebuilds a dedicated Phase 1 environment from recorded dependency constraints. The complete local chain passed 1704 tests (two skips, 91.16% coverage); the rebuilt environment passed 421 focused tests. Both environments completed all 14 experiment entries and independently replayed 763 static-layer plans each. All 729 non-CP plans matched; four of 34 time-limited CP rows differed in status or objective and were checked separately. Full evidence is linked from the guide. The original dated reviews below remain unchanged in their numerical conclusions; they are not current status tables.
+
 ## Validation-only diagnosis, single candidate and retain/reject decision 2026-10-26
 
 - [Results/usage](graduation_validation_iteration.md): newdiagnostic selectivelyverifies/replays oldtraining+validation, skipsprobe/CPJSONnodes.16selectedvalidationplans+112freshprefixEDDcontinuations checked, EDDagreement29/96; divergence26order/16assignment/24prod-maint/1maintmachine, clipping4/256. These motivateahypothesis, notcausalproof. New RunningReturnBaseline usespastcompletepertrain-slot/stepmeans, observesrawreturnsonlyaftercheckedupdate; optionaltrainerflag defaultnone preservesoldnumerics/logschema. Originalactor/core/codec/reward/checkers/contracts/dependencies unchanged.
@@ -211,7 +217,7 @@ Last updated: 2026-06-07
 
 | Item | Value |
 |---|---|
-| Latest reviewed commit | Current branch `HEAD` |
+| Historical reviewed commit | Revision identity was not recorded in this snapshot |
 | Python environment | Dedicated Conda environment: `.conda-env` or `FJSP_CONDA_ENV` |
 | matplotlib | 3.8.4 |
 | Pillow | 10.4.0 |
@@ -219,7 +225,7 @@ Last updated: 2026-06-07
 | core coverage | 89.35% with 80% CI threshold |
 | Known warning | Low-priority `.pytest_cache` warning on some Windows paths |
 
-## Verified Commands
+## Historical Verified Commands (2026-06-07)
 
 | Command | Exit code | Result |
 |---|---:|---|
@@ -248,7 +254,7 @@ Last updated: 2026-06-07
 | `pytest` | 0 | 201 passed |
 | `git status --short` | 0 | Pending Phase 2A edits |
 
-## Module Status
+## Historical Module Status (2026-06-07)
 
 | Module | Status | Notes |
 |---|---|---|
@@ -281,7 +287,7 @@ Last updated: 2026-06-07
 | Gantt | Done | Agg backend, fixed `exp_001_gantt_latest.png` output |
 | Math model | Done | Static FJSP formulation in English and Chinese LaTeX plus compiled PDFs |
 
-## Next Review Targets
+## Historical Next Review Targets (2026-06-07)
 
 1. Keep benchmark expansion in controlled batches, with metadata audit before experiment runs.
 2. Compare larger static benchmark subsets before adding more dispatching rules.

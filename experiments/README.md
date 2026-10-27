@@ -25,6 +25,8 @@ The printed path must belong to `.conda-env` or the environment selected by `FJS
 
 After Phase 1 hardening, `exp_001`–`exp_004` default to a fresh directory under `experiments/runs/`; use `--output-dir` to choose a new directory. Their artifact names below are relative to that directory. Schedule CSVs now have a sibling `.evidence.json` containing the original instance, complete schedule, configuration and provenance. Existing CSV/evidence pairs are never overwritten. For later scripts with historical default paths, select fresh `--output`, `--runs-output` and/or `--summary-output` paths as exposed by `--help`; the [Phase 1 guide](../docs/reproducibility_phase1.md) gives a complete example.
 
+The shared local/CI entry is `python scripts/check_experiments.py`. Add `--heavy` for 005/009/010/011/013 with fresh report inputs, or `--heavy --max-files 1` for a declared small sample. Sampling saves its instance hashes and matching BKS table before running; it never derives the denominator from successful rows. These are input snapshots, not a lock against concurrent file edits. EAM is included once in the matrix and quality report, under `EarliestAvailableMachine`.
+
 ## `exp_001_toy_instance.py`
 
 Runs heuristic baselines on the toy 3 jobs x 3 machines FJSP instance.
@@ -99,6 +101,7 @@ Runs the strict dispatching-rule variants on the same toy instance.
 Algorithms:
 
 - DispatchFIFO: choose the earliest ready operation, then choose its earliest-finish eligible machine
+- DispatchEAM: choose the earliest ready operation, then the smallest `(feasible start, machine ID)` eligible machine
 - DispatchSPT: choose the ready operation-machine pair with the shortest processing time
 - DispatchEFT: choose the ready operation-machine pair with the earliest finish time
 - DispatchMWKR: choose the ready job with most remaining route work, then choose its earliest-finish eligible machine
@@ -116,6 +119,7 @@ Expected output:
 | Algorithm | Feasible |
 |---|---|
 | DispatchFIFO | PASS |
+| DispatchEAM | PASS |
 | DispatchSPT | PASS |
 | DispatchEFT | PASS |
 | DispatchMWKR | PASS |
@@ -181,7 +185,7 @@ Behavior:
 
 - recursively discovers `*.fjs` files in stable path order
 - records loader failures as `LOAD` rows instead of silently dropping files
-- runs FIFO, SPT, DispatchFIFO, DispatchSPT, DispatchEFT, DispatchMWKR, and DispatchMOPNR
+- runs FIFO, SPT, EarliestAvailableMachine, DispatchFIFO, DispatchSPT, DispatchEFT, DispatchMWKR, and DispatchMOPNR
 - runs CP-SAT by default with a configurable per-instance time limit
 - writes `results/exp_005_benchmark_batch.csv`
 

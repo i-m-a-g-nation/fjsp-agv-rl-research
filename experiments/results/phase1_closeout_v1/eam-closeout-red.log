@@ -1,0 +1,103 @@
+.....FFFF                                                                [100%]
+================================== FAILURES ===================================
+________ test_benchmark_entry_runs_eam_without_substituting_eft[batch] ________
+
+entry = 'batch'
+
+    @pytest.mark.parametrize('entry', ['batch', 'matrix'])
+    def test_benchmark_entry_runs_eam_without_substituting_eft(entry):
+        """Omitting EAM, or registering EFT under its name, must fail this witness."""
+        from experiments.common import run_solver_suite
+        from experiments.exp_005_benchmark_batch import build_solver_specs
+        from experiments.exp_010_heuristic_benchmark_matrix import build_heuristic_specs
+        instance = FJSPInstance.from_jobs_array([[[(0, 9), (1, 2)]]], num_machines=2)
+        specs = (build_solver_specs(include_cp_sat=False) if entry == 'batch' else
+                 [(s.run_label, s.solver_fn) for s in build_heuristic_specs([42])])
+        runs = run_solver_suite([(name, lambda fn=fn: fn(instance)) for name, fn in specs],
+                                expected_instance=instance)
+        eam = [r for r in runs if r.algorithm == 'EarliestAvailableMachine']
+>       assert len(eam) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests\test_eam_baseline.py:60: AssertionError
+_______ test_benchmark_entry_runs_eam_without_substituting_eft[matrix] ________
+
+entry = 'matrix'
+
+    @pytest.mark.parametrize('entry', ['batch', 'matrix'])
+    def test_benchmark_entry_runs_eam_without_substituting_eft(entry):
+        """Omitting EAM, or registering EFT under its name, must fail this witness."""
+        from experiments.common import run_solver_suite
+        from experiments.exp_005_benchmark_batch import build_solver_specs
+        from experiments.exp_010_heuristic_benchmark_matrix import build_heuristic_specs
+        instance = FJSPInstance.from_jobs_array([[[(0, 9), (1, 2)]]], num_machines=2)
+        specs = (build_solver_specs(include_cp_sat=False) if entry == 'batch' else
+                 [(s.run_label, s.solver_fn) for s in build_heuristic_specs([42])])
+        runs = run_solver_suite([(name, lambda fn=fn: fn(instance)) for name, fn in specs],
+                                expected_instance=instance)
+        eam = [r for r in runs if r.algorithm == 'EarliestAvailableMachine']
+>       assert len(eam) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests\test_eam_baseline.py:60: AssertionError
+_ test_static_cli_archives_checked_eam_plans[exp_003_dispatching_rules-DispatchEAM-1] _
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-341/test_static_cli_archives_check0')
+module = 'exp_003_dispatching_rules', label = 'DispatchEAM', count = 1
+
+    @pytest.mark.parametrize(('module', 'label', 'count'), [
+        ('exp_003_dispatching_rules', 'DispatchEAM', 1),
+        ('exp_004_benchmark_smoke', 'EarliestAvailableMachine', 2),
+    ])
+    def test_static_cli_archives_checked_eam_plans(tmp_path, module, label, count):
+        import csv
+        import subprocess
+        import sys
+        from experiments.artifacts import recheck_results_csv
+        run = subprocess.run([sys.executable, 'experiments/' + module + '.py',
+                              '--output-dir', str(tmp_path)], capture_output=True, text=True, timeout=30)
+        assert run.returncode == 0, run.stderr
+        path = tmp_path / (module + '.csv')
+        with path.open(encoding='utf-8-sig', newline='') as f:
+            rows = list(csv.DictReader(f))
+        eam = [r for r in rows if r['algorithm'] == label]
+>       assert len(eam) == count
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests\test_eam_baseline.py:81: AssertionError
+_ test_static_cli_archives_checked_eam_plans[exp_004_benchmark_smoke-EarliestAvailableMachine-2] _
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-341/test_static_cli_archives_check1')
+module = 'exp_004_benchmark_smoke', label = 'EarliestAvailableMachine'
+count = 2
+
+    @pytest.mark.parametrize(('module', 'label', 'count'), [
+        ('exp_003_dispatching_rules', 'DispatchEAM', 1),
+        ('exp_004_benchmark_smoke', 'EarliestAvailableMachine', 2),
+    ])
+    def test_static_cli_archives_checked_eam_plans(tmp_path, module, label, count):
+        import csv
+        import subprocess
+        import sys
+        from experiments.artifacts import recheck_results_csv
+        run = subprocess.run([sys.executable, 'experiments/' + module + '.py',
+                              '--output-dir', str(tmp_path)], capture_output=True, text=True, timeout=30)
+        assert run.returncode == 0, run.stderr
+        path = tmp_path / (module + '.csv')
+        with path.open(encoding='utf-8-sig', newline='') as f:
+            rows = list(csv.DictReader(f))
+        eam = [r for r in rows if r['algorithm'] == label]
+>       assert len(eam) == count
+E       assert 0 == 2
+E        +  where 0 = len([])
+
+tests\test_eam_baseline.py:81: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_eam_baseline.py::test_benchmark_entry_runs_eam_without_substituting_eft[batch]
+FAILED tests/test_eam_baseline.py::test_benchmark_entry_runs_eam_without_substituting_eft[matrix]
+FAILED tests/test_eam_baseline.py::test_static_cli_archives_checked_eam_plans[exp_003_dispatching_rules-DispatchEAM-1]
+FAILED tests/test_eam_baseline.py::test_static_cli_archives_checked_eam_plans[exp_004_benchmark_smoke-EarliestAvailableMachine-2]
+4 failed, 5 passed in 4.20s

@@ -66,6 +66,7 @@ def test_build_solver_specs_can_skip_cp_sat():
     assert names == [
         "FIFO",
         "SPT",
+        "EarliestAvailableMachine",
         "DispatchFIFO",
         "DispatchSPT",
         "DispatchEFT",

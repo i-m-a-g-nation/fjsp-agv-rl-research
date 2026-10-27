@@ -1,0 +1,303 @@
+Instance: Brandimarte1993/mk01.fjs (10 jobs x 6 machines, 55 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                    40   OPTIMAL   40.000000    0.000000    0.546884
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1       40 40.000000  0.000000     40 40.000000  0.000000
+
+Instance: Brandimarte1993/mk02.fjs (10 jobs x 6 machines, 58 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                    30  FEASIBLE    3.000000    0.900000    3.002101
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1       30 30.000000  0.000000     30  3.000000  0.900000
+
+Instance: Brandimarte1993/mk03.fjs (15 jobs x 8 machines, 150 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   399  FEASIBLE   20.000000    0.949875    3.001782
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      399 399.000000  0.000000    399 20.000000  0.949875
+
+Instance: Brandimarte1993/mk04.fjs (15 jobs x 8 machines, 90 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                    60  FEASIBLE   14.000000    0.766667    3.001230
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1       60 60.000000  0.000000     60 14.000000  0.766667
+
+Instance: Brandimarte1993/mk05.fjs (15 jobs x 4 machines, 106 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   181  FEASIBLE   32.000000    0.823204    3.000979
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      181 181.000000  0.000000    181 32.000000  0.823204
+
+Instance: Brandimarte1993/mk06.fjs (10 jobs x 15 machines, 150 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   142  FEASIBLE    6.000000    0.957746    3.002499
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      142 142.000000  0.000000    142  6.000000  0.957746
+
+Instance: Brandimarte1993/mk07.fjs (20 jobs x 5 machines, 100 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   192  FEASIBLE   25.000000    0.869792    3.001347
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      192 192.000000  0.000000    192 25.000000  0.869792
+
+Instance: Brandimarte1993/mk08.fjs (20 jobs x 10 machines, 225 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   605  FEASIBLE  182.000000    0.699174    3.001135
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      605 605.000000  0.000000    605 182.000000  0.699174
+
+Instance: Brandimarte1993/mk09.fjs (20 jobs x 10 machines, 240 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   589  FEASIBLE   27.000000    0.954160    3.001919
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      589 589.000000  0.000000    589 27.000000  0.954160
+
+Instance: Brandimarte1993/mk10.fjs (20 jobs x 15 machines, 240 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   534  FEASIBLE   15.000000    0.971910    3.002373
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      534 534.000000  0.000000    534 15.000000  0.971910
+
+Instance: ChambersBarnes1996/mt10c1.fjs (10 jobs x 11 machines, 100 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   928  FEASIBLE  759.000000    0.182112    3.001920
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      928 928.000000  0.000000    928 759.000000  0.182112
+
+Instance: ChambersBarnes1996/mt10cc.fjs (10 jobs x 12 machines, 100 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   933  FEASIBLE  655.000000    0.297964    3.005804
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      933 933.000000  0.000000    933 655.000000  0.297964
+
+Instance: ChambersBarnes1996/mt10x.fjs (10 jobs x 11 machines, 100 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   948  FEASIBLE  655.000000    0.309072    3.001256
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      948 948.000000  0.000000    948 655.000000  0.309072
+
+Instance: DauzerePeresPaulli1994/01a.fjs (10 jobs x 5 machines, 196 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                  2843  FEASIBLE  1395.000000    0.509321    3.006383
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1     2843 2843.000000  0.000000   2843 1395.000000  0.509321
+
+Instance: DauzerePeresPaulli1994/02a.fjs (10 jobs x 5 machines, 196 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                  3026  FEASIBLE  506.000000    0.832783    3.001070
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1     3026 3026.000000  0.000000   3026 506.000000  0.832783
+
+Instance: DauzerePeresPaulli1994/03a.fjs (10 jobs x 5 machines, 196 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                  3894  FEASIBLE  108.000000    0.972265    3.043152
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1     3894 3894.000000  0.000000   3894 108.000000  0.972265
+
+Instance: DauzerePeresPaulli1994/04a.fjs (10 jobs x 5 machines, 196 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                  2807  FEASIBLE  1385.000000    0.506591    3.001865
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1     2807 2807.000000  0.000000   2807 1385.000000  0.506591
+
+Instance: FattahiMehrabadJolai2007/fattahi1.fjs (2 jobs x 2 machines, 4 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                    66   OPTIMAL   66.000000    0.000000    0.003974
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1       66 66.000000  0.000000     66 66.000000  0.000000
+
+Instance: FattahiMehrabadJolai2007/fattahi2.fjs (2 jobs x 2 machines, 4 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   107   OPTIMAL  107.000000    0.000000    0.002959
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      107 107.000000  0.000000    107 107.000000  0.000000
+
+Instance: FattahiMehrabadJolai2007/fattahi3.fjs (3 jobs x 2 machines, 6 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   221   OPTIMAL  221.000000    0.000000    0.004987
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      221 221.000000  0.000000    221 221.000000  0.000000
+
+Instance: FattahiMehrabadJolai2007/fattahi4.fjs (3 jobs x 2 machines, 6 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   355   OPTIMAL  355.000000    0.000000    0.004504
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      355 355.000000  0.000000    355 355.000000  0.000000
+
+Instance: FattahiMehrabadJolai2007/fattahi5.fjs (3 jobs x 2 machines, 6 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   119   OPTIMAL  119.000000    0.000000    0.006567
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      119 119.000000  0.000000    119 119.000000  0.000000
+
+Instance: FattahiMehrabadJolai2007/fattahi6.fjs (3 jobs x 3 machines, 9 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   320   OPTIMAL  320.000000    0.000000    0.006742
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      320 320.000000  0.000000    320 320.000000  0.000000
+
+Instance: FattahiMehrabadJolai2007/fattahi7.fjs (3 jobs x 5 machines, 9 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   397   OPTIMAL  397.000000    0.000000    0.008361
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      397 397.000000  0.000000    397 397.000000  0.000000
+
+Instance: FattahiMehrabadJolai2007/fattahi8.fjs (3 jobs x 4 machines, 9 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   253   OPTIMAL  253.000000    0.000000    0.012059
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      253 253.000000  0.000000    253 253.000000  0.000000
+
+Instance: HurinkJurischThole1994/edata/ft06.fjs (6 jobs x 6 machines, 36 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                    55   OPTIMAL   55.000000    0.000000    0.012960
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1       55 55.000000  0.000000     55 55.000000  0.000000
+
+Instance: KacemHammadiBorne2002/kacem1.fjs (4 jobs x 5 machines, 12 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                    11   OPTIMAL   11.000000    0.000000    0.038450
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1       11 11.000000  0.000000     11 11.000000  0.000000
+
+Instance: KacemHammadiBorne2002/kacem2.fjs (10 jobs x 7 machines, 29 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                    11   OPTIMAL   11.000000    0.000000    2.335359
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1       11 11.000000  0.000000     11 11.000000  0.000000
+
+Instance: KacemHammadiBorne2002/kacem3.fjs (10 jobs x 10 machines, 30 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                     7   OPTIMAL    7.000000    0.000000    2.808958
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1        7  7.000000  0.000000      7  7.000000  0.000000
+
+Instance: KacemHammadiBorne2002/kacem4.fjs (15 jobs x 10 machines, 56 ops)
+Algorithm                                    makespan    status       bound         gap    solver_s
+---------------------------------------------------------------------------------------------------
+CP-SAT(workers=1,tl=3s,run=1/1)                   169  FEASIBLE    0.000000    1.000000    3.002370
+
+Aggregate observations:
+workers    pass   best      mean     stdev  worst     bound       gap
+---------------------------------------------------------------------
+      1   1/1      169 169.000000  0.000000    169  0.000000  1.000000
+
+Per-run CSV results written to: D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\experiments\runs\phase1-closeout-native-v1\cpsat_runs.csv
+Aggregate CSV results written to: D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\experiments\runs\phase1-closeout-native-v1\cpsat_summary.csv
+All benchmark-matrix schedules passed feasibility check.

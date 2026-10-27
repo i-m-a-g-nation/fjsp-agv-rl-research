@@ -43,3 +43,59 @@ def test_eam_public_facades_return_uniform_legal_schedules():
         assert isinstance(result, ScheduleResult) and result.instance == instance
         assert result.makespan == 3
         assert check_feasibility(result)[0]
+
+
+@pytest.mark.parametrize('entry', ['batch', 'matrix'])
+def test_benchmark_entry_runs_eam_without_substituting_eft(entry):
+    """Omitting EAM, or registering EFT under its name, must fail this witness."""
+    from experiments.common import run_solver_suite
+    from experiments.exp_005_benchmark_batch import build_solver_specs
+    from experiments.exp_010_heuristic_benchmark_matrix import build_heuristic_specs
+    instance = FJSPInstance.from_jobs_array([[[(0, 9), (1, 2)]]], num_machines=2)
+    specs = (build_solver_specs(include_cp_sat=False) if entry == 'batch' else
+             [(s.run_label, s.solver_fn) for s in build_heuristic_specs([42])])
+    runs = run_solver_suite([(name, lambda fn=fn: fn(instance)) for name, fn in specs],
+                            expected_instance=instance)
+    eam = [r for r in runs if r.algorithm == 'EarliestAvailableMachine']
+    assert len(eam) == 1
+    assert eam[0].feasible and eam[0].makespan == 9
+    assert eam[0].result.records[0].machine_id == 0
+
+
+@pytest.mark.parametrize(('module', 'label', 'count'), [
+    ('exp_003_dispatching_rules', 'DispatchEAM', 1),
+    ('exp_004_benchmark_smoke', 'EarliestAvailableMachine', 2),
+])
+def test_static_cli_archives_checked_eam_plans(tmp_path, module, label, count):
+    import csv
+    import subprocess
+    import sys
+    from experiments.artifacts import recheck_results_csv
+    run = subprocess.run([sys.executable, 'experiments/' + module + '.py',
+                          '--output-dir', str(tmp_path)], capture_output=True, text=True, timeout=30)
+    assert run.returncode == 0, run.stderr
+    path = tmp_path / (module + '.csv')
+    with path.open(encoding='utf-8-sig', newline='') as f:
+        rows = list(csv.DictReader(f))
+    eam = [r for r in rows if r['algorithm'] == label]
+    assert len(eam) == count
+    assert recheck_results_csv(path)['validated_schedules'] == len(rows)
+
+
+def test_eam_benchmark_reaches_quality_report_with_hand_checked_gap(tmp_path):
+    from experiments.exp_010_heuristic_benchmark_matrix import (
+        build_heuristic_specs, run_heuristic_benchmark_matrix, write_heuristic_aggregates_csv)
+    from experiments.exp_011_heuristic_quality_report import (
+        BenchmarkReference, build_quality_rows, aggregate_family_quality)
+    path = tmp_path / 'witness.fjs'
+    path.write_text('1 2 2.0\n1 2 0 9 1 2\n', encoding='utf-8')
+    _, aggregates, failures = run_heuristic_benchmark_matrix(
+        [path], tmp_path, build_heuristic_specs([42]))
+    assert not failures
+    summary = tmp_path / 'summary.csv'
+    write_heuristic_aggregates_csv(summary, aggregates)
+    rows = build_quality_rows(summary, {'witness.fjs': BenchmarkReference('witness.fjs', 2, 2)})
+    eam = [row for row in rows if row.family == 'EarliestAvailableMachine']
+    assert len(eam) == 1
+    assert eam[0].mean_gap_ratio == 3.5  # (9 - 2) / 2, not EFT's zero gap.
+    assert any(row.family == 'EarliestAvailableMachine' for row in aggregate_family_quality(rows))

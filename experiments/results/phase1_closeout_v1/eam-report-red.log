@@ -1,0 +1,43 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_______ test_eam_benchmark_reaches_quality_report_with_hand_checked_gap _______
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-342/test_eam_benchmark_reaches_qua0')
+
+    def test_eam_benchmark_reaches_quality_report_with_hand_checked_gap(tmp_path):
+        from experiments.exp_010_heuristic_benchmark_matrix import (
+            build_heuristic_specs, run_heuristic_benchmark_matrix, write_heuristic_aggregates_csv)
+        from experiments.exp_011_heuristic_quality_report import (
+            BenchmarkReference, build_quality_rows, aggregate_family_quality)
+        path = tmp_path / 'witness.fjs'
+        path.write_text('1 2 2.0\n1 2 0 9 1 2\n', encoding='utf-8')
+        _, aggregates, failures = run_heuristic_benchmark_matrix(
+            [path], tmp_path, build_heuristic_specs([42]))
+        assert not failures
+        summary = tmp_path / 'summary.csv'
+        write_heuristic_aggregates_csv(summary, aggregates)
+        rows = build_quality_rows(summary, {'witness.fjs': BenchmarkReference('witness.fjs', 2, 2)})
+        eam = [row for row in rows if row.family == 'EarliestAvailableMachine']
+>       assert len(eam) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests\test_eam_baseline.py:99: AssertionError
+---------------------------- Captured stdout call -----------------------------
+Instance: witness.fjs (1 jobs x 2 machines, 1 ops)
+Algorithm                    makespan  feasible   runtime_s  note
+-----------------------------------------------------------------
+FIFO                                9      PASS      0.0001  PASS
+SPT                                 2      PASS      0.0001  PASS
+EarliestFinishTime                  2      PASS      0.0001  PASS
+DispatchFIFO                        2      PASS      0.0001  PASS
+DispatchSPT                         2      PASS      0.0001  PASS
+DispatchEFT                         2      PASS      0.0001  PASS
+DispatchMWKR                        2      PASS      0.0001  PASS
+DispatchMOPNR                       2      PASS      0.0001  PASS
+Random(seed=42)                     9      PASS      0.0001  PASS
+DispatchRandom(seed=42)             9      PASS      0.0001  PASS
+
+=========================== short test summary info ===========================
+FAILED tests/test_eam_baseline.py::test_eam_benchmark_reaches_quality_report_with_hand_checked_gap
+1 failed in 1.41s

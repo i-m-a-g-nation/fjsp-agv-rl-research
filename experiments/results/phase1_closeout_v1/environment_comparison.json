@@ -1,0 +1,283 @@
+{
+  "same_machine_new_conda_prefix": true,
+  "cross_machine_validated": false,
+  "non_solver_plans": 729,
+  "exact_plan_matches": 729,
+  "cp_rows": 34,
+  "cp_differences": 4,
+  "cp": [
+    {
+      "instance": "Brandimarte1993/mk01.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 40,
+      "rebuilt_makespan": 40,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "Brandimarte1993/mk02.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 30,
+      "rebuilt_makespan": 30,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "Brandimarte1993/mk03.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 399,
+      "rebuilt_makespan": 415,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "Brandimarte1993/mk04.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 60,
+      "rebuilt_makespan": 60,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "Brandimarte1993/mk05.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 181,
+      "rebuilt_makespan": 181,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "Brandimarte1993/mk06.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 142,
+      "rebuilt_makespan": 136,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "Brandimarte1993/mk07.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 192,
+      "rebuilt_makespan": 192,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "Brandimarte1993/mk08.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 605,
+      "rebuilt_makespan": 605,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "Brandimarte1993/mk09.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 589,
+      "rebuilt_makespan": 589,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "Brandimarte1993/mk10.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 534,
+      "rebuilt_makespan": 534,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "ChambersBarnes1996/mt10c1.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 928,
+      "rebuilt_makespan": 928,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "ChambersBarnes1996/mt10cc.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 933,
+      "rebuilt_makespan": 933,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "ChambersBarnes1996/mt10x.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 948,
+      "rebuilt_makespan": 948,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "DauzerePeresPaulli1994/01a.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 2843,
+      "rebuilt_makespan": 2843,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "DauzerePeresPaulli1994/02a.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 3026,
+      "rebuilt_makespan": 3012,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "DauzerePeresPaulli1994/03a.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 3894,
+      "rebuilt_makespan": 3894,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "DauzerePeresPaulli1994/04a.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 2807,
+      "rebuilt_makespan": 2798,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "FattahiMehrabadJolai2007/fattahi1.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 66,
+      "rebuilt_makespan": 66,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "FattahiMehrabadJolai2007/fattahi2.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 107,
+      "rebuilt_makespan": 107,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "FattahiMehrabadJolai2007/fattahi3.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 221,
+      "rebuilt_makespan": 221,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "FattahiMehrabadJolai2007/fattahi4.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 355,
+      "rebuilt_makespan": 355,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "FattahiMehrabadJolai2007/fattahi5.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 119,
+      "rebuilt_makespan": 119,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "FattahiMehrabadJolai2007/fattahi6.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 320,
+      "rebuilt_makespan": 320,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "FattahiMehrabadJolai2007/fattahi7.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 397,
+      "rebuilt_makespan": 397,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "FattahiMehrabadJolai2007/fattahi8.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 253,
+      "rebuilt_makespan": 253,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "HurinkJurischThole1994/edata/ft06.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 55,
+      "rebuilt_makespan": 55,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "KacemHammadiBorne2002/kacem1.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 11,
+      "rebuilt_makespan": 11,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "KacemHammadiBorne2002/kacem2.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 11,
+      "rebuilt_makespan": 11,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "KacemHammadiBorne2002/kacem3.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 7,
+      "rebuilt_makespan": 7,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "KacemHammadiBorne2002/kacem4.fjs",
+      "algorithm": "CP-SAT(workers=1,tl=3s,run=1/1)",
+      "native_makespan": 169,
+      "rebuilt_makespan": 169,
+      "native_status": "FEASIBLE",
+      "rebuilt_status": "FEASIBLE"
+    },
+    {
+      "instance": "toy_3x3",
+      "algorithm": "CP-SAT(tl=30s)",
+      "native_makespan": 11,
+      "rebuilt_makespan": 11,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "toy_3x3",
+      "algorithm": "CP-SAT(tl=60s)",
+      "native_makespan": 11,
+      "rebuilt_makespan": 11,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "toy_3x3_0based.fjs",
+      "algorithm": "CP-SAT(tl=10s)",
+      "native_makespan": 11,
+      "rebuilt_makespan": 11,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    },
+    {
+      "instance": "tiny_2x2_1based.fjs",
+      "algorithm": "CP-SAT(tl=10s)",
+      "native_makespan": 4,
+      "rebuilt_makespan": 4,
+      "native_status": "OPTIMAL",
+      "rebuilt_status": "OPTIMAL"
+    }
+  ],
+  "note": "Wall-clock-limited CP results may differ; every saved plan and certificate consistency checked separately."
+}

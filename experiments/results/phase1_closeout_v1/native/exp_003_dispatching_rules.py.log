@@ -1,0 +1,15 @@
+Instance: 3 jobs x 3 machines, 7 ops
+
+Algorithm                makespan  feasible   runtime_s  note
+-------------------------------------------------------------
+DispatchFIFO                   11      PASS      0.0002  PASS
+DispatchEAM                    11      PASS      0.0002  PASS
+DispatchSPT                    13      PASS      0.0002  PASS
+DispatchEFT                    13      PASS      0.0002  PASS
+DispatchMWKR                   12      PASS      0.0002  PASS
+DispatchMOPNR                  12      PASS      0.0002  PASS
+DispatchRandom(42)             14      PASS      0.0002  PASS
+
+CSV results written to: D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\experiments\runs\phase1-closeout-native-v1\exp_003_dispatching_rules.csv
+
+All strict dispatching results passed feasibility check.

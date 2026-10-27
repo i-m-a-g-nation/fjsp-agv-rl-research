@@ -1,0 +1,53 @@
+"""Standalone raw-plan replay; deliberately does not call the project checker."""
+from pathlib import Path
+import json
+import csv
+import io
+import hashlib
+import math
+import sys
+
+out = Path(sys.argv[1])
+count = operations = certificates = 0
+for sidecar in sorted(out.glob('*.evidence.json')):
+    data = json.loads(sidecar.read_bytes())
+    csv_path = sidecar.with_name(sidecar.name.replace('.evidence.json', '.csv'))
+    assert hashlib.sha256(csv_path.read_bytes()).hexdigest() == data['csv_sha256']
+    rows = list(csv.DictReader(io.StringIO(csv_path.read_text(encoding='utf-8'))))
+    assert len(rows) == len(data['rows'])
+    for row, saved in zip(rows, data['rows']):
+        assert row == saved['csv']
+        run = saved['run']; problem = run['expected_instance']; result = run['result']
+        assert problem == result['instance'] and run['feasible'] is True and not run['violations']
+        expected = {(j, o): dict(options) for j, job in enumerate(problem['jobs']) for o, options in enumerate(job)}
+        actual = {}
+        for r in result['records']:
+            assert all(type(r[k]) is int for k in ('job_id','op_id','machine_id','start','end','processing_time'))
+            key = r['job_id'], r['op_id']
+            assert key in expected and key not in actual
+            assert r['start'] >= 0 and r['processing_time'] > 0
+            assert r['end'] - r['start'] == r['processing_time'] == expected[key].get(r['machine_id'])
+            actual[key] = r
+            operations += 1
+        assert set(expected) == set(actual)
+        for (j, o), r in actual.items():
+            if o: assert actual[j, o-1]['end'] <= r['start']
+        for machine in range(problem['num_machines']):
+            ordered = sorted((r for r in actual.values() if r['machine_id'] == machine), key=lambda r:r['start'])
+            assert all(a['end'] <= b['start'] for a, b in zip(ordered, ordered[1:]))
+        assert result['makespan'] == max(r['end'] for r in actual.values()) == int(row['makespan'])
+        if result['solver_status'] is not None:
+            status = result['solver_status']; bound = result['solver_objective_bound']; gap = result['solver_gap']
+            assert status in ('OPTIMAL', 'FEASIBLE') and 0 <= bound <= result['makespan']
+            assert math.isclose(gap, (result['makespan']-bound)/max(1,result['makespan']), abs_tol=1e-9)
+            if status == 'OPTIMAL': assert bound == result['makespan'] and gap == 0
+            assert result['solver_config']['num_workers'] == 1 and result['solver_config']['seed'] == 42
+            certificates += 1
+        count += 1
+report = {'status':'PASS', 'schedules':count, 'operations':operations, 'solver_diagnostics':certificates,
+          'discrepancies':0, 'method':'Standard-library raw instance/plan replay; no project checker, decoder or solver imported.',
+          'limitation':'Static feasibility layer and diagnostic consistency only; dynamic release/freeze rules require domain checks. Not an independent general optimality proof.',
+          'driver_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
+assert count == 763  # 37 toy/smoke + 240 batch + 30 CP + 450 heuristic + 6 dynamic static layers
+(out/'independent_replay.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
+print(json.dumps(report))

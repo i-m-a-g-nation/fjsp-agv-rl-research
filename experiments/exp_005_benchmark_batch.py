@@ -32,6 +32,7 @@ from src.solvers.heuristics import (  # noqa: E402
     dispatch_mopnr_solve,
     dispatch_mwkr_solve,
     dispatch_spt_solve,
+    earliest_available_machine_solve,
     fifo_solve,
     spt_solve,
 )
@@ -72,6 +73,7 @@ def build_solver_specs(
     solvers: list[SolverSpec] = [
         ("FIFO", fifo_solve),
         ("SPT", spt_solve),
+        ("EarliestAvailableMachine", earliest_available_machine_solve),
         ("DispatchFIFO", dispatch_fifo_solve),
         ("DispatchSPT", dispatch_spt_solve),
         ("DispatchEFT", dispatch_eft_solve),

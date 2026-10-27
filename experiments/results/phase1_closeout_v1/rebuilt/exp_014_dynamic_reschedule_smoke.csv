@@ -1,0 +1,4 @@
+experiment_id,instance_name,algorithm,makespan,feasible,runtime_s,note,objective_bound,gap,solver_wall_time
+exp_014_dynamic_reschedule_smoke,dynamic_breakdown_1x1,DynamicEFT(machine_breakdown),12,PASS,0.000150,DYNAMIC_PASS,,,
+exp_014_dynamic_reschedule_smoke,dynamic_job_arrival_2x1,DynamicEFT(job_arrival),10,PASS,0.000155,DYNAMIC_PASS,,,
+exp_014_dynamic_reschedule_smoke,dynamic_multi_event_2x2,DynamicEFT(multi_event),8,PASS,0.000615,DYNAMIC_PASS,,,

@@ -1,0 +1,9 @@
+file                                 events  first   last  order status note
+----------------------------------------------------------------------------
+dynamic_events_multi_event.json           3      2      2   PASS   PASS EVENT_FILE_OK
+dynamic_events_release_stagger.json       3      2      5   PASS   PASS EVENT_FILE_OK
+dynamic_events_repair_cycle.json          3      1      4   PASS   PASS EVENT_FILE_OK
+
+CSV results written to: D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\experiments\runs\phase1-closeout-rebuilt-v2\exp_015_dynamic_event_file_check.csv
+
+All dynamic event JSON files passed the Phase 2A audit.

@@ -1,0 +1,10 @@
+Algorithm                        makespan  feasible   runtime_s  note
+---------------------------------------------------------------------
+DynamicEFT(machine_breakdown)          12      PASS      0.0002  DYNAMIC_PASS
+DynamicEFT(job_arrival)                10      PASS      0.0001  DYNAMIC_PASS
+DynamicEFT(multi_event)                 8      PASS      0.0004  DYNAMIC_PASS
+
+CSV results written to: D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\experiments\runs\phase1-closeout-native-v1\exp_014_dynamic_reschedule_smoke.csv
+Markdown report written to: D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\experiments\runs\phase1-closeout-native-v1\exp_014_dynamic_reschedule_smoke.md
+
+All Phase 2A dynamic reschedules passed feasibility check.

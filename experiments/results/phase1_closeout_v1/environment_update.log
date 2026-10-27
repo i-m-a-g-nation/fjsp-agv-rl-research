@@ -1,0 +1,311 @@
+Channels:
+ - conda-forge
+Platform: win-64
+Collecting package metadata (repodata.json): - \ | / - \ | / - \ | / - \ | / - done
+Solving environment: | / done
+Installing pip dependencies: \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / Ran pip subprocess with arguments:
+['D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\.conda-env\\python.exe', '-m', 'pip', 'install', '-U', '-r', 'D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\condaenv._mxywywf.requirements.txt', '--exists-action=b']
+Pip subprocess output:
+Looking in indexes: https://pypi.tuna.tsinghua.edu.cn/simple
+
+Obtaining file:///D:/UserData/.codex/worktrees/research-workflow-guards/fjsp-agv-rl-research
+
+  Installing build dependencies: started
+
+  Installing build dependencies: finished with status 'done'
+
+  Checking if build backend supports build_editable: started
+
+  Checking if build backend supports build_editable: finished with status 'done'
+
+  Getting requirements to build editable: started
+
+  Getting requirements to build editable: finished with status 'done'
+
+  Preparing editable metadata (pyproject.toml): started
+
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+
+Requirement already satisfied: pip==26.1.1 in .\.conda-env\Lib\site-packages (from -r D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\condaenv._mxywywf.requirements.txt (line 2)) (26.1.1)
+
+Requirement already satisfied: setuptools==82.0.1 in .\.conda-env\Lib\site-packages (from -r D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\condaenv._mxywywf.requirements.txt (line 3)) (82.0.1)
+
+Requirement already satisfied: wheel==0.47.0 in .\.conda-env\Lib\site-packages (from -r D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\condaenv._mxywywf.requirements.txt (line 4)) (0.47.0)
+
+Requirement already satisfied: numpy in .\.conda-env\Lib\site-packages (from fjsp-agv-rl==0.1.0) (2.4.5)
+
+Requirement already satisfied: pandas in .\.conda-env\Lib\site-packages (from fjsp-agv-rl==0.1.0) (3.0.3)
+
+Requirement already satisfied: matplotlib<3.10,>=3.8.4 in .\.conda-env\Lib\site-packages (from fjsp-agv-rl==0.1.0) (3.8.4)
+
+Requirement already satisfied: pillow<12,>=10.4 in .\.conda-env\Lib\site-packages (from fjsp-agv-rl==0.1.0) (10.4.0)
+
+Requirement already satisfied: pydantic in .\.conda-env\Lib\site-packages (from fjsp-agv-rl==0.1.0) (2.13.4)
+
+Requirement already satisfied: networkx in .\.conda-env\Lib\site-packages (from fjsp-agv-rl==0.1.0) (3.6.1)
+
+Requirement already satisfied: scipy in .\.conda-env\Lib\site-packages (from fjsp-agv-rl==0.1.0) (1.17.1)
+
+Requirement already satisfied: ortools in .\.conda-env\Lib\site-packages (from fjsp-agv-rl==0.1.0) (9.15.6755)
+
+Requirement already satisfied: pytest in .\.conda-env\Lib\site-packages (from fjsp-agv-rl==0.1.0) (9.0.3)
+
+Requirement already satisfied: pytest-cov in .\.conda-env\Lib\site-packages (from fjsp-agv-rl==0.1.0) (7.1.0)
+
+Requirement already satisfied: coverage<8,>=7.10 in .\.conda-env\Lib\site-packages (from fjsp-agv-rl==0.1.0) (7.14.1)
+
+Collecting langgraph<2,>=1.2.17 (from fjsp-agv-rl==0.1.0)
+
+  Downloading langgraph-1.2.17-py3-none-any.whl (260 kB)
+
+Collecting langgraph-checkpoint-sqlite<4,>=3.1.2 (from fjsp-agv-rl==0.1.0)
+
+  Using cached langgraph_checkpoint_sqlite-3.1.2-py3-none-any.whl (41 kB)
+
+Collecting faiss-cpu<2,>=1.15.1 (from fjsp-agv-rl==0.1.0)
+
+  Downloading faiss_cpu-1.15.1-cp311-cp311-win_amd64.whl (16.3 MB)
+
+     ---------------------------------------- 16.3/16.3 MB 2.2 MB/s  0:00:07
+
+Collecting pypdf<7,>=6.21.2 (from fjsp-agv-rl==0.1.0)
+
+  Downloading pypdf-6.21.2-py3-none-any.whl (407 kB)
+
+Collecting requests<3,>=2.34.2 (from fjsp-agv-rl==0.1.0)
+
+  Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+
+Collecting langchain-openai<2,>=1.7.2 (from fjsp-agv-rl==0.1.0)
+
+  Downloading langchain_openai-1.7.2-py3-none-any.whl (146 kB)
+
+Requirement already satisfied: packaging>=24.0 in .\.conda-env\Lib\site-packages (from wheel==0.47.0->-r D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\condaenv._mxywywf.requirements.txt (line 4)) (26.2)
+
+Collecting certifi>=2024.6.2 (from langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading certifi-2026.4.22-py3-none-any.whl (135 kB)
+
+Collecting langchain-core<2.0.0,>=1.6.10 (from langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading langchain_core-1.7.0-py3-none-any.whl (574 kB)
+
+     --------------------------------------- 574.7/574.7 kB 256.6 kB/s  0:00:02
+
+Collecting openai<4.0.0,>=2.45.0 (from langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading openai-3.37.0-py3-none-any.whl (2.3 MB)
+
+     ---------------------------------------- 2.3/2.3 MB 526.9 kB/s  0:00:04
+
+Collecting tiktoken<1.0.0,>=0.7.0 (from langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading tiktoken-0.14.0-cp311-cp311-win_amd64.whl (944 kB)
+
+     --------------------------------------- 944.4/944.4 kB 432.4 kB/s  0:00:02
+
+Collecting httpx<1.0.0,>=0.23.0 (from langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+
+Collecting jsonpatch<2.0.0,>=1.33.0 (from langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading jsonpatch-1.36-py3-none-any.whl (17 kB)
+
+Collecting langchain-protocol>=0.0.20 (from langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading langchain_protocol-0.0.20-py3-none-any.whl (7.3 kB)
+
+Collecting langsmith<1.0.0,>=0.14.9 (from langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading langsmith-0.14.12-py3-none-any.whl (883 kB)
+
+     --------------------------------------- 883.6/883.6 kB 663.3 kB/s  0:00:01
+
+Collecting pyyaml<7.0.0,>=5.3.0 (from langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading pyyaml-6.0.3-cp311-cp311-win_amd64.whl (158 kB)
+
+Collecting tenacity!=8.4.0,<10.0.0,>=8.1.0 (from langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading tenacity-9.2.1-py3-none-any.whl (32 kB)
+
+Requirement already satisfied: typing-extensions<5.0.0,>=4.7.0 in .\.conda-env\Lib\site-packages (from langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0) (4.15.0)
+
+Collecting uuid-utils<1.0,>=0.12.0 (from langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading uuid_utils-0.18.0-cp311-cp311-win_amd64.whl (179 kB)
+
+Collecting anyio (from httpx<1.0.0,>=0.23.0->langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading anyio-4.13.0-py3-none-any.whl (114 kB)
+
+Collecting httpcore==1.* (from httpx<1.0.0,>=0.23.0->langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+
+Collecting idna (from httpx<1.0.0,>=0.23.0->langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading idna-3.20-py3-none-any.whl (69 kB)
+
+Collecting h11>=0.16 (from httpcore==1.*->httpx<1.0.0,>=0.23.0->langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+
+Collecting jsonpointer>=3.2 (from jsonpatch<2.0.0,>=1.33.0->langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading jsonpointer-3.4-py3-none-any.whl (9.0 kB)
+
+Collecting langgraph-checkpoint<5.0.0,>=4.3.0 (from langgraph<2,>=1.2.17->fjsp-agv-rl==0.1.0)
+
+  Downloading langgraph_checkpoint-4.3.0-py3-none-any.whl (58 kB)
+
+Collecting langgraph-prebuilt<1.2.0,>=1.1.0 (from langgraph<2,>=1.2.17->fjsp-agv-rl==0.1.0)
+
+  Downloading langgraph_prebuilt-1.1.1-py3-none-any.whl (42 kB)
+
+Collecting langgraph-sdk<0.5.0,>=0.4.6 (from langgraph<2,>=1.2.17->fjsp-agv-rl==0.1.0)
+
+  Downloading langgraph_sdk-0.4.9-py3-none-any.whl (167 kB)
+
+Collecting xxhash>=3.5.0 (from langgraph<2,>=1.2.17->fjsp-agv-rl==0.1.0)
+
+  Downloading xxhash-4.0.2-cp311-cp311-win_amd64.whl (36 kB)
+
+Collecting ormsgpack>=1.12.0 (from langgraph-checkpoint<5.0.0,>=4.3.0->langgraph<2,>=1.2.17->fjsp-agv-rl==0.1.0)
+
+  Downloading ormsgpack-1.13.0-cp311-cp311-win_amd64.whl (153 kB)
+
+Collecting aiosqlite>=0.20 (from langgraph-checkpoint-sqlite<4,>=3.1.2->fjsp-agv-rl==0.1.0)
+
+  Using cached aiosqlite-0.22.1-py3-none-any.whl (17 kB)
+
+Collecting sqlite-vec>=0.1.6 (from langgraph-checkpoint-sqlite<4,>=3.1.2->fjsp-agv-rl==0.1.0)
+
+  Using cached sqlite_vec-0.1.9-py3-none-win_amd64.whl (292 kB)
+
+Collecting orjson>=3.11.5 (from langgraph-sdk<0.5.0,>=0.4.6->langgraph<2,>=1.2.17->fjsp-agv-rl==0.1.0)
+
+  Downloading orjson-3.13.0-cp311-cp311-win_amd64.whl (121 kB)
+
+Collecting websockets>=14 (from langgraph-sdk<0.5.0,>=0.4.6->langgraph<2,>=1.2.17->fjsp-agv-rl==0.1.0)
+
+  Downloading websockets-17.3-cp311-cp311-win_amd64.whl (219 kB)
+
+Collecting distro<2,>=1.7.0 (from langsmith<1.0.0,>=0.14.9->langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Using cached distro-1.9.0-py3-none-any.whl (20 kB)
+
+Collecting httpx2<3,>=2 (from langsmith<1.0.0,>=0.14.9->langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading httpx2-2.16.0-py3-none-any.whl (97 kB)
+
+Collecting requests-toolbelt>=1.0.0 (from langsmith<1.0.0,>=0.14.9->langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Using cached requests_toolbelt-1.0.0-py2.py3-none-any.whl (54 kB)
+
+Collecting sniffio (from langsmith<1.0.0,>=0.14.9->langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Using cached sniffio-1.3.1-py3-none-any.whl (10 kB)
+
+Collecting zstandard>=0.23.0 (from langsmith<1.0.0,>=0.14.9->langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading zstandard-0.25.0-cp311-cp311-win_amd64.whl (506 kB)
+
+Collecting httpcore2==2.16.0 (from httpx2<3,>=2->langsmith<1.0.0,>=0.14.9->langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading httpcore2-2.16.0-py3-none-any.whl (85 kB)
+
+Collecting truststore>=0.10 (from httpx2<3,>=2->langsmith<1.0.0,>=0.14.9->langchain-core<2.0.0,>=1.6.10->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading truststore-0.10.5-py3-none-any.whl (19 kB)
+
+Requirement already satisfied: contourpy>=1.0.1 in .\.conda-env\Lib\site-packages (from matplotlib<3.10,>=3.8.4->fjsp-agv-rl==0.1.0) (1.3.3)
+
+Requirement already satisfied: cycler>=0.10 in .\.conda-env\Lib\site-packages (from matplotlib<3.10,>=3.8.4->fjsp-agv-rl==0.1.0) (0.12.1)
+
+Requirement already satisfied: fonttools>=4.22.0 in .\.conda-env\Lib\site-packages (from matplotlib<3.10,>=3.8.4->fjsp-agv-rl==0.1.0) (4.63.0)
+
+Requirement already satisfied: kiwisolver>=1.3.1 in .\.conda-env\Lib\site-packages (from matplotlib<3.10,>=3.8.4->fjsp-agv-rl==0.1.0) (1.5.0)
+
+Requirement already satisfied: pyparsing>=2.3.1 in .\.conda-env\Lib\site-packages (from matplotlib<3.10,>=3.8.4->fjsp-agv-rl==0.1.0) (3.3.2)
+
+Requirement already satisfied: python-dateutil>=2.7 in .\.conda-env\Lib\site-packages (from matplotlib<3.10,>=3.8.4->fjsp-agv-rl==0.1.0) (2.9.0.post0)
+
+Collecting jiter<1,>=0.16.0 (from openai<4.0.0,>=2.45.0->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading jiter-0.18.0-cp311-cp311-win_amd64.whl (219 kB)
+
+Requirement already satisfied: annotated-types>=0.6.0 in .\.conda-env\Lib\site-packages (from pydantic->fjsp-agv-rl==0.1.0) (0.7.0)
+
+Requirement already satisfied: pydantic-core==2.46.4 in .\.conda-env\Lib\site-packages (from pydantic->fjsp-agv-rl==0.1.0) (2.46.4)
+
+Requirement already satisfied: typing-inspection>=0.4.2 in .\.conda-env\Lib\site-packages (from pydantic->fjsp-agv-rl==0.1.0) (0.4.2)
+
+Collecting charset_normalizer<4,>=2 (from requests<3,>=2.34.2->fjsp-agv-rl==0.1.0)
+
+  Downloading charset_normalizer-3.4.7-cp311-cp311-win_amd64.whl (159 kB)
+
+Collecting urllib3<3,>=1.26 (from requests<3,>=2.34.2->fjsp-agv-rl==0.1.0)
+
+  Downloading urllib3-2.7.0-py3-none-any.whl (131 kB)
+
+Collecting regex (from tiktoken<1.0.0,>=0.7.0->langchain-openai<2,>=1.7.2->fjsp-agv-rl==0.1.0)
+
+  Downloading regex-2026.9.29-cp311-cp311-win_amd64.whl (280 kB)
+
+Requirement already satisfied: six>=1.5 in .\.conda-env\Lib\site-packages (from python-dateutil>=2.7->matplotlib<3.10,>=3.8.4->fjsp-agv-rl==0.1.0) (1.17.0)
+
+Requirement already satisfied: absl-py>=2.0.0 in .\.conda-env\Lib\site-packages (from ortools->fjsp-agv-rl==0.1.0) (2.4.0)
+
+Requirement already satisfied: protobuf<6.34,>=6.33.1 in .\.conda-env\Lib\site-packages (from ortools->fjsp-agv-rl==0.1.0) (6.33.6)
+
+Requirement already satisfied: immutabledict>=3.0.0 in .\.conda-env\Lib\site-packages (from ortools->fjsp-agv-rl==0.1.0) (4.3.1)
+
+Requirement already satisfied: tzdata in .\.conda-env\Lib\site-packages (from pandas->fjsp-agv-rl==0.1.0) (2026.2)
+
+Requirement already satisfied: colorama>=0.4 in .\.conda-env\Lib\site-packages (from pytest->fjsp-agv-rl==0.1.0) (0.4.6)
+
+Requirement already satisfied: iniconfig>=1.0.1 in .\.conda-env\Lib\site-packages (from pytest->fjsp-agv-rl==0.1.0) (2.3.0)
+
+Requirement already satisfied: pluggy<2,>=1.5 in .\.conda-env\Lib\site-packages (from pytest->fjsp-agv-rl==0.1.0) (1.6.0)
+
+Requirement already satisfied: pygments>=2.7.2 in .\.conda-env\Lib\site-packages (from pytest->fjsp-agv-rl==0.1.0) (2.20.0)
+
+Building wheels for collected packages: fjsp-agv-rl
+
+  Building editable for fjsp-agv-rl (pyproject.toml): started
+
+  Building editable for fjsp-agv-rl (pyproject.toml): finished with status 'done'
+
+  Created wheel for fjsp-agv-rl: filename=fjsp_agv_rl-0.1.0-0.editable-py3-none-any.whl size=1602 sha256=006eacbb408ebc2b07e9cece14b0d27e41c3c4172c9447f1644363c8a39ff27d
+
+  Stored in directory: C:\Users\25494\AppData\Local\Temp\pip-ephem-wheel-cache-1jjd5mtt\wheels\64\ea\d6\70368a50f8c07a5fd38de13cbf1a366255c59760c4781d9f1f
+
+Successfully built fjsp-agv-rl
+
+Installing collected packages: sqlite-vec, zstandard, xxhash, websockets, uuid-utils, urllib3, truststore, tenacity, sniffio, regex, pyyaml, pypdf, ormsgpack, orjson, langchain-protocol, jsonpointer, jiter, idna, h11, faiss-cpu, distro, charset_normalizer, certifi, aiosqlite, requests, jsonpatch, httpcore2, httpcore, anyio, tiktoken, requests-toolbelt, httpx2, httpx, openai, langsmith, fjsp-agv-rl, langchain-core, langgraph-sdk, langgraph-checkpoint, langchain-openai, langgraph-prebuilt, langgraph-checkpoint-sqlite, langgraph
+
+  Attempting uninstall: fjsp-agv-rl
+
+    Found existing installation: fjsp-agv-rl 0.1.0
+
+    Uninstalling fjsp-agv-rl-0.1.0:
+
+      Successfully uninstalled fjsp-agv-rl-0.1.0
+
+
+
+Successfully installed aiosqlite-0.22.1 anyio-4.13.0 certifi-2026.4.22 charset_normalizer-3.4.7 distro-1.9.0 faiss-cpu-1.15.1 fjsp-agv-rl-0.1.0 h11-0.16.0 httpcore-1.0.9 httpcore2-2.16.0 httpx-0.28.1 httpx2-2.16.0 idna-3.20 jiter-0.18.0 jsonpatch-1.36 jsonpointer-3.4 langchain-core-1.7.0 langchain-openai-1.7.2 langchain-protocol-0.0.20 langgraph-1.2.17 langgraph-checkpoint-4.3.0 langgraph-checkpoint-sqlite-3.1.2 langgraph-prebuilt-1.1.1 langgraph-sdk-0.4.9 langsmith-0.14.12 openai-3.37.0 orjson-3.13.0 ormsgpack-1.13.0 pypdf-6.21.2 pyyaml-6.0.3 regex-2026.9.29 requests-2.34.2 requests-toolbelt-1.0.0 sniffio-1.3.1 sqlite-vec-0.1.9 tenacity-9.2.1 tiktoken-0.14.0 truststore-0.10.5 urllib3-2.7.0 uuid-utils-0.18.0 websockets-17.3 xxhash-4.0.2 zstandard-0.25.0
+
+
+done
+#
+# To activate this environment, use
+#
+#     $ conda activate D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\.conda-env
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
+

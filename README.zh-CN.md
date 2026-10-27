@@ -16,11 +16,15 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 
 默认创建到项目内 `.conda-env`；使用自定义位置时，先设置 `FJSP_CONDA_ENV`。本机环境路径不要写进版本化文件。
 
+需要复现已核对的版本时，用[`environment-phase1-repro.yml`](environment-phase1-repro.yml)在新前缀创建环境，其中包含核心、dev与research依赖。具体命令和已验证边界见[Phase 1复现清单](docs/reproducibility_phase1.md)。它是版本约束，不是跨平台二进制锁文件。
+
 运行本地检查链：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1
 ```
+
+本地与CI均通过`scripts/check_experiments.py`运行001–004和动态检查链，再执行完整测试。给PowerShell入口加`-Heavy`可运行完整基准矩阵及新结果报告；CI也提供显式的`full_benchmarks`手动选项。每批结果写入新目录。
 
 逐项运行时，先核对 Python 路径：
 

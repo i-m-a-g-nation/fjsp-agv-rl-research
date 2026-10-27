@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "status": "COMPLETED",
+  "heavy": true,
+  "python": "D:\\2-Dev\\Environments\\Conda\\fjsp-agv-rl\\python.exe",
+  "created_utc": "2026-10-27T07:46:56.969043+00:00",
+  "runner_sha256": "139f6dfa7407674c44d5ed7d90ee4e8d7c97c9738ab2128094c396957407e4fb",
+  "commands": [
+    {
+      "script": "exp_001_toy_instance.py",
+      "arguments": [
+        "--output-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 6.077999999979511
+    },
+    {
+      "script": "exp_002_solver_check.py",
+      "arguments": [
+        "--output-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 7.188000000023749
+    },
+    {
+      "script": "exp_003_dispatching_rules.py",
+      "arguments": [
+        "--output-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.8589999999967404
+    },
+    {
+      "script": "exp_004_benchmark_smoke.py",
+      "arguments": [
+        "--output-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 2.10999999998603
+    },
+    {
+      "script": "exp_012_benchmark_metadata_audit.py",
+      "arguments": [
+        "--output",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\metadata.csv"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.0150000000139698
+    },
+    {
+      "script": "exp_014_dynamic_reschedule_smoke.py",
+      "arguments": [
+        "--output-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.6880000000237487
+    },
+    {
+      "script": "exp_015_dynamic_event_file_check.py",
+      "arguments": [
+        "--output",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\exp_015_dynamic_event_file_check.csv"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.15700000000651926
+    },
+    {
+      "script": "exp_016_dynamic_event_file_reschedule.py",
+      "arguments": [
+        "--output-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.6720000000204891
+    },
+    {
+      "script": "exp_017_phase2a_dynamic_report.py",
+      "arguments": [
+        "--smoke-input",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\exp_014_dynamic_reschedule_smoke.csv",
+        "--audit-input",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\exp_015_dynamic_event_file_check.csv",
+        "--replay-input",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\exp_016_dynamic_event_file_reschedule.csv",
+        "--output",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\exp_017_phase2a_dynamic_report.md"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.14000000001396984
+    },
+    {
+      "script": "exp_005_benchmark_batch.py",
+      "arguments": [
+        "--input-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\instances\\fjsplib",
+        "--skip-cp-sat",
+        "--output",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\batch.csv"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 27.06299999996554
+    },
+    {
+      "script": "exp_009_cpsat_benchmark_matrix.py",
+      "arguments": [
+        "--input-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\instances\\fjsplib",
+        "--worker-counts",
+        "1",
+        "--repeats",
+        "1",
+        "--time-limit",
+        "3",
+        "--runs-output",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\cpsat_runs.csv",
+        "--summary-output",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\cpsat_summary.csv"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 61.95300000003772
+    },
+    {
+      "script": "exp_010_heuristic_benchmark_matrix.py",
+      "arguments": [
+        "--input-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\instances\\fjsplib",
+        "--runs-output",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\heuristic_runs.csv",
+        "--summary-output",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\heuristic_summary.csv"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 48.75
+    },
+    {
+      "script": "exp_011_heuristic_quality_report.py",
+      "arguments": [
+        "--summary-input",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\heuristic_summary.csv",
+        "--bks-input",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\instances\\fjsplib_bks.csv",
+        "--quality-output",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\quality_rows.csv",
+        "--family-output",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\quality_families.csv"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.13999999995576218
+    },
+    {
+      "script": "exp_013_cpsat_report.py",
+      "arguments": [
+        "--bks-input",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\instances\\fjsplib_bks.csv",
+        "--summary-input",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\cpsat_summary.csv",
+        "--output",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\phase1-closeout-native-v1\\cpsat_report.md"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.14100000000325963
+    }
+  ]
+}

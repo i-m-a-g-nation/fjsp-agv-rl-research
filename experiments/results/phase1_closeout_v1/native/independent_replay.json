@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "schedules": 763,
+  "operations": 65371,
+  "solver_diagnostics": 34,
+  "discrepancies": 0,
+  "method": "Standard-library raw instance/plan replay; no project checker, decoder or solver imported.",
+  "limitation": "Static feasibility layer and diagnostic consistency only; dynamic release/freeze rules require domain checks. Not an independent general optimality proof.",
+  "driver_sha256": "7b3a979b63162148b8e5054bb58edc2856c4fc820c641d587e5bde83a14611ce"
+}

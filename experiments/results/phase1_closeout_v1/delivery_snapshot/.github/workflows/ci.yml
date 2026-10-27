@@ -1,0 +1,50 @@
+name: Phase 1 and 2A CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      full_benchmarks:
+        description: Run the complete static benchmark evidence matrix
+        type: boolean
+        default: false
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    name: tests and reproducibility checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.15"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -c requirements/phase1-py311.constraints.txt -e ".[dev,research]"
+
+      - name: Run shared local/CI experiment checks
+        run: python scripts/check_experiments.py --output-dir experiments/runs/ci
+
+      - name: Run full benchmark evidence matrix when requested
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.full_benchmarks }}
+        run: python scripts/check_experiments.py --heavy --output-dir experiments/runs/ci-heavy
+
+      - name: Run tests with core coverage
+        run: python -m pytest --cov=src --cov-report=term-missing --cov-fail-under=80
+
+      - name: Preserve experiment evidence and failure receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: experiment-checks
+          path: experiments/runs/ci*

@@ -29,6 +29,7 @@ from src.solvers.heuristics import (
     dispatch_mopnr_solve,
     dispatch_mwkr_solve,
     dispatch_spt_solve,
+    earliest_available_machine_solve,
     fifo_solve,
     spt_solve,
 )
@@ -47,6 +48,7 @@ def main(argv=None) -> None:
     solvers: list[tuple[str, Callable[[FJSPInstance], ScheduleResult]]] = [
         ("FIFO", fifo_solve),
         ("SPT", spt_solve),
+        ("EarliestAvailableMachine", earliest_available_machine_solve),
         ("DispatchSPT", dispatch_spt_solve),
         ("DispatchEFT", dispatch_eft_solve),
         ("DispatchMWKR", dispatch_mwkr_solve),

@@ -39,6 +39,7 @@ from src.solvers.heuristics import (  # noqa: E402
     dispatch_mwkr_solve,
     dispatch_random_solve,
     dispatch_spt_solve,
+    earliest_available_machine_solve,
     earliest_finish_time_solve,
     fifo_solve,
     random_solve,
@@ -118,6 +119,8 @@ def build_heuristic_specs(seeds: Sequence[int]) -> list[HeuristicSpec]:
     specs = [
         HeuristicSpec("FIFO", "FIFO", "fixed", fifo_solve),
         HeuristicSpec("SPT", "SPT", "fixed", spt_solve),
+        HeuristicSpec("EarliestAvailableMachine", "EarliestAvailableMachine", "fixed",
+                      earliest_available_machine_solve),
         HeuristicSpec(
             "EarliestFinishTime",
             "EarliestFinishTime",

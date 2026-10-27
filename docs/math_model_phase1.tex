@@ -11,6 +11,15 @@
 \begin{document}
 \maketitle
 
+\paragraph{Version note (2026-10-27).}
+The formulation and EAM rule below describe the current implementation.
+The later numerical tables retain earlier archived experiments, including
+the pre-EAM 420-run matrix; they are not overwritten with new results.
+The new 450-run matrix adds EAM on all 30 instances, with 30 feasible EAM
+plans and a mean UB-relative ratio $(C_{\max}-UB)/UB$ of 0.461360.
+This is a comparison with published upper bounds, not a proven optimality gap.
+Current commands and evidence are indexed in \texttt{docs/reproducibility\_phase1.md}.
+
 \section{Scope}
 
 This document describes the Phase 1 static flexible job shop scheduling
@@ -170,6 +179,7 @@ time on machine $m$, and $f_{jom}=s_{jom}+p_{jom}$ is the tentative finish time.
 Rule & Operation selection & Machine selection \\
 \midrule
 FIFO & smallest $(r_{jo},j,o)$ & earliest finish \\
+EAM & smallest $(r_{jo},j,o)$ & smallest $(s_{jom},m)$ \\
 SPT & smallest $p_{jom}$ pair & selected with pair \\
 EFT & smallest $f_{jom}$ pair & selected with pair \\
 MWKR & largest remaining route work & earliest finish \\
@@ -178,6 +188,13 @@ Random & random ready pair & selected with pair \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+For the project's EAM variant, $s_{jom}=\max(r_{jo},a_m)$, where $a_m$
+is the machine's current completion time. Ties in feasible start use machine
+ID, not processing time or finish time. The public names
+\texttt{EarliestAvailableMachine} and \texttt{DispatchEAM} share this rule;
+benchmark aggregation counts it once. EAM does not change the FJSP model
+or imply an optimality guarantee.
 
 For MWKR, remaining route work is estimated as
 \[
@@ -190,8 +207,12 @@ N_{jo} = last(j) - o + 1.
 
 \section{Experiment Result Schema}
 
-Phase 1 experiment scripts write normalized CSV files under
-\texttt{experiments/results/}. Each row has the following fields:
+Phase 1 experiment scripts write normalized CSV files. Current smoke entry
+points default to a fresh directory under \texttt{experiments/runs/}; promoted
+and historical evidence is retained under \texttt{experiments/results/}.
+Each CSV has a sibling evidence JSON storing the original instance, full plan,
+solver configuration, source hashes and installed package versions. The CSV
+row retains the following fields:
 
 \begin{table}[h]
 \centering
@@ -328,6 +349,8 @@ Longer limits improve the feasible schedule in this run, but no row proves
 optimality. The default benchmark batch uses the solver's default worker
 configuration and is recorded separately. Worker count is part of the
 experimental configuration and must not be hidden during comparisons.
+The current solver default is one worker and random seed 42; archived
+experiments retain the settings recorded for their original runs.
 
 \subsection{CP-SAT Worker-Count Sweep}
 
@@ -416,6 +439,8 @@ uncontrolled stochastic sample.
 
 \begin{table}[h]
 \centering
+\small
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{llrr}
 \toprule
 Instance & Best deterministic rule & Random range & DispatchRandom range \\

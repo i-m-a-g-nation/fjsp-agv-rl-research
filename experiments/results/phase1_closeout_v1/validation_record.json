@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "base_commit": "fd89472",
+  "scope": "Phase 1 review closeout: EAM evidence, shared check entry, environment reconstruction, documentation",
+  "validated_utc": "2026-10-27T08:09:18.682275+00:00",
+  "full_local_checks": {
+    "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/run_checks.ps1",
+    "exit_code": 0,
+    "passed": 1704,
+    "skipped": 2,
+    "warnings": 13,
+    "coverage_percent": 91.16,
+    "pytest_seconds": 1048.27,
+    "log": "full_checks.log"
+  },
+  "rebuilt_environment": {
+    "same_machine_new_prefix": true,
+    "cross_machine": false,
+    "python": "3.11.15",
+    "pinned_dependencies": 76,
+    "all_pins_match": true,
+    "pip_check": "PASS",
+    "focused_tests_passed": 421,
+    "focused_tests_seconds": 27.59,
+    "full_research_suite_rerun_in_new_environment": false,
+    "record": "environment_validation.json"
+  },
+  "native_experiments": {
+    "commands": 14,
+    "all_exit_codes": 0,
+    "saved_plans": 763,
+    "static_plans": 757,
+    "dynamic_plans_static_layer": 6,
+    "operations": 65371,
+    "solver_diagnostics": 34,
+    "independent_replay": "native/independent_replay.json"
+  },
+  "rebuilt_experiments": {
+    "commands": 14,
+    "all_exit_codes": 0,
+    "saved_plans": 763,
+    "operations": 65371,
+    "independent_replay": "rebuilt/independent_replay.json"
+  },
+  "environment_comparison": {
+    "identical_non_cp_plans": 729,
+    "cp_rows": 34,
+    "cp_status_or_objective_differences": 4,
+    "record": "environment_comparison.json"
+  },
+  "eam": {
+    "benchmark_instances": 30,
+    "feasible": 30,
+    "matrix_rows": 450,
+    "mean_ub_relative_ratio": 0.46136,
+    "not_an_optimality_gap": true
+  },
+  "review": {
+    "independent_agent_read_only": true,
+    "blocking_findings": 0,
+    "environment_scope_feedback": "Resolved by adding pinned research dependency closure; original core pins unchanged; install/pip check/version checks and focused tests passed",
+    "deferred": "input_scope.json is a pre-run snapshot, not continuous concurrent-edit detection"
+  },
+  "repairs_during_work": [
+    "Missing EAM registrations reproduced by five failing checks before implementation.",
+    "Initial sampled check used a subdirectory that changed instance IDs; fixed root identity. A subset then correctly failed full BKS coverage; snapshot declared subset and its matching BKS rows before execution without relaxing the report checker.",
+    "Initial new environment contained only core/dev; expanded to research dependencies after independent review."
+  ],
+  "documents": {
+    "latex_compile": "PASS",
+    "english_pages": 9,
+    "chinese_pages": 7,
+    "visual_review": "All pages inspected; updated EAM and evidence sections readable",
+    "historical_numeric_tables": "Retained and explicitly labelled",
+    "new_human_markdown_files": 0
+  },
+  "limitations": [
+    "No remote CI success or second-machine validation in this turn.",
+    "Version constraints are not wheel hashes or a cross-platform binary lock.",
+    "CP wall-clock limits can produce different valid results even under the same package versions.",
+    "Independent raw replay checks static feasibility and solver diagnostic consistency, not dynamic semantics or general optimality.",
+    "No new research algorithm benefit, graduation acceptance or innovation-project acceptance.",
+    "Gantt-specific tests and Phase 2A external library/dynamic baseline work remain outside this finite closeout."
+  ]
+}

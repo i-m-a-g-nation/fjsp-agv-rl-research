@@ -1,0 +1,16 @@
+Algorithm family     instances  mean_best_gap  max_best_gap
+-----------------------------------------------------------
+FIFO                        30       4.862683     25.090909
+SPT                         30       2.291656      6.088083
+EarliestAvailableMachine        30       0.461360      3.142857
+EarliestFinishTime          30       0.392423      1.384615
+DispatchFIFO                30       0.151281      0.370370
+DispatchSPT                 30       1.393257      4.564767
+DispatchEFT                 30       0.405199      1.384615
+DispatchMWKR                30       0.158760      0.364924
+DispatchMOPNR               30       0.193880      0.466667
+Random                      30       3.141676      9.421053
+DispatchRandom              30       1.318093      6.142857
+
+Per-instance quality CSV written to: D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\experiments\runs\phase1-closeout-rebuilt-v2\quality_rows.csv
+Family quality CSV written to: D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\experiments\runs\phase1-closeout-rebuilt-v2\quality_families.csv

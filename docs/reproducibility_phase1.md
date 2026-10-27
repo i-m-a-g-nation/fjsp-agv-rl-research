@@ -1,5 +1,62 @@
 # Phase 1 可复现性清单
 
+## 2026-10-27 评审后收口计划
+
+用户在评审答复后要求继续，采用已说明的有限收口方案；当前基线为 `fd89472`，在现有工作树内执行。沿用本文记录，不新增计划Markdown。范围不包含新研究算法或Phase 2A公开库适配。
+
+- [x] EAM证据：在003/004/005/010注册既有EAM规则；先用手算反例和真实CLI证明遗漏，再补注册。011按输入自动汇总，增加端到端测试保证EAM进入报告。完整矩阵保留其他算法与seed，输出新目录。
+- [x] 检查入口：本地和CI共用显式的轻量验收脚本，覆盖001–004和既有动态链；重型模式另外运行005/009/010/011。先验证缺少入口和错误传播，再实现；拒绝复用非空输出目录，不执行模型API。
+- [x] 固定环境：保存核心、dev及research依赖的传递版本约束，新建本机专用Conda前缀验证安装及静态复跑；不改现有科研环境。不把同机新环境称为跨机器复现。
+- [x] 文档和验收：补EAM的顺序/平局语义，同步当前审查摘要和结果索引，保留历史数字；运行完整回归、归档哈希和独立复核，最终本地提交。
+
+接口依赖：实验注册表→矩阵→011质量报告→验收脚本；新约束文件→新环境安装→同一验收入口。原025/026科研源码绑定不涉及这些静态实验入口，保持原参考身份检查。审查重点是EAM被误接成EFT、输入/报告路径混用、失败后仍继续、旧结果覆盖、环境重建与原环境混淆。
+
+执行记录：5项EAM注册/报告反例先失败，补齐后相关28项通过。统一入口初次集成暴露子目录使实例ID与BKS不一致；决定固定使用仓库FJSPLib根目录并允许数量抽样，避免在验收入口扩展自定义数据与参考表协议。抽样模式在运行前由声明的文件清单生成参考表，011仍检查该表的完整覆盖，不能按成功行缩小分母。自定义实验继续使用已有独立脚本显式提供匹配参考表。统一入口及失败传播测试4项通过。
+
+独立代码审查未发现阻断问题。依据审查补齐新环境中的research依赖，防止默认前缀只能跑静态实验而不能运行研究测试。另一项边界保留：`input_scope.json`是运行前输入快照，不是对并发文件修改的持续监视；验收期间保持源码和数据固定。每个实验sidecar独立保存实际问题，不能将快照描述为隔离锁。
+
+### 本轮实际验收
+
+- 原研究环境通过完整本地检查链：**1704通过、2跳过、13条第三方警告，覆盖率91.16%，1048.27秒，退出码0**。这包含共用实验入口及全量pytest。
+- 同机新Conda前缀安装了清单要求的核心、dev与research依赖，76项版本全部吻合，`pip check`通过；新环境的定向静态/入口回归**421项通过，27.59秒**。本轮没有在新环境再次执行完整研究测试，也没有跨机器或远程CI成功记录。
+- 两环境均执行14个入口，各保存763份计划（757静态计划、6份动态结果的静态层），每批65371道工序、34条CP诊断；项目重检和不导入项目检查器的独立实现均为零差异。动态事件、冻结历史及release约束仍由对应入口的领域检查器负责。
+- 两环境的729份非CP计划完全相同；34条限时CP结果有4条状态或目标值不同。这符合墙钟限时求解的已知复现边界，不能把版本固定解释为CP结果逐位一致，也不据此比较环境性能。
+- EAM新增30条基准结果，完整启发式矩阵由420增为450条。EAM平均`(makespan-UB)/UB = 0.461360`，只表示相对公开上界的质量，不能解释为证明最优的gap。新中英文模型PDF已编译并逐页检查，历史数值保留并明确标注。
+- 本轮未更改核心求解器、检查器或025/026科研参考绑定源文件；现有参考身份仍有效。没有新增人工维护的Markdown，生成的实验报告随证据归档。
+
+[本轮验收记录](../experiments/results/phase1_closeout_v1/validation_record.json)、[环境对比及CP差异](../experiments/results/phase1_closeout_v1/environment_comparison.json)、[原环境独立重检](../experiments/results/phase1_closeout_v1/native/independent_replay.json)、[新环境独立重检](../experiments/results/phase1_closeout_v1/rebuilt/independent_replay.json)。
+
+这次关闭了EAM对照证据、现有文档同步、检查入口一致性和本机环境重建缺口。仍保留的边界是跨机器/远程CI验证、输入快照不监视并发修改，以及未作为本轮范围扩展的Gantt专测、Phase 2A公开库/公开动态基线。下一阶段回到具体研究假设和实验闭环，遇到新反例再针对性加固。
+
+### 本地与CI共用入口
+
+```powershell
+$Python = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.exe' } else { '.\.conda-env\python.exe' }
+& $Python -c "import sys; print(sys.executable)"
+& $Python scripts/check_experiments.py
+& $Python scripts/check_experiments.py --heavy
+```
+
+默认执行001–004、012、014–017。`--heavy`再执行005（启发式批量）、009（单线程/seed42/每例3秒/一次）、010（含EAM、全部原有算法和seed）、011、013；报告读取本批新结果。`--heavy --max-files 1`可验收明确的小子集，其结果不能充当完整30实例矩阵。输出默认新建在`experiments/runs/`，也可用`--output-dir`指定尚不存在的路径；保留`checks.json`及每个入口的日志，任一子进程失败即停止。
+
+`scripts/run_checks.ps1`调用同一实验入口再运行完整pytest；加`-Heavy`启用完整矩阵。CI常规任务运行轻量入口和完整测试，手动`full_benchmarks`可增加重型任务，并保存实验产物。配置已更新，不代表本轮实际获得了远程CI成功记录。
+
+### 固定版本环境
+
+在仓库根目录为新环境执行；若默认前缀已经存在，选择另一个空前缀：
+
+```powershell
+$ReproEnv = Join-Path (Get-Location) '.conda-env'
+conda env create --prefix $ReproEnv --file environment-phase1-repro.yml
+$env:FJSP_CONDA_ENV = $ReproEnv
+$Python = Join-Path $ReproEnv 'python.exe'
+& $Python -c "import sys; print(sys.executable)"
+& $Python -m pip check
+& $Python scripts/check_experiments.py --heavy
+```
+
+该清单固定Python 3.11.15，并通过`requirements/phase1-py311.constraints.txt`约束核心、dev和research的76项传递依赖版本，包括OR-Tools 9.15.6755。原`environment.yml`仍是滚动开发安装方式。此处约束是Windows x64下核对的发行版本，不包含所有Conda构建号、轮子哈希或跨平台解析锁；不能保证不同系统的底层二进制相同。环境文件本身也不包含API密钥。
+
 ## 2026-10-27 加固方案与执行记录
 
 用户已授权依据本轮评估加固并重新评估；沿用本页记录，不新增进度 Markdown。
