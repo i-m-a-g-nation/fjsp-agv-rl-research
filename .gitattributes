@@ -1,3 +1,10 @@
+# Stable source bytes on Windows and Linux. Three current core sources were
+# archived with CRLF; retain that spelling rather than rewriting evidence hashes.
+*.py text eol=lf
+src/data/instance.py text eol=crlf
+src/scheduling/encoding.py text eol=crlf
+src/scheduling/feasibility.py text eol=crlf
+
 # Preserve exact evidence bytes so Git newline conversion cannot break hashes.
 experiments/protocols/phase2a_v1.json -text
 experiments/requests/graduation_reference_v1.json -text

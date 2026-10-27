@@ -1,5 +1,11 @@
 # Phase 1 可复现性清单
 
+## 2026-10-27 首次远程CI与检出身份修复
+
+在用户明确授权公开当前分支后建立[草稿PR #1](https://github.com/i-m-a-g-nation/fjsp-agv-rl-research/pull/1)，不合并main。[首次Linux运行](https://github.com/i-m-a-g-nation/fjsp-agv-rl-research/actions/runs/40474551395)的依赖安装与共享实验入口通过，完整测试为1669通过、18失败、19设置错误。源码绑定使检出换行差异暴露出来：当前025/026的`phase1_v2`参考将三个核心文件绑定为CRLF字节，而Git中为LF，Linux默认检出后哈希不符。
+
+`.gitattributes`现将Python源码默认固定为LF，并将`src/data/instance.py`、`src/scheduling/encoding.py`、`src/scheduling/feasibility.py`明确固定为CRLF，以保留已有参考绑定。历史实验档案继续使用`-text`，不改写其哈希、不忽略来源检查。新增测试真实执行Git暂存与重新检出，分别覆盖`core.autocrlf=false/true`；修复前两个测试均失败，修复后连同Phase 1证据、穷举和入口回归共41项通过。修复后的远程结果以PR对应提交的Checks为准；下文各轮本地验收数字是历史记录。
+
 ## 2026-10-27 评审后收口计划
 
 用户在评审答复后要求继续，采用已说明的有限收口方案；当前基线为 `fd89472`，在现有工作树内执行。沿用本文记录，不新增计划Markdown。范围不包含新研究算法或Phase 2A公开库适配。

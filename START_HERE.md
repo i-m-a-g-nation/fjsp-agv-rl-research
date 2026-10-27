@@ -26,6 +26,8 @@ Phase 1 加固后，025/026参考实验以 `phase1_v2` 新目录重新运行；3
 
 本轮评审收口补齐EAM的30实例对照与质量报告，本地和CI共用验收入口；同机新Conda环境按76项依赖版本重建，两个环境各763份计划通过静态层重检。729份非CP计划完全相同；限时CP有4条状态或目标值不同，均单独通过合法性与诊断一致性检查。运行方法和完整边界见[Phase 1验收记录](docs/reproducibility_phase1.md)。这次工作补齐基础交付，没有新增研究算法效果。
 
+用户授权公开分支后，已建立[草稿 PR #1](https://github.com/i-m-a-g-nation/fjsp-agv-rl-research/pull/1)，尚未合并。首次Linux CI通过实验入口，但完整测试暴露了换行转换导致的参考源码哈希不匹配；已增加明确的Git检出换行规则及Windows/Linux默认设置下的真实检出回归测试。远程验收以PR中对应提交的Checks为准，不能用本地通过代替；细节见[复现说明](docs/reproducibility_phase1.md)。
+
 ## 先把模型配在哪里
 
 在**当前打开的这份工作树**根目录编辑 `.env`，把密钥填入 `OPENAI_API_KEY=`。其他配置与检查统一看[模型接口说明](docs/model_interface.md)和[模板](.env.example)。当前两个控制器模式均离线运行，不需要 API。
