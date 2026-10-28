@@ -59,7 +59,7 @@ ceil/floor使用整数运算，不用浮点近似；先完整生成并保存输�
 
 先导使用n=3,m=2、p∈[1,4]、相同α/β、τ=100%、seed11/22/33及中点策略：12配对、24求解。每条还由既有独立枚举核对，要求双方OPTIMAL并与枚举一致、G1检查通过。W≤6、每机可行维护开始数≤6，最多36个维护组合；既有全局排列/分配/cut枚举每组合264状态，至多9504，低于200000预算。先导预算90秒，失败不自动加时；须修复或改版后再冻结主实验。
 
-主实验每调用CP-SAT1秒、单线程、solver seed42、不重复计时，共480求解秒的请求上限之和。整个新批次累计主动时间上限600秒，包含建模/检查/写盘/报告和监督开销，预算0模型调用/0token；等待人审不计主动时间。600秒符合当前BudgetLimits硬上限，但**当前单请求路线尚不支持该批量执行**，必须先实现有界批次后端，不能把480次调用塞进旧已完成会话。
+主实验每调用CP-SAT1秒、单线程、solver seed42、不重复计时，共480求解秒的请求上限之和。整个新批次累计主动时间上限600秒，包含建模/检查/写盘/报告和监督开销，预算0模型调用/0token；等待人审不计主动时间。600秒符合当前BudgetLimits硬上限。旧单请求路线不支持该批量执行；后续实现的独立有界后端见第11节，不能把480次调用塞进旧已完成会话。
 
 先导与主批次使用两个新的持久会话，各自三审和预算（90/600秒），计划总主动上限690秒。先导通过不自动批准或启动主批次；预算不互相退款或借用。这里给的是设计上限，当前没有执行或批准这两个新批次。
 
@@ -93,7 +93,7 @@ G3A只做可行域/参考比较。它的数据与结果可用于开发理解，�
 
 后续实施顺序：G3A生成器与去重/预算测试→先导独立枚举验收→有界批次/完整产物和三审→主参考对照；另线R1无训练环境→R2掩码规则基线→R3短训练试验→R4独立算法比较。最终算法以用户RL偏好推进设计，同时继续核对完整任务书，不把偏好写成原题强制要求。
 
-历史进度更新：用户随后推进[R1无训练环境](graduation_rl_environment_validation.md)，并继续完成有界神经试训及候选比较，最新状态见[START_HERE](../START_HERE.md)。这些不代表正式G3A网格已经执行。原JSON草案的execution_supported=false仍有效；下面的开发入口使用独立、固定的先导协议。
+历史进度更新：用户随后推进[R1无训练环境](graduation_rl_environment_validation.md)，并继续完成有界神经试训及候选比较，最新状态见[START_HERE](../START_HERE.md)。这些不代表正式G3A网格已经执行。原JSON草案的execution_supported=false记录当时状态，保留历史字节；正式主比较材料及后端见第10/11节，下面的开发入口使用独立、固定的先导协议。
 
 ## 9. 先导开发验证（2026-10-28）
 
@@ -132,3 +132,28 @@ $scopePython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.
 ```
 
 本入口只生成scope材料，不运行CP-SAT、模型API、RL或最终测试，不提供主实验执行后端。实际会话保留在原本地新目录，归档用于只读审阅。根据本协议“范围→协议/输入证据→实际批次→结论三审”，scope批准只允许进入evidence；旧G2小例及先导的批准均不能代替这一批材料的审核。
+
+## 11. 主比较后端与evidence材料（2026-10-29）
+
+用户已明确批准第10节的完整scope哈希，仅进入evidence审核。`exp_030_graduation_main.py`现支持准备/只读复检evidence、查看原账本状态、有批准后执行、只读复检结果。所有动作继续使用原始`budget.sqlite`；只读归档不能替换账本，也不授权执行。scope绑定的8份源码、原模型、求解器、检查器、奖励与训练器均未修改。
+
+执行时先保存480条完整计划行，每对fixed后joint，使用原CP-SAT配置。父进程和工作进程各自核对同一份人审批准、输入、27份来源及Python/OR-Tools运行环境。每条保存完整生产和维护计划，父进程重读G1合法性、延期与solver诊断后生成原始CSV、主比较表和敏感性表；只读复检可以重新生成这些表，不运行求解器。限时逆序、零延期分母、失败/未运行行及非独立工作负载按第6节披露。`COMPLETED`仅表示所有请求已记账，仍可能含UNKNOWN等无有效计划结果；不代表所有配对都有可用指标。
+
+最终相关回归229项通过。受原进程监督器管理的DEVTEST另跑4次小例求解，固定/联合延期为4/0和6/0；独立标准库计算核对计划并穷举机器分配、任务顺序、维护时刻和前后切点，最优值一致。真实CLI在未获evidence批准时拒绝运行，未创建输出，也未改变scope、control、evidence或账本字节。测试中的模拟批准明确标为开发夹具，不写入真实会话。
+
+**最终整批后端独立审查未完成**：审查代理触达账户用量限制。已有模块测试、主进程复核及反例修复，不能将其等同于整批独立审查通过。[限制记录](../experiments/results/exp_030_graduation_main_evidence_v1/review_limitations.json)随审核材料保存。远程完整回归以草稿PR对应提交的Checks为准，不用229项局部测试代替全套验收。
+
+本次[evidence中文摘要](../experiments/results/exp_030_graduation_main_evidence_v1/materials/evidence_summary.txt)及[完整请求](../experiments/results/exp_030_graduation_main_evidence_v1/materials/evidence_review.json)绑定哈希`600826efe8d5ad4d4497a3e0f3103145f9e8970a79c19f346f95750caaea8acd`。原600秒累计账本已计约10.5秒、余589.5秒，包含scope/evidence准备及各次保守预扣5秒的收尾；精确浮点数见[预算收据](../experiments/results/exp_030_graduation_main_evidence_v1/materials/budget_snapshot.json)。审批等待不计时。正式网格0次求解，evidence/conclusion均未批准，research_status仍为not_achieved。
+
+日常只读入口如下（先设置项目专用环境并核对解释器）：
+
+```powershell
+$mainPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.exe' } else { '.\.conda-env\python.exe' }
+& $mainPython -c "import sys; print(sys.executable)"
+& $mainPython experiments/exp_030_graduation_main.py status --review-dir experiments/runs/g3_main_review_17bc1aa7
+& $mainPython experiments/exp_030_graduation_main.py recheck-evidence --evidence-dir experiments/results/exp_030_graduation_main_evidence_v1/materials
+```
+
+实际批准必须绑定原本地packet路径和完整evidence哈希；运行命令为`run --review-dir <实际控制目录> --evidence-dir <已审核原包> --output-dir <新目录>`，没有批准时拒绝。来源/输入/运行环境改变需要新evidence，不能自行补写批准或沿用旧哈希。预算耗尽、进程失败或控制状态改变均不自动重跑、续跑或加时。`exp_029 --recheck`只适用于最初冻结的双段账本；开始evidence后请用`exp_030`检查累计历史。
+
+进程树对工作进程实施硬超时；主进程检查和I/O采用合作式截止检查，每次最终结算/写盘预付5秒且限定在该时段内。阻塞I/O或失败清理可能晚返回，但不能保留迟到成功状态；不承诺强制中断任意文件系统调用。来源哈希是内容身份，记录的主机信息与历史人工决定仍依赖真实回执来源，不能靠哈希自行证明历史事实。

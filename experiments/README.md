@@ -629,6 +629,10 @@ Runs 12 paired tiny instances and 24 CP-SAT solves checked by enumeration, with 
 
 `exp_029_graduation_main_scope.py` prepares or rechecks the complete240-pair/480-request formal-scope materials without running a solver. Read the [scope guide and review boundaries](../docs/graduation_g3_protocol_draft.md#10-主比较范围材料2026-10-29) before preparing a new folder.
 
+## `exp_030_graduation_main.py`
+
+Prepares/rechecks content-bound evidence, inspects the original cumulative budget, or executes the frozen main comparison only after its actual evidence approval. The supervised worker preserves all480 planned rows, including failures and missing requests, and independently checks saved production/maintenance plans. [Usage and review limitation](../docs/graduation_g3_protocol_draft.md#11-主比较后端与evidence材料2026-10-29). The published evidence packet grants no execution approval.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.

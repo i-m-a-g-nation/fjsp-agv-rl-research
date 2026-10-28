@@ -1,0 +1,102 @@
+FFFF                                                                     [100%]
+================================== FAILURES ===================================
+_______________ test_worker_self_deadline_is_budget_exhaustion ________________
+
+unit_context = {'backend_source_hashes': {'test': 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'}, 'cases': [{'ca..._ONLY', 'stage': 'evidence'}, 'evidence_hash': 'dd1b3a737c738b33880d5d64993af449cc07a4f1ac1bf0abf0061926478737e5', ...}
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-404/test_worker_self_deadline_is_b0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001CF4D79A750>
+
+    def test_worker_self_deadline_is_budget_exhaustion(unit_context,tmp_path,monkeypatch):
+        monkeypatch.setattr(backend,'supervised_json_process',lambda *a,**k:{'status':'BUDGET_EXHAUSTED'})
+        result=backend.run_main(tmp_path/'control',tmp_path/'evidence',tmp_path/'out')
+>       assert result['status']=='BUDGET_EXHAUSTED'
+E       AssertionError: assert 'FAILED' == 'BUDGET_EXHAUSTED'
+E         
+E         - BUDGET_EXHAUSTED
+E         + FAILED
+
+tests\test_graduation_main_backend.py:101: AssertionError
+______________ test_resigned_csv_cannot_contradict_checked_rows _______________
+
+unit_context = {'backend_source_hashes': {'test': 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'}, 'cases': [{'ca..._ONLY', 'stage': 'evidence'}, 'evidence_hash': 'dd1b3a737c738b33880d5d64993af449cc07a4f1ac1bf0abf0061926478737e5', ...}
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-404/test_resigned_csv_cannot_contr0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001CF4D86A890>
+
+    def test_resigned_csv_cannot_contradict_checked_rows(unit_context,tmp_path,monkeypatch):
+        monkeypatch.setattr(backend,'supervised_json_process',lambda *a,**k:{'status':'WORKER_FINISHED','completed_rows':480})
+        folder=tmp_path/'out'
+        backend.run_main(tmp_path/'control',tmp_path/'evidence',folder)
+        (folder/'raw.csv').write_text('forged performance table\n',encoding='utf-8')
+        manifest=json.loads((folder/'manifest.json').read_text(encoding='utf-8'))
+        manifest['artifacts']['raw.csv']=backend._sha(folder/'raw.csv')
+        (folder/'manifest.json').write_bytes(encoded(manifest))
+>       with pytest.raises(ValueError):
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests\test_graduation_main_backend.py:112: Failed
+______ test_completed_output_carries_bound_scope_and_evidence_decisions _______
+
+unit_context = {'backend_source_hashes': {'test': 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'}, 'cases': [{'ca..._ONLY', 'stage': 'evidence'}, 'evidence_hash': 'dd1b3a737c738b33880d5d64993af449cc07a4f1ac1bf0abf0061926478737e5', ...}
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-404/test_completed_output_carries_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001CF4DA09D90>
+
+    def test_completed_output_carries_bound_scope_and_evidence_decisions(unit_context,tmp_path,monkeypatch):
+        monkeypatch.setattr(backend,'supervised_json_process',lambda *a,**k:{'status':'WORKER_FINISHED','completed_rows':480})
+        folder=tmp_path/'out'
+        backend.run_main(tmp_path/'control',tmp_path/'evidence',folder)
+>       approval=json.loads((folder/'authorization.json').read_text(encoding='utf-8'))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_graduation_main_backend.py:120: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+D:\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\pathlib.py:1058: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-404/test_completed_output_carries_0/out/authorization.json')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\25494\\AppData\\Local\\Temp\\pytest-of-25494\\pytest-404\\test_completed_output_carries_0\\out\\authorization.json'
+
+D:\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\pathlib.py:1044: FileNotFoundError
+________________ test_altered_state_scope_cannot_rebind_a_run _________________
+
+unit_context = {'backend_source_hashes': {'test': 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'}, 'cases': [{'ca..._ONLY', 'stage': 'evidence'}, 'evidence_hash': 'dd1b3a737c738b33880d5d64993af449cc07a4f1ac1bf0abf0061926478737e5', ...}
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-404/test_altered_state_scope_canno0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001CF4DACFF90>
+
+    def test_altered_state_scope_cannot_rebind_a_run(unit_context,tmp_path,monkeypatch):
+        def altered(script,payload,timeout):
+            path=Path(payload['output_dir'])/'state.json'
+            state=json.loads(path.read_text(encoding='utf-8'))
+            state['scope_hash']='0'*64
+            path.write_bytes(encoded(state))
+            return {'status':'WORKER_FINISHED','completed_rows':480,'input_set_sha256':digest(unit_context['cases'])}
+        monkeypatch.setattr(backend,'supervised_json_process',altered)
+        folder=tmp_path/'out'
+        assert backend.run_main(tmp_path/'control',tmp_path/'evidence',folder)['status']=='FAILED'
+        state=json.loads((folder/'state.json').read_text(encoding='utf-8'))
+>       assert state['scope_hash']==unit_context['scope_hash']
+E       AssertionError: assert '000000000000...0000000000000' == 'd6cc13815d9b...57b15a68a5ec7'
+E         
+E         - d6cc13815d9b0e1a6c1d86301ef5cd1e6c160f54008f29ab08f57b15a68a5ec7
+E         + 0000000000000000000000000000000000000000000000000000000000000000
+
+tests\test_graduation_main_backend.py:136: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_graduation_main_backend.py::test_worker_self_deadline_is_budget_exhaustion
+FAILED tests/test_graduation_main_backend.py::test_resigned_csv_cannot_contradict_checked_rows
+FAILED tests/test_graduation_main_backend.py::test_completed_output_carries_bound_scope_and_evidence_decisions
+FAILED tests/test_graduation_main_backend.py::test_altered_state_scope_cannot_rebind_a_run
+4 failed, 5 deselected in 2.85s
