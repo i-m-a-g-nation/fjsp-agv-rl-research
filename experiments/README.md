@@ -621,6 +621,10 @@ These independent entry points validate lossless observation transport, run a bo
 
 Runs or inspects the bounded controller for registered research tasks. Use the [controller guide](../docs/research_controller_validation.md) for commands, budgets, evidence identity and stopping boundaries. The current registered capabilities are summarized only in [START_HERE.md](../START_HERE.md).
 
+## `exp_028_graduation_reference_pilot.py`
+
+Runs 12 paired tiny instances and 24 CP-SAT solves checked by enumeration, with a90-second execution deadline and zero API/network calls. See [pilot usage and its formal-review boundary](../docs/graduation_g3_protocol_draft.md#9-先导开发验证2026-10-28). The formal main grid remains a separate proposed protocol.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.

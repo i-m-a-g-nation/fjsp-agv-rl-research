@@ -12,6 +12,7 @@ This directory stores versioned evidence for static FJSP, dynamic scheduling, gr
 | Current source-bound training references | `exp_025_neural_policy_phase1_v2/`, `exp_026_validation_iteration_phase1_v2/` |
 | Controller candidate evidence | `exp_027_controlled_candidate_v1/`; [controller guide](../../docs/research_controller_validation.md) |
 | One registered rejection-feedback trial; both candidates rejected | [`exp_027_feedback_v1/summary.json`](exp_027_feedback_v1/summary.json); [verification](exp_027_feedback_v1/validation_record.json) |
+| Graduation reference pilot development validation; two complete repeats | [`exp_028_graduation_reference_pilot_v1/`](exp_028_graduation_reference_pilot_v1/); [protocol and limits](../../docs/graduation_g3_protocol_draft.md) |
 
 New static schedule CSVs have a sibling `.evidence.json` containing the original instance, complete plan, configuration, source hashes and installed versions. Recheck these with `experiments.artifacts.recheck_results_csv`; old metric-only CSVs cannot be certified as complete-plan evidence. Domain checks for maintenance and dynamic events remain separate. New runs belong under ignored `experiments/runs/`; promote a completed, verified batch to a new archive, never overwrite an old one.
 

@@ -1,0 +1,34 @@
+{
+  "active_seconds": [
+    3.375,
+    3.625
+  ],
+  "final_test_evaluated": false,
+  "formal_approval": false,
+  "fresh_reviewer_targeted_passed": 34,
+  "full_regression": "See the exact resulting PR commit CI; no new full local suite claimed.",
+  "independent_standard_library_plan_checks": 96,
+  "local_related_tests_passed": 89,
+  "main_grid_executed": false,
+  "native_runs": 2,
+  "oracle_checks_per_run": 48,
+  "per_run_outcomes": {
+    "base_workloads": 3,
+    "paired_requests": 12,
+    "strict_improvements": 10,
+    "ties": 2,
+    "unique_core_models": 12
+  },
+  "provenance_boundary": "Portable replay checks recorded schema/identities; exact current source bytes require explicit option. Hashes do not prove historic host identity.",
+  "repeat_inputs_objectives_identical": true,
+  "research_status": "not_achieved",
+  "review_fixes": [
+    "Late receipt I/O could leave COMPLETED",
+    "Re-signed metadata could contradict budgets, counts and provenance"
+  ],
+  "review_verdict": "No remaining scoped concrete code blocker after original probes were rechecked.",
+  "rl_training_run": false,
+  "runtime_boundary": "Worker has process-tree hard timeout; parent deadline is cooperative around replay/I/O. Late receipts reject completion; failure cleanup can finish later. Timing sample follows first full receipt persistence.",
+  "scope": "pilot_development_validation",
+  "validated_cp_solves_per_run": 24
+}

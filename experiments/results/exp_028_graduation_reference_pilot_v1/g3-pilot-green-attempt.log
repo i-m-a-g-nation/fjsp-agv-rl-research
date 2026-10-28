@@ -1,0 +1,68 @@
+..........EE.........EE.                                                 [100%]
+=================================== ERRORS ====================================
+___ ERROR at setup of test_native_complete_pilot_rechecks_every_saved_plan ____
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000001E5CA1DC050>, _basetemp=WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-373'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def completed(tmp_path_factory):
+        folder = tmp_path_factory.mktemp('reference-pilot')/'run'
+        result = pilot.run_pilot(folder)
+>       assert result['status'] == 'COMPLETED'
+E       AssertionError: assert 'FAILED' == 'COMPLETED'
+E         
+E         - COMPLETED
+E         + FAILED
+
+tests\test_reference_pilot.py:16: AssertionError
+__________ ERROR at setup of test_existing_directory_never_restarts ___________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000001E5CA1DC050>, _basetemp=WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-373'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def completed(tmp_path_factory):
+        folder = tmp_path_factory.mktemp('reference-pilot')/'run'
+        result = pilot.run_pilot(folder)
+>       assert result['status'] == 'COMPLETED'
+E       AssertionError: assert 'FAILED' == 'COMPLETED'
+E         
+E         - COMPLETED
+E         + FAILED
+
+tests\test_reference_pilot.py:16: AssertionError
+______________ ERROR at setup of test_changed_input_is_rejected _______________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000001E5CA1DC050>, _basetemp=WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-373'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def completed(tmp_path_factory):
+        folder = tmp_path_factory.mktemp('reference-pilot')/'run'
+        result = pilot.run_pilot(folder)
+>       assert result['status'] == 'COMPLETED'
+E       AssertionError: assert 'FAILED' == 'COMPLETED'
+E         
+E         - COMPLETED
+E         + FAILED
+
+tests\test_reference_pilot.py:16: AssertionError
+_______ ERROR at setup of test_forged_optimum_rejected_by_fresh_oracle ________
+
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000001E5CA1DC050>, _basetemp=WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-373'), _retention_count=3, _retention_policy='all')
+
+    @pytest.fixture(scope='module')
+    def completed(tmp_path_factory):
+        folder = tmp_path_factory.mktemp('reference-pilot')/'run'
+        result = pilot.run_pilot(folder)
+>       assert result['status'] == 'COMPLETED'
+E       AssertionError: assert 'FAILED' == 'COMPLETED'
+E         
+E         - COMPLETED
+E         + FAILED
+
+tests\test_reference_pilot.py:16: AssertionError
+=========================== short test summary info ===========================
+ERROR tests/test_reference_pilot.py::test_native_complete_pilot_rechecks_every_saved_plan
+ERROR tests/test_reference_pilot.py::test_existing_directory_never_restarts
+ERROR tests/test_reference_pilot.py::test_changed_input_is_rejected - Asserti...
+ERROR tests/test_reference_pilot.py::test_forged_optimum_rejected_by_fresh_oracle
+20 passed, 4 errors in 5.70s

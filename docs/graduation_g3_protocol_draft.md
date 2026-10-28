@@ -1,6 +1,6 @@
 # 毕设 G3A：固定/联合维护参考对照协议草案 v0.1
 
-状态：**草案，未冻结、未执行**。用户“继续”承接G3协议设计；随后说明“暂不清楚，但最好加强化学习”。因此把RL列为优先研究方向，完整任务书要求仍未核实。本页的网格、生成规则与预算是本轮设计建议，不是用户已经确认的实验参数。
+状态：**正式协议仍为草案，主网格未冻结、未执行；先导开发验证已实现并运行**，见文末2026-10-28记录。用户“继续”承接G3协议设计；随后说明“暂不清楚，但最好加强化学习”。因此把RL列为优先研究方向，完整任务书要求仍未核实。本页正式网格、生成规则与预算仍是设计建议，不是已生成的人审批准。
 
 机器可读提案见[同名JSON](graduation_g3_protocol_draft.json)，它不是现有018/019的可执行协议，`execution_supported=false`，不能直接投入工作流。原已完成三审会话的批准不授予本协议运行或RL训练权限。
 
@@ -93,4 +93,23 @@ G3A只做可行域/参考比较。它的数据与结果可用于开发理解，�
 
 后续实施顺序：G3A生成器与去重/预算测试→先导独立枚举验收→有界批次/完整产物和三审→主参考对照；另线R1无训练环境→R2掩码规则基线→R3短训练试验→R4独立算法比较。最终算法以用户RL偏好推进设计，同时继续核对完整任务书，不把偏好写成原题强制要求。
 
-进度更新：用户随后已继续推进[R1无训练环境](graduation_rl_environment_validation.md)，该阶段已实现并验证；这不代表本G3A批次后端、正式网格或RL训练已执行。JSON草案的execution_supported=false仍有效。
+历史进度更新：用户随后推进[R1无训练环境](graduation_rl_environment_validation.md)，并继续完成有界神经试训及候选比较，最新状态见[START_HERE](../START_HERE.md)。这些不代表正式G3A网格已经执行。原JSON草案的execution_supported=false仍有效；下面的开发入口使用独立、固定的先导协议。
+
+## 9. 先导开发验证（2026-10-28）
+
+新增`exp_028_graduation_reference_pilot.py`，只执行本草案12对先导配置。生成器以独立RNG流保存p/u/四个v、完整实例及三层身份；所有输入与24条计划行先落盘，再按fixed→joint执行。原G1、CP-SAT及独立枚举保持。每条均须OPTIMAL、领域合法并与枚举目标一致；主进程还会重读计划并重新枚举核对。失败保留完整分母，不覆盖或续跑已有目录。
+
+原生两次新目录复跑分别3.375秒和3.625秒，24/24通过，输入和最优目标一致。共有3组基础随机工作负载、12个不同物理模型；10对联合维护总延期更低，2对相同。独立标准库脚本重算两次运行共96份生产/维护计划，工序唯一性、资源互斥、完整窗口、固定开始、总延期及最优诊断均一致。该结果不证明RL优势、普遍性能或课题达标；这些实例已暴露为开发数据。
+
+运行及只读复检（先按项目规则选择专用环境、核对解释器）：
+
+```powershell
+$pilotPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.exe' } else { '.\.conda-env\python.exe' }
+& $pilotPython -c "import sys; print(sys.executable)"
+& $pilotPython experiments/exp_028_graduation_reference_pilot.py --output-dir experiments/runs/my-g3a-pilot
+& $pilotPython experiments/exp_028_graduation_reference_pilot.py --recheck experiments/runs/my-g3a-pilot
+```
+
+预算最多90秒，覆盖输入准备、工作进程执行及主进程验收。CP-SAT/枚举工作进程受进程树硬超时管理；主进程在重放、文件操作及最终收据前后检查真实截止时间。阻塞文件I/O或失败收尾可能在期限后返回，但迟到结果不能保留COMPLETED。复检核对预算、分母、协议与来源记录结构；默认读取历史证据而不要求源码字节等于当前检出。API的`require_current_sources=True`才同时检查当前源码；记录的主机身份本身不是哈希能证明的事实。
+
+这是开发者根据原草案选定的先导实现，`formal_approval=false`、`research_status=not_achieved`。没有生成三审批准，没有启动480次主网格或接入新RL训练。正式会话仍须遵守原范围、证据和结论审核。[两次运行及独立核对归档](../experiments/results/exp_028_graduation_reference_pilot_v1/)

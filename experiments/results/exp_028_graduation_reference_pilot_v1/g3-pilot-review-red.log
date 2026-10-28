@@ -1,0 +1,99 @@
+FFF.F.                                                                   [100%]
+================================== FAILURES ===================================
+_____ test_rehashed_summary_cannot_change_execution_contract[over_budget] _____
+
+completed = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-375/reference-pilot0/run')
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-375/test_rehashed_summary_cannot_c0')
+damage = 'over_budget'
+
+    @pytest.mark.parametrize('damage', ['over_budget','negative_time','wrong_count','false_approval'])
+    def test_rehashed_summary_cannot_change_execution_contract(completed, tmp_path, damage):
+        import shutil
+        folder = tmp_path/damage
+        shutil.copytree(completed, folder)
+        summary = json.loads((folder/'summary.json').read_text())
+        field, value = {'over_budget':('active_seconds',91), 'negative_time':('active_seconds',-1),
+            'wrong_count':('finished_rows',23), 'false_approval':('formal_approval',True)}[damage]
+        summary[field] = value
+        (folder/'summary.json').write_bytes(pilot.encoded(summary))
+        manifest = json.loads((folder/'manifest.json').read_text())
+        manifest['artifacts']['summary.json'] = pilot.file_sha(folder/'summary.json')
+        (folder/'manifest.json').write_bytes(pilot.encoded(manifest))
+>       with pytest.raises(ValueError):
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests\test_reference_pilot.py:125: Failed
+____ test_rehashed_summary_cannot_change_execution_contract[negative_time] ____
+
+completed = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-375/reference-pilot0/run')
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-375/test_rehashed_summary_cannot_c1')
+damage = 'negative_time'
+
+    @pytest.mark.parametrize('damage', ['over_budget','negative_time','wrong_count','false_approval'])
+    def test_rehashed_summary_cannot_change_execution_contract(completed, tmp_path, damage):
+        import shutil
+        folder = tmp_path/damage
+        shutil.copytree(completed, folder)
+        summary = json.loads((folder/'summary.json').read_text())
+        field, value = {'over_budget':('active_seconds',91), 'negative_time':('active_seconds',-1),
+            'wrong_count':('finished_rows',23), 'false_approval':('formal_approval',True)}[damage]
+        summary[field] = value
+        (folder/'summary.json').write_bytes(pilot.encoded(summary))
+        manifest = json.loads((folder/'manifest.json').read_text())
+        manifest['artifacts']['summary.json'] = pilot.file_sha(folder/'summary.json')
+        (folder/'manifest.json').write_bytes(pilot.encoded(manifest))
+>       with pytest.raises(ValueError):
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests\test_reference_pilot.py:125: Failed
+_____ test_rehashed_summary_cannot_change_execution_contract[wrong_count] _____
+
+completed = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-375/reference-pilot0/run')
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-375/test_rehashed_summary_cannot_c2')
+damage = 'wrong_count'
+
+    @pytest.mark.parametrize('damage', ['over_budget','negative_time','wrong_count','false_approval'])
+    def test_rehashed_summary_cannot_change_execution_contract(completed, tmp_path, damage):
+        import shutil
+        folder = tmp_path/damage
+        shutil.copytree(completed, folder)
+        summary = json.loads((folder/'summary.json').read_text())
+        field, value = {'over_budget':('active_seconds',91), 'negative_time':('active_seconds',-1),
+            'wrong_count':('finished_rows',23), 'false_approval':('formal_approval',True)}[damage]
+        summary[field] = value
+        (folder/'summary.json').write_bytes(pilot.encoded(summary))
+        manifest = json.loads((folder/'manifest.json').read_text())
+        manifest['artifacts']['summary.json'] = pilot.file_sha(folder/'summary.json')
+        (folder/'manifest.json').write_bytes(pilot.encoded(manifest))
+>       with pytest.raises(ValueError):
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests\test_reference_pilot.py:125: Failed
+___________ test_final_receipt_io_cannot_authorize_expired_success ____________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-375/test_final_receipt_io_cannot_a0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000264C97BBFD0>
+
+    def test_final_receipt_io_cannot_authorize_expired_success(tmp_path, monkeypatch):
+        original_write, original_clock = pilot._write, pilot.time.monotonic
+        delay = [0]
+        def slow_summary(path, value):
+            original_write(path, value)
+            if Path(path).name == 'summary.json':
+                delay[0] = 100
+        monkeypatch.setattr(pilot, '_write', slow_summary)
+        monkeypatch.setattr(pilot.time, 'monotonic', lambda:original_clock()+delay[0])
+        result = pilot.run_pilot(tmp_path/'slow-finalize')
+>       assert result['status'] == 'BUDGET_EXHAUSTED'
+E       AssertionError: assert 'COMPLETED' == 'BUDGET_EXHAUSTED'
+E         
+E         - BUDGET_EXHAUSTED
+E         + COMPLETED
+
+tests\test_reference_pilot.py:139: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_reference_pilot.py::test_rehashed_summary_cannot_change_execution_contract[over_budget]
+FAILED tests/test_reference_pilot.py::test_rehashed_summary_cannot_change_execution_contract[negative_time]
+FAILED tests/test_reference_pilot.py::test_rehashed_summary_cannot_change_execution_contract[wrong_count]
+FAILED tests/test_reference_pilot.py::test_final_receipt_io_cannot_authorize_expired_success
+4 failed, 2 passed, 14 deselected in 10.35s

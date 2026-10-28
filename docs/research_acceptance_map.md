@@ -2,6 +2,8 @@
 
 依据是用户提供的大创申请书、毕设课题截图，以及已冻结的 `src/ai_workflow/contracts.py` 要求。完整毕设任务书尚未提供；用户已确认首版机器/维护假设，先批准 G1 数据、延期和检查器，再以“开始”放行 G2 小规模参考求解及枚举核对；这些是 Phase2A 的特定例外，不据此扩大至大创算法或正式研究验收。
 
+当前进度统一看[START_HERE](../START_HERE.md)；下表区分已实现的工程能力与尚未完成的正式课题验收。
+
 ## 当前共享底座
 
 | 能力 | 代码或入口 | 已有证据 | 尚不能推出的结论 |
@@ -23,7 +25,7 @@
 | AGV 资源协同 | 未实现 | 资源容量、任务分配及与机器衔接的可行性实验 |
 | 缓冲区约束 | 未实现 | 明确容量/阻塞假设、检查器与对照实验 |
 | 动态生产—物流仿真 | 仅有调度事件最小底座 | 真实协同状态推进、事件处理和统一结果验证 |
-| 强化学习训练与评价 | 未实现 | 经阶段确认的 MDP、训练、独立测试与固定种子 |
+| 强化学习训练与评价 | 已有毕设简化模型的有界REINFORCE试训；生产—物流RL未实现 | 面向大创协同模型的 MDP、训练、独立测试与固定种子 |
 | 比较实验及计划书指标 | 当前只有 makespan 基线 | 依原文人工确定完工、延期、等待、重调度等指标组合，再做相同条件比较 |
 | 学术论文成果 | 未取得发表/录用证据 | 申请书原文预期“发表或录用一篇学术论文”；技术契约capability列表不是全部成果清单，完整验收版本仍待人工核对 |
 
@@ -51,6 +53,6 @@
 
 下一次科研决策是G3正式算例/预算/比较协议及最终算法要求；维护参考后端已接入受监督工作流，实际会话仍逐道人审。不能通过修改验收清单来消除尚未实现的能力。
 
-用户最新偏好为加入RL，但完整任务书算法要求仍不清楚；[G3A参考协议](graduation_g3_protocol_draft.md)仍未冻结/执行，[RL方案](graduation_rl_design_draft.md)的[R1无训练构造环境](graduation_rl_environment_validation.md)及[R2规则基线](graduation_r2_validation.md)已实现。R2开发验证24条、两次新目录复跑一致，尚无已训练策略或算法优势证据，不计作G3正式先导。它们不替代G1检查，也不直接满足大创生产—物流课题；[大创最小范围草案](innovation_minimum_scope_draft.md)仅为实施前建议。
+用户偏好为加入RL，但完整任务书算法要求仍不清楚；[G3A参考协议](graduation_g3_protocol_draft.md)仍未冻结/执行，[RL方案](graduation_rl_design_draft.md)的[R1无训练构造环境](graduation_rl_environment_validation.md)及[R2规则基线](graduation_r2_validation.md)已实现。R2阶段开发验证24条、两次新目录复跑一致；后续已有[NumPy REINFORCE有界试训](graduation_neural_policy_pilot.md)及[单候选验证对照](graduation_validation_iteration.md)。[共享评分候选及一次学习率反馈试验](research_controller_validation.md)也已执行，候选仍差于原none对照并被拒绝，尚无算法优势证据。已有短训不计作G3正式先导；PPO、独立最终测试和课题验收仍未完成。它们不替代G1检查，也不直接满足大创生产—物流课题；[大创最小范围草案](innovation_minimum_scope_draft.md)仅为实施前建议。
 
 已形成[Phase2A交付自检](phase2a_acceptance.md)、[毕设首版模型](graduation_model_draft.md)、[G1基础验证](graduation_g1_validation.md)和[G2参考求解](graduation_g2_validation.md)。G1/G2已分别获准并实现，不表示后续阶段自动放行。按申请书2026年7–11月仿真环境开发安排，目前物流、AGV、缓冲仍是阶段交付缺口。
