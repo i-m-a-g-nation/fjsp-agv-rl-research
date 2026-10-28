@@ -1,0 +1,15 @@
+Instance: 3 jobs x 3 machines, 7 ops
+
+  FIFO                       makespan= 14  feasible=PASS
+  SPT                        makespan= 13  feasible=PASS
+  EarliestAvailableMachine   makespan= 11  feasible=PASS
+  EarliestFinishTime         makespan= 13  feasible=PASS
+  Random(s=42)               makespan= 14  feasible=PASS
+  Random(s=123)              makespan= 14  feasible=PASS
+  Random(s=999)              makespan= 20  feasible=PASS
+
+CSV results written to: D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\experiments\runs\feedback_final_checks_20261028\exp_001_toy_instance.csv
+Best: EarliestAvailableMachine with makespan = 11
+
+All schedules passed feasibility check.
+Gantt chart saved to: D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research\experiments\runs\feedback_final_checks_20261028\exp_001_gantt_latest.png

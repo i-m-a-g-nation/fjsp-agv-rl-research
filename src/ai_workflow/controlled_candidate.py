@@ -19,7 +19,9 @@ from src.graduation.validation_diagnostics import _path_inside
 TEMPLATE = ROOT / 'src/graduation/candidate_templates/shared_scorer.py'
 KINDS = {'materialize_shared_scorer': 'controlled_candidate_materialization',
          'check_shared_scorer': 'controlled_candidate_check',
-         'compare_shared_scorer': 'controlled_candidate_comparison'}
+         'compare_shared_scorer': 'controlled_candidate_comparison',
+         'diagnose_rejected_candidate': 'rejected_candidate_diagnosis',
+         'compare_larger_step': 'controlled_candidate_step_comparison'}
 PROTECTED = {'src/graduation/rl_environment.py', 'src/graduation/feasibility.py',
     'src/graduation/metrics.py', 'src/graduation/neural_policy.py', 'src/graduation/policy_training.py',
     'src/graduation/solver.py', 'src/ai_workflow/contracts.py'}
@@ -34,8 +36,8 @@ def _write(path, value):
 def _context(batch):
     batch = Path(batch).resolve()
     spec = read_json(batch / 'spec.json')['identity']
-    if spec.get('profile') != 'shared_scorer_v1':
-        raise ValueError('Candidate requires the explicit shared_scorer_v1 profile')
+    if spec.get('profile') not in ('shared_scorer_v1', 'shared_scorer_feedback_v1'):
+        raise ValueError('Candidate requires an explicit registered candidate profile')
     hashes = spec['source_hashes']
     if not PROTECTED <= hashes.keys():
         raise ValueError('Missing protected source identity')
@@ -186,15 +188,15 @@ def check_candidate(batch, reference_archive=DEFAULT_REFERENCE, *, check_budget=
             'checks': checks, 'artifacts': _artifact_hashes(Path(batch).resolve(), sorted(folder.iterdir()))}
 
 
-def compare_candidate(batch, reference_archive=DEFAULT_REFERENCE):
+def compare_candidate(batch, reference_archive=DEFAULT_REFERENCE, *, trial='initial'):
     _completed_gate(batch)
     from src.ai_workflow.candidate_comparison import run_comparison
-    result = run_comparison(batch, reference_archive, load_candidate(batch))
+    result = run_comparison(batch, reference_archive, load_candidate(batch), trial=trial)
     _package(batch)
     return result
 
 
-def _completed_gate(batch):
+def _completed_gate(batch, check_budget=lambda: None):
     """The controller's completed task receipt, file and reference must agree."""
     batch = Path(batch).resolve()
     try:
@@ -208,7 +210,7 @@ def _completed_gate(batch):
         if sha(path.read_bytes()) != task['result_sha256']:
             raise ValueError('Candidate check receipt identity changed')
         receipt = read_json(path)
-        verify_candidate_result('check_shared_scorer', receipt, batch)
+        verify_candidate_result('check_shared_scorer', receipt, batch, check_budget=check_budget)
         inputs = read_json(batch / 'spec.json')['input_hashes']
         checks = receipt['checks']
         if (checks['reference_manifest_sha256'] != inputs['validation/manifest.json']
@@ -218,16 +220,22 @@ def _completed_gate(batch):
         raise ValueError('Candidate requires a complete bound check receipt') from exc
 
 
-def verify_candidate_result(task_id, result, batch):
+def verify_candidate_result(task_id, result, batch, *, check_budget=lambda: None):
+    check_budget()
     batch, _, _, _ = _package(batch)
     if (result.get('kind') != KINDS[task_id] or result.get('status') != 'COMPLETED'
             or result.get('research_status') != 'not_achieved'):
         raise ValueError('Invalid controlled candidate result')
+    if task_id == 'diagnose_rejected_candidate':
+        from src.ai_workflow.candidate_feedback import verify_diagnosis
+        verify_diagnosis(result, batch, check_budget=check_budget)
+        return
     artifacts = result.get('artifacts')
     if type(artifacts) is not dict or not 3 <= len(artifacts) <= 512:
         raise ValueError('Incomplete controlled candidate artifacts')
     for relative, expected in artifacts.items():
-        if not relative.startswith(('candidate/', 'candidate_run/')):
+        check_budget()
+        if not relative.startswith(('candidate/', 'candidate_run/', 'candidate_step_run/')):
             raise ValueError('Candidate artifact is outside owned outputs')
         if sha(_path_inside(batch, relative).read_bytes()) != expected:
             raise ValueError('Candidate artifact identity changed')
@@ -244,7 +252,9 @@ def verify_candidate_result(task_id, result, batch):
                 or check != read_json(batch / 'candidate/checks.json')
                 or check.get('template_sha256') != sha(TEMPLATE.read_bytes())):
             raise ValueError('Incomplete controlled candidate gate')
-    if task_id == 'compare_shared_scorer':
+    if task_id in ('compare_shared_scorer', 'compare_larger_step'):
+        if result.get('trial', 'initial') != ('initial' if task_id == 'compare_shared_scorer' else 'larger_step_v1'):
+            raise ValueError('Comparison receipt belongs to another trial')
         expected = {'training_runs': 4, 'training_steps': 1536, 'candidate_validation_plans': 16,
             'control_validation_plans': 16, 'rule_reference_plans': 48,
             'cp_reference_plans': 8, 'equivariance_states': 384}
@@ -260,6 +270,6 @@ def verify_candidate_result(task_id, result, batch):
             if (decision['status'] != 'DECIDED' or decision['selected_method'] != selected
                     or any(type(v) not in (int, float) or not math.isfinite(v) or v < 0 for v in means.values())):
                 raise ValueError('Inconsistent controlled comparison decision')
-        _completed_gate(batch)
+        _completed_gate(batch, check_budget)
         from src.ai_workflow.candidate_evidence import verify_comparison_evidence
-        verify_comparison_evidence(batch, result)
+        verify_comparison_evidence(batch, result, check_budget=check_budget)

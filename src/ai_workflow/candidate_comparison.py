@@ -1,6 +1,6 @@
 """One bounded, source-bound shared-scorer comparison on frozen native inputs.
 
-Only candidate_run/ is writable. Archived controls, rules and CP certificates
+Only the registered trial's output directory is writable. Archived controls, rules and CP certificates
 are replayed/rechecked evidence, never fresh training or optimization. A complete
 validation decision is a development artifact and cannot promote a default.
 """
@@ -40,6 +40,24 @@ EXPECTED_COUNTS = {'training_runs': 4, 'training_episodes': 256, 'training_steps
     'candidate_validation_rows': 16, 'control_validation_rows': 16,
     'rule_reference_rows': 48, 'cp_reference_rows': 8,
     'permutation_cases': 64, 'equivariance_state_comparisons': 384}
+
+
+def trial_layout(trial):
+    choices = {'initial': ('candidate_run', .01, 'controlled_candidate_comparison'),
+               'larger_step_v1': ('candidate_step_run', .1, 'controlled_candidate_step_comparison')}
+    _require(type(trial) is str and trial in choices, 'Unregistered candidate trial')
+    return choices[trial]
+
+
+def comparison_config(identity, trial='initial'):
+    _, rate, _ = trial_layout(trial)
+    return {'profile': METHOD, 'episodes': 64, 'validation_every': 16,
+        'modes': list(MODES), 'seeds': list(SEEDS), 'hidden_size': 16, 'parameter_count': 545,
+        'learning_rate': rate, 'max_grad_norm': 1., 'gamma': 1, 'return_baseline': 'none',
+        'reward': '-total_tardiness/100', 'max_training_steps': 1536, 'hyperparameter_search': False,
+        'selection': 'minimum_greedy_validation_mean_tardiness_earliest_tie',
+        'candidate_selection': 'strictly_lower_pooled_validation_mean_else_none',
+        'source_identity': identity, 'network_calls': 0, 'model_api_calls': 0}
 
 
 def _report_counts(denominators):
@@ -269,7 +287,7 @@ def _reference_rows(raw_results, validation, validation_rows, budget):
     return config, rules, cp
 
 
-def run_comparison(batch_dir, reference_archive, actor_class, *, check_budget=None):
+def run_comparison(batch_dir, reference_archive, actor_class, *, check_budget=None, trial='initial'):
     """Execute exactly four64-episode runs and complete checked native validation.
 
     Exceptions propagate to the supervising controller; progress and checkpoints
@@ -284,8 +302,14 @@ def run_comparison(batch_dir, reference_archive, actor_class, *, check_budget=No
         if check_budget is not None:
             check_budget()
 
+    prefix, rate, kind = trial_layout(trial)
     batch, archive = Path(batch_dir).resolve(), Path(reference_archive).resolve()
-    output = batch / 'candidate_run'
+    if trial != 'initial':
+        from src.ai_workflow.candidate_feedback import require_trial
+        require_trial(batch, budget)
+        _require(archive == Path(_decode((batch / 'spec.json').read_text(encoding='utf-8'))['identity']['reference_archive']).resolve(),
+                 'Feedback reference differs from the registered batch')
+    output = _path_inside(batch, prefix)
     _require(not output.is_relative_to(archive) and not archive.is_relative_to(output),
              'Candidate output must be outside the read-only reference archive')
     output.mkdir(parents=False, exist_ok=False)
@@ -304,13 +328,7 @@ def run_comparison(batch_dir, reference_archive, actor_class, *, check_budget=No
     reference_config, rule_rows, cp_rows = _reference_rows(raw_results, validation, validation_rows, budget)
     _require(_sha(_encoded(reference_config)) == manifest['config_sha256'],
              'Archived control configuration hash mismatch')
-    config = {'profile': METHOD, 'episodes': 64, 'validation_every': 16,
-        'modes': list(MODES), 'seeds': list(SEEDS), 'hidden_size': 16, 'parameter_count': 545,
-        'learning_rate': .01, 'max_grad_norm': 1., 'gamma': 1, 'return_baseline': 'none',
-        'reward': '-total_tardiness/100', 'max_training_steps': 1536, 'hyperparameter_search': False,
-        'selection': 'minimum_greedy_validation_mean_tardiness_earliest_tie',
-        'candidate_selection': 'strictly_lower_pooled_validation_mean_else_none',
-        'source_identity': identity, 'network_calls': 0, 'model_api_calls': 0}
+    config = comparison_config(identity, trial)
     config_hash = _sha(_encoded(config))
     _write(output / 'config.json', config)
     _write(output / 'inputs.json', {'training_base_identities': training_ids,
@@ -319,8 +337,8 @@ def run_comparison(batch_dir, reference_archive, actor_class, *, check_budget=No
     runs, candidate_rows, control_rows, permutations = [], [], [], []
     for mode, seed in sorted(EXPECTED_RUNS):
         budget()
-        relative = f'candidate_run/checkpoints/{mode}-seed{seed}'
-        log_relative = f'candidate_run/logs/{mode}-seed{seed}.jsonl'
+        relative = f'{prefix}/checkpoints/{mode}-seed{seed}'
+        log_relative = f'{prefix}/logs/{mode}-seed{seed}.jsonl'
         log_path = _path_inside(batch, log_relative)
         log_path.parent.mkdir(parents=True, exist_ok=True)
         interval = []
@@ -350,7 +368,8 @@ def run_comparison(batch_dir, reference_archive, actor_class, *, check_budget=No
             budget()
 
         trained = train_shared_policy(training, tuple(validation), mode=mode, seed=seed,
-            episodes=64, validation_every=16, actor_class=actor_class, check_budget=budget, on_progress=progress)
+            episodes=64, validation_every=16, learning_rate=rate,
+            actor_class=actor_class, check_budget=budget, on_progress=progress)
         _require(trained['episodes_completed'] == 64 and trained['training_steps'] == 384,
                  'Incomplete candidate training episode/step denominator')
         diagnostic = _training_diagnostics(trained, training, training_ids, budget)
@@ -441,7 +460,7 @@ def run_comparison(batch_dir, reference_archive, actor_class, *, check_budget=No
     _require(_sha((archive / 'manifest.json').read_bytes()) == manifest_hash,
              'Reference manifest changed during comparison')
     denominators, counts = counts, _report_counts(counts)
-    report = {'version': 1, 'kind': 'controlled_candidate_comparison', 'status': 'COMPLETED',
+    report = {'version': 1, 'kind': kind, 'trial': trial, 'status': 'COMPLETED',
         'research_status': 'not_achieved', 'network_calls': 0, 'model_api_calls': 0,
         'probe_evaluated': False, 'final_test_evaluated': False, 'production_default_changed': False,
         'training_performed': True, 'all_checks_passed': True, 'config': config,
@@ -462,6 +481,9 @@ def run_comparison(batch_dir, reference_archive, actor_class, *, check_budget=No
         'control_outcomes': [row['payload'] for row in control_rows], 'decisions': decisions,
         'counts': counts, 'training_logs': [run['logs'] for run in runs]}
     report['outcome_digest'] = _sha(_encoded(stable))
+    if trial != 'initial':
+        from src.ai_workflow.candidate_feedback import comparison_feedback
+        report['feedback'] = comparison_feedback(batch, report, check_budget=budget)
     budget()
     _write(output / 'results.json', report)
     artifacts = {}
@@ -472,6 +494,6 @@ def run_comparison(batch_dir, reference_archive, actor_class, *, check_budget=No
     _write(output / 'manifest.json', {'version': 1, 'status': 'COMPLETED',
         'kind': report['kind'], 'artifacts': artifacts, 'outcome_digest': report['outcome_digest'],
         'source_identity': identity, 'research_status': 'not_achieved'})
-    artifacts['candidate_run/manifest.json'] = _sha((output / 'manifest.json').read_bytes())
+    artifacts[prefix+'/manifest.json'] = _sha((output / 'manifest.json').read_bytes())
     budget()
     return {**report, 'artifacts': artifacts}

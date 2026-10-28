@@ -1,0 +1,14 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.15, pytest-9.0.3, pluggy-1.6.0
+rootdir: D:\UserData\.codex\worktrees\research-workflow-guards\fjsp-agv-rl-research
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.13.0, langsmith-0.14.12, cov-7.1.0
+collected 1762 items
+
+tests\test_ai_workflow.py .......                                        [  0%]
+tests\test_benchmark_batch.py ....                                       [  0%]
+tests\test_benchmark_metadata_audit.py ......                            [  0%]
+tests\test_candidate_comparison.py ..........................            [  2%]
+tests\test_candidate_feedback.py .............EEEEEEEE..EEEE             [  3%]
+tests\test_candidate_replay.py .............

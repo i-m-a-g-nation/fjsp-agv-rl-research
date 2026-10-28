@@ -1,0 +1,45 @@
+{
+  "artifact_bytes_unchanged": true,
+  "budget": {
+    "active_seconds": 87.32799999999952,
+    "active_seconds_charged": 87.32799999999952,
+    "active_seconds_reserved": 0,
+    "limits": {
+      "max_active_seconds": 120,
+      "max_output_tokens": 0,
+      "max_provider_calls": 0
+    },
+    "output_tokens_reserved": 0,
+    "provider_calls": 0
+  },
+  "feedback": {
+    "comparisons": {
+      "fixed": {
+        "change_from_previous": -6.875,
+        "new_candidate_mean": 24.125,
+        "none_mean": 10.25,
+        "previous_candidate_mean": 31.0,
+        "retained_development_candidate": false
+      },
+      "joint": {
+        "change_from_previous": -2.25,
+        "new_candidate_mean": 15.5,
+        "none_mean": 7.5,
+        "previous_candidate_mean": 17.75,
+        "retained_development_candidate": false
+      }
+    },
+    "diagnosis_report_sha256": "2677f811269fc5eb27785896abf90a1682d566e8e7ec009261570c4e498f991f",
+    "hypothesis_sha256": "803df7484e50b54bcc80a2e64c2084370dc86a4c2cc7e55fa455c41257d527ab",
+    "independent_generalization_claim": false,
+    "only_changed_factor": "learning_rate",
+    "previous_result_sha256": "7649e7f7eb90879138a7f7123418ddbde79f213fdeabcd9c342ff3f3a4ddedcb",
+    "same_initial_parameters": true,
+    "total_training_steps": 3072
+  },
+  "files": 249,
+  "state_and_budget_unchanged": true,
+  "status": "PASS",
+  "stop_reason": "feedback_round_complete",
+  "tasks": 7
+}

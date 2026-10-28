@@ -22,7 +22,7 @@ from src.graduation.rl_environment import EpisodeInvariantError, ParallelMainten
 
 def train_shared_policy(
     training_instances: tuple, validation_instances: tuple, *, mode: str, seed: int,
-    episodes: int = 64, validation_every: int = 16,
+    episodes: int = 64, validation_every: int = 16, learning_rate: float = .01,
     check_budget: Callable[[], None] | None = None,
     on_progress: Callable[[dict], None] | None = None, actor_class=None,
 ) -> dict:
@@ -30,6 +30,8 @@ def train_shared_policy(
     _integer(seed, 'seed', 0, 2**32-1)
     _integer(episodes, 'episodes', 1, 64)
     _integer(validation_every, 'validation_every', 1)
+    if type(learning_rate) is not float or not math.isfinite(learning_rate) or not 0 < learning_rate <= 1:
+        raise ValueError('learning_rate must be a finite float in (0, 1]')
     if type(mode) is not str or mode not in ('fixed', 'joint'):
         raise ValueError('Expected supported fixed/joint mode')
     _callback(on_progress, 'on_progress')
@@ -90,7 +92,7 @@ def train_shared_policy(
             seed=episode_seed, check_budget=budget)
         budget()  # A completed rollout cannot authorize an update after expiry.
         before = actor.state_dict()
-        update = actor.reinforce_update(completed.samples, learning_rate=.01, max_grad_norm=1.)
+        update = actor.reinforce_update(completed.samples, learning_rate=learning_rate, max_grad_norm=1.)
         after = actor.state_dict()
         changed = any(not np.array_equal(before[name], after[name]) for name in before)
         if type(update) is not dict or update.get('changed') is not changed:

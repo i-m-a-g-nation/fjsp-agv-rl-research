@@ -1,0 +1,155 @@
+{
+  "archive_kind": "portable_read_only_evidence_not_a_relocatable_resume_folder",
+  "budget": {
+    "active_seconds": 87.32799999999952,
+    "active_seconds_charged": 87.32799999999952,
+    "active_seconds_reserved": 0,
+    "limits": {
+      "max_active_seconds": 120,
+      "max_output_tokens": 0,
+      "max_provider_calls": 0
+    },
+    "output_tokens_reserved": 0,
+    "provider_calls": 0
+  },
+  "completed_tasks": 7,
+  "feedback": {
+    "comparisons": {
+      "fixed": {
+        "change_from_previous": -6.875,
+        "new_candidate_mean": 24.125,
+        "none_mean": 10.25,
+        "previous_candidate_mean": 31.0,
+        "retained_development_candidate": false
+      },
+      "joint": {
+        "change_from_previous": -2.25,
+        "new_candidate_mean": 15.5,
+        "none_mean": 7.5,
+        "previous_candidate_mean": 17.75,
+        "retained_development_candidate": false
+      }
+    },
+    "diagnosis_report_sha256": "2677f811269fc5eb27785896abf90a1682d566e8e7ec009261570c4e498f991f",
+    "hypothesis_sha256": "803df7484e50b54bcc80a2e64c2084370dc86a4c2cc7e55fa455c41257d527ab",
+    "independent_generalization_claim": false,
+    "only_changed_factor": "learning_rate",
+    "previous_result_sha256": "7649e7f7eb90879138a7f7123418ddbde79f213fdeabcd9c342ff3f3a4ddedcb",
+    "same_initial_parameters": true,
+    "total_training_steps": 3072
+  },
+  "final_test_evaluated": false,
+  "first_decisions": {
+    "fixed": {
+      "development_selection": true,
+      "mean_validation_tardiness": {
+        "none": 10.25,
+        "shared_scorer_v1": 31.0
+      },
+      "per_seed": [
+        {
+          "mean_validation_tardiness": {
+            "none": 13.0,
+            "shared_scorer_v1": 33.5
+          },
+          "seed": 17
+        },
+        {
+          "mean_validation_tardiness": {
+            "none": 7.5,
+            "shared_scorer_v1": 28.5
+          },
+          "seed": 29
+        }
+      ],
+      "selected_method": "none",
+      "status": "DECIDED"
+    },
+    "joint": {
+      "development_selection": true,
+      "mean_validation_tardiness": {
+        "none": 7.5,
+        "shared_scorer_v1": 17.75
+      },
+      "per_seed": [
+        {
+          "mean_validation_tardiness": {
+            "none": 6.5,
+            "shared_scorer_v1": 21.5
+          },
+          "seed": 17
+        },
+        {
+          "mean_validation_tardiness": {
+            "none": 8.5,
+            "shared_scorer_v1": 14.0
+          },
+          "seed": 29
+        }
+      ],
+      "selected_method": "none",
+      "status": "DECIDED"
+    }
+  },
+  "probe_evaluated": false,
+  "production_default_changed": false,
+  "profile": "shared_scorer_feedback_v1",
+  "research_status": "not_achieved",
+  "retry_decisions": {
+    "fixed": {
+      "development_selection": true,
+      "mean_validation_tardiness": {
+        "none": 10.25,
+        "shared_scorer_v1": 24.125
+      },
+      "per_seed": [
+        {
+          "mean_validation_tardiness": {
+            "none": 13.0,
+            "shared_scorer_v1": 33.5
+          },
+          "seed": 17
+        },
+        {
+          "mean_validation_tardiness": {
+            "none": 7.5,
+            "shared_scorer_v1": 14.75
+          },
+          "seed": 29
+        }
+      ],
+      "selected_method": "none",
+      "status": "DECIDED"
+    },
+    "joint": {
+      "development_selection": true,
+      "mean_validation_tardiness": {
+        "none": 7.5,
+        "shared_scorer_v1": 15.5
+      },
+      "per_seed": [
+        {
+          "mean_validation_tardiness": {
+            "none": 6.5,
+            "shared_scorer_v1": 17.75
+          },
+          "seed": 17
+        },
+        {
+          "mean_validation_tardiness": {
+            "none": 8.5,
+            "shared_scorer_v1": 13.25
+          },
+          "seed": 29
+        }
+      ],
+      "selected_method": "none",
+      "status": "DECIDED"
+    }
+  },
+  "stop_reason": "feedback_round_complete",
+  "total_training_episodes": 512,
+  "total_training_steps": 3072,
+  "verification_date": "2026-10-28",
+  "version": 1
+}

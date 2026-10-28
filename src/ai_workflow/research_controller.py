@@ -64,15 +64,16 @@ def read_controller_status(folder):
     return state
 
 
-def _validate_results(folder, state, expected_inputs):
+def _validate_results(folder, state, expected_inputs, check_budget=lambda: None):
     completed = {}
     for index, task in enumerate(state['tasks'], 1):
+        check_budget()
         if task['status'] == 'COMPLETED':
             path = folder / f'task_{index:02d}.json'
             if sha(path.read_bytes()) != task['result_sha256']:
                 raise ValueError('Saved task result identity changed')
             result = read_json(path)
-            validate_task_result(task['id'], result, expected_inputs, folder)
+            validate_task_result(task['id'], result, expected_inputs, folder, check_budget=check_budget)
             completed[task['id']] = result
     return completed
 
@@ -104,20 +105,38 @@ def _existing_budget(path, limits):
         raise ValueError('Invalid controller budget ledger') from exc
 
 
+def _deadline_checkpoint(budget):
+    """Cheap checkpoints within the exclusively owned active reservation.
+
+    Snapshot I/O is included conservatively. The caller still reads the durable
+    ledger at dispatch/acceptance boundaries; this does not grant another segment.
+    """
+    started = time.monotonic()
+    deadline = started + budget.remaining_seconds()
+    def check():
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise BudgetExceeded('Active execution time budget exhausted')
+        return remaining
+    return check
+
+
 def run_controller(folder, *, reference_archive=None, paper_archive=None, max_active_seconds=120,
                    max_tasks=None, steps=None, track='graduation', profile='audit_v1'):
     """Start/resume an immutable batch; steps limits this invocation, not its budget."""
     if track not in ('graduation', 'innovation'):
         raise ValueError('Unknown research track')
-    if profile not in ('audit_v1', 'shared_scorer_v1'):
+    if profile not in ('audit_v1', 'shared_scorer_v1', 'shared_scorer_feedback_v1'):
         raise ValueError('Unknown controller profile')
-    ceiling = 2 if profile == 'audit_v1' else 5
+    ceiling = {'audit_v1': 2, 'shared_scorer_v1': 5, 'shared_scorer_feedback_v1': 7}[profile]
     max_tasks = ceiling if max_tasks is None else max_tasks
     steps = ceiling if steps is None else steps
     if (type(max_tasks) is not int or not 1 <= max_tasks <= ceiling
             or type(steps) is not int or not 1 <= steps <= ceiling):
         raise ValueError('Task/step limits exceed the declared profile')
     limits = BudgetLimits(max_active_seconds, 0, 0)
+    if profile == 'shared_scorer_feedback_v1' and limits.max_active_seconds > 120:
+        raise ValueError('Feedback profile is limited to 120 cumulative active seconds')
     folder = Path(folder).resolve()
     reference, paper = Path(reference_archive or DEFAULT_REFERENCE).resolve(), Path(paper_archive or DEFAULT_PAPER).resolve()
     if any(folder.is_relative_to(p) or p.is_relative_to(folder) for p in (reference, paper)):
@@ -178,7 +197,7 @@ def _run_reserved(folder, state, spec, budget, terminal, steps, track, max_tasks
     """All nonterminal identity checks and dispatch happen inside the reservation."""
     preflight_done = False
     try:
-        check = (lambda: None) if terminal else budget.remaining_seconds
+        check = (lambda: None) if terminal else _deadline_checkpoint(budget)
         check()
         contracts = {name: get_research_contract(name).to_dict() for name in ('graduation', 'innovation')}
         identity = {'version': 2, 'track': track, 'profile': profile, 'max_tasks': max_tasks,
@@ -201,16 +220,20 @@ def _run_reserved(folder, state, spec, budget, terminal, steps, track, max_tasks
             _write(folder / 'spec.json', spec)
             state['tracks'] = {name: {'research_status': 'not_achieved', 'contract_hash': contract['contract_hash'],
                 'required_capabilities': contract['required_capabilities']} for name, contract in contracts.items()}
-        completed = _validate_results(folder, state, spec['input_hashes'])
+        completed = _validate_results(folder, state, spec['input_hashes'], check)
+        if not terminal:
+            budget.remaining_seconds()
+            check()
         preflight_done = True
         if state['status'] == 'RUNNING':
             state.update(status='STOPPED', stop_reason='interrupted_task')
         if state['status'] != 'STOPPED':
-            observation = inspect_inputs(reference, paper, budget.remaining_seconds)
+            observation = inspect_inputs(reference, paper, check)
             state['skipped_candidates'] = observation['rejected_candidates']
             performed = 0
             while True:
                 budget.remaining_seconds()
+                check()
                 choice = choose_next(observation, completed, track=track, profile=profile)
                 state['decisions'].append(choice)
                 if 'stop_reason' in choice:
@@ -227,15 +250,20 @@ def _run_reserved(folder, state, spec, budget, terminal, steps, track, max_tasks
                 state['tasks'].append(task)
                 state.update(status='RUNNING', stop_reason=None, next_task=None)
                 _write(folder / 'state.json', state)
+                timeout = min(budget.remaining_seconds(), check())
                 result = supervised_json_process(Path(__file__).with_name('research_worker.py'),
                     {'task_id': task_id, 'reference_archive': str(reference), 'paper_archive': str(paper),
-                     'expected_inputs': spec['input_hashes'], 'batch_dir': str(folder)}, timeout=budget.remaining_seconds())
+                     'expected_inputs': spec['input_hashes'], 'batch_dir': str(folder)}, timeout=timeout)
+                budget.remaining_seconds()
+                check()
                 if type(result) is dict and result.get('status') == 'FAILED':
                     task['worker_error_type'] = str(result.get('error_type', 'Unknown'))[:80]
-                validate_task_result(task_id, result, spec['input_hashes'], folder)
+                validate_task_result(task_id, result, spec['input_hashes'], folder, check_budget=check)
                 budget.remaining_seconds()
-                if input_hashes(reference, paper, budget.remaining_seconds) != spec['input_hashes']:
+                if input_hashes(reference, paper, check) != spec['input_hashes']:
                     raise ValueError('Input identity changed during worker execution')
+                budget.remaining_seconds()  # Never accept a receipt against a stale ledger snapshot.
+                check()  # The preceding database read may itself have consumed the remaining time.
                 index = len(state['tasks'])
                 _write(folder / f'task_{index:02d}.json', result)
                 task.update(status='COMPLETED', result_sha256=sha(encoded(result)))

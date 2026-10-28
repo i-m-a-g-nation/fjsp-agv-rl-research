@@ -104,3 +104,50 @@ Ruling: one predeclared template limits what the program can materialize and exe
 - Nativebatch36.5active seconds;fixed31vs10.25,joint17.75vs7.5:bothrejectshared/retainnone. Selectedepochs0,0,0,64. Native terminalresume identical with0newtasks/training.
 - Fresh reviewer hit an account quota before numerical replay; parent completed independent replay instead without calling trainer/comparison/evidence verifier:2274checks/0differences,256updates/1536steps,52checkpoints,80interval+32selected+56referenceplans,384states,81sourceidentities. Runtime/source/nativebytes unchanged.
 - Handoffcheck:8editedMarkdown/219localfilelinks valid;124trackedMarkdown/0newMD;156changedfiles actualkeyscan0matches; archiveand81frozenruntimehashesmatch. Read-only archive includes candidatecode/patch/checkreceipt, all52NPZ/logs/results and independentrecord. No merge/push.
+
+## Next authorized increment: rejection feedback and one step-size trial (2026-10-27)
+
+The user requested continuing the proposed diagnosis-to-next-experiment increment. Existing research requirements and approved model assumptions remain the spec. Reuse this plan and existing guide, with no new Markdown document. Implementation choices below are developer rulings, not claims of human scientific approval.
+
+**Design:** Add explicit `shared_scorer_feedback_v1` beside unchanged audit/two-task and shared/five-task profiles. It executes the first five tasks, diagnoses only a candidate rejected in both modes, then conditionally executes one registered `larger_step_v1` trial. Seven tasks maximum, one cumulative120active-second budget, zero model/network calls, no default-policy promotion. All source/input/receipt identities and failed/partial artifacts remain binding. Terminal resume must verify, not retrain.
+
+**Hypothesis:** An update may change probabilities without changing greedy action ranks. Replay all20validation checkpoints on all4validation cases (80checked plans, including the initial/final/selected views;96same-state comparisons), inspect all256updates. Eligible only if both modes rejected, at least3runs have unchanged greedy plans/ranks and flat validation means despite nonzero parameter/probability changes, and no gradient clipping. This supports trying a larger step, not diagnosing a proven cause. Otherwise stop explicitly; do not invent another experiment.
+
+**Controlled trial:** Learning rate0.01→0.1 only. Same initial parameter states, train8/validation4, fixed/joint,seeds17/29,64episodes/validation every16,545parameters, original reward/G1/CP/none controls. Save separately under`candidate_step_run`; keep first round immutable. Replay and independently verify all existing denominators and bind exact config/data/checkpoint identities. Compare with both prior candidate andnone; only strict improvement over both may retain a development candidate. One trial only, no probe/final-test access, no automatic repeated search or scientific achievement. Total fresh training at most512episodes/3072steps across both rounds.
+
+### Task 4: Explicit step-size support and verified rejected-candidate diagnosis
+
+- [x] RED/GREEN: trainer accepts bounded explicit learning_rate with unchanged default; one-update10xdelta and invalid/bool/NaN inputs tested.
+- [x] Add`src/ai_workflow/candidate_feedback.py`: completed receipt lookup; diagnose_candidate(batch,persist=True) returns deterministic source-bound replay diagnostics and a bounded hypothesis; verify_diagnosis independently recomputes rather than trusts summary counts.
+- [x] Tests cover no update, clipping, rank changes, retained candidate, missing/changed receipts/checkpoints, fake diagnosis, budget interruption and no held-out decoding.
+
+### Task 5: Single-factor comparison and seven-task controller integration
+
+- [x] Generalize comparison/evidence to two allowlisted trials only; isolated prefixes, learning-rate config binding, identical initialization/data/seeds/episode budget, complete replay and checkpoint/log selection verification.
+- [x] Extend controlled_candidate/tasks/controller/CLI with explicit profile and diagnosis-dependent dispatch. Old profiles unchanged; unmatched diagnosis stops without training; trial failure cannot retain or restart.
+- [x] Integration RED/GREEN: real first5→yield→diagnosis→trial→terminal resume, seven-task cap, cumulative budget, no second trial or promotion, evidence/config/identity tampering rejected.
+
+### Task 6: Evidence, review and delivery
+
+- [x] Fresh scoped review; fix meaningful findings with regression tests; full suite and one native120secondbatch plus terminal resume.
+- [x] Independently replay saved initial/final/selected parameters, gradient steps, validation means/selection,80diagnostic plans and final decisions; preserve all failures.
+- [x] Archive portable evidence and update existing guide/START_HERE. Verify secrets, index bytes and protected-source identities before publishing.
+
+Delivery gate: update the already authorized draftPR and inspect CI for the exact new head; record the remote result in the PR description. Do not merge. Local verification below does not stand in for remote CI.
+
+Ruling: registering one larger-step trial avoids arbitrary generated code or hidden parameter sweeps. A negative or ineligible diagnosis is a successful bounded stop, not permission to expand the budget. The previous CI/source-newline repair remains intact. The controller source change requires a new batch; old archives are never rewritten to permit resumption.
+
+### Feedback review findings (2026-10-28)
+
+- Structural hashes alone allowed mutually consistent false optimizer logs and invented data identities. Add numerical replay of all gradient steps, actual reference split hashing, and a hard 120-second ceiling. Keep remaining-budget checks inside parent acceptance as well as worker execution.
+- The fresh integration run exposed native tuple versus restored JSON list comparison. A cold-cache regression reproduces the false rejection; compare trajectory values consistently across serialization.
+- Independent review constructed feasible control plans attributed to the second candidate and updated every artifact hash; acceptance incorrectly retained that candidate. Both trials must replay every validation checkpoint, recompute the earliest minimum, and bind selected rows to the actual selected actor. Three failing regression cases cover selected plans, interval means, and interval trajectories. Do not deliver until this is fixed and the fresh native run is checked.
+- Coverage tracing and repeated SQLite reads made real three-slice integration exceed120seconds; the controller correctly stopped. Suspending tracing only during real-time integration and moving temporary storage were tested separately; moving storage alone was insufficient. A measured two-task comparison attributed94%of the disk-dependent delay to1247budgetpolls. The controller now uses one fixed conservative monotonic deadline within its exclusive reservation, and rereads the durable ledger before dispatch and acceptance, checking time again after blocking reads. The clock, cumulativecap and coveragegate remain unchanged. New deadline/slow-read/stale-ledger regressions are RED→GREEN; related73tests pass, three-slice execution74.516seconds on the original temporary disk. The final source requires a fresh nativev2 batch; nativev1 and failed timing attempts remain preserved.
+
+### Feedback final local verification (2026-10-28)
+
+- Frozen full suite:1764passed/2skipped/13warnings,91.14%coverage,1274.88seconds. All9default experiment entries pass; the full heavy benchmark matrix was not rerun.
+- Nativev2 completes all7tasks in87.328active seconds of120,0model/network calls, then stops atfeedback_round_complete. A fresh-process terminal resume leaves249localfiles, state andbudget unchanged. Research status remainsnot_achieved.
+- First/retry/none mean validation tardiness:fixed31/24.125/10.25,joint17.75/15.5/7.5. Both candidates remain rejected; retryselectedepochs0,64,64,64. No thirdtrial, defaultpromotion orheld-out use.
+- Both trials numerically replay all256updates and80interval plans each; selected candidate plans and frozen reference controls are bound to their actual sources. Budgetpoll changes preserve512updates,32candidateplans and24initial/selected/final parameter identities versusnativev1. Final scoped review reports no remaining blocker after forged-plan/reference and shape/dtype rechecks.
+- Read-only archive:experiments/results/exp_027_feedback_v1. Includes both trials, finalfullsuite,9experimentreceipts/logs,terminalresume,budgetcomparison and originalinstrumentedtimeout. No newMarkdown orprotectedmodel/environment/reward/solver edits. Remote delivery remains governed by the exact-head PR check above.

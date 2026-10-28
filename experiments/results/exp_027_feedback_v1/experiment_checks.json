@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "status": "COMPLETED",
+  "heavy": false,
+  "python": "D:\\2-Dev\\Environments\\Conda\\fjsp-agv-rl\\python.exe",
+  "created_utc": "2026-10-28T12:10:30.782724+00:00",
+  "runner_sha256": "139f6dfa7407674c44d5ed7d90ee4e8d7c97c9738ab2128094c396957407e4fb",
+  "commands": [
+    {
+      "script": "exp_001_toy_instance.py",
+      "arguments": [
+        "--output-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\feedback_final_checks_20261028"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 3.3440000000009604
+    },
+    {
+      "script": "exp_002_solver_check.py",
+      "arguments": [
+        "--output-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\feedback_final_checks_20261028"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 3.125
+    },
+    {
+      "script": "exp_003_dispatching_rules.py",
+      "arguments": [
+        "--output-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\feedback_final_checks_20261028"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.6879999999982829
+    },
+    {
+      "script": "exp_004_benchmark_smoke.py",
+      "arguments": [
+        "--output-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\feedback_final_checks_20261028"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.6090000000003783
+    },
+    {
+      "script": "exp_012_benchmark_metadata_audit.py",
+      "arguments": [
+        "--output",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\feedback_final_checks_20261028\\metadata.csv"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.9059999999990396
+    },
+    {
+      "script": "exp_014_dynamic_reschedule_smoke.py",
+      "arguments": [
+        "--output-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\feedback_final_checks_20261028"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.5940000000009604
+    },
+    {
+      "script": "exp_015_dynamic_event_file_check.py",
+      "arguments": [
+        "--output",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\feedback_final_checks_20261028\\exp_015_dynamic_event_file_check.csv"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.125
+    },
+    {
+      "script": "exp_016_dynamic_event_file_reschedule.py",
+      "arguments": [
+        "--output-dir",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\feedback_final_checks_20261028"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.5780000000013388
+    },
+    {
+      "script": "exp_017_phase2a_dynamic_report.py",
+      "arguments": [
+        "--smoke-input",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\feedback_final_checks_20261028\\exp_014_dynamic_reschedule_smoke.csv",
+        "--audit-input",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\feedback_final_checks_20261028\\exp_015_dynamic_event_file_check.csv",
+        "--replay-input",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\feedback_final_checks_20261028\\exp_016_dynamic_event_file_reschedule.csv",
+        "--output",
+        "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\feedback_final_checks_20261028\\exp_017_phase2a_dynamic_report.md"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.125
+    }
+  ]
+}

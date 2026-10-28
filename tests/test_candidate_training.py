@@ -79,6 +79,26 @@ def test_trainer_accepts_separately_loaded_exact_template_class_and_uses_it(tmp_
     assert len(actors) == 1 and _same(result['final_state'], actors[0].state_dict())
 
 
+def test_explicit_step_size_changes_only_the_same_first_gradient_step():
+    kwargs = dict(mode='joint', seed=17, episodes=1)
+    base = _api().train_shared_policy((_data(),), (_data((100, 101)),), **kwargs)
+    trial = _api().train_shared_policy((_data(),), (_data((100, 101)),), learning_rate=.1, **kwargs)
+    assert _same(base['initial_state'], trial['initial_state'])
+    assert base['logs'] == trial['logs']
+    for key in base['initial_state']:
+        np.testing.assert_allclose(trial['final_state'][key]-trial['initial_state'][key],
+            10*(base['final_state'][key]-base['initial_state'][key]), rtol=1e-10, atol=1e-15)
+
+
+@pytest.mark.parametrize('rate', [True, 1, 0., -1., 1.01, float('nan'), float('inf'), '.1'])
+def test_bad_step_size_refuses_before_any_progress(rate):
+    events = []
+    with pytest.raises(ValueError, match='learning_rate'):
+        _api().train_shared_policy((_data(),), (_data((100, 101)),), mode='joint', seed=17,
+                                  episodes=1, learning_rate=rate, on_progress=events.append)
+    assert events == []
+
+
 def test_earliest_strictly_improved_validation_checkpoint_wins_over_last_state():
     m, events = _api(), []
     from src.graduation.candidate_templates.shared_scorer import SharedScorer

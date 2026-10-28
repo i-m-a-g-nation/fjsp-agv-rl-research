@@ -1,11 +1,12 @@
 # 科研控制器：审计与受限模板候选批次
 
-同一`exp_027`入口提供两种显式模式。`audit_v1`核对文献与诊断冻结策略；`shared_scorer_v1`再生成已登记模板候选包、检查、训练和验证选择。自动找新论文、自由生成新算法或跨设计搜索仍未实现。本文数值是对应版本的快照；当前状态统一看[START_HERE](../START_HERE.md)。
+同一`exp_027`入口提供三种显式模式。`audit_v1`核对文献与诊断冻结策略；`shared_scorer_v1`再生成已登记模板候选包、检查、训练和验证选择；`shared_scorer_feedback_v1`增加拒绝后的诊断和一次符合条件的学习率试验。自动找新论文、自由生成新算法或跨设计搜索仍未实现。本文数值是对应版本的快照；当前状态统一看[START_HERE](../START_HERE.md)。
 
 | 模式 | 已注册任务数 | 批次内可执行的改动 |
 |---|---|---|
 | `audit_v1`（默认兼容入口） | 2 | 新增依据核对和诊断报告 |
 | `shared_scorer_v1` | 5 | 报告、模板源码/补丁、检查、训练日志和权重、保留或拒绝决定 |
+| `shared_scorer_feedback_v1` | 最多7 | 上述产物、拒绝诊断、一次学习率试验和两轮比较 |
 
 ## 人类先读这里
 
@@ -44,7 +45,14 @@ $controllerPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'py
 & $controllerPython experiments/exp_027_research_controller.py status --output-dir experiments/runs/my-shared-scorer-batch
 ```
 
-同样的`run`命令（含相同profile）恢复同一批次。`--steps 1`只限制本次调用执行一个任务，下一次继续，累计预算不会增加。两模式默认共享120执行秒，任务上限分别2/5，模型调用和tokens均为0。已完成或失败的任务不自动重试。预算损坏、来源/输入/配置变化时拒绝恢复，需要保留旧记录并使用新批次；新增控制器代码也会使旧本地批次拒绝继续，旧只读归档保持。
+运行包含拒绝反馈的批次：
+
+```powershell
+& $controllerPython experiments/exp_027_research_controller.py run --profile shared_scorer_feedback_v1 --output-dir experiments/runs/my-feedback-batch
+& $controllerPython experiments/exp_027_research_controller.py status --output-dir experiments/runs/my-feedback-batch
+```
+
+同样的`run`命令（含相同profile）恢复同一批次。`--steps 1`只限制本次调用执行一个任务，下一次继续，累计预算不会增加。三模式默认共享120执行秒，任务上限分别2/5/7，模型调用和tokens均为0；反馈模式不能提高120秒上限。已完成或失败的任务不自动重试。预算损坏、来源/输入/配置变化时拒绝恢复，需要保留旧记录并使用新批次；新增控制器代码也会使旧本地批次拒绝继续，旧只读归档保持。
 
 默认只执行毕设已注册任务。`--track innovation` 会显示大创需要生产—物流能力，并停在没有已注册执行器的边界；不会把毕设生产—维护结果算作大创成果。
 
@@ -61,6 +69,8 @@ $controllerPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'py
 | `src/graduation/candidate_training.py` | 使用原始已检查回合和奖励训练模板策略 |
 | `src/ai_workflow/controlled_candidate.py` / `candidate_evidence.py` | 模板包、检查收据和完整产物验收 |
 | `src/ai_workflow/candidate_comparison.py` | 有界训练、验证选模、归档基线复核及严格选择 |
+| `src/ai_workflow/candidate_feedback.py` | 从拒绝诊断决定是否执行已登记的学习率试验 |
+| `src/ai_workflow/candidate_replay.py` | 重算梯度/参数、重跑验证计划、核对冻结对照的来源 |
 | 批次 `spec.json` / `state.json` | 源码/输入/契约身份；任务、决定、停止原因 |
 | 批次 `task_01.json` / `task_02.json` | 文献依据核对和完整诊断结果 |
 | 批次 `budget.sqlite` | 实际执行与未结算预占；崩溃不会自动退还 |
@@ -75,7 +85,11 @@ $controllerPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'py
 
 比较使用归档的同64回合预算none策略、规则和CP参考并重新回放/核对，不把它们说成新训练或新求解。每模式包含全部8个策略验证结果，候选均值严格更低才保留为批次产物，否则选择none。完整日志、检查点、32份策略验证计划、48规则/8CP参考和384次训练后对称性比较缺一，则不能作保留决定。生产默认策略与原三审批准保持独立。
 
-当前贯通预先登记模板的生成、检查、训练与拒绝/保留；新假设和新模板仍需开发者实现、测试和登记。自动论文发现、自由代码生成尚无执行器，大创生产—物流范围仍需独立推进。
+反馈模式仅在两种维护模式均拒绝首轮候选，且至少3个训练分支出现“参数和概率变化、贪心计划/排序不变、验证均值持平”，同时没有梯度裁剪时，执行一次预先登记的学习率0.01→0.1试验。这是待检验假设，不是已经证明的原因。其余数据、初始权重、种子、64回合预算、奖励和G1均不变。两轮共512训练回合/3072步。
+
+两轮分别保存到`candidate_run/`和`candidate_step_run/`，诊断保存在`candidate_diagnosis/`。主进程独立重算训练更新，并用保存的权重重跑全部80个区间验证计划，核对最早最优检查点和报告中的16个候选计划；`none`、规则和CP对照绑定原参考档案。只有同时优于首轮候选和`none`才保留为开发候选。`feedback_round_complete`表示本次有限试验结束；`feedback_no_registered_trial`表示诊断不满足条件。两者都不代表课题完成。
+
+新假设和新模板仍需开发者实现、测试和登记。自动论文发现、自由代码生成尚无执行器，大创生产—物流范围仍需独立推进。人类日常只需核对题目/模型假设、这一轮改变了什么、完整对照结果和结论边界；不必逐份阅读日志。
 
 ## 原审计模式验证快照
 
@@ -105,3 +119,22 @@ $controllerPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'py
 ## Phase 1 加固后的参考版本说明
 
 2026-10-27基础层改为严格不可变实例并加固检查器。源码身份检查保持不变；当前默认参考为 `experiments/results/exp_026_validation_iteration_phase1_v2/`，其来源是重新运行的 `exp_025_neural_policy_phase1_v2/`。36份初始/最终/选中参数与176条策略及规则轨迹同旧版一致。新控制器批次可正常执行；旧批次继续保留原源码绑定，不直接续跑。上文原批次数字及v1路径仍属于历史快照；本次加固与复验见[Phase 1记录](reproducibility_phase1.md)。
+
+## 拒绝反馈批次（2026-10-28）
+
+最终版本的真实子进程入口完成全部7项任务，用时87.328执行秒，预算120秒，0模型/网络调用。终态再次运行后，249个本地文件、任务状态和预算均未变化。首轮4个分支中3个符合“更新发生但贪心策略停滞”的条件，程序据此自动启动一次学习率试验。
+
+| 维护模式 | 首轮学习率0.01 | 第二轮学习率0.1 | 原none对照 | 最终决定 |
+|---|---:|---:|---:|---|
+| fixed | 31.0 | 24.125 | 10.25 | 拒绝候选，保留none |
+| joint | 17.75 | 15.5 | 7.5 | 拒绝候选，保留none |
+
+数值为每模式两种种子、四个验证实例的平均总延期，越小越好。第二轮所选回合为fixed/17=0，其余三分支=64。结果支持“这一学习率在当前验证集上优于首轮配置”，不能证明它优于原策略，也不能用于泛化结论或课题验收。流程停于`feedback_round_complete`，没有继续第三轮、修改默认策略或使用最终测试集。
+
+120秒是累计执行上限，不是跨机器的完成时间保证。细粒度检查现在使用本段已锁定的单调时钟截止时间；派发、恢复验收、工作进程返回及结果保存边界重新读取持久账本，读账本之后也检查是否已经超时。这样避免每个解析字符块和重放步骤重复打开数据库。测试保留早期覆盖率/慢盘开销导致的预算停止记录；两个完整流程的实际计时段暂停覆盖率采样，恢复核验、数值重放及篡改测试仍采样。时钟、生产上限和80%覆盖率门槛均保持。
+
+独立审查实际构造了“模型权重真实，但把其他算法的好计划冒充模型输出”的伪造报告，并确认旧验收路径会误收。修复后，候选计划必须从对应权重重现；对照计划必须匹配冻结参考；梯度、检查点形状/类型、实际数据身份和累计预算也有反例测试。数值复核复用原环境、G1和前向计算，梯度与更新由独立实现重算，不能据此声称整个研究软件获得了形式证明。
+
+最终本地全量回归 **1764通过、2跳过、13条警告，覆盖率91.14%**，1274.88秒；9个默认实验入口全部通过，包括静态规则、CP-SAT参考和动态重调度。本轮没有重跑完整重型基准矩阵。预算轮询改动前后，两轮共512次参数更新、32份候选计划及24份初始/选中/最终参数身份一致。独立审查的最后一轮未报告本次范围内的剩余阻塞问题。
+
+[批次摘要](../experiments/results/exp_027_feedback_v1/summary.json)、[拒绝诊断](../experiments/results/exp_027_feedback_v1/task_06.json)、[第二轮比较](../experiments/results/exp_027_feedback_v1/task_07.json)、[验证记录](../experiments/results/exp_027_feedback_v1/validation_record.json)、[终态恢复核对](../experiments/results/exp_027_feedback_v1/terminal_resume.json)、[归档哈希](../experiments/results/exp_027_feedback_v1/archive_manifest.json)。归档保存两轮完整产物和早期失败记录，仅供只读审阅；继续运行必须使用原本地批次且源码身份一致。远程结果以[草稿PR对应提交的Checks](https://github.com/i-m-a-g-nation/fjsp-agv-rl-research/pull/1/checks)为准。

@@ -246,7 +246,7 @@ def test_truncated_states_cannot_redefine_the_native_denominator(diagnostic_repo
         tasks.validate_task_result('diagnose_identifier_permutations', result)
 
 
-def test_controlled_profile_dispatches_package_gate_and_comparison(tmp_path, monkeypatch, diagnostic_report):
+def test_controlled_profile_dispatches_package_gate_and_comparison(tmp_path, monkeypatch, diagnostic_report, untraced_wall_clock):
     calls = []
     def local_worker(script, payload, timeout):
         calls.append(payload['task_id'])
@@ -256,7 +256,8 @@ def test_controlled_profile_dispatches_package_gate_and_comparison(tmp_path, mon
                                   expected_inputs=payload['expected_inputs'], batch_dir=payload['batch_dir'])
     monkeypatch.setattr(controller, 'supervised_json_process', local_worker)
     folder = tmp_path / 'controlled'
-    state = controller.run_controller(folder, profile='shared_scorer_v1')
+    with untraced_wall_clock():
+        state = controller.run_controller(folder, profile='shared_scorer_v1')
     assert state['stop_reason'] == 'candidate_round_complete'
     assert calls == ['audit_paper_evidence', 'diagnose_identifier_permutations', 'materialize_shared_scorer',
                      'check_shared_scorer', 'compare_shared_scorer']

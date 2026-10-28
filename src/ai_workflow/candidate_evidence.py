@@ -8,28 +8,38 @@ from src.ai_workflow.research_tasks import encoded, read_json, sha, _validate_pl
 from src.graduation.validation_diagnostics import _path_inside, _raw_fields, _decode, _state_hash
 
 
-def verify_comparison_evidence(batch, result):
+def verify_comparison_evidence(batch, result, *, check_budget=lambda: None):
+    from src.ai_workflow.candidate_comparison import trial_layout, comparison_config
     batch = Path(batch).resolve()
+    trial = result.get('trial', 'initial')
+    prefix, _, kind = trial_layout(trial)
+    if result['kind'] != kind:
+        raise ValueError('Comparison trial kind differs')
     artifacts = result['artifacts']
-    if not {'candidate_run/results.json', 'candidate_run/manifest.json'} <= artifacts.keys():
+    if not {prefix+'/results.json', prefix+'/manifest.json'} <= artifacts.keys():
         raise ValueError('Missing complete comparison training artifacts')
     actual = {}
-    for path in sorted((batch / 'candidate_run').rglob('*')):
+    for path in sorted((batch / prefix).rglob('*')):
+        check_budget()
         if path.is_symlink():
             raise ValueError('Comparison artifacts cannot contain links')
         if path.is_file():
             actual[path.relative_to(batch).as_posix()] = sha(path.read_bytes())
     if artifacts != actual:
         raise ValueError('Incomplete comparison artifact closure')
-    saved = read_json(batch / 'candidate_run/results.json')
+    saved = read_json(batch / prefix / 'results.json')
     if encoded(saved) != encoded({k: v for k, v in result.items() if k != 'artifacts'}):
         raise ValueError('Comparison summary differs from saved complete results')
-    manifest = read_json(batch / 'candidate_run/manifest.json')
-    expected = {k: v for k, v in artifacts.items() if k != 'candidate_run/manifest.json'}
+    manifest = read_json(batch / prefix / 'manifest.json')
+    expected = {k: v for k, v in artifacts.items() if k != prefix+'/manifest.json'}
     if manifest['status'] != 'COMPLETED' or manifest['artifacts'] != expected:
         raise ValueError('Incomplete comparison manifest')
     package = read_json(batch / 'candidate/manifest.json')
     identity = result['source_identity']
+    config = comparison_config(identity, trial)
+    if encoded(result['config']) != encoded(config) or encoded(read_json(batch/prefix/'config.json')) != encoded(config):
+        raise ValueError('Comparison registered configuration differs')
+    config_hash = sha(encoded(config))
     if (identity['package_manifest_sha256'] != sha((batch / 'candidate/manifest.json').read_bytes())
             or identity['candidate_source_sha256'] != package['template_sha256']
             or identity['template_sha256'] != package['template_sha256']
@@ -37,6 +47,13 @@ def verify_comparison_evidence(batch, result):
         raise ValueError('Comparison source identity mismatch')
     spec = read_json(batch / 'spec.json')
     reference = Path(spec['identity']['reference_archive'])
+    from src.ai_workflow.candidate_replay import verified_splits, verify_training_replay
+    _, _, bound_inputs = verified_splits(reference, check_budget)
+    if (read_json(batch/prefix/'inputs.json') != bound_inputs
+            or bound_inputs['reference_manifest_sha256'] != spec['input_hashes']['validation/manifest.json']
+            or bound_inputs['reference_results_sha256'] != spec['input_hashes']['validation/results.json']):
+        raise ValueError('Comparison data identity differs from bound reference')
+    data_hash = bound_inputs['data_sha256']
     raw = (reference / 'results.json').read_text(encoding='utf-8-sig')
     split = _raw_fields(_raw_fields(raw, {'splits'}, lambda: None)['splits'], {'validation'}, lambda: None)
     inputs = _decode(split['validation'])
@@ -48,6 +65,7 @@ def verify_comparison_evidence(batch, result):
             or rows != result['candidate_rows'] + result['control_rows']):
         raise ValueError('Incomplete comparison validation denominator')
     for row in rows:
+        check_budget()
         if row['validation_status'] != 'PASS' or row['schedule_accepted'] is not True:
             raise ValueError('Unchecked comparison plan')
         _validate_plan(row, inputs[row['validation_index']]['input'], row['mode'])
@@ -60,6 +78,7 @@ def verify_comparison_evidence(batch, result):
     if len(runs) != 4 or {(r['mode'], r['seed']) for r in runs} != {(m, s) for m in ('fixed', 'joint') for s in (17, 29)}:
         raise ValueError('Incomplete comparison training denominator')
     for run in runs:
+        check_budget()
         if (run['status'] != 'COMPLETED' or run['episodes_completed'] != 64 or run['training_steps'] != 384
                 or len(run['logs']) != 64 or [r['episode'] for r in run['logs']] != list(range(1, 65))
                 or len(run['interval_checkpoints']) != 5):
@@ -71,6 +90,8 @@ def verify_comparison_evidence(batch, result):
         if run['selected_episode'] != best['episode']:
             raise ValueError('Comparison selected a nonminimal checkpoint')
         log_path = _path_inside(batch, run['progress_log'])
+        if not run['progress_log'].startswith(prefix+'/logs/'):
+            raise ValueError('Comparison log belongs to another trial')
         events = [_decode(line) for line in log_path.read_text(encoding='utf-8').splitlines()]
         if (sha(log_path.read_bytes()) != run['progress_log_sha256']
                 or len(events) != 69 or sum(e['kind'] == 'episode' for e in events) != 64):
@@ -78,6 +99,11 @@ def verify_comparison_evidence(batch, result):
         checkpoints = list(run['checkpoints'].values())
         checkpoints += [entry[name] for entry in run['interval_checkpoints'] for name in ('current', 'selected')]
         for checkpoint in checkpoints:
+            check_budget()
+            if (not checkpoint['path'].startswith(prefix+'/checkpoints/')
+                    or checkpoint['config_sha256'] != config_hash or checkpoint['data_sha256'] != data_hash
+                    or checkpoint['source_identity'] != identity):
+                raise ValueError('Comparison checkpoint configuration/data/trial differs')
             path = _path_inside(batch, checkpoint['path'])
             if (sha(path.read_bytes()) != checkpoint['sha256']
                     or read_json(path.with_suffix('.json')) != checkpoint):
@@ -96,3 +122,9 @@ def verify_comparison_evidence(batch, result):
         raise ValueError('Incomplete comparison equivariance evidence')
     if len(result['rule_rows']) != 48 or len(result['cp_rows']) != 8:
         raise ValueError('Incomplete comparison reference denominator')
+    from src.ai_workflow.controlled_candidate import load_candidate
+    verify_training_replay(batch, reference, result, load_candidate(batch), check_budget=check_budget)
+    if trial != 'initial':
+        from src.ai_workflow.candidate_feedback import comparison_feedback
+        if result.get('feedback') != comparison_feedback(batch, result, check_budget=check_budget):
+            raise ValueError('Comparison feedback decision differs')

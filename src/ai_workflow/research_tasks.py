@@ -19,7 +19,9 @@ TASK_KINDS = {'audit_paper_evidence': 'archived_paper_evidence_audit',
               'diagnose_identifier_permutations': 'validation_only_permutation_diagnosis',
               'materialize_shared_scorer': 'controlled_candidate_materialization',
               'check_shared_scorer': 'controlled_candidate_check',
-              'compare_shared_scorer': 'controlled_candidate_comparison'}
+              'compare_shared_scorer': 'controlled_candidate_comparison',
+              'diagnose_rejected_candidate': 'rejected_candidate_diagnosis',
+              'compare_larger_step': 'controlled_candidate_step_comparison'}
 
 
 def sha(data):
@@ -142,6 +144,11 @@ def execute_task(task_id, reference_archive, paper_archive, *, expected_inputs=N
             result = materialize_candidate(batch_dir)
         elif task_id == 'check_shared_scorer':
             result = check_candidate(batch_dir, reference_archive)
+        elif task_id == 'diagnose_rejected_candidate':
+            from src.ai_workflow.candidate_feedback import diagnose_candidate
+            result = diagnose_candidate(batch_dir)
+        elif task_id == 'compare_larger_step':
+            result = compare_candidate(batch_dir, reference_archive, trial='larger_step_v1')
         else:
             result = compare_candidate(batch_dir, reference_archive)
     if input_hashes(reference_archive, paper_archive) != before:
@@ -149,7 +156,8 @@ def execute_task(task_id, reference_archive, paper_archive, *, expected_inputs=N
     return result
 
 
-def validate_task_result(task_id, result, expected_inputs=None, batch_dir=None):
+def validate_task_result(task_id, result, expected_inputs=None, batch_dir=None, *, check_budget=lambda: None):
+    check_budget()
     if (type(result) is not dict or result.get('kind') != TASK_KINDS[task_id]
             or result.get('status') != 'COMPLETED' or result.get('research_status') != 'not_achieved'):
         raise ValueError('Invalid registered task result envelope')
@@ -172,7 +180,7 @@ def validate_task_result(task_id, result, expected_inputs=None, batch_dir=None):
         from src.ai_workflow.controlled_candidate import verify_candidate_result
         if batch_dir is None:
             raise ValueError('Candidate verification requires its batch')
-        verify_candidate_result(task_id, result, batch_dir)
+        verify_candidate_result(task_id, result, batch_dir, check_budget=check_budget)
     encoded(result)
 
 
@@ -261,7 +269,7 @@ def choose_next(observation, completed, *, track, profile='audit_v1'):
         return {'task_id': 'diagnose_identifier_permutations',
                 'reason': 'running_mean was rejected; diagnose representation sensitivity without retraining.'}
     sensitive = completed['diagnose_identifier_permutations']['sensitive_states']
-    if profile == 'shared_scorer_v1' and sensitive:
+    if profile in ('shared_scorer_v1', 'shared_scorer_feedback_v1') and sensitive:
         for task_id, reason in (
             ('materialize_shared_scorer', 'Materialize only the registered shared scoring template into this batch.'),
             ('check_shared_scorer', 'Verify copied candidate gradients, masks and same-state distribution symmetry.'),
@@ -270,6 +278,24 @@ def choose_next(observation, completed, *, track, profile='audit_v1'):
                 return {'task_id': task_id, 'reason': reason}
         decisions = completed['compare_shared_scorer']['decisions']
         selected = {mode: decision['selected_method'] for mode, decision in decisions.items()}
+        if profile == 'shared_scorer_feedback_v1' and all(v == 'none' for v in selected.values()):
+            if 'diagnose_rejected_candidate' not in completed:
+                return {'task_id': 'diagnose_rejected_candidate',
+                        'reason': 'Replay checkpoints and action ranks before authorizing another experiment.'}
+            hypothesis = completed['diagnose_rejected_candidate']['hypothesis']
+            if not hypothesis['eligible']:
+                return {'stop_reason': 'feedback_no_registered_trial', 'next_task': {
+                    'id': 'design_different_hypothesis', 'executable': False,
+                    'reason': 'Verified diagnosis does not match the one registered trial.',
+                    'production_default_changed': False}}
+            if 'compare_larger_step' not in completed:
+                return {'task_id': 'compare_larger_step',
+                        'reason': 'Verified stalled rankings authorize one same-budget larger-step trial.'}
+            selected = {m:d['selected_method'] for m,d in completed['compare_larger_step']['decisions'].items()}
+            return {'stop_reason': 'feedback_round_complete', 'next_task': {
+                'id': 'review_feedback_evidence', 'executable': False, 'selected_methods': selected,
+                'reason': 'One registered feedback trial completed; no additional search is authorized.',
+                'production_default_changed': False}}
         return {'stop_reason': 'candidate_round_complete', 'next_task': {
             'id': 'diagnose_rejected_candidate' if all(v == 'none' for v in selected.values())
                   else 'review_retained_validation_candidate',
