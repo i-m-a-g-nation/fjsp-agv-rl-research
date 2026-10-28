@@ -1,0 +1,50 @@
+FF                                                                       [100%]
+================================== FAILURES ===================================
+_______ test_slow_review_material_cannot_escape_preparation_deadline[1] _______
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-381/test_slow_review_material_cann0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000134FF530810>
+request_call = 1
+
+    @pytest.mark.parametrize('request_call',[1,2])
+    def test_slow_review_material_cannot_escape_preparation_deadline(tmp_path,monkeypatch,request_call):
+        original_request,original_clock=scope._request,scope.time.monotonic
+        offset,calls=[0],[0]
+        def delayed(*args,**kwargs):
+            calls[0]+=1
+            result=original_request(*args,**kwargs)
+            if calls[0]==request_call:
+                offset[0]=601
+            return result
+        monkeypatch.setattr(scope,'_request',delayed)
+        monkeypatch.setattr(scope.time,'monotonic',lambda:original_clock()+offset[0])
+>       with pytest.raises((BudgetExceeded,ValueError)):
+E       Failed: DID NOT RAISE any of (<class 'src.ai_workflow.runtime_budget.BudgetExceeded'>, <class 'ValueError'>)
+
+tests\test_graduation_main_scope.py:127: Failed
+_______ test_slow_review_material_cannot_escape_preparation_deadline[2] _______
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-381/test_slow_review_material_cann1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000013549E65150>
+request_call = 2
+
+    @pytest.mark.parametrize('request_call',[1,2])
+    def test_slow_review_material_cannot_escape_preparation_deadline(tmp_path,monkeypatch,request_call):
+        original_request,original_clock=scope._request,scope.time.monotonic
+        offset,calls=[0],[0]
+        def delayed(*args,**kwargs):
+            calls[0]+=1
+            result=original_request(*args,**kwargs)
+            if calls[0]==request_call:
+                offset[0]=601
+            return result
+        monkeypatch.setattr(scope,'_request',delayed)
+        monkeypatch.setattr(scope.time,'monotonic',lambda:original_clock()+offset[0])
+>       with pytest.raises((BudgetExceeded,ValueError)):
+E       Failed: DID NOT RAISE any of (<class 'src.ai_workflow.runtime_budget.BudgetExceeded'>, <class 'ValueError'>)
+
+tests\test_graduation_main_scope.py:127: Failed
+=========================== short test summary info ===========================
+FAILED tests/test_graduation_main_scope.py::test_slow_review_material_cannot_escape_preparation_deadline[1]
+FAILED tests/test_graduation_main_scope.py::test_slow_review_material_cannot_escape_preparation_deadline[2]
+2 failed, 15 deselected in 2.48s

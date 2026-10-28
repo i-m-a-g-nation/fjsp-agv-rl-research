@@ -113,3 +113,22 @@ $pilotPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.
 预算最多90秒，覆盖输入准备、工作进程执行及主进程验收。CP-SAT/枚举工作进程受进程树硬超时管理；主进程在重放、文件操作及最终收据前后检查真实截止时间。阻塞文件I/O或失败收尾可能在期限后返回，但迟到结果不能保留COMPLETED。复检核对预算、分母、协议与来源记录结构；默认读取历史证据而不要求源码字节等于当前检出。API的`require_current_sources=True`才同时检查当前源码；记录的主机身份本身不是哈希能证明的事实。
 
 这是开发者根据原草案选定的先导实现，`formal_approval=false`、`research_status=not_achieved`。没有生成三审批准，没有启动480次主网格或接入新RL训练。正式会话仍须遵守原范围、证据和结论审核。[两次运行及独立核对归档](../experiments/results/exp_028_graduation_reference_pilot_v1/)
+
+## 10. 主比较范围材料（2026-10-29）
+
+`exp_029_graduation_main_scope.py`已实现范围材料准备及只读复检。按上述声明顺序生成160对主比较，再对n8/m2的40个主算例逐一追加earliest/latest，共80对敏感性分析。每对的fixed/joint引用同一完整输入；480条计划行均为NOT_RUN。用两份JSON集合保存全部输入与求解顺序，保留相同物理模型的所有条件标签。
+
+实际材料包含10组基础工作负载、160个不同物理核心：120个核心只有中点策略，40个核心有中点/最早/最晚三种固定策略。独立标准库脚本逐项核对全部240对输入、480条顺序、RNG/整数公式及三层身份，未调用项目生成器或求解器。相关53项测试通过，独立审查最终31项专项通过，原预算/账本/只读反例均复检后拒绝。
+
+原生材料的scope哈希为`17bc1aa7d715f2090468718c8f3a14327d979178ef48b7980c5964b99fa0c0a3`。[中文审核摘要](../experiments/results/exp_029_graduation_main_scope_v1/materials/scope_summary.txt)、[全部输入](../experiments/results/exp_029_graduation_main_scope_v1/materials/inputs.json)、[求解顺序](../experiments/results/exp_029_graduation_main_scope_v1/materials/planned_runs.json)、[审核请求](../experiments/results/exp_029_graduation_main_scope_v1/materials/scope_review.json)、[独立矩阵复检](../experiments/results/exp_029_graduation_main_scope_v1/independent_matrix_check.json)。这些归档是准备时快照，批准记录须独立绑定该scope哈希，不能把快照的false字段自行改成批准。
+
+总预算仍为600累计主动秒。输入生成、来源哈希、审核材料构建和完整静态重构从函数入口计时；最后账本结算/回执刷新保守预扣5秒，且该阶段本身限定5秒，未用不退。当前已计账5.172秒、剩余594.828秒；等待人审不计时。账本缺失、篡改或未结算均拒绝；复检使用immutable只读连接并拒绝WAL，避免创建旁路文件。迟到或失败收尾可能晚于期限返回，但不能留下可审核就绪状态。
+
+```powershell
+$scopePython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.exe' } else { '.\.conda-env\python.exe' }
+& $scopePython -c "import sys; print(sys.executable)"
+& $scopePython experiments/exp_029_graduation_main_scope.py --output-dir experiments/runs/my-g3a-main-scope
+& $scopePython experiments/exp_029_graduation_main_scope.py --recheck experiments/runs/my-g3a-main-scope
+```
+
+本入口只生成scope材料，不运行CP-SAT、模型API、RL或最终测试，不提供主实验执行后端。实际会话保留在原本地新目录，归档用于只读审阅。根据本协议“范围→协议/输入证据→实际批次→结论三审”，scope批准只允许进入evidence；旧G2小例及先导的批准均不能代替这一批材料的审核。

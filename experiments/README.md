@@ -625,6 +625,10 @@ Runs or inspects the bounded controller for registered research tasks. Use the [
 
 Runs 12 paired tiny instances and 24 CP-SAT solves checked by enumeration, with a90-second execution deadline and zero API/network calls. See [pilot usage and its formal-review boundary](../docs/graduation_g3_protocol_draft.md#9-先导开发验证2026-10-28). The formal main grid remains a separate proposed protocol.
 
+## `exp_029_graduation_main_scope.py`
+
+`exp_029_graduation_main_scope.py` prepares or rechecks the complete240-pair/480-request formal-scope materials without running a solver. Read the [scope guide and review boundaries](../docs/graduation_g3_protocol_draft.md#10-主比较范围材料2026-10-29) before preparing a new folder.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.
