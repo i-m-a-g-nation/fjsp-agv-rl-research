@@ -1,0 +1,6 @@
+{
+  "commit": "3bb926d65f52c02b19d83f2268862d0bc2fdb3e5",
+  "checks": 756,
+  "rule": "Git checkout attributes: three declared CRLF core files, all remaining Python LF",
+  "solver_calls": 0
+}

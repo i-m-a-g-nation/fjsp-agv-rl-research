@@ -637,6 +637,10 @@ Prepares/rechecks content-bound evidence, inspects the original cumulative budge
 
 Read-only `audit` selects the five archived G3A errors. Read-only `recheck` verifies development captures and explicit captured-source snapshots; see [diagnosis, budget lock and usage](../docs/graduation_g3_protocol_draft.md#14-拒绝候选诊断2026-10-29). The single five-call development capture reproduced reported-objective/returned-solution disagreement; its packaging failed and remains FAILED. The original cumulative budget is now locked with zero available time. `dev-probe` cannot resume it. No formal results are replaced or accepted by these diagnostics.
 
+## `exp_032_graduation_remedy_scope.py`
+
+Preparation-only scope for14 solver-remedy development requests: five historical error requests under two presolve configurations, plus four enumerable controls. Only `prepare` and read-only `recheck` are available. No execution, budget or approval is created. [Scope, new-budget proposal and limitations](../docs/graduation_g3_protocol_draft.md#15-补救开发范围提案2026-10-29).
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.

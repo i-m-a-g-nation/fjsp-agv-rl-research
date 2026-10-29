@@ -1,0 +1,65 @@
+{
+  "solver_calls": 0,
+  "rechecks": [
+    {
+      "file": "exp_001_toy_instance.csv",
+      "result": {
+        "scope": "static_fjsp_feasibility",
+        "rows": 7,
+        "validated_schedules": 7,
+        "failed_runs": 0,
+        "current_sources_checked": false
+      }
+    },
+    {
+      "file": "exp_002_solver_check.csv",
+      "result": {
+        "scope": "static_fjsp_feasibility",
+        "rows": 7,
+        "validated_schedules": 7,
+        "failed_runs": 0,
+        "current_sources_checked": false
+      }
+    },
+    {
+      "file": "exp_003_dispatching_rules.csv",
+      "result": {
+        "scope": "static_fjsp_feasibility",
+        "rows": 7,
+        "validated_schedules": 7,
+        "failed_runs": 0,
+        "current_sources_checked": false
+      }
+    },
+    {
+      "file": "exp_004_benchmark_smoke.csv",
+      "result": {
+        "scope": "static_fjsp_feasibility",
+        "rows": 16,
+        "validated_schedules": 16,
+        "failed_runs": 0,
+        "current_sources_checked": false
+      }
+    },
+    {
+      "file": "exp_014_dynamic_reschedule_smoke.csv",
+      "result": {
+        "scope": "static_fjsp_feasibility",
+        "rows": 3,
+        "validated_schedules": 3,
+        "failed_runs": 0,
+        "current_sources_checked": false
+      }
+    },
+    {
+      "file": "exp_016_dynamic_event_file_reschedule.csv",
+      "result": {
+        "scope": "static_fjsp_feasibility",
+        "rows": 3,
+        "validated_schedules": 3,
+        "failed_runs": 0,
+        "current_sources_checked": false
+      }
+    }
+  ]
+}

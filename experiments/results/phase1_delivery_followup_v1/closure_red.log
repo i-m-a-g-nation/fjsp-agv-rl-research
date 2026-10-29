@@ -1,0 +1,18 @@
+.F                                                                       [100%]
+================================== FAILURES ===================================
+_ test_unindexed_files_are_rejected_even_when_named_manifest[nested/manifest.json] _
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-443/test_unindexed_files_are_rejec1')
+relative = 'nested/manifest.json'
+
+    @pytest.mark.parametrize('relative',['extra.json','nested/manifest.json'])
+    def test_unindexed_files_are_rejected_even_when_named_manifest(tmp_path,relative):
+        out=tmp_path/'proposal';scope.prepare(out)
+        extra=out/relative;extra.parent.mkdir(parents=True,exist_ok=True);extra.write_bytes(b'{}')
+>       with pytest.raises(ValueError):scope.recheck(out)
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests\test_graduation_remedy_scope.py:69: Failed
+=========================== short test summary info ===========================
+FAILED tests/test_graduation_remedy_scope.py::test_unindexed_files_are_rejected_even_when_named_manifest[nested/manifest.json]
+1 failed, 1 passed, 8 deselected in 8.23s

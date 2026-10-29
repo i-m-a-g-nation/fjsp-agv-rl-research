@@ -1,0 +1,19 @@
+{
+  "agent": "limited_closeout_review",
+  "status": "NO_REMAINING_IMPORTANT_FINDINGS_IN_DELTA",
+  "findings_fixed": [
+    "Missing new archive -text rules",
+    "Nested manifest.json incorrectly excluded from proposal closure"
+  ],
+  "initial_focused_tests_passed": 11,
+  "final_counterexamples_passed": 2,
+  "native_solver_calls": 0,
+  "verified": [
+    "archive byte preservation",
+    "gantt LF",
+    "proposal29source hashes and canonical scope digest",
+    "native CSV/evidence binding"
+  ],
+  "scope": "finite closeout delta only; not the whole G3 backend",
+  "whole_G3_independent_review_still_incomplete": true
+}

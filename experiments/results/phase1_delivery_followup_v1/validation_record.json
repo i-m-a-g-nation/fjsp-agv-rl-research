@@ -1,0 +1,79 @@
+{
+  "base_commit": "3bb926d65f52c02b19d83f2268862d0bc2fdb3e5",
+  "source_sha256": {
+    "src/vis/gantt.py": "e00ef6d7f2c72396b9bf75c1eb74d3e2c197193946cf9e5b71cf595abc078d2a",
+    "experiments/exp_032_graduation_remedy_scope.py": "1a81671cdfde5121ee0e0cc1a76faa957abfc2f0e365bcc68c21cf58ffb704b1",
+    "tests/test_gantt.py": "4606f9e7ffb0d0ba432ff842e9b09ab2df4dbcc2e6fa7b32833ffcf27992300e",
+    "tests/test_graduation_remedy_scope.py": "58047765927d009ad19c07cd5331477feb0d25af7820976c26e8541cae70a9bf"
+  },
+  "legacy27unchanged": {
+    "experiments/exp_029_graduation_main_scope.py": "e6b1cb71ae24246f1f162c85d427e5ca1abb21c2ff79c8689e70e24e328f52c3",
+    "experiments/exp_030_graduation_main.py": "6f1c7c642ac41f9a299ab8dae76cfc6dcce35108f02b2492cffd55a64964bca3",
+    "src/ai_workflow/contracts.py": "c2bd5bcb27ed8e3e2c637eeee16e3767e93e5ce8521c6bf5524b614bfab55265",
+    "src/ai_workflow/graduation_backend.py": "a06ffefdc4ef2d6dc969559c285f2b5cf49fa33dda33e8c2624fd2b32432db70",
+    "src/ai_workflow/graduation_main_backend.py": "9a8ae90b418adc6509b40c2960368be015e1b6ef6959d2f0144389c90468b272",
+    "src/ai_workflow/graduation_main_budget.py": "01b5bb466a84d060a065e9b2d907b9d2fdf8ad7c01e3e498cccfba1b166d806c",
+    "src/ai_workflow/graduation_main_evidence.py": "2e585812adc245aa1b76a8f58dba408f0e2492229f560f22e1d61508fb487bd7",
+    "src/ai_workflow/graduation_main_scope.py": "5ddcf0571fe6e5a1abe9b459129c865076097972a86a1d5fbe3893634812c0ce",
+    "src/ai_workflow/process_supervisor.py": "4163d13753909ec97fc55a33c3ee5d8f534dd38fcb49793254b3492c55af1bb4",
+    "src/ai_workflow/review.py": "73c12de6c977a074148ca856145bef5597dd16cba4376349a76560f7cca6b25e",
+    "src/ai_workflow/runtime_budget.py": "d623544cd8969c1e24d88dadb009f9beb35cd6ded48326eb143407700bb0149d",
+    "src/ai_workflow/session_watchdog.py": "8cf94072eb5feaeed739af842d9ccba9632300ce373495229db18b97ee969d73",
+    "src/data/instance.py": "ddf1435c10c19f0b07867325e1504a7d60627be276284187c2cdf0c03d579025",
+    "src/graduation/_production.py": "9524fbc00dfcd2c5a9ad90eab9976c87f20e47a7299e5b5ec0f5ccf11363c8b3",
+    "src/graduation/data.py": "e9d854b854762b802b5c0208365955824a02edbf060123a2bacbeac813cfa205",
+    "src/graduation/enumeration.py": "47946b894670c246a0b36fffebd6d6334291acd2eb9bf4754c680c08881acc62",
+    "src/graduation/feasibility.py": "7a4fcb72adb761e40e4f168124019c3139e2a845849aef1d6a101053d128b925",
+    "src/graduation/metrics.py": "6270cc64dc8823917debb426dbab94f12df443d2706bfa6565afde39c4c829fd",
+    "src/graduation/reference_main_protocol.py": "df95c7f5da9f6f31510f44c8bc20b64636540a9df5abda2271432ebc3860795a",
+    "src/graduation/reference_main_results.py": "ed242a2c5553b3b487ab301329245be1d359d4a3d23df2d32518b21cc9bdb47d",
+    "src/graduation/reference_main_worker.py": "9f8f76b8838c9bd4c41fea2c56873d62d49513b15941e65175953f9bee6bb398",
+    "src/graduation/reference_pilot.py": "adda4cdc3890d6f1145292d11cbafe565ad00f4f5351116889c17ba335d0de0d",
+    "src/graduation/reference_protocol.py": "77cd7636b677be4d65d0266cf93711cf7f8271c2521b99cb300d4ba53f13b027",
+    "src/graduation/result.py": "9140bfa5eb529bc5629b2f4a987b98901690790f3e4c1a763b2d40c90e7e24dd",
+    "src/graduation/solver.py": "82716e579f94781f32b65de6f971ac25b6ddcb905b04f8767d66cea53b9600fb",
+    "src/scheduling/encoding.py": "76a4e5f80da5ede7ce5f32a0be5b9dfdbaca3312f55e28c121dae0be7d9a1d24",
+    "src/scheduling/feasibility.py": "20b3b495c37b244df6b4d4afdb62fbd0aeccf8473faa277c8ca86229125c02c7"
+  },
+  "full_local_pytest": {
+    "passed": 2049,
+    "skipped": 2,
+    "warnings": 13,
+    "seconds": 776.72,
+    "log": "full_pytest.log",
+    "scope": "before the final two-case closure fix; final change covered by related tests and exactcommitCI"
+  },
+  "final_related": {
+    "passed": 28,
+    "warnings": 13,
+    "log": "final_related.log"
+  },
+  "native001002": {
+    "all_exit_codes": 0,
+    "saved_plans": 14,
+    "current_source_recheck_passed": true,
+    "visual_inspection": "exp_001_gantt_latest.png checked; machine rows, labels and schedule readable"
+  },
+  "historical_CI": {
+    "commit": "3bb926d65f52c02b19d83f2268862d0bc2fdb3e5",
+    "run_id": 40821350521,
+    "archive": "../phase1_ci_3bb926d_v1",
+    "is_current_fix_CI": false
+  },
+  "original_ledger_sha256_unchanged": "85ee164ddf42227c1cf21e26a6b1fd81bd6d7fdd3de23c96c852d4eae9efb71a",
+  "old_closed_control_unchanged": true,
+  "remedy_proposal": {
+    "status": "VERIFIED_UNAPPROVED_PROPOSAL",
+    "scope_sha256": "6f9f88f81315bbfdda2da1c7a7c0c29577ab5e0a0fec9039e5b442282918d83e",
+    "planned_calls": 14,
+    "new_solver_calls": 0,
+    "budget_created": false
+  },
+  "new_remedy_solver_calls": 0,
+  "new_formal_solver_calls": 0,
+  "RL_training_calls": 0,
+  "model_calls": 0,
+  "independent_delta_review": "no remaining important findings",
+  "new_remote_CI": "verify exact delivery commit PR Checks",
+  "research_status": "not_achieved"
+}

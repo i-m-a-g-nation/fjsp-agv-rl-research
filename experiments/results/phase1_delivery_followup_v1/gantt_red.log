@@ -1,0 +1,71 @@
+.FF                                                                      [100%]
+================================== FAILURES ===================================
+_______ test_shown_gantt_preserves_machine_rows_and_operation_intervals _______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000259754EC590>
+
+    def test_shown_gantt_preserves_machine_rows_and_operation_intervals(monkeypatch):
+        result=checked_schedule();seen=[];before=set(plt.get_fignums())
+        def inspect_display():
+            ax=plt.gcf().axes[0]
+            seen.append({'machines':[t.get_text() for t in ax.get_yticklabels()],
+                         'intervals':sorted((p.get_x(),p.get_width(),p.get_y()+p.get_height()/2) for p in ax.patches),
+                         'labels':sorted(t.get_text() for t in ax.texts)})
+        monkeypatch.setattr(plt,'show',inspect_display)
+        try:
+            plot_gantt(result)
+            assert seen==[{'machines':['M0','M1'],'intervals':[(0,2,1),(0,3,0),(3,2,1)],
+                           'labels':['J0O0','J0O1','J1O0']}]
+>           assert set(plt.get_fignums())==before
+E           assert {1} == set()
+E             
+E             Extra items in the left set:
+E             1
+E             Use -v to get more diff
+
+tests\test_gantt.py:48: AssertionError
+___________________ test_failed_save_does_not_leak_a_figure ___________________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-438/test_failed_save_does_not_leak0')
+
+    def test_failed_save_does_not_leak_a_figure(tmp_path):
+        before=set(plt.get_fignums())
+        try:
+            with pytest.raises(FileNotFoundError):
+                plot_gantt(checked_schedule(),save_path=tmp_path/'missing'/'schedule.png')
+>           assert set(plt.get_fignums())==before
+E           assert {1} == set()
+E             
+E             Extra items in the left set:
+E             1
+E             Use -v to get more diff
+
+tests\test_gantt.py:58: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\..\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+..\..\..\..\..\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+..\..\..\..\..\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+..\..\..\..\..\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+..\..\..\..\..\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+..\..\..\..\..\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:88
+  D:\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+    parse = parser.parseString(pattern)
+
+..\..\..\..\..\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+..\..\..\..\..\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+..\..\..\..\..\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+..\..\..\..\..\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+..\..\..\..\..\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+..\..\..\..\..\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:92
+  D:\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+    parser.resetCache()
+
+..\..\..\..\..\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_mathtext.py:45
+  D:\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\site-packages\matplotlib\_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+    ParserElement.enablePackrat()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_gantt.py::test_shown_gantt_preserves_machine_rows_and_operation_intervals
+FAILED tests/test_gantt.py::test_failed_save_does_not_leak_a_figure - assert ...
+2 failed, 1 passed, 13 warnings in 1.18s

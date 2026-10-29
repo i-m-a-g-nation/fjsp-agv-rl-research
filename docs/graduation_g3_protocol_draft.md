@@ -247,3 +247,21 @@ $mainPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.e
 ```
 
 这些入口不调用求解器、模型或修改账本。下一步先准备新的有界验证提案，比较原配置与关闭有关预处理/等价严格建模中的一种补救，再用枚举和反例验证目标、返回变量、合法性和界。新试验需要明确的新预算与协议，不能恢复旧账本或直接重跑正式网格。确认参考底座后才推进新的G3/RL对比；大创物流与毕设算法成果均未因此达标。
+
+## 15. 补救开发范围提案（2026-10-29）
+
+本次用户选择开始落实有限交付补齐及下一次验证准备。`exp_032_graduation_remedy_scope.py`只生成或只读复检材料，没有运行命令，也不创建预算、人工批准或求解结果。旧600秒账本继续锁定，原正式480条和5份开发诊断不改写。
+
+提案只改变`cp_model_presolve`一个开关：原5个ERROR的原case/mode各跑开/关两配置，共10次；再对原可枚举单机双任务，在fixed/joint及两配置下运行4次控制，总计14次。每次最多1秒、单线程、seed42，Python3.11.15/OR-Tools9.15.6755。控制例加工2/2、交期2/4、维护时长2、完整窗口[0,6)、fixed开始0；枚举与手算目标为固定4、联合0。
+
+建议新预算60累计主动秒，仅覆盖将来获批执行的入口检查、受监督子进程、结果核验和收尾；本次材料开发准备不计入该未来预算。0模型调用，不重试、不恢复，不修改原模型/严格checker，也不升级依赖。官方[参数定义](https://github.com/google/or-tools/blob/stable/ortools/sat/sat_parameters.proto)确认该布尔开关默认true；[上游问题](https://github.com/google/or-tools/issues/5453)仅作为待验证机制依据，关闭整个预处理不能单独证明某条内部规则是原因。
+
+本版[中文范围摘要](../experiments/results/exp_032_graduation_remedy_scope_v1/scope_summary.txt)、[全部输入](../experiments/results/exp_032_graduation_remedy_scope_v1/inputs.json)、[14条顺序](../experiments/results/exp_032_graduation_remedy_scope_v1/planned_runs.json)及[协议](../experiments/results/exp_032_graduation_remedy_scope_v1/protocol.json)绑定范围哈希`6f9f88f81315bbfdda2da1c7a7c0c29577ab5e0a0fec9039e5b442282918d83e`。范围、新预算和原生执行均未批准；有界执行入口尚待实现，不能把本提案当作已经完成补救验证。
+
+计划保留14条完整分母和所有拒绝/未完成行，逐项记录报告目标、原始整数目标、独立延期、界、状态、参数和完整候选。控制例须OPTIMAL且与枚举4/0一致；5问题例若原配置不再复现，则明确写“反事实证据不足”，不自动重试。仅在这5个请求上减少异常不能推出通用正确性、性能优势、完整G3通过或课题达标。
+
+```powershell
+& $mainPython experiments/exp_032_graduation_remedy_scope.py recheck --output-dir experiments/results/exp_032_graduation_remedy_scope_v1
+```
+
+上面仅只读核对内容、来源和固定计划，不运行求解器、不改账本。旧未发布草稿因复检闭包缺陷修复而被替换，原草稿移至本机忽略的开发记录，未有人工批准；本节仅以当前完整哈希为待审范围。正式批次的既有scope/evidence/conclusion批准均不自动授权新试验。

@@ -1,0 +1,19 @@
+{
+  "solver_calls": 0,
+  "checks": [
+    {
+      "scope": "static_fjsp_feasibility",
+      "rows": 7,
+      "validated_schedules": 7,
+      "failed_runs": 0,
+      "current_sources_checked": true
+    },
+    {
+      "scope": "static_fjsp_feasibility",
+      "rows": 7,
+      "validated_schedules": 7,
+      "failed_runs": 0,
+      "current_sources_checked": true
+    }
+  ]
+}

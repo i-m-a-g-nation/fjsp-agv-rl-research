@@ -1,0 +1,20 @@
+历史Linux CI长期证据：提交3bb926d，run40821350521
+
+GitHub运行URL：https://github.com/i-m-a-g-nation/fjsp-agv-rl-research/actions/runs/40821350521
+运行结论SUCCESS；完整测试2040 passed、13 warnings、742.90秒，覆盖率90.84%。
+9个默认实验入口通过，可选heavy matrix跳过。本包不是本轮新绘图修复的CI结果。
+
+experiment-checks.zip是GitHub原始artifact ZIP，包含28份文件，压缩体约96KB。
+下载ZIP的SHA256与GitHub API发布digest一致：
+ab991fb3bb6527b530481fa6e1ffd49f7d90314727d5d613cbc65ab8138b3861
+全部ZIP成员与gh run download下载结果逐字节一致。
+github_run.json、github_artifact.json保留实际元数据；checks.json为原始入口回执，
+pytest_tail.log保留测试/覆盖率结尾。原始artifact会过期，本ZIP已纳入Git长期保留。
+
+从原始下载文件只读重检6份CSV中的43份保存计划，静态可行性和诊断通过；
+其中6份来自动态场景，仅重检静态加工层，不宣称由此独立验证完整动态语义。
+重检不调用求解器，require_current_sources=false：对象是3bb926d的历史结果，
+不是用后续源码重新执行；来源身份另按该提交及Git换行属性核对。
+GitHub元数据/哈希不能自行证明模型真实、一般最优或研究创新。
+
+Phase1已进入维护。远程heavy未运行、二进制锁和公开动态强基线等边界仍保留。

@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "status": "COMPLETED",
+  "heavy": false,
+  "python": "/opt/hostedtoolcache/Python/3.11.15/x64/bin/python",
+  "created_utc": "2026-10-29T05:05:57.603644+00:00",
+  "runner_sha256": "139f6dfa7407674c44d5ed7d90ee4e8d7c97c9738ab2128094c396957407e4fb",
+  "commands": [
+    {
+      "script": "exp_001_toy_instance.py",
+      "arguments": [
+        "--output-dir",
+        "/home/runner/work/fjsp-agv-rl-research/fjsp-agv-rl-research/experiments/runs/ci"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 1.0165594450000128
+    },
+    {
+      "script": "exp_002_solver_check.py",
+      "arguments": [
+        "--output-dir",
+        "/home/runner/work/fjsp-agv-rl-research/fjsp-agv-rl-research/experiments/runs/ci"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.4664873099999909
+    },
+    {
+      "script": "exp_003_dispatching_rules.py",
+      "arguments": [
+        "--output-dir",
+        "/home/runner/work/fjsp-agv-rl-research/fjsp-agv-rl-research/experiments/runs/ci"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.21425502699997878
+    },
+    {
+      "script": "exp_004_benchmark_smoke.py",
+      "arguments": [
+        "--output-dir",
+        "/home/runner/work/fjsp-agv-rl-research/fjsp-agv-rl-research/experiments/runs/ci"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.565136965999983
+    },
+    {
+      "script": "exp_012_benchmark_metadata_audit.py",
+      "arguments": [
+        "--output",
+        "/home/runner/work/fjsp-agv-rl-research/fjsp-agv-rl-research/experiments/runs/ci/metadata.csv"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.3648799909999809
+    },
+    {
+      "script": "exp_014_dynamic_reschedule_smoke.py",
+      "arguments": [
+        "--output-dir",
+        "/home/runner/work/fjsp-agv-rl-research/fjsp-agv-rl-research/experiments/runs/ci"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.16401718000000187
+    },
+    {
+      "script": "exp_015_dynamic_event_file_check.py",
+      "arguments": [
+        "--output",
+        "/home/runner/work/fjsp-agv-rl-research/fjsp-agv-rl-research/experiments/runs/ci/exp_015_dynamic_event_file_check.csv"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.06377905400000827
+    },
+    {
+      "script": "exp_016_dynamic_event_file_reschedule.py",
+      "arguments": [
+        "--output-dir",
+        "/home/runner/work/fjsp-agv-rl-research/fjsp-agv-rl-research/experiments/runs/ci"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.16405485600000702
+    },
+    {
+      "script": "exp_017_phase2a_dynamic_report.py",
+      "arguments": [
+        "--smoke-input",
+        "/home/runner/work/fjsp-agv-rl-research/fjsp-agv-rl-research/experiments/runs/ci/exp_014_dynamic_reschedule_smoke.csv",
+        "--audit-input",
+        "/home/runner/work/fjsp-agv-rl-research/fjsp-agv-rl-research/experiments/runs/ci/exp_015_dynamic_event_file_check.csv",
+        "--replay-input",
+        "/home/runner/work/fjsp-agv-rl-research/fjsp-agv-rl-research/experiments/runs/ci/exp_016_dynamic_event_file_reschedule.csv",
+        "--output",
+        "/home/runner/work/fjsp-agv-rl-research/fjsp-agv-rl-research/experiments/runs/ci/exp_017_phase2a_dynamic_report.md"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.0638360089999992
+    }
+  ]
+}

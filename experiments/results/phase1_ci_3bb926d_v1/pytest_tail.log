@@ -1,0 +1,100 @@
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7308639Z     ParserElement.enablePackrat()
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7308856Z 
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7309103Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7309648Z ================================ tests coverage ================================
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7310170Z _______________ coverage: platform linux, python 3.11.15-final-0 _______________
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7310727Z 
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7310903Z Name                                                  Stmts   Miss  Cover   Missing
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7311381Z -----------------------------------------------------------------------------------
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7311899Z src/ai_workflow/__init__.py                               8      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7312584Z src/ai_workflow/campus_auth.py                          209    130    38%   38-39, 42-48, 62-149, 187-244, 288-289, 321-322, 328-337, 341-372, 376
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7314200Z src/ai_workflow/candidate_comparison.py                 286     10    97%   104-105, 138-139, 301, 308-310, 485-486
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7315056Z src/ai_workflow/candidate_evidence.py                   108     27    75%   2-11, 17, 25, 29, 32, 36, 47, 66, 70, 76, 79, 85, 88, 91, 94, 98, 106, 110, 114, 122, 124, 130
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7315825Z src/ai_workflow/candidate_feedback.py                   153      4    97%   189-192
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7316429Z src/ai_workflow/candidate_replay.py                     179      1    99%   269
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7316995Z src/ai_workflow/config.py                                72      2    97%   34-35
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7317524Z src/ai_workflow/contracts.py                             33      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7318309Z src/ai_workflow/controlled_candidate.py                 203     26    87%   43, 49, 52, 90, 93, 106-108, 116, 133, 140, 158, 177, 193-196, 207, 211, 218, 228, 239, 243, 257, 265, 272
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7319144Z src/ai_workflow/evidence.py                             103      5    95%   36, 78, 126, 142, 151
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7321292Z src/ai_workflow/evidence_sources.py                      41      2    95%   47-48
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7322278Z src/ai_workflow/extraction_quality.py                    48      7    85%   52-56, 59, 73-75, 85
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7323105Z src/ai_workflow/field_extraction.py                      57      3    95%   44, 49, 63
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7324208Z src/ai_workflow/graduation_backend.py                   158     13    92%   50, 59, 64, 71, 120, 131, 196, 203-207, 214, 217
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7325273Z src/ai_workflow/graduation_main_backend.py              243     32    87%   53, 58, 66, 69, 71-79, 82, 85, 125, 129, 140, 146, 152, 154-155, 157, 164, 202, 216, 237, 273, 301, 307, 315, 319
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7326389Z src/ai_workflow/graduation_main_budget.py               150      9    94%   34, 37, 91, 94, 104, 110, 151-152, 213
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7327505Z src/ai_workflow/graduation_main_evidence.py             269     26    90%   80, 98-99, 113, 128, 150, 175, 196, 207, 273, 276, 279, 288, 292, 314, 332, 336, 365, 367, 373, 394, 398, 405, 425, 446, 450
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7386116Z src/ai_workflow/graduation_main_scope.py                148     11    93%   62, 125, 138, 157, 171, 184, 186, 192, 214, 222, 231
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7387160Z src/ai_workflow/langgraph_pipeline.py                   409     18    96%   121, 124, 130, 136, 224, 227, 230, 267, 270, 297-298, 440, 442, 445, 491, 618, 817, 827
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7387933Z src/ai_workflow/model_json.py                            41      1    98%   52
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7388677Z src/ai_workflow/paper_fetcher.py                        216     53    75%   114-115, 127-128, 237-240, 336-339, 362-364, 380-390, 417-418, 422-433, 437-454
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7389506Z src/ai_workflow/process_supervisor.py                    94     39    59%   19-55, 70, 79-80, 92-94, 99, 114, 120
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7390261Z src/ai_workflow/rag_store.py                            223     16    93%   53, 69-74, 76, 100, 161-162, 245, 290, 295, 303, 372-373, 376-377
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7391020Z src/ai_workflow/research_controller.py                  220     11    95%   36-37, 48, 102, 155, 157-158, 186, 217, 260, 264
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7391966Z src/ai_workflow/research_tasks.py                       193     41    79%   39, 54, 59, 72, 76, 80, 84, 97, 103, 106, 109, 115, 133, 136-153, 155, 178, 182, 200, 216, 227, 229, 243, 248, 255, 264, 278
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7393029Z src/ai_workflow/research_worker.py                       16     16     0%   3-25
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7401466Z src/ai_workflow/review.py                                22      1    95%   12
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7402105Z src/ai_workflow/runtime_budget.py                        95      5    95%   80, 100, 104, 109, 122
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7402813Z src/ai_workflow/sandbox.py                              113     17    85%   48, 51-52, 71, 73, 95, 103, 105-106, 126-127, 129, 138, 145, 154, 160-161
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7403723Z src/ai_workflow/sandbox_worker.py                        65     22    66%   27-58
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7404270Z src/ai_workflow/schemas.py                               51      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7404893Z src/ai_workflow/semantic_review.py                       63      4    94%   29, 36, 38, 55
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7405514Z src/ai_workflow/session_watchdog.py                      16      1    94%   13
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7406121Z src/ai_workflow/session_worker.py                        83      4    95%   20, 22, 82, 85
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7406881Z src/ai_workflow/sessions.py                             160     17    89%   38-39, 43-44, 50, 105, 118, 120, 125, 129, 135, 138, 147, 162, 167, 192-193
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7408063Z src/ai_workflow/source_bundle.py                        412     42    90%   48, 67, 69, 82, 94, 128, 136, 143, 153-154, 158-165, 202-203, 212, 244, 273, 317, 324, 336, 383, 389, 392, 397, 399, 405, 407, 447, 461, 482, 496-500, 530, 533
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7408965Z src/data/__init__.py                                      3      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7409470Z src/data/instance.py                                    130      1    99%   116
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7410032Z src/data/loader.py                                      109      9    92%   46, 76, 100, 103, 109, 118, 123, 126, 130
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7410815Z src/dynamic/__init__.py                                  10      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7411375Z src/dynamic/event_specs.py                               53      5    91%   65, 72, 79, 85, 90
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7412008Z src/dynamic/events.py                                    53     10    81%   16, 29, 31, 43, 55, 58, 61, 63, 78, 80
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7412617Z src/dynamic/feasibility.py                               39      2    95%   49-53
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7413168Z src/dynamic/remaining.py                                 32      2    94%   29, 31
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7413976Z src/dynamic/reschedule.py                                86      8    91%   83, 95, 102, 121, 142, 144, 146, 149
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7414572Z src/dynamic/rolling.py                                   67      1    99%   61
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7415092Z src/dynamic/snapshot.py                                  13      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7415706Z src/dynamic/state.py                                     84     13    85%   27, 44, 46, 48, 50, 52, 54, 73, 97, 148, 150, 163, 167
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7416308Z src/dynamic/timeline.py                                  13      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7416815Z src/graduation/__init__.py                                9      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7417384Z src/graduation/_production.py                            27      6    78%   11, 13, 18, 20, 29-30
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7418150Z src/graduation/candidate_templates/shared_scorer.py     126     12    90%   44, 60-61, 63, 105-106, 108, 120, 138-139, 141, 164
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7418877Z src/graduation/candidate_training.py                     78      1    99%   99
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7419454Z src/graduation/data.py                                   59      4    93%   58-59, 63, 75
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7420029Z src/graduation/enumeration.py                            63      4    94%   29, 45, 66, 77
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7420625Z src/graduation/feasibility.py                            62      1    98%   30
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7421160Z src/graduation/metrics.py                                 9      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7421987Z src/graduation/neural_policy.py                         142     15    89%   47-48, 50, 67, 84, 97, 107, 129-130, 132, 145, 162, 184, 187-188
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7422713Z src/graduation/permutation_diagnostics.py               179      2    99%   44, 46
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7423492Z src/graduation/policy_training.py                       173      6    97%   44, 83, 93, 102, 109, 233
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7424112Z src/graduation/reference_main_protocol.py                38      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7424771Z src/graduation/reference_main_results.py                151     11    93%   32, 39, 44-45, 47, 71, 99, 104, 126, 168, 211
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7425503Z src/graduation/reference_main_worker.py                  50      3    94%   24, 29, 52
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7426221Z src/graduation/reference_pilot.py                       200     18    91%   80, 87, 92, 98, 112, 119, 122, 128, 134, 141, 191, 230-237, 270
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7426927Z src/graduation/reference_pilot_worker.py                 14      3    79%   13, 15-16
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7427534Z src/graduation/reference_protocol.py                     45      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7428082Z src/graduation/result.py                                 13      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7428627Z src/graduation/return_baseline.py                        34      1    97%   42
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7429252Z src/graduation/rl_environment.py                        135      5    96%   102-103, 146, 150, 165
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7429868Z src/graduation/rules.py                                  54      1    98%   73
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7430441Z src/graduation/solver.py                                 86      5    94%   66, 83, 86, 103-104
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7431051Z src/graduation/solver_diagnostics.py                    139      5    96%   56, 162, 179, 182, 199
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7431780Z src/graduation/state_encoding.py                         69      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7432352Z src/graduation/validation_diagnostics.py                286      3    99%   105-106, 138
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7433001Z src/research/batch.py                                   184     10    95%   48-49, 71, 75, 161, 196, 214, 239-240, 262
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7433688Z src/research/protocol.py                                 84      3    96%   58, 70, 106
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7434211Z src/scheduling/__init__.py                                4      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7434729Z src/scheduling/decoding.py                               41      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7435238Z src/scheduling/encoding.py                               34      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7435782Z src/scheduling/feasibility.py                           135      1    99%   121
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7436298Z src/solvers/__init__.py                                   3      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7436811Z src/solvers/baselines.py                                 76      2    97%   31, 108
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7437349Z src/solvers/dispatching.py                               84      3    96%   62, 79, 234
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7437892Z src/solvers/heuristics.py                                 4      0   100%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7438441Z src/solvers/ortools_solver.py                           120      4    97%   153, 166, 199, 207
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7438960Z src/vis/gantt.py                                         39      1    97%   81
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7439447Z -----------------------------------------------------------------------------------
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7439928Z TOTAL                                                  8701    797    91%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7440193Z 
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:24.7440309Z 4 empty files skipped.
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:25.3695924Z Required test coverage of 80% reached. Total coverage: 90.84%
+tests and reproducibility checks	Run tests with core coverage	2026-10-29T05:18:25.3696401Z ================ 2040 passed, 13 warnings in 742.90s (0:12:22) =================
