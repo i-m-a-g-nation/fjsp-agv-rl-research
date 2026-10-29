@@ -1,0 +1,9 @@
+{
+  "formal_solver_calls": 0,
+  "original_ledger_retained": true,
+  "previous_evidence_hash": "600826efe8d5ad4d4497a3e0f3103145f9e8970a79c19f346f95750caaea8acd",
+  "previous_evidence_packet": "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\g3_main_evidence_20261029_v1",
+  "previous_evidence_was_approved": false,
+  "reason": "Real ledger/gate integration test reproduced active reservation being misclassified as exhaustion; fixed gated reservation ownership and rejected reuse after settled attempts.",
+  "status": "SUPERSEDED_BEFORE_APPROVAL"
+}

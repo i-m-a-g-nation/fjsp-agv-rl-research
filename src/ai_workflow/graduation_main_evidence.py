@@ -420,11 +420,11 @@ def recheck_main_evidence(evidence_dir, scope_dir=None, *, require_current_sourc
         raise ValueError(f'Invalid main evidence packet: {type(exc).__name__}') from exc
 
 
-def export_execution_context(review_dir, evidence_dir, *, allow_running=False) -> dict:
+def export_execution_context(review_dir, evidence_dir, *, allow_running=False, allow_reserved=False) -> dict:
     """Validate the actual evidence decision and original live ledger, without writes."""
     review, evidence = Path(review_dir).resolve(), Path(evidence_dir).resolve()
     state = _read(review / 'state.json')
-    allowed = {READY, 'RUNNING'} if allow_running else {READY}
+    allowed = {'RUNNING'} if allow_running else {READY}
     if state.get('status') not in allowed:
         raise ValueError('Control state does not authorize a main execution gate')
     context = load_scope_context(review)
@@ -443,8 +443,15 @@ def export_execution_context(review_dir, evidence_dir, *, allow_running=False) -
     recorded = _read(evidence / 'budget_snapshot.json')
     if budget['segments'][:len(recorded['segments'])] != recorded['segments']:
         raise ValueError('Original main budget lost or changed its evidence preparation history')
-    if not allow_running and budget['remaining_active_seconds'] <= 0:
-        raise ValueError('Original main budget is exhausted or interrupted')
+    if allow_running or allow_reserved:
+        # Only the one currently owned reservation may follow this evidence.
+        # It reserves all remaining time, so its available balance reads zero.
+        if (len(budget['segments']) != len(recorded['segments'])+1
+                or budget['segments'][-1]['finished_seconds'] is not None
+                or budget['active_seconds'] != recorded['active_seconds']):
+            raise ValueError('Main gate requires exactly its active execution reservation')
+    elif (budget['segments'] != recorded['segments'] or budget['remaining_active_seconds'] <= 0):
+        raise ValueError('Original main budget is exhausted, interrupted or already used after evidence')
     return {**context, 'evidence_dir': evidence, 'evidence_request': request,
             'evidence_decision': decision, 'evidence_hash': request['artifact_hash'],
             'backend_source_hashes': _read(evidence / 'backend_sources.json'),

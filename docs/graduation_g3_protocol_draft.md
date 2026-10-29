@@ -139,11 +139,11 @@ $scopePython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.
 
 执行时先保存480条完整计划行，每对fixed后joint，使用原CP-SAT配置。父进程和工作进程各自核对同一份人审批准、输入、27份来源及Python/OR-Tools运行环境。每条保存完整生产和维护计划，父进程重读G1合法性、延期与solver诊断后生成原始CSV、主比较表和敏感性表；只读复检可以重新生成这些表，不运行求解器。限时逆序、零延期分母、失败/未运行行及非独立工作负载按第6节披露。`COMPLETED`仅表示所有请求已记账，仍可能含UNKNOWN等无有效计划结果；不代表所有配对都有可用指标。
 
-最终相关回归229项通过。受原进程监督器管理的DEVTEST另跑4次小例求解，固定/联合延期为4/0和6/0；独立标准库计算核对计划并穷举机器分配、任务顺序、维护时刻和前后切点，最优值一致。真实CLI在未获evidence批准时拒绝运行，未创建输出，也未改变scope、control、evidence或账本字节。测试中的模拟批准明确标为开发夹具，不写入真实会话。
+最终相关回归231项通过。受原进程监督器管理的DEVTEST另跑4次小例求解，固定/联合延期为4/0和6/0；独立标准库计算核对计划并穷举机器分配、任务顺序、维护时刻和前后切点，最优值一致。真实CLI在未获evidence批准时拒绝运行，未创建输出，也未改变scope、control、evidence或账本字节。测试中的模拟批准明确标为开发夹具，不写入真实会话。另用真实审批检查/账本执行480条模拟UNKNOWN结果，确认预算预留期间可以启动、结果保留全分母、同一evidence不能重复执行；没有正式求解。
 
-**最终整批后端独立审查未完成**：审查代理触达账户用量限制。已有模块测试、主进程复核及反例修复，不能将其等同于整批独立审查通过。[限制记录](../experiments/results/exp_030_graduation_main_evidence_v1/review_limitations.json)随审核材料保存。远程完整回归以草稿PR对应提交的Checks为准，不用229项局部测试代替全套验收。
+**最终整批后端独立审查未完成**：审查代理触达账户用量限制。已有模块测试、主进程复核及反例修复，不能将其等同于整批独立审查通过。[限制记录](../experiments/results/exp_030_graduation_main_evidence_v2/review_limitations.json)随审核材料保存。远程完整回归以草稿PR对应提交的Checks为准，不用231项局部测试代替全套验收。
 
-本次[evidence中文摘要](../experiments/results/exp_030_graduation_main_evidence_v1/materials/evidence_summary.txt)及[完整请求](../experiments/results/exp_030_graduation_main_evidence_v1/materials/evidence_review.json)绑定哈希`600826efe8d5ad4d4497a3e0f3103145f9e8970a79c19f346f95750caaea8acd`。原600秒累计账本已计约10.5秒、余589.5秒，包含scope/evidence准备及各次保守预扣5秒的收尾；精确浮点数见[预算收据](../experiments/results/exp_030_graduation_main_evidence_v1/materials/budget_snapshot.json)。审批等待不计时。正式网格0次求解，evidence/conclusion均未批准，research_status仍为not_achieved。
+本次[evidence中文摘要](../experiments/results/exp_030_graduation_main_evidence_v2/materials/evidence_summary.txt)及[完整请求](../experiments/results/exp_030_graduation_main_evidence_v2/materials/evidence_review.json)绑定哈希`187881a399e7c27ba7949356a716d918b1b4243bf566d4f81d7ea2129397561b`。原600秒累计账本已计约15.828秒、余584.172秒，包含scope/evidence准备及各次保守预扣5秒的收尾；精确浮点数见[预算收据](../experiments/results/exp_030_graduation_main_evidence_v2/materials/budget_snapshot.json)。审批等待不计时。正式网格0次求解，evidence/conclusion均未批准，research_status仍为not_achieved。
 
 日常只读入口如下（先设置项目专用环境并核对解释器）：
 
@@ -151,9 +151,11 @@ $scopePython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.
 $mainPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.exe' } else { '.\.conda-env\python.exe' }
 & $mainPython -c "import sys; print(sys.executable)"
 & $mainPython experiments/exp_030_graduation_main.py status --review-dir experiments/runs/g3_main_review_17bc1aa7
-& $mainPython experiments/exp_030_graduation_main.py recheck-evidence --evidence-dir experiments/results/exp_030_graduation_main_evidence_v1/materials
+& $mainPython experiments/exp_030_graduation_main.py recheck-evidence --evidence-dir experiments/results/exp_030_graduation_main_evidence_v2/materials
 ```
 
 实际批准必须绑定原本地packet路径和完整evidence哈希；运行命令为`run --review-dir <实际控制目录> --evidence-dir <已审核原包> --output-dir <新目录>`，没有批准时拒绝。来源/输入/运行环境改变需要新evidence，不能自行补写批准或沿用旧哈希。预算耗尽、进程失败或控制状态改变均不自动重跑、续跑或加时。`exp_029 --recheck`只适用于最初冻结的双段账本；开始evidence后请用`exp_030`检查累计历史。
 
 进程树对工作进程实施硬超时；主进程检查和I/O采用合作式截止检查，每次最终结算/写盘预付5秒且限定在该时段内。阻塞I/O或失败清理可能晚返回，但不能保留迟到成功状态；不承诺强制中断任意文件系统调用。来源哈希是内容身份，记录的主机信息与历史人工决定仍依赖真实回执来源，不能靠哈希自行证明历史事实。
+
+第一版evidence在获批前被新版替代：真实账本集成测试发现运行预留被误判为预算耗尽，导致无法启动；修复同时收紧重复启动检查。旧包、失败日志和[替代记录](../experiments/results/exp_030_graduation_main_evidence_v2/superseded_evidence.json)保留，重新准备的主动时间仍计入同一600秒账本，没有退款或重建。请只审核本节新版哈希。

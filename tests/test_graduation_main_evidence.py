@@ -71,6 +71,38 @@ def approve_evidence_for_unit_test(unit_review):
                      'note': 'Synthetic gate test; not real human authorization'}})
 
 
+def test_real_gate_and_ledger_dispatch_all_mocked_rows_once(unit_review,monkeypatch):
+    """Synthetic human decisions; real gate/ledger/finalization, no CP solve."""
+    from src.ai_workflow import graduation_main_backend as backend
+    from src.graduation import reference_main_worker as worker
+    from src.graduation.reference_protocol import digest
+    prepare(unit_review)
+    approve_evidence_for_unit_test(unit_review)
+    monkeypatch.setattr(backend,'backend_source_hashes',lambda:deepcopy(unit_review['sources']))
+    dispatches=[]
+    def no_schedule(case,mode):
+        return {'case_id':case['case_id'],'mode':mode,'input_sha256':digest(case['data']),
+            'status':'NO_SCHEDULE','solver_status':'UNKNOWN','metrics':None,'payload':None,
+            'error':'GraduationSolverError: CP-SAT returned UNKNOWN; no accepted schedule',
+            'solver':{'time_limit':1.0,'num_workers':1,'seed':42}}
+    monkeypatch.setattr(worker,'evaluate_row',no_schedule)
+    def dispatch(script,payload,timeout):
+        context=evidence.execution_context(unit_review['review'],unit_review['output'],allow_running=True)
+        assert context['budget_snapshot']['segments'][-1]['finished_seconds'] is None
+        dispatches.append(payload)
+        return worker.execute_rows(context['cases'],Path(payload['output_dir']),payload['deadline'])
+    monkeypatch.setattr(backend,'supervised_json_process',dispatch)
+    output=unit_review['review'].parent/'mocked-formal-shaped-output'
+    result=backend.run_main(unit_review['review'],unit_review['output'],output)
+    assert len(dispatches)==1
+    assert result['status']=='COMPLETED' and result['status_counts']['NO_SCHEDULE']==480
+    assert result['accepted_runs']==0 and result['planned_calls']==480
+    assert backend.recheck_main_run(output,evidence.load_scope_context(unit_review['review'])['cases'])==result
+    with pytest.raises(ValueError):
+        backend.run_main(unit_review['review'],unit_review['output'],output.parent/'no-second-run')
+    assert len(dispatches)==1
+
+
 def rehash_artifacts(folder):
     manifest = read(folder / 'manifest.json')
     manifest['artifacts'] = {name: evidence._sha(folder / name) for name in sorted(evidence.FILES)}
@@ -240,7 +272,24 @@ def test_approved_gate_is_read_only_and_running_gate_is_explicit(unit_review):
     state['status'] = 'RUNNING'
     write(unit_review['review'] / 'state.json', state)
     with pytest.raises(ValueError): evidence.execution_context(unit_review['review'], unit_review['output'])
-    assert evidence.execution_context(unit_review['review'], unit_review['output'], allow_running=True)['scope_hash'] == context['scope_hash']
+    with pytest.raises(ValueError):
+        evidence.execution_context(unit_review['review'],unit_review['output'],allow_running=True)
+    from src.ai_workflow.graduation_main_budget import run_main_phase
+    def work(handle):
+        return evidence.execution_context(unit_review['review'],unit_review['output'],allow_running=True)['scope_hash']
+    assert run_main_phase(unit_review['scope'],unit_review['review'],work,
+                          lambda value,snapshot,check:value)==context['scope_hash']
+
+
+def test_settled_attempt_cannot_reuse_same_evidence(unit_review):
+    prepare(unit_review)
+    approve_evidence_for_unit_test(unit_review)
+    from src.ai_workflow.graduation_main_budget import run_main_phase
+    def failed(handle):raise ValueError('Synthetic attempt failed before output initialization')
+    with pytest.raises(ValueError):
+        run_main_phase(unit_review['scope'],unit_review['review'],failed,lambda *a:None)
+    with pytest.raises(ValueError):
+        evidence.execution_context(unit_review['review'],unit_review['output'])
 
 
 def test_stale_evidence_decision_fails_before_any_execution(unit_review):

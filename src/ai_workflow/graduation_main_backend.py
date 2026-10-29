@@ -196,7 +196,7 @@ def run_main(review_dir,evidence_dir,output_dir):
     def work(window):
         nonlocal initialized,state
         window.check()
-        current=execution_context(review,evidence)
+        current=execution_context(review,evidence,allow_reserved=True)
         if any(encoded(current[k])!=encoded(context[k]) for k in
                 ('scope_hash','evidence_hash','backend_source_hashes','cases')):
             raise ValueError('Main authorization changed while acquiring the execution lock')

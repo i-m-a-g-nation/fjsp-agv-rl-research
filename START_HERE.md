@@ -24,7 +24,7 @@ R1/R2 目前通过独立 API 和 `exp_022` 开发验证使用，尚未接入三�
 
 随后已实现并两次运行[毕设参考先导开发验证](docs/graduation_g3_protocol_draft.md)：12对三任务双机实例、24次CP-SAT均与独立枚举一致，两次输入与最优目标一致；10对联合维护延期更低、2对相同。它验证固定/联合参考模型及生成器，尚非正式G3或RL算法比较。阶段一进入维护，下一步重点是正式对照协议和大创最小物流模型。
 
-2026-10-29正式主比较的[范围审核材料](experiments/results/exp_029_graduation_main_scope_v1/materials/scope_summary.txt)已获用户明确批准：160对主比较、80对敏感性分析，共240对输入/480条请求，来自10组基础随机工作负载、160个不同物理模型。随后新增`exp_030`有界批次后端，已完成229项相关测试和4次开发小例求解，固定/联合延期4/0与6/0均通过独立枚举。正式主实验尚未求解，当前停在[evidence审核材料](experiments/results/exp_030_graduation_main_evidence_v1/materials/evidence_summary.txt)，哈希`600826ef…`；原600秒账本已计约10.5秒、余589.5秒。整批后端的最终独立代码审查因账户用量限制未完成，不能宣称独立审查通过。批准对应evidence后才运行正式批次，结果仍需conclusion审核。使用和边界见[G3说明](docs/graduation_g3_protocol_draft.md#11-主比较后端与evidence材料2026-10-29)。
+2026-10-29正式主比较的[范围审核材料](experiments/results/exp_029_graduation_main_scope_v1/materials/scope_summary.txt)已获用户明确批准：160对主比较、80对敏感性分析，共240对输入/480条请求，来自10组基础随机工作负载、160个不同物理模型。随后新增`exp_030`有界批次后端，已完成231项相关测试和4次开发小例求解，固定/联合延期4/0与6/0均通过独立枚举。正式主实验尚未求解，当前停在[evidence审核材料](experiments/results/exp_030_graduation_main_evidence_v2/materials/evidence_summary.txt)，哈希`187881a3…`；原600秒账本已计约15.828秒、余584.172秒。整批后端的最终独立代码审查因账户用量限制未完成，不能宣称独立审查通过。批准对应evidence后才运行正式批次，结果仍需conclusion审核。使用和边界见[G3说明](docs/graduation_g3_protocol_draft.md#11-主比较后端与evidence材料2026-10-29)。
 
 Phase 1 加固后，025/026参考实验以 `phase1_v2` 新目录重新运行；36份策略参数以及176条策略/规则轨迹与旧版一致。控制器默认使用新源码对应的参考档案，五步候选兼容性复跑仍拒绝同一候选。旧档案保留为历史证据，旧批次不能直接在新源码上续跑。基础正确性与课题算法效果分别评价。
 
