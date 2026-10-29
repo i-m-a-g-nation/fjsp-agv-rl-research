@@ -1,8 +1,8 @@
-# 毕设 G3A：固定/联合维护参考对照协议草案 v0.1
+# 毕设 G3A：固定/联合维护参考对照协议与执行记录（原草案 v0.1）
 
-状态：**正式协议仍为草案，主网格未冻结、未执行；先导开发验证已实现并运行**，见文末2026-10-28记录。用户“继续”承接G3协议设计；随后说明“暂不清楚，但最好加强化学习”。因此把RL列为优先研究方向，完整任务书要求仍未核实。本页正式网格、生成规则与预算仍是设计建议，不是已生成的人审批准。
+当前状态：**主网格已冻结并经实际scope/evidence批准；第二次尝试执行480次请求，475接受/5 ERROR，整批FAILED，结论待审核**。当前结果与完整边界见第13节。以下保留从原草案到材料冻结、批准和执行的历史，不用后续批准改写旧快照。用户偏好加强化学习，完整任务书要求仍未核实。
 
-机器可读提案见[同名JSON](graduation_g3_protocol_draft.json)，它不是现有018/019的可执行协议，`execution_supported=false`，不能直接投入工作流。原已完成三审会话的批准不授予本协议运行或RL训练权限。
+[同名JSON](graduation_g3_protocol_draft.json)保留原提案及其`execution_supported=false`历史字段。实际主比较通过第10—13节冻结材料及独立入口执行；旧G2/先导批准不替代本批scope/evidence，任何参考运行均不授予RL训练或课题验收权限。
 
 ## 1. 研究问题与分工
 
@@ -93,7 +93,7 @@ G3A只做可行域/参考比较。它的数据与结果可用于开发理解，�
 
 后续实施顺序：G3A生成器与去重/预算测试→先导独立枚举验收→有界批次/完整产物和三审→主参考对照；另线R1无训练环境→R2掩码规则基线→R3短训练试验→R4独立算法比较。最终算法以用户RL偏好推进设计，同时继续核对完整任务书，不把偏好写成原题强制要求。
 
-历史进度更新：用户随后推进[R1无训练环境](graduation_rl_environment_validation.md)，并继续完成有界神经试训及候选比较，最新状态见[START_HERE](../START_HERE.md)。这些不代表正式G3A网格已经执行。原JSON草案的execution_supported=false记录当时状态，保留历史字节；正式主比较材料及后端见第10/11节，下面的开发入口使用独立、固定的先导协议。
+历史进度更新：用户随后推进[R1无训练环境](graduation_rl_environment_validation.md)，并继续完成有界神经试训及候选比较，最新状态见[START_HERE](../START_HERE.md)。这些开发记录本身不代表正式G3A网格执行；后续实际尝试见第13节。原JSON草案的execution_supported=false记录当时状态，保留历史字节；正式主比较材料及后端见第10/11节，下面的开发入口使用独立、固定的先导协议。
 
 ## 9. 先导开发验证（2026-10-28）
 
@@ -164,6 +164,8 @@ $mainPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.e
 
 ## 12. 首次批准执行失败与修复后提审（2026-10-29）
 
+本节记录第3版材料准备时快照；其后实际批准及执行结果见第13节。
+
 用户已明确批准第2版`187881a3…` evidence。实际执行一次后，工作进程在第一条求解前被身份检查拒绝，批次标记FAILED，全部480行NOT_RUN、0条接受结果、0次实际求解，科研结论仍不可用。[失败摘要](../experiments/results/exp_030_graduation_main_failed_v1/failure_summary.txt)及[完整记录](../experiments/results/exp_030_graduation_main_failed_v1/failure_record.json)保存实际人审回执、全部CSV/计划行、原始runmanifest和原账本收据。原控制目录`experiments/runs/g3_main_review_17bc1aa7`保持FAILED，不被重置或续跑。
 
 根因是Windows的`platform.machine()`读取了监督器刻意移除的架构环境变量，父进程报告AMD64，精简环境中的子进程报告空串。改用`sysconfig.get_platform()`绑定解释器平台，仍严格比较Python完整版本、解释器路径、OR-Tools版本、系统与解释器平台；没有扩大监督器环境白名单或跳过身份检查。工作进程现在返回限长的阶段/错误原因，父进程保存原始`worker_receipt.json`并绑定进manifest，避免只留下“回执不完整”。
@@ -182,3 +184,30 @@ $mainPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.e
 ```
 
 第2版的实际批准仅用于已结束的首次尝试，源码与材料已变化，不能拿它批准第3版。只有明确批准本次新evidence才能再执行一次有界比较；执行后仍需conclusion审核。当前不认可任何维护协同效果、RL优势或课题达标。
+
+## 13. 第二次实际执行与结论材料（2026-10-29）
+
+用户在`call_f9b4280f95804ccba4711741e4605f5d`明确批准`5f654ce7…`新版evidence，随后仅执行一次第二次尝试。执行源码为`7b8e07c`，本轮未修改模型、求解器、检查器、预算或任何绑定源码。480次请求全部处理完，475份接受、5份ERROR，无UNKNOWN、未运行或中断行；接受结果为410 OPTIMAL、65 FEASIBLE。5份错误均为`Solver objective/bound disagrees with independent total tardiness`，因此整批保持**FAILED**，不是一次完整通过的参考比较。
+
+| 分组 | 计划配对 | 有效完整配对 | 联合延期更低 | 相同 | 联合延期更高 | 不完整 | 两方OPTIMAL |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 主比较 | 160 | 155 | 88 | 63 | 4 | 5 | 124 |
+| 敏感性 | 80 | 80 | 43 | 37 | 0 | 0 | 80 |
+
+[全部480行原始指标](../experiments/results/exp_030_graduation_main_attempt2_v1/run/raw.csv)、[160对主比较](../experiments/results/exp_030_graduation_main_attempt2_v1/run/primary_pairs.csv)、[80对敏感性](../experiments/results/exp_030_graduation_main_attempt2_v1/run/sensitivity_pairs.csv)完整保留。分析另给出[48个条件分组](../experiments/results/exp_030_graduation_main_attempt2_v1/conclusion/conditions.csv)和[规模分组](../experiments/results/exp_030_graduation_main_attempt2_v1/conclusion/size_groups.csv)。主比较观察差范围[-95,157]，敏感性[0,59]；负差不截断，固定延期为0时百分比留空。5个缺失配对不被从计划分母160中删除，也不以0补齐。数据只有10组基础随机工作负载、160个物理核心，不能按240个独立样本推断显著性或普遍优势。
+
+已有生产后端重检所有行的来源、输入、审批、预算、计划和派生CSV。另用标准库整数区间算术独立复算475份接受计划：任务恰好一次、机器分配、加工时长、生产与维护互斥、每机一次维护、完整窗口、fixed时刻、总延期、makespan及诊断一致；逐对重算观察差/界/NA，并检查同一物理核心中OPTIMAL joint目标一致。该复算不调用项目领域检查器或求解器，475份均通过；之后从复制出的完整归档再次只读重放通过，没有额外求解。独立计划算术不是整批代码独立审查，后者仍因额度限制未完成。
+
+5份拒绝结果的原始候选和分项数值没有保存，现有记录只能确认合并校验错误，无法确定具体是目标值、下界还是独立延期不一致。不能直接放宽检查或据此断言某一种根因。它们均位于n24/m2主比较，完整case_id/mode/错误保存在[comparison.json](../experiments/results/exp_030_graduation_main_attempt2_v1/conclusion/comparison.json)的rejected_or_missing列表。下一步应设计拒绝候选诊断留档并受控定位，再决定新验证；本批不自动重跑，也不进入RL调参。已保存各接受结果的solver_wall_time和阶段累计账本，尚无逐请求完整端到端耗时，不作运行时性能排名。
+
+同一600秒账本包含旧启动失败、两版准备、第二次求解及本次复核/结论封装；累计约136.296秒、余463.704秒，共14个已结算片段。第二次执行阶段91.313秒，另预付5秒收尾；结论复核4.546秒，另预付5秒收尾，未用不退。精确值见[结论预算收据](../experiments/results/exp_030_graduation_main_attempt2_v1/conclusion/budget_snapshot.json)。全批0模型调用，没有退款、重置、加时或失败重试。批次端到端账本不能冒充每条请求耗时。
+
+[结论中文摘要](../experiments/results/exp_030_graduation_main_attempt2_v1/conclusion/conclusion_summary.txt)与[内容绑定请求](../experiments/results/exp_030_graduation_main_attempt2_v1/conclusion/conclusion_review.json)的哈希为`106f4ba8bcbdc9c9c955a4c7458958af4b236497235a0fe61658cf0e3e70ee6a`。实际控制状态为WAITING_HUMAN_CONCLUSION，experiment_status仍为FAILED、conclusion_approved=false、research_status=not_achieved。待确认的只是本次失败事实、接受子集和未解决问题，不是完整G3通过、RL优势、大创物流协同或课题验收。
+
+归档只读重检（先依项目规则选择专用环境并核对解释器）：
+
+```powershell
+& $mainPython experiments/results/exp_030_graduation_main_attempt2_v1/conclusion/analysis.py --recheck experiments/results/exp_030_graduation_main_attempt2_v1
+```
+
+此入口只读取保存的原始计划、材料、哈希并重算报告，不调用CP-SAT、不改变账本、不授予新运行许可。执行源码`7b8e07c`的既有验收为本地236项相关测试和Linux1991项完整测试（覆盖率90.75%）；本轮只追加结果档案和说明，结果提交的CI状态以PR Checks为准。
