@@ -213,3 +213,37 @@ $mainPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.e
 此入口只读取保存的原始计划、材料、哈希并重算报告，不调用CP-SAT、不改变账本、不授予新运行许可。执行源码`7b8e07c`的既有验收为本地236项相关测试和Linux1991项完整测试（覆盖率90.75%）；本轮只追加结果档案和说明，结果提交的CI状态以PR Checks为准。
 
 随后用户在`call_1780b4a49e8b421085b0b0b1141a46c7`明确回复“仅确认本次失败事实与有效子集”。[实际结论回执](../experiments/results/exp_030_graduation_main_conclusion_ack_v1/conclusion_approval.json)单独绑定同一`106f4ba8…`完整哈希，原待审材料和原始run状态未改写。当前控制状态为CONCLUSION_RECORDED_EXPERIMENT_FAILED，conclusion_approved=true仅表示事实确认；experiment_status仍FAILED、research_status仍not_achieved，不授权额外求解或RL训练。保存回执前后原账本字节一致，剩余463.704秒未被退款或重置。5条一致性错误、拒绝诊断缺口和独立代码审查缺口仍未解决。
+
+## 14. 拒绝候选诊断（2026-10-29）
+
+本次“继续”按上一明确下一步解释为诊断开发，未伪造内容绑定的正式scope/evidence批准。新增隔离观察器和`exp_031`入口，所有27份旧后端源码、原模型、求解器和检查器均保持字节不变。观察器记录原始响应、每个整数变量、目标表达式和API取值，然后继续返回原基线行；严格目标/下界一致性检查没有放宽。
+
+只执行一次独立开发批次：原5条ERROR各1次、原顺序、每次1秒、单线程、seed42，整个开发入口限定30主动秒，继续使用原600秒账本。5条全部重现原拒绝；这不是480请求正式批次重跑，也不替换任何历史行。所有新候选保持`UNVALIDATED_DIAGNOSTIC_CANDIDATE`和`accepted_for_research=false`。
+
+| 原请求序号（从0计） | 模式 | 报告目标 | 原始整数目标与独立延期 | 差值 | 下界 |
+|---|---|---:|---:|---:|---:|
+| 167 | joint | 88 | 86 | 2 | 0 |
+| 186 | fixed | 109 | 106 | 3 | 0 |
+| 222 | fixed | 159 | 141 | 18 | 0 |
+| 226 | fixed | 423 | 422 | 1 | 0 |
+| 229 | joint | 63 | 61 | 2 | 0 |
+
+5份均为FEASIBLE。原始响应目标等于API目标；返回整数变量、API变量和独立计划延期彼此一致。独立标准库脚本另检任务恰好一次、单机分配、加工时长、资源互斥、每机一次维护、完整维护窗口及fixed时刻，5份均通过。原模型的24个目标系数均1、offset0、scale1，差异是整数级，不能靠增大浮点容差处理。[逐项取证报告](../experiments/results/exp_031_consistency_diagnostic_dev_v1/independent_candidate_check.json)与[独立脚本](../experiments/results/exp_031_consistency_diagnostic_dev_v1/inspect_candidates.py)随原始捕获归档。算术通过不证明搜索过程正确，也不授予科研接受资格。
+
+这与[OR-Tools官方问题5453](https://github.com/google/or-tools/issues/5453)描述的9.15.6755问题吻合：`lin_max`预处理与后处理可能使报告目标与返回变量不一致。本模型使用延期的`AddMaxEquality`，因此是有依据的机制推断；尚未做关闭该预处理的对照，不能说已经独立证明了具体内部规则因果。查看时[修复PR5452](https://github.com/google/or-tools/pull/5452)仍是未合并草稿，没有安装或验证修复版本。只用重算延期覆盖公开目标可能掩盖搜索内部候选排名问题，当前未采用。
+
+本次开发封装另因Windows强制锁文件被纳入哈希清单而失败：worker已经保存全部5份捕获，但批次回执为DEVELOPMENT_FAILED。原失败目录和采集时源码快照不改写。后续版本将运行锁移到结果目录外；合成反例验证修复，没有再次调用这5个问题算例。重放额外核对29份来源，旧27份必须匹配当前原始源码；两份诊断源码发生变化时，必须显式提供采集快照且哈希匹配，绝不执行快照源码。重放还检查开发状态、零正式/模型调用及研究未达成，不能把重算哈希后的材料提升为研究通过。
+
+内部工作进程现在还核对父进程PID、有效期限、父进程持有的锁、原账本预留段和账本哈希；只有公开源码/输入哈希不能直接启动。后续代理审查发现的来源、结果标记、普通求解异常误标完整、内部入口绑定问题均补了合成反例。最终独立复审因账户用量限制未完成；本次审查提出问题不等于修复后独立审查通过，整批G3后端独立审查也仍未完成。
+
+本次工作计账13.828秒，另预付5秒收尾；账本累计155.124秒。由于封装失败，既有保守策略又预留余下444.876秒且不结算，所以charged=600、可用=0。这不表示实际消耗600秒CPU。原账本及17段记录保存，未退款、删除预留、重建或自动续跑。后续代码修复、只读复盘和合成测试属于开发活动，不冒充仍有实验额度；相关旧回归中2次微型G2求解控制也明确与这5次诊断分开记载。
+
+当前仅有只读复检可继续使用（先核对专用解释器）：
+
+```powershell
+& $mainPython experiments/exp_031_graduation_solver_diagnostics.py audit
+& $mainPython experiments/exp_031_graduation_solver_diagnostics.py recheck --output-dir experiments/results/exp_031_consistency_diagnostic_dev_v1/run --captured-sources experiments/results/exp_031_consistency_diagnostic_dev_v1/captured_sources
+& $mainPython experiments/results/exp_031_consistency_diagnostic_dev_v1/inspect_candidates.py --recheck experiments/results/exp_031_consistency_diagnostic_dev_v1
+```
+
+这些入口不调用求解器、模型或修改账本。下一步先准备新的有界验证提案，比较原配置与关闭有关预处理/等价严格建模中的一种补救，再用枚举和反例验证目标、返回变量、合法性和界。新试验需要明确的新预算与协议，不能恢复旧账本或直接重跑正式网格。确认参考底座后才推进新的G3/RL对比；大创物流与毕设算法成果均未因此达标。

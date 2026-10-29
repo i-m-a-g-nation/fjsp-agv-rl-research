@@ -633,6 +633,10 @@ Runs 12 paired tiny instances and 24 CP-SAT solves checked by enumeration, with 
 
 Prepares/rechecks content-bound evidence, inspects the original cumulative budget, or executes the frozen main comparison only after its actual evidence approval. The supervised worker preserves all480 planned rows, including failures and missing requests, and independently checks saved production/maintenance plans. [Usage and review limitation](../docs/graduation_g3_protocol_draft.md#11-主比较后端与evidence材料2026-10-29). The published evidence packet grants no execution approval.
 
+## `exp_031_graduation_solver_diagnostics.py`
+
+Read-only `audit` selects the five archived G3A errors. Read-only `recheck` verifies development captures and explicit captured-source snapshots; see [diagnosis, budget lock and usage](../docs/graduation_g3_protocol_draft.md#14-拒绝候选诊断2026-10-29). The single five-call development capture reproduced reported-objective/returned-solution disagreement; its packaging failed and remains FAILED. The original cumulative budget is now locked with zero available time. `dev-probe` cannot resume it. No formal results are replaced or accepted by these diagnostics.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.

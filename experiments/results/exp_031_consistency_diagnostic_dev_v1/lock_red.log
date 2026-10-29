@@ -1,0 +1,55 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+______________ test_receipt_never_hashes_a_live_controller_lock _______________
+
+p = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-426/test_receipt_never_hashes_a_li0/out/control/controller.lock')
+
+    def locked(p):
+>       if Path(p).name=='controller.lock':raise PermissionError('TEST_ONLY-live locked file')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       PermissionError: TEST_ONLY-live locked file
+
+tests\test_solver_diagnostic_cli.py:65: PermissionError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-426/test_receipt_never_hashes_a_li0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000019A576B7E10>
+
+    def test_receipt_never_hashes_a_live_controller_lock(tmp_path,monkeypatch):
+        """Simulate mandatory Windows byte locking, without a solver or real ledger."""
+        import shutil
+        from src.ai_workflow.graduation_main_budget import read_main_budget
+        from src.ai_workflow.graduation_main_evidence import ROOT,SCOPE_ARCHIVE
+        scope=tmp_path/'TEST_ONLY-scope'
+        shutil.copytree(ROOT/SCOPE_ARCHIVE,scope)
+        monkeypatch.setattr(cli,'load_scope_context',lambda _:{'scope_dir':scope})
+        monkeypatch.setattr(cli,'supervised_json_process',lambda *a,**k:{'status':'DEADLINE_EXHAUSTED','diagnostic_solver_calls':0})
+        original_sha=cli.sha
+        def locked(p):
+            if Path(p).name=='controller.lock':raise PermissionError('TEST_ONLY-live locked file')
+            return original_sha(p)
+        monkeypatch.setattr(cli,'sha',locked)
+>       result=cli.run_development(tmp_path/'out')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_solver_diagnostic_cli.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+experiments\exp_031_graduation_solver_diagnostics.py:153: in run_development
+    'artifacts':{p.relative_to(out).as_posix():sha(p) for p in out.rglob('*')
+experiments\exp_031_graduation_solver_diagnostics.py:153: in <dictcomp>
+    'artifacts':{p.relative_to(out).as_posix():sha(p) for p in out.rglob('*')
+                                               ^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+p = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-426/test_receipt_never_hashes_a_li0/out/control/controller.lock')
+
+    def locked(p):
+>       if Path(p).name=='controller.lock':raise PermissionError('TEST_ONLY-live locked file')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       PermissionError: TEST_ONLY-live locked file
+
+tests\test_solver_diagnostic_cli.py:65: PermissionError
+=========================== short test summary info ===========================
+FAILED tests/test_solver_diagnostic_cli.py::test_receipt_never_hashes_a_live_controller_lock
+1 failed in 4.16s

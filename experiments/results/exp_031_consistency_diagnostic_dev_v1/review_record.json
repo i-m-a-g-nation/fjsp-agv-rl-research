@@ -1,0 +1,27 @@
+{
+  "scope": "uncommitted diagnostic delta only; not whole G3 backend",
+  "status": "INCOMPLETE_USAGE_LIMIT",
+  "agent": "diagnostic_delta_review",
+  "findings": [
+    {
+      "issue": "replay did not validate source map",
+      "addressed_by": "exact29-map validation and explicit matching capture-source snapshots"
+    },
+    {
+      "issue": "rehashed development receipt could claim research success",
+      "addressed_by": "strict status and false/zero/research invariants"
+    },
+    {
+      "issue": "ordinary Solve exception incorrectly marked capture COMPLETE",
+      "addressed_by": "annotate capture error and rethrow unchanged"
+    },
+    {
+      "issue": "internal worker public hashes not bound to live original budget ownership",
+      "addressed_by": "parent PID,held lock,deadline,original ledger hash and reserved-segment lease"
+    }
+  ],
+  "fixes_have_local_regression_tests": true,
+  "final_independent_re_review_completed": false,
+  "reviewer_native_solver_calls": 0,
+  "earlier_whole_backend_independent_review_still_incomplete": true
+}

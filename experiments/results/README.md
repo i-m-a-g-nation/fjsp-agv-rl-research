@@ -74,3 +74,10 @@ reaches the upstream UB, and whether the local CP-SAT status proved optimality.
 Experiment 014 records Phase 2A dynamic-rescheduling smoke scenarios as both a
 CSV table and compact Markdown report. Each PASS row is still validated through
 the Phase 1 feasibility checker and Phase 2A dynamic checks.
+
+`exp_031_consistency_diagnostic_dev_v1` preserves one failed development capture
+batch, five complete raw rejected candidates, exact capture-time source snapshots,
+independent integer interval/objective arithmetic, and the locked original ledger.
+Read [diagnosis_summary.txt](exp_031_consistency_diagnostic_dev_v1/diagnosis_summary.txt)
+for findings and limits. These diagnostics do not replace the original formal
+475-accepted/5-error batch or establish research completion.

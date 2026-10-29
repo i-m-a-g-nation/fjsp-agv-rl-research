@@ -1,0 +1,19 @@
+{
+  "checked_at_utc": "2026-10-29T05:04:04.486614+00:00",
+  "primary_sources": [
+    {
+      "url": "https://github.com/google/or-tools/issues/5453",
+      "title": "CP-SAT: objective_value differs from the returned solution after lin_max presolve",
+      "state_at_inspection": "open",
+      "updated_at": "2026-10-07T09:01:20Z"
+    },
+    {
+      "url": "https://github.com/google/or-tools/pull/5452",
+      "state_at_inspection": "draft_unmerged"
+    }
+  ],
+  "matched_observation": "OR-Tools9.15.6755: reported objective exceeds exact objective of returned integer solution in a model with AddMaxEquality tardiness.",
+  "inference": "lin_max presolve/postsolve mechanism is a close upstream match; no local presolve-off counterfactual has been run.",
+  "no_verified_remedy": true,
+  "no_dependency_change": true
+}

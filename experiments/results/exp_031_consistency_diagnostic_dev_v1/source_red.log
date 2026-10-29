@@ -1,0 +1,101 @@
+FFFFF                                                                    [100%]
+================================== FAILURES ===================================
+_______ test_historical_replay_requires_explicit_captured_source_bytes ________
+
+    def test_historical_replay_requires_explicit_captured_source_bytes():
+        archive=cli.ROOT/'experiments/results/exp_031_consistency_diagnostic_dev_v1'
+>       with pytest.raises(ValueError,match='source'):
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests\test_solver_diagnostic_cli.py:92: Failed
+_________ test_source_map_or_snapshot_tampering_is_rejected[missing] __________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-429/test_source_map_or_snapshot_ta0')
+fault = 'missing'
+
+    @pytest.mark.parametrize('fault',['missing','extra','baseline','snapshot'])
+    def test_source_map_or_snapshot_tampering_is_rejected(tmp_path,fault):
+        import shutil
+        archive=cli.ROOT/'experiments/results/exp_031_consistency_diagnostic_dev_v1'
+        manifest=cli.read(archive/'run/manifest.json')
+        snapshots=tmp_path/'captured_sources';shutil.copytree(archive/'captured_sources',snapshots)
+        if fault=='missing':manifest['source_hashes'].pop('src/graduation/solver.py')
+        elif fault=='extra':manifest['source_hashes']['TEST_ONLY-extra.py']='0'*64
+        elif fault=='baseline':manifest['source_hashes']['src/graduation/solver.py']='0'*64
+        else:(snapshots/'exp_031_graduation_solver_diagnostics.py').write_bytes(b'TEST_ONLY-tampered')
+        with pytest.raises(ValueError,match='source'):
+>           cli._recheck_sources(manifest,snapshots)
+            ^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'experiments.exp_031_graduation_solver_diagnostics' has no attribute '_recheck_sources'
+
+tests\test_solver_diagnostic_cli.py:110: AttributeError
+__________ test_source_map_or_snapshot_tampering_is_rejected[extra] ___________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-429/test_source_map_or_snapshot_ta1')
+fault = 'extra'
+
+    @pytest.mark.parametrize('fault',['missing','extra','baseline','snapshot'])
+    def test_source_map_or_snapshot_tampering_is_rejected(tmp_path,fault):
+        import shutil
+        archive=cli.ROOT/'experiments/results/exp_031_consistency_diagnostic_dev_v1'
+        manifest=cli.read(archive/'run/manifest.json')
+        snapshots=tmp_path/'captured_sources';shutil.copytree(archive/'captured_sources',snapshots)
+        if fault=='missing':manifest['source_hashes'].pop('src/graduation/solver.py')
+        elif fault=='extra':manifest['source_hashes']['TEST_ONLY-extra.py']='0'*64
+        elif fault=='baseline':manifest['source_hashes']['src/graduation/solver.py']='0'*64
+        else:(snapshots/'exp_031_graduation_solver_diagnostics.py').write_bytes(b'TEST_ONLY-tampered')
+        with pytest.raises(ValueError,match='source'):
+>           cli._recheck_sources(manifest,snapshots)
+            ^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'experiments.exp_031_graduation_solver_diagnostics' has no attribute '_recheck_sources'
+
+tests\test_solver_diagnostic_cli.py:110: AttributeError
+_________ test_source_map_or_snapshot_tampering_is_rejected[baseline] _________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-429/test_source_map_or_snapshot_ta2')
+fault = 'baseline'
+
+    @pytest.mark.parametrize('fault',['missing','extra','baseline','snapshot'])
+    def test_source_map_or_snapshot_tampering_is_rejected(tmp_path,fault):
+        import shutil
+        archive=cli.ROOT/'experiments/results/exp_031_consistency_diagnostic_dev_v1'
+        manifest=cli.read(archive/'run/manifest.json')
+        snapshots=tmp_path/'captured_sources';shutil.copytree(archive/'captured_sources',snapshots)
+        if fault=='missing':manifest['source_hashes'].pop('src/graduation/solver.py')
+        elif fault=='extra':manifest['source_hashes']['TEST_ONLY-extra.py']='0'*64
+        elif fault=='baseline':manifest['source_hashes']['src/graduation/solver.py']='0'*64
+        else:(snapshots/'exp_031_graduation_solver_diagnostics.py').write_bytes(b'TEST_ONLY-tampered')
+        with pytest.raises(ValueError,match='source'):
+>           cli._recheck_sources(manifest,snapshots)
+            ^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'experiments.exp_031_graduation_solver_diagnostics' has no attribute '_recheck_sources'
+
+tests\test_solver_diagnostic_cli.py:110: AttributeError
+_________ test_source_map_or_snapshot_tampering_is_rejected[snapshot] _________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-429/test_source_map_or_snapshot_ta3')
+fault = 'snapshot'
+
+    @pytest.mark.parametrize('fault',['missing','extra','baseline','snapshot'])
+    def test_source_map_or_snapshot_tampering_is_rejected(tmp_path,fault):
+        import shutil
+        archive=cli.ROOT/'experiments/results/exp_031_consistency_diagnostic_dev_v1'
+        manifest=cli.read(archive/'run/manifest.json')
+        snapshots=tmp_path/'captured_sources';shutil.copytree(archive/'captured_sources',snapshots)
+        if fault=='missing':manifest['source_hashes'].pop('src/graduation/solver.py')
+        elif fault=='extra':manifest['source_hashes']['TEST_ONLY-extra.py']='0'*64
+        elif fault=='baseline':manifest['source_hashes']['src/graduation/solver.py']='0'*64
+        else:(snapshots/'exp_031_graduation_solver_diagnostics.py').write_bytes(b'TEST_ONLY-tampered')
+        with pytest.raises(ValueError,match='source'):
+>           cli._recheck_sources(manifest,snapshots)
+            ^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'experiments.exp_031_graduation_solver_diagnostics' has no attribute '_recheck_sources'
+
+tests\test_solver_diagnostic_cli.py:110: AttributeError
+=========================== short test summary info ===========================
+FAILED tests/test_solver_diagnostic_cli.py::test_historical_replay_requires_explicit_captured_source_bytes
+FAILED tests/test_solver_diagnostic_cli.py::test_source_map_or_snapshot_tampering_is_rejected[missing]
+FAILED tests/test_solver_diagnostic_cli.py::test_source_map_or_snapshot_tampering_is_rejected[extra]
+FAILED tests/test_solver_diagnostic_cli.py::test_source_map_or_snapshot_tampering_is_rejected[baseline]
+FAILED tests/test_solver_diagnostic_cli.py::test_source_map_or_snapshot_tampering_is_rejected[snapshot]
+5 failed, 7 deselected in 3.88s
