@@ -40,6 +40,7 @@ experiments/results/exp_030_graduation_main_evidence_v3/** -text whitespace=cr-a
 experiments/results/exp_030_graduation_main_evidence_v3/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 experiments/results/exp_030_graduation_main_attempt2_v1/** -text whitespace=cr-at-eol
 experiments/results/exp_030_graduation_main_attempt2_v1/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
+experiments/results/exp_030_graduation_main_conclusion_ack_v1/** -text whitespace=cr-at-eol
 experiments/results/phase1_hardening_v1/** -text whitespace=cr-at-eol
 experiments/results/phase1_closeout_v1/** -text whitespace=cr-at-eol
 experiments/results/phase1_closeout_v1/**/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol

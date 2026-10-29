@@ -1,6 +1,6 @@
 # 毕设 G3A：固定/联合维护参考对照协议与执行记录（原草案 v0.1）
 
-当前状态：**主网格已冻结并经实际scope/evidence批准；第二次尝试执行480次请求，475接受/5 ERROR，整批FAILED，结论待审核**。当前结果与完整边界见第13节。以下保留从原草案到材料冻结、批准和执行的历史，不用后续批准改写旧快照。用户偏好加强化学习，完整任务书要求仍未核实。
+当前状态：**第二次尝试执行480次请求，475接受/5 ERROR，整批FAILED；用户仅确认失败事实与有效子集，研究仍未达成**。当前结果与完整边界见第13节。以下保留从原草案到材料冻结、批准和执行的历史，不用后续批准改写旧快照。用户偏好加强化学习，完整任务书要求仍未核实。
 
 [同名JSON](graduation_g3_protocol_draft.json)保留原提案及其`execution_supported=false`历史字段。实际主比较通过第10—13节冻结材料及独立入口执行；旧G2/先导批准不替代本批scope/evidence，任何参考运行均不授予RL训练或课题验收权限。
 
@@ -202,7 +202,7 @@ $mainPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.e
 
 同一600秒账本包含旧启动失败、两版准备、第二次求解及本次复核/结论封装；累计约136.296秒、余463.704秒，共14个已结算片段。第二次执行阶段91.313秒，另预付5秒收尾；结论复核4.546秒，另预付5秒收尾，未用不退。精确值见[结论预算收据](../experiments/results/exp_030_graduation_main_attempt2_v1/conclusion/budget_snapshot.json)。全批0模型调用，没有退款、重置、加时或失败重试。批次端到端账本不能冒充每条请求耗时。
 
-[结论中文摘要](../experiments/results/exp_030_graduation_main_attempt2_v1/conclusion/conclusion_summary.txt)与[内容绑定请求](../experiments/results/exp_030_graduation_main_attempt2_v1/conclusion/conclusion_review.json)的哈希为`106f4ba8bcbdc9c9c955a4c7458958af4b236497235a0fe61658cf0e3e70ee6a`。实际控制状态为WAITING_HUMAN_CONCLUSION，experiment_status仍为FAILED、conclusion_approved=false、research_status=not_achieved。待确认的只是本次失败事实、接受子集和未解决问题，不是完整G3通过、RL优势、大创物流协同或课题验收。
+[结论中文摘要](../experiments/results/exp_030_graduation_main_attempt2_v1/conclusion/conclusion_summary.txt)与[内容绑定请求](../experiments/results/exp_030_graduation_main_attempt2_v1/conclusion/conclusion_review.json)的哈希为`106f4ba8bcbdc9c9c955a4c7458958af4b236497235a0fe61658cf0e3e70ee6a`。材料生成时控制状态为WAITING_HUMAN_CONCLUSION，experiment_status仍为FAILED、conclusion_approved=false、research_status=not_achieved。待确认的只是本次失败事实、接受子集和未解决问题，不是完整G3通过、RL优势、大创物流协同或课题验收。
 
 归档只读重检（先依项目规则选择专用环境并核对解释器）：
 
@@ -211,3 +211,5 @@ $mainPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.e
 ```
 
 此入口只读取保存的原始计划、材料、哈希并重算报告，不调用CP-SAT、不改变账本、不授予新运行许可。执行源码`7b8e07c`的既有验收为本地236项相关测试和Linux1991项完整测试（覆盖率90.75%）；本轮只追加结果档案和说明，结果提交的CI状态以PR Checks为准。
+
+随后用户在`call_1780b4a49e8b421085b0b0b1141a46c7`明确回复“仅确认本次失败事实与有效子集”。[实际结论回执](../experiments/results/exp_030_graduation_main_conclusion_ack_v1/conclusion_approval.json)单独绑定同一`106f4ba8…`完整哈希，原待审材料和原始run状态未改写。当前控制状态为CONCLUSION_RECORDED_EXPERIMENT_FAILED，conclusion_approved=true仅表示事实确认；experiment_status仍FAILED、research_status仍not_achieved，不授权额外求解或RL训练。保存回执前后原账本字节一致，剩余463.704秒未被退款或重置。5条一致性错误、拒绝诊断缺口和独立代码审查缺口仍未解决。
