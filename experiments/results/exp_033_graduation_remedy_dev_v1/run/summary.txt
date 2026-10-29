@@ -1,0 +1,23 @@
+毕设预处理开关：一次有界开发验证
+范围：6f9f88f81315bbfdda2da1c7a7c0c29577ab5e0a0fec9039e5b442282918d83e
+执行状态：DEVELOPMENT_CAPTURED；反事实判断：INCONCLUSIVE_ORIGINAL_NOT_REPRODUCED
+计划14次，已捕获14份；确认Solve调用14次。
+原配置复现2/5；关闭预处理后接受5/5；小例控制通过：True。
+新预算60秒，累计计账（含预付）26.672秒，预留0.000秒。剩余额度不授权额外求解。
+14条计划分母保留；未完成、错误和缺失值不填0。不自动重试、不恢复、不运行正式G3网格或RL。
+研究仍未达成。本次仅检查有限请求中的目标/返回解一致性，不证明通用正确、普遍性能优势或特定内部规则因果。
+旧600秒账本及正式结果不在本次写入范围。
+00 joint presolve=True 状态=FEASIBLE/ERROR 报告目标=119.0 重算延期=114 下界=0.0
+01 joint presolve=False 状态=FEASIBLE/ACCEPTED 报告目标=1711.0 重算延期=1711 下界=0.0
+02 fixed presolve=True 状态=FEASIBLE/ACCEPTED 报告目标=121.0 重算延期=121 下界=0.0
+03 fixed presolve=False 状态=FEASIBLE/ACCEPTED 报告目标=1542.0 重算延期=1542 下界=0.0
+04 fixed presolve=True 状态=FEASIBLE/ERROR 报告目标=159.0 重算延期=141 下界=0.0
+05 fixed presolve=False 状态=FEASIBLE/ACCEPTED 报告目标=1371.0 重算延期=1371 下界=0.0
+06 fixed presolve=True 状态=FEASIBLE/ACCEPTED 报告目标=472.0 重算延期=472 下界=0.0
+07 fixed presolve=False 状态=FEASIBLE/ACCEPTED 报告目标=541.0 重算延期=541 下界=0.0
+08 joint presolve=True 状态=FEASIBLE/ACCEPTED 报告目标=98.0 重算延期=98 下界=0.0
+09 joint presolve=False 状态=FEASIBLE/ACCEPTED 报告目标=2176.0 重算延期=2176 下界=0.0
+10 fixed presolve=True 状态=OPTIMAL/ACCEPTED 报告目标=4.0 重算延期=4 下界=4.0
+11 fixed presolve=False 状态=OPTIMAL/ACCEPTED 报告目标=4.0 重算延期=4 下界=4.0
+12 joint presolve=True 状态=OPTIMAL/ACCEPTED 报告目标=0.0 重算延期=0 下界=0.0
+13 joint presolve=False 状态=OPTIMAL/ACCEPTED 报告目标=0.0 重算延期=0 下界=0.0

@@ -265,3 +265,34 @@ $mainPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.e
 ```
 
 上面仅只读核对内容、来源和固定计划，不运行求解器、不改账本。旧未发布草稿因复检闭包缺陷修复而被替换，原草稿移至本机忽略的开发记录，未有人工批准；本节仅以当前完整哈希为待审范围。正式批次的既有scope/evidence/conclusion批准均不自动授权新试验。
+
+## 16. 一次实际预处理对照及停止（2026-10-29）
+
+用户在`call_abf95b525fbb402ab0a44191fe83cfdf`明确批准第15节完整`6f9f88f8…`范围和全新60主动秒，条件为入口实现、测试、复核后仅执行一次14请求，不授权正式G3网格或RL。实际人审回执[单独保存](../experiments/results/exp_033_graduation_remedy_dev_v1/run/authorization/approval.json)，原提案准备时false标记未改。原600秒账本未解锁、退款或重建。
+
+新增`remedy_validation.py`配置观察器与`exp_033`有界入口，只切换`cp_model_presolve`，原模型、checker及29份批准来源不变。新执行器另绑定自身与锁实现，共32份来源；记录实际Solve前的参数。原始候选、API/响应目标、整数变量和目标表达式完整保存，基线ERROR仍保留原样。实际批准、来源、测试/审查、4aa655a成功CI、运行环境及新账本在派发前核对，工作进程再验证父PID、持有锁、单次尝试标记、完整文件集合和原预留段。没有自由配置、批准或恢复命令。
+
+40项合成/零求解专项通过。独立复核先发现工作进程准入、重放来源绑定、失败可重检、状态提升和锁实现来源遗漏，另发现损坏验证记录的收尾问题；修复并补反例后复核未报剩余重要问题。最终两项损坏记录反例先失败后通过。完整本地回归在最后小收尾修复前为2089通过、2跳过；实际执行前专用validate命令重新运行当前40项并绑定32份源码及2份测试。前置`4aa655a`CI为2053通过、覆盖率90.85%；这不冒充新执行器提交的CI，最终远程验收以对应提交Checks为准。此审查范围是新增执行器，不补齐此前整批G3后端独立审查缺口。
+
+执行源码为`5fb4344`。一次14/14全部捕获、原始计划14份均有效，原基线返回12ACCEPTED/2ERROR，程序状态DEVELOPMENT_CAPTURED；预先约定的研究判断却是**INCONCLUSIVE_ORIGINAL_NOT_REPRODUCED**，因为原5个ERROR本次仅复现2个。没有删除另外3个观察、重复尝试或延长单次时限。
+
+| 原请求序号 | 模式 | 原配置报告目标 | 原配置候选重算延期 | 原配置行状态 | 关闭预处理延期 |
+|---|---|---:|---:|---|---:|
+| 167 | joint | 119 | 114 | ERROR | 1711 |
+| 186 | fixed | 121 | 121 | ACCEPTED | 1542 |
+| 222 | fixed | 159 | 141 | ERROR | 1371 |
+| 226 | fixed | 472 | 472 | ACCEPTED | 541 |
+| 229 | joint | 98 | 98 | ACCEPTED | 2176 |
+
+10份大例均FEASIBLE、下界均0；关闭预处理5份均通过严格一致性检查，但原始候选延期全部更大。表中两份ERROR的候选只作诊断，不能提升成原正式研究接受结果，也不据此作一般性能排名。4个小例控制均OPTIMAL，两配置固定/联合分别4/0、界相同，与枚举一致。单线程固定seed与墙钟1秒不能保证每次保留同一候选；本次未复现不抹去旧5/5诊断记录。
+
+新60秒账本工作21.672秒，另预付5秒收尾，累计26.672秒，余33.328秒、无预留。单次attempt1已消费，剩余时间不授权额外求解，入口拒绝恢复或重试。程序内核对和收尾计入这份预算；随后独立标准库开发复盘及复制重放只读、0新增求解，不修改账本，不是第二次试验。独立复算全部14份区间/目标、并枚举小例开工/维护时刻，均通过。旧账本字节相同，原正式475接受/5错误/整批FAILED及研究not_achieved保持不变。
+
+阅读[中文结果](../experiments/results/exp_033_graduation_remedy_dev_v1/findings.txt)、[程序收据](../experiments/results/exp_033_graduation_remedy_dev_v1/run/summary.txt)、[独立算术](../experiments/results/exp_033_graduation_remedy_dev_v1/independent_candidate_check.json)和[新预算](../experiments/results/exp_033_graduation_remedy_dev_v1/run/budget_snapshot.json)。只读复检如下（先核对专用解释器）：
+
+```powershell
+& $mainPython experiments/exp_033_graduation_remedy.py recheck --output-dir experiments/results/exp_033_graduation_remedy_dev_v1/run
+& $mainPython experiments/results/exp_033_graduation_remedy_dev_v1/inspect_candidates.py --recheck experiments/results/exp_033_graduation_remedy_dev_v1
+```
+
+当前1秒样例下，全关预处理的质量代价明显，暂不直接用于正式参考配置。下一步先设计保持每个可行解数学等价的局部延期表达，或核实已修复的上游版本，再准备有界验证。第15节批准已用于这一次尝试，不授权这些新试验、正式网格或训练。

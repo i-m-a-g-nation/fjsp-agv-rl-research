@@ -1,0 +1,65 @@
+FFF                                                                      [100%]
+================================== FAILURES ===================================
+_____ test_observed_status_cannot_promote_a_feasible_baseline_to_optimal ______
+
+    def test_observed_status_cannot_promote_a_feasible_baseline_to_optimal():
+        result=capture_configured(dev_case(),'fixed',False,_solver_factory=factory())
+        result['observation']['status_name']='OPTIMAL'
+        result['observation']['status_code']=int(baseline.cp_model.OPTIMAL)
+        result['observation']['response']['status_code']=int(baseline.cp_model.OPTIMAL)
+>       with pytest.raises(ValueError):recheck_configured(result,dev_case(),'fixed',False)
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests\test_remedy_validation.py:55: Failed
+______ test_supervisor_exit_retains_interruption_and_unknown_call_count _______
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-449/test_supervisor_exit_retains_i0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002744C3267D0>
+
+    def test_supervisor_exit_retains_interruption_and_unknown_call_count(tmp_path,monkeypatch):
+        review=tmp_path/'TEST_ONLY-killed';review.mkdir();out=tmp_path/'out'
+        (review/'approval.json').write_bytes(b'{"kind":"TEST_ONLY-not-human"}')
+        monkeypatch.setattr(run,'approval',lambda *a,**k:{'kind':'TEST_ONLY-synthetic-decision'})
+        monkeypatch.setattr(run,'full_gate',lambda *a,**k:run.scope.materials())
+        monkeypatch.setattr(run,'copy_context',lambda *a,**k:None)
+        monkeypatch.setattr(run,'review_hashes',lambda *a,**k:{})
+        monkeypatch.setattr(run,'old_ledger_sha',lambda:'TEST_ONLY-unchanged-original')
+        def killed(*a,**k):
+            state=run.read(out/'state.json');state['rows'][0]['status']='RUNNING';run.write(out/'state.json',state)
+            raise RuntimeError('TEST_ONLY-supervisor-exit')
+        monkeypatch.setattr(run,'supervised_json_process',killed)
+        result=run.run_once(run.PROPOSAL,review,out,review/'TEST_ONLY-validation.json')
+        assert result['status']=='DEVELOPMENT_FAILED' and result['planned_requests']==14
+>       assert run.read(out/'state.json')['rows'][0]['status']=='INTERRUPTED'
+E       AssertionError: assert 'RUNNING' == 'INTERRUPTED'
+E         
+E         - INTERRUPTED
+E         + RUNNING
+
+tests\test_graduation_remedy_execution.py:93: AssertionError
+__________ test_denied_raw_reply_cannot_be_normalized_into_approval ___________
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-449/test_denied_raw_reply_cannot_b0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002744C652AD0>
+
+    def test_denied_raw_reply_cannot_be_normalized_into_approval(tmp_path,monkeypatch):
+        review=tmp_path/'TEST_ONLY-denied';review.mkdir();monkeypatch.setattr(run,'ROOT',tmp_path)
+        raw={'questionItemId':'["request_user_input_async","call_abf95b525fbb402ab0a44191fe83cfdf",0]',
+             'question':'6f9f88f8','answer':'�ݲ���׼��ֻ�����᰸'}
+        run.write(review/'raw_authorization.json',raw)
+        a={'kind':'ACTUAL_USER_AUTHORIZATION','scope_sha256':run.SCOPE_SHA,
+           'scope_approved':True,'new_budget_approved':True,'native_execution_approved':True,
+           'packet_manifest_sha256':run.sha(run.PROPOSAL/'manifest.json'),
+           'raw_authorization_sha256':run.sha(review/'raw_authorization.json'),'recorded_review_dir':review.name,
+           'constraints':{'planned_solver_calls':14,'max_active_seconds':60,'max_time_in_seconds':1.,
+               'num_search_workers':1,'random_seed':42,'model_calls':0,'attempts':1,'formal_G3_rerun':False,'RL_training':False}}
+        run.write(review/'approval.json',a)
+>       with pytest.raises(ValueError):run.approval(run.PROPOSAL,review)
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests\test_graduation_remedy_execution.py:111: Failed
+=========================== short test summary info ===========================
+FAILED tests/test_remedy_validation.py::test_observed_status_cannot_promote_a_feasible_baseline_to_optimal
+FAILED tests/test_graduation_remedy_execution.py::test_supervisor_exit_retains_interruption_and_unknown_call_count
+FAILED tests/test_graduation_remedy_execution.py::test_denied_raw_reply_cannot_be_normalized_into_approval
+3 failed, 24 deselected in 6.17s

@@ -1,0 +1,104 @@
+FF                                                                       [100%]
+================================== FAILURES ===================================
+_ test_malformed_preflight_validation_still_has_recheckable_zero_call_evidence[{] _
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-453/test_malformed_preflight_valid0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001D86B6F2710>
+bad = b'{'
+
+    @pytest.mark.parametrize('bad',[b'{',b'{}'])
+    def test_malformed_preflight_validation_still_has_recheckable_zero_call_evidence(tmp_path,monkeypatch,bad):
+        review,out,validation,_=context_fixture(tmp_path,monkeypatch,fresh=True)
+        validation.write_bytes(bad)
+        monkeypatch.setattr(run,'supervised_json_process',lambda *a,**k:pytest.fail('Malformed preflight dispatched'))
+        summary=run.run_once(run.PROPOSAL,review,out,validation)
+        assert summary['status']=='DEVELOPMENT_FAILED' and summary['attempted_requests']==0
+>       replay=run.recheck(out)
+               ^^^^^^^^^^^^^^^^
+
+tests\test_graduation_remedy_execution.py:245: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+experiments\exp_033_graduation_remedy.py:476: in recheck
+    bundle,admission,budget=verify_context(out,m)
+                            ^^^^^^^^^^^^^^^^^^^^^
+experiments\exp_033_graduation_remedy.py:426: in verify_context
+    or source_map!=read(out/'source_hashes.json')):
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\ai_workflow\graduation_main_evidence.py:83: in _read
+    return json.loads(Path(path).read_text(encoding='utf-8-sig'), object_pairs_hook=pairs,
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+D:\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\pathlib.py:1058: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-453/test_malformed_preflight_valid0/out/source_hashes.json')
+mode = 'r', buffering = -1, encoding = 'utf-8-sig', errors = None
+newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\25494\\AppData\\Local\\Temp\\pytest-of-25494\\pytest-453\\test_malformed_preflight_valid0\\out\\source_hashes.json'
+
+D:\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\pathlib.py:1044: FileNotFoundError
+_ test_malformed_preflight_validation_still_has_recheckable_zero_call_evidence[{}] _
+
+tmp_path = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-453/test_malformed_preflight_valid1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001D8C7FAD310>
+bad = b'{}'
+
+    @pytest.mark.parametrize('bad',[b'{',b'{}'])
+    def test_malformed_preflight_validation_still_has_recheckable_zero_call_evidence(tmp_path,monkeypatch,bad):
+        review,out,validation,_=context_fixture(tmp_path,monkeypatch,fresh=True)
+        validation.write_bytes(bad)
+        monkeypatch.setattr(run,'supervised_json_process',lambda *a,**k:pytest.fail('Malformed preflight dispatched'))
+        summary=run.run_once(run.PROPOSAL,review,out,validation)
+        assert summary['status']=='DEVELOPMENT_FAILED' and summary['attempted_requests']==0
+>       replay=run.recheck(out)
+               ^^^^^^^^^^^^^^^^
+
+tests\test_graduation_remedy_execution.py:245: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+experiments\exp_033_graduation_remedy.py:476: in recheck
+    bundle,admission,budget=verify_context(out,m)
+                            ^^^^^^^^^^^^^^^^^^^^^
+experiments\exp_033_graduation_remedy.py:426: in verify_context
+    or source_map!=read(out/'source_hashes.json')):
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\ai_workflow\graduation_main_evidence.py:83: in _read
+    return json.loads(Path(path).read_text(encoding='utf-8-sig'), object_pairs_hook=pairs,
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+D:\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\pathlib.py:1058: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-453/test_malformed_preflight_valid1/out/source_hashes.json')
+mode = 'r', buffering = -1, encoding = 'utf-8-sig', errors = None
+newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\25494\\AppData\\Local\\Temp\\pytest-of-25494\\pytest-453\\test_malformed_preflight_valid1\\out\\source_hashes.json'
+
+D:\2-Dev\Environments\Conda\fjsp-agv-rl\Lib\pathlib.py:1044: FileNotFoundError
+=========================== short test summary info ===========================
+FAILED tests/test_graduation_remedy_execution.py::test_malformed_preflight_validation_still_has_recheckable_zero_call_evidence[{]
+FAILED tests/test_graduation_remedy_execution.py::test_malformed_preflight_validation_still_has_recheckable_zero_call_evidence[{}]
+2 failed, 25 deselected in 10.34s

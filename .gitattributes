@@ -44,6 +44,8 @@ experiments/results/exp_030_graduation_main_conclusion_ack_v1/** -text whitespac
 experiments/results/exp_031_consistency_diagnostic_dev_v1/** -text whitespace=cr-at-eol
 experiments/results/exp_031_consistency_diagnostic_dev_v1/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 experiments/results/exp_032_graduation_remedy_scope_v1/** -text whitespace=cr-at-eol
+experiments/results/exp_033_graduation_remedy_dev_v1/** -text whitespace=cr-at-eol
+experiments/results/exp_033_graduation_remedy_dev_v1/**/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 experiments/results/phase1_ci_3bb926d_v1/** -text whitespace=cr-at-eol
 experiments/results/phase1_ci_3bb926d_v1/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
 experiments/results/phase1_delivery_followup_v1/** -text whitespace=cr-at-eol

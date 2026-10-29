@@ -641,6 +641,10 @@ Read-only `audit` selects the five archived G3A errors. Read-only `recheck` veri
 
 Preparation-only scope for14 solver-remedy development requests: five historical error requests under two presolve configurations, plus four enumerable controls. Only `prepare` and read-only `recheck` are available. No execution, budget or approval is created. [Scope, new-budget proposal and limitations](../docs/graduation_g3_protocol_draft.md#15-补救开发范围提案2026-10-29).
 
+## `exp_033_graduation_remedy.py`
+
+Implements the single approved14-request presolve development comparison with a fresh60-second execution ledger. Requires the actual scope/budget reply, unchanged approved sources, current validation and independent review, and the passed4aa655aCI receipt. Managed native execution is one-attempt-only, with exact effective parameters, raw candidates, failed/missing rows and source/SQLite snapshots. Read-only `recheck` reproduces saved facts without solving. The actual attempt captured14/14 but its prespecified judgment is inconclusive; see [results and next-step boundary](../docs/graduation_g3_protocol_draft.md#16-一次实际预处理对照及停止2026-10-29). No remaining time authorizes another trial.
+
 ## General Requirements
 
 - Every experiment result must pass `check_feasibility()`.

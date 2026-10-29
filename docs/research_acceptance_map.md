@@ -40,7 +40,7 @@
 | 维护时长、允许维护时间窗 | G1 独立记录与检查、G2 固定/可调维护模型已有 | 复杂维护条件仍依任务书核对；故障停机不能替代维护决策 |
 | 联合决定分配、顺序和维护时机 | G2 小规模参考求解及独立枚举核对已有 | 更大规模方法及研究评价 |
 | 最小化总延期 | G1 精确计算、G2 最小化求解和核对已有 | 正式对照及规模适用性；makespan 不能替代 |
-| 不同规模/维护条件、固定维护对比 | G3A协议草案已有；未冻结/执行 | 审核生成/固定策略/预算，实施先导和有界主批次，再评价正式结果 |
+| 不同规模/维护条件、固定维护对比 | G3A第二次参考尝试480请求、475接受/5错误，整批FAILED；14次补救开发按预案记证据不足 | 验证保持模型语义的补救方案，另行审核新正式比较，再完成最终算法和课题评价 |
 
 验收结论：**未达成**。G1基础和[G2参考求解](graduation_g2_validation.md)已有，并已接入[LangGraph三审专用路线](graduation_workflow.md)，从保存的计划重新检查维护与延期。仍不能替代G3正式对照、最终算法和论文/答辩要求；截图列举算法类别，不据此要求同时实现所有算法。
 
@@ -51,8 +51,8 @@
 3. 文献陈述是否被原文支持；文本定位成功仅是辅助证据。
 4. 最终结果是否支持表述的结论，以及哪些要求仍未满足。
 
-下一次科研决策是G3正式算例/预算/比较协议及最终算法要求；维护参考后端已接入受监督工作流，实际会话仍逐道人审。不能通过修改验收清单来消除尚未实现的能力。
+下一次科研决策是参考求解器的局部补救验证、新正式比较及最终算法要求；维护参考后端已接入受监督工作流，实际会话仍逐道人审。不能通过修改验收清单来消除尚未实现的能力。
 
-用户偏好为加入RL，但完整任务书算法要求仍不清楚；[G3A参考协议](graduation_g3_protocol_draft.md)仍未冻结/执行，[RL方案](graduation_rl_design_draft.md)的[R1无训练构造环境](graduation_rl_environment_validation.md)及[R2规则基线](graduation_r2_validation.md)已实现。R2阶段开发验证24条、两次新目录复跑一致；后续已有[NumPy REINFORCE有界试训](graduation_neural_policy_pilot.md)及[单候选验证对照](graduation_validation_iteration.md)。[共享评分候选及一次学习率反馈试验](research_controller_validation.md)也已执行，候选仍差于原none对照并被拒绝，尚无算法优势证据。已有短训不计作G3正式先导；PPO、独立最终测试和课题验收仍未完成。它们不替代G1检查，也不直接满足大创生产—物流课题；[大创最小范围草案](innovation_minimum_scope_draft.md)仅为实施前建议。
+用户偏好为加入RL，但完整任务书算法要求仍不清楚。[G3A参考协议](graduation_g3_protocol_draft.md)已获批执行第二次参考尝试，完整验收尚未通过；最新14次预处理开发对照也不能替代正式G3或算法比较。[RL方案](graduation_rl_design_draft.md)的[R1无训练构造环境](graduation_rl_environment_validation.md)及[R2规则基线](graduation_r2_validation.md)已实现。R2阶段开发验证24条、两次新目录复跑一致；后续已有[NumPy REINFORCE有界试训](graduation_neural_policy_pilot.md)及[单候选验证对照](graduation_validation_iteration.md)。[共享评分候选及一次学习率反馈试验](research_controller_validation.md)也已执行，候选仍差于原none对照并被拒绝，尚无算法优势证据。已有短训不计作G3正式先导；PPO、独立最终测试和课题验收仍未完成。它们不替代G1检查，也不直接满足大创生产—物流课题；[大创最小范围草案](innovation_minimum_scope_draft.md)仅为实施前建议。
 
 已形成[Phase2A交付自检](phase2a_acceptance.md)、[毕设首版模型](graduation_model_draft.md)、[G1基础验证](graduation_g1_validation.md)和[G2参考求解](graduation_g2_validation.md)。G1/G2已分别获准并实现，不表示后续阶段自动放行。按申请书2026年7–11月仿真环境开发安排，目前物流、AGV、缓冲仍是阶段交付缺口。
