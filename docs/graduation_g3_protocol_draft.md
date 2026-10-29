@@ -135,6 +135,8 @@ $scopePython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.
 
 ## 11. 主比较后端与evidence材料（2026-10-29）
 
+本节记录第2版材料交付时的快照；随后的人审批准、启动失败及修复提审见第12节。
+
 用户已明确批准第10节的完整scope哈希，仅进入evidence审核。`exp_030_graduation_main.py`现支持准备/只读复检evidence、查看原账本状态、有批准后执行、只读复检结果。所有动作继续使用原始`budget.sqlite`；只读归档不能替换账本，也不授权执行。scope绑定的8份源码、原模型、求解器、检查器、奖励与训练器均未修改。
 
 执行时先保存480条完整计划行，每对fixed后joint，使用原CP-SAT配置。父进程和工作进程各自核对同一份人审批准、输入、27份来源及Python/OR-Tools运行环境。每条保存完整生产和维护计划，父进程重读G1合法性、延期与solver诊断后生成原始CSV、主比较表和敏感性表；只读复检可以重新生成这些表，不运行求解器。限时逆序、零延期分母、失败/未运行行及非独立工作负载按第6节披露。`COMPLETED`仅表示所有请求已记账，仍可能含UNKNOWN等无有效计划结果；不代表所有配对都有可用指标。
@@ -159,3 +161,24 @@ $mainPython = if ($env:FJSP_CONDA_ENV) { Join-Path $env:FJSP_CONDA_ENV 'python.e
 进程树对工作进程实施硬超时；主进程检查和I/O采用合作式截止检查，每次最终结算/写盘预付5秒且限定在该时段内。阻塞I/O或失败清理可能晚返回，但不能保留迟到成功状态；不承诺强制中断任意文件系统调用。来源哈希是内容身份，记录的主机信息与历史人工决定仍依赖真实回执来源，不能靠哈希自行证明历史事实。
 
 第一版evidence在获批前被新版替代：真实账本集成测试发现运行预留被误判为预算耗尽，导致无法启动；修复同时收紧重复启动检查。旧包、失败日志和[替代记录](../experiments/results/exp_030_graduation_main_evidence_v2/superseded_evidence.json)保留，重新准备的主动时间仍计入同一600秒账本，没有退款或重建。请只审核本节新版哈希。
+
+## 12. 首次批准执行失败与修复后提审（2026-10-29）
+
+用户已明确批准第2版`187881a3…` evidence。实际执行一次后，工作进程在第一条求解前被身份检查拒绝，批次标记FAILED，全部480行NOT_RUN、0条接受结果、0次实际求解，科研结论仍不可用。[失败摘要](../experiments/results/exp_030_graduation_main_failed_v1/failure_summary.txt)及[完整记录](../experiments/results/exp_030_graduation_main_failed_v1/failure_record.json)保存实际人审回执、全部CSV/计划行、原始runmanifest和原账本收据。原控制目录`experiments/runs/g3_main_review_17bc1aa7`保持FAILED，不被重置或续跑。
+
+根因是Windows的`platform.machine()`读取了监督器刻意移除的架构环境变量，父进程报告AMD64，精简环境中的子进程报告空串。改用`sysconfig.get_platform()`绑定解释器平台，仍严格比较Python完整版本、解释器路径、OR-Tools版本、系统与解释器平台；没有扩大监督器环境白名单或跳过身份检查。工作进程现在返回限长的阶段/错误原因，父进程保存原始`worker_receipt.json`并绑定进manifest，避免只留下“回执不完整”。
+
+4个新增原生反例先失败后通过。真实生产入口测试使用明确标为TEST_ONLY的合成批准和已经过期的执行截止时间，经过实际子进程、审批和SQLite预算后，在首条求解前超时；480行仍NOT_RUN且没有计划文件，不执行正式算例。最终236项相关回归通过（60.63秒），同时修复验证器对pytest标准分钟时长后缀的误拒绝。原生只读诊断再次确认父/子身份相同，材料/来源/原账本检查通过；缺少新批准时真实CLI拒绝运行且所有材料字节不变。
+
+[第二次尝试审核说明](../experiments/results/exp_030_graduation_main_evidence_v3/attempt_review.txt)是修复后的独立提案，完整evidence哈希为`5f654ce766bfbb9084dc8ea7d497972114f6a2ced2fe8afc6726e2c5951e6fec`。研究范围仍为原`17bc1aa7…`，输入、模型、顺序及每次1秒/单线程/seed42完全相同。复制原实际scope批准，未声称产生新的人审；新控制目录`experiments/runs/g3_main_review_17bc1aa7_attempt2`没有evidence批准。拟用新输出目录`experiments/runs/g3_main_formal_20261029_v2`。这是等待明确授权的额外尝试，未自动重跑。
+
+首次失败耗时和新材料准备均保留在同一原600秒账本；目前累计约30.437秒、余569.563秒，共10个已结算片段。前次失败档案及本次[尝试上下文](../experiments/results/exp_030_graduation_main_evidence_v3/prior_attempt.json)的哈希写入受审核包绑定的validation.log；没有退款、重建账本或隐藏前次480条未运行记录。整批后端的独立代码审查仍未完成，原因是账户用量限制，测试通过不能替代该审查。完整Linux回归以本次修复提交的PR Checks为准。
+
+只读查看新提案（先依项目规则选择专用环境、核对解释器）：
+
+```powershell
+& $mainPython experiments/exp_030_graduation_main.py status --review-dir experiments/runs/g3_main_review_17bc1aa7_attempt2
+& $mainPython experiments/exp_030_graduation_main.py recheck-evidence --evidence-dir experiments/results/exp_030_graduation_main_evidence_v3/materials
+```
+
+第2版的实际批准仅用于已结束的首次尝试，源码与材料已变化，不能拿它批准第3版。只有明确批准本次新evidence才能再执行一次有界比较；执行后仍需conclusion审核。当前不认可任何维护协同效果、RL优势或课题达标。

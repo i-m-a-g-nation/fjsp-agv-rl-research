@@ -1,0 +1,82 @@
+{
+  "automatic_retry": false,
+  "budget_before_preparation": {
+    "active_seconds": 25.092999999986205,
+    "active_seconds_charged": 25.092999999986205,
+    "active_seconds_reserved": 0.0,
+    "finalization_prepaid_seconds": 5.0,
+    "limits": {
+      "max_active_seconds": 600,
+      "max_output_tokens": 0,
+      "max_provider_calls": 0
+    },
+    "output_tokens_reserved": 0,
+    "provider_calls": 0,
+    "remaining_active_seconds": 574.9070000000138,
+    "segments": [
+      {
+        "finished_seconds": 0.17199999999866122,
+        "id": 1,
+        "reserved_seconds": 600.0
+      },
+      {
+        "finished_seconds": 5.0,
+        "id": 2,
+        "reserved_seconds": 599.8280000000013
+      },
+      {
+        "finished_seconds": 0.3279999999940628,
+        "id": 3,
+        "reserved_seconds": 594.8280000000013
+      },
+      {
+        "finished_seconds": 5.0,
+        "id": 4,
+        "reserved_seconds": 594.5000000000073
+      },
+      {
+        "finished_seconds": 0.3279999999940628,
+        "id": 5,
+        "reserved_seconds": 589.5000000000073
+      },
+      {
+        "finished_seconds": 5.0,
+        "id": 6,
+        "reserved_seconds": 589.1720000000132
+      },
+      {
+        "finished_seconds": 4.264999999999418,
+        "id": 7,
+        "reserved_seconds": 584.1720000000132
+      },
+      {
+        "finished_seconds": 5.0,
+        "id": 8,
+        "reserved_seconds": 579.9070000000138
+      }
+    ]
+  },
+  "correction": "Bind interpreter target with sysconfig.get_platform; preserve stage/error and worker receipt; real managed production-entry tests.",
+  "failure_archive": "experiments/results/exp_030_graduation_main_failed_v1",
+  "failure_archive_manifest_sha256": "035dd555e916294fce912a3c83bc2c5923b21ab43d58fc7e0f2fe360ae23a7ee",
+  "failure_reason": "Windows environment-dependent machine identity differed across the sanitized process boundary.",
+  "independent_backend_review": "not_completed_quota_limit",
+  "new_evidence_approved": false,
+  "new_evidence_packet": "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\g3_main_evidence_20261029_v3",
+  "new_review_dir": "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\g3_main_review_17bc1aa7_attempt2",
+  "new_scope_approval_claimed": false,
+  "original_budget_path": "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\g3_main_scope_20261029_d\\budget.sqlite",
+  "previous_actual_solver_calls": 0,
+  "previous_evidence_hash": "187881a399e7c27ba7949356a716d918b1b4243bf566d4f81d7ea2129397561b",
+  "previous_not_run_rows": 480,
+  "previous_run_manifest_sha256": "94cd8409ae55e6f9959f51bb304c901b9d004a8d1c94dc29d86d9cd6dbf154df",
+  "previous_run_status": "FAILED",
+  "proposed_new_output": "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\g3_main_formal_20261029_v2",
+  "recorded_at_utc": "2026-10-29T00:31:39.510053+00:00",
+  "research_status": "not_achieved",
+  "same_inputs_model_order_and_solver_limits": true,
+  "scope_approval_reused_from": "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\g3_main_review_17bc1aa7\\scope_approval.json",
+  "scope_hash": "17bc1aa7d715f2090468718c8f3a14327d979178ef48b7980c5964b99fa0c0a3",
+  "status": "PROPOSED_SECOND_ATTEMPT_NOT_APPROVED",
+  "version": 1
+}

@@ -12,6 +12,7 @@ import posixpath
 import re
 import platform
 import sys
+import sysconfig
 import time
 
 from src.ai_workflow import graduation_main_scope as scope
@@ -61,7 +62,10 @@ READY = 'WAITING_HUMAN_EVIDENCE'
 def runtime_identity():
     return {'python':sys.version,'executable':sys.executable,
         'ortools':importlib.metadata.version('ortools'),
-        'system':platform.system(),'machine':platform.machine()}
+        # Windows platform.machine() depends on PROCESSOR_ARCHITECTURE, which
+        # the supervised worker intentionally does not inherit. Bind the actual
+        # interpreter target instead, retaining equality across that boundary.
+        'system':platform.system(),'python_platform':sysconfig.get_platform()}
 
 
 def _sha(path):
@@ -146,7 +150,8 @@ def _validation(log, record, sources, *, require_current_sources):
         raise ValueError('Development receipt is missing required backend tests')
     text = re.sub(r'\x1b\[[0-?]*[ -/]*[@-~]', '', log.decode('utf-8-sig'))
     lines = [line.strip() for line in text.splitlines() if line.strip()]
-    final = re.fullmatch(r'(?:=+\s*)?(\d+) passed(?:, (?!.*(?:failed|error))[^\r\n]*?)? in \d+(?:\.\d+)?s(?:\s*=+)?',
+    final = re.fullmatch(r'(?:=+\s*)?(\d+) passed(?:, (?!.*(?:failed|error))[^\r\n]*?)? in \d+(?:\.\d+)?s'
+                         r'(?: \(\d+:[0-5]\d:[0-5]\d\))?(?:\s*=+)?',
                          lines[-1] if lines else '')
     if final is None or int(final.group(1)) != record['passed']:
         raise ValueError('Development log final pytest passed count does not match the receipt')

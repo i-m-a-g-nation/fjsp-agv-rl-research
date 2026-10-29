@@ -1,0 +1,68 @@
+{
+  "checks": {
+    "budget": {
+      "status": "PASSED",
+      "value": {
+        "active_seconds": 30.436999999983527,
+        "active_seconds_charged": 30.436999999983527,
+        "active_seconds_reserved": 0.0,
+        "finalization_prepaid_seconds": 5.0,
+        "limits": {
+          "max_active_seconds": 600,
+          "max_output_tokens": 0,
+          "max_provider_calls": 0
+        },
+        "output_tokens_reserved": 0,
+        "provider_calls": 0,
+        "remaining_active_seconds": 569.5630000000165
+      }
+    },
+    "evidence": {
+      "status": "PASSED",
+      "value": {
+        "active_seconds_charged": 30.436999999983527,
+        "base_workloads": 10,
+        "conclusion_approved": false,
+        "current_sources_checked": true,
+        "development_tests_passed": 236,
+        "evidence_approved": false,
+        "evidence_dir": "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\g3_main_evidence_20261029_v3",
+        "evidence_hash": "5f654ce766bfbb9084dc8ea7d497972114f6a2ced2fe8afc6726e2c5951e6fec",
+        "independent_backend_review": "not_completed_quota_limit",
+        "model_calls": 0,
+        "network_calls": 0,
+        "next_gate_after_execution": "conclusion",
+        "paired_requests": 240,
+        "planned_solver_calls": 480,
+        "primary_pairs": 160,
+        "prior_pilot_runs_rechecked": 2,
+        "remaining_active_seconds": 569.5630000000165,
+        "research_status": "not_achieved",
+        "scope_approved": true,
+        "scope_hash": "17bc1aa7d715f2090468718c8f3a14327d979178ef48b7980c5964b99fa0c0a3",
+        "sensitivity_pairs": 80,
+        "solver_calls_executed": 0,
+        "status": "WAITING_HUMAN_EVIDENCE",
+        "unique_core_models": 160
+      }
+    },
+    "runtime": {
+      "status": "PASSED",
+      "value": {
+        "executable": "D:\\2-Dev\\Environments\\Conda\\fjsp-agv-rl\\python.exe",
+        "ortools": "9.15.6755",
+        "python": "3.11.15 | packaged by conda-forge | (main, Mar  5 2026, 16:36:00) [MSC v.1944 64 bit (AMD64)]",
+        "python_platform": "win-amd64",
+        "system": "Windows"
+      }
+    },
+    "scope": {
+      "status": "PASSED",
+      "value": {
+        "scope_hash": "17bc1aa7d715f2090468718c8f3a14327d979178ef48b7980c5964b99fa0c0a3"
+      }
+    }
+  },
+  "kind": "READ_ONLY_DEV_DIAGNOSIS",
+  "solver_calls": 0
+}

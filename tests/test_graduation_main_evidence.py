@@ -17,6 +17,60 @@ def read(path):
     return json.loads(Path(path).read_text(encoding='utf-8-sig'))
 
 
+def test_real_supervisor_preserves_bound_runtime_identity():
+    from src.ai_workflow.process_supervisor import supervised_json_process
+    reply=supervised_json_process(Path(__file__).parent/'fixtures/g3_runtime_probe.py',{},30)
+    assert reply==evidence.runtime_identity()
+
+
+def test_validation_accepts_pytest_minutes_duration_suffix(unit_review):
+    unit_review['log'].write_bytes(b'Synthetic fixture only.\n3 passed in 60.91s (0:01:00)\n')
+    unit_review['record']['log_sha256']=evidence._sha(unit_review['log'])
+    assert prepare(unit_review)['development_tests_passed']==3
+
+
+def test_real_production_worker_passes_gates_then_honors_expired_deadline(tmp_path):
+    """Real subprocess and ledger; synthetic decisions only; no solver call."""
+    import time
+    from src.ai_workflow.process_supervisor import supervised_json_process
+    from src.ai_workflow.graduation_main_budget import run_main_phase
+    from src.ai_workflow.graduation_main_backend import initial_state
+    scope=tmp_path/'TEST_ONLY-scope'
+    shutil.copytree(evidence.ROOT/evidence.SCOPE_ARCHIVE,scope)
+    review=tmp_path/'TEST_ONLY-control';review.mkdir()
+    request=read(scope/'scope_review.json')
+    write(review/'scope_approval.json',{'reviewed_scope_packet':str(scope),'scope_approved':True,
+        'authorization_source':{'kind':'synthetic_unit_fixture_only'},
+        'decision':{'stage':'scope','artifact_hash':request['artifact_hash'],'decision':'approve',
+                    'reviewer':'TEST_ONLY_NOT_HUMAN','note':'Synthetic no-solve process test'}})
+    write(review/'state.json',{'status':'EVIDENCE_PREPARATION_REQUIRED','scope_approved':True,
+        'scope_review_hash':request['artifact_hash'],'evidence_approved':False,'conclusion_approved':False})
+    log=tmp_path/'TEST_ONLY-validation.log'
+    log.write_bytes(b'Synthetic test fixture only, not a real validation receipt.\n1 passed in 0.01s\n')
+    receipt={'version':1,'status':'PASSED','exit_code':0,'passed':1,
+        'log_sha256':evidence._sha(log),'backend_source_hashes':evidence.backend_source_hashes(),
+        'test_hashes':{name:evidence._sha(evidence.ROOT/name) for name in evidence.REQUIRED_TEST_PATHS}}
+    packet=tmp_path/'TEST_ONLY-evidence'
+    prepared=evidence.prepare_main_evidence(review,packet,log,receipt)
+    write(review/'evidence_approval.json',{'decision':{'stage':'evidence',
+        'artifact_hash':prepared['evidence_hash'],'decision':'approve',
+        'reviewer':'TEST_ONLY_NOT_HUMAN','note':'Synthetic no-solve process test'}})
+    output=tmp_path/'TEST_ONLY-worker-output';output.mkdir();(output/'rows').mkdir()
+    def work(handle):
+        context=evidence.execution_context(review,packet,allow_reserved=True)
+        write(output/'state.json',initial_state(context['cases'],context['scope_hash'],context['evidence_hash']))
+        state=read(review/'state.json');state.update(status='RUNNING',evidence_approved=True,output_dir=str(output.resolve()))
+        write(review/'state.json',state)
+        return supervised_json_process(evidence.ROOT/'src/graduation/reference_main_worker.py',
+            {'review_dir':str(review),'evidence_dir':str(packet),'output_dir':str(output),
+             'deadline':time.monotonic()-1},30)
+    reply=run_main_phase(scope,review,work,lambda result,snapshot,check:result)
+    assert reply['status']=='BUDGET_EXHAUSTED',reply
+    assert reply['error_type']=='TimeoutError'
+    assert all(row['status']=='NOT_RUN' for row in read(output/'state.json')['rows'])
+    assert not list((output/'rows').iterdir())
+
+
 def write(path, value):
     Path(path).write_bytes(encoded(value))
 

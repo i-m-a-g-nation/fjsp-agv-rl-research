@@ -1,0 +1,68 @@
+{
+  "kind": "READ_ONLY_DEV_DIAGNOSIS",
+  "solver_calls": 0,
+  "checks": {
+    "runtime": {
+      "status": "PASSED",
+      "value": {
+        "python": "3.11.15 | packaged by conda-forge | (main, Mar  5 2026, 16:36:00) [MSC v.1944 64 bit (AMD64)]",
+        "executable": "D:\\2-Dev\\Environments\\Conda\\fjsp-agv-rl\\python.exe",
+        "ortools": "9.15.6755",
+        "system": "Windows",
+        "machine": ""
+      }
+    },
+    "evidence": {
+      "status": "PASSED",
+      "value": {
+        "status": "WAITING_HUMAN_EVIDENCE",
+        "scope_hash": "17bc1aa7d715f2090468718c8f3a14327d979178ef48b7980c5964b99fa0c0a3",
+        "paired_requests": 240,
+        "primary_pairs": 160,
+        "sensitivity_pairs": 80,
+        "planned_solver_calls": 480,
+        "base_workloads": 10,
+        "unique_core_models": 160,
+        "scope_approved": true,
+        "evidence_approved": false,
+        "conclusion_approved": false,
+        "solver_calls_executed": 0,
+        "model_calls": 0,
+        "network_calls": 0,
+        "development_tests_passed": 231,
+        "prior_pilot_runs_rechecked": 2,
+        "independent_backend_review": "not_completed_quota_limit",
+        "active_seconds_charged": 15.827999999986787,
+        "remaining_active_seconds": 584.1720000000132,
+        "next_gate_after_execution": "conclusion",
+        "research_status": "not_achieved",
+        "evidence_hash": "187881a399e7c27ba7949356a716d918b1b4243bf566d4f81d7ea2129397561b",
+        "evidence_dir": "D:\\UserData\\.codex\\worktrees\\research-workflow-guards\\fjsp-agv-rl-research\\experiments\\runs\\g3_main_evidence_20261029_v2",
+        "current_sources_checked": true
+      }
+    },
+    "scope": {
+      "status": "PASSED",
+      "value": {
+        "scope_hash": "17bc1aa7d715f2090468718c8f3a14327d979178ef48b7980c5964b99fa0c0a3"
+      }
+    },
+    "budget": {
+      "status": "PASSED",
+      "value": {
+        "limits": {
+          "max_active_seconds": 600,
+          "max_provider_calls": 0,
+          "max_output_tokens": 0
+        },
+        "active_seconds": 25.092999999986205,
+        "active_seconds_charged": 25.092999999986205,
+        "active_seconds_reserved": 0.0,
+        "provider_calls": 0,
+        "output_tokens_reserved": 0,
+        "finalization_prepaid_seconds": 5.0,
+        "remaining_active_seconds": 574.9070000000138
+      }
+    }
+  }
+}

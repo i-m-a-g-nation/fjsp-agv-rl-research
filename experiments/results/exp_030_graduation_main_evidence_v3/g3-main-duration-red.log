@@ -1,0 +1,58 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+___________ test_validation_accepts_pytest_minutes_duration_suffix ____________
+
+unit_review = {'log': WindowsPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-423/test_validation_accepts_pytest0/synt...sPath('C:/Users/25494/AppData/Local/Temp/pytest-of-25494/pytest-423/test_validation_accepts_pytest0/unit-review'), ...}
+
+    def test_validation_accepts_pytest_minutes_duration_suffix(unit_review):
+        unit_review['log'].write_bytes(b'Synthetic fixture only.\n3 passed in 60.91s (0:01:00)\n')
+        unit_review['record']['log_sha256']=evidence._sha(unit_review['log'])
+>       assert prepare(unit_review)['development_tests_passed']==3
+               ^^^^^^^^^^^^^^^^^^^^
+
+tests\test_graduation_main_evidence.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_graduation_main_evidence.py:116: in prepare
+    return evidence.prepare_main_evidence(unit_review['review'], unit_review['output'],
+src\ai_workflow\graduation_main_evidence.py:342: in prepare_main_evidence
+    return run_main_phase(original_scope, review, work, finalize, started_at=entered)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\ai_workflow\graduation_main_budget.py:192: in run_main_phase
+    value = work(handle)
+            ^^^^^^^^^^^^
+src\ai_workflow\graduation_main_evidence.py:296: in work
+    _validation(log, record, sources, require_current_sources=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+log = b'Synthetic fixture only.\n3 passed in 60.91s (0:01:00)\n'
+record = {'backend_source_hashes': {'experiments/exp_029_graduation_main_scope.py': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa....}, 'exit_code': 0, 'log_sha256': 'b626904e6a048a473e4ffbe75bd04b09279b46ca75ef58a9648949a1286ad3c7', 'passed': 3, ...}
+sources = {'experiments/exp_029_graduation_main_scope.py': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', '...aaa', 'src/ai_workflow/graduation_backend.py': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', ...}
+
+    def _validation(log, record, sources, *, require_current_sources):
+        keys = {'version', 'status', 'exit_code', 'passed', 'log_sha256',
+                'backend_source_hashes', 'test_hashes'}
+        if (not isinstance(record, dict) or set(record) != keys
+                or type(record['version']) is not int or record['version'] != 1
+                or record['status'] != 'PASSED' or type(record['exit_code']) is not int
+                or record['exit_code'] != 0 or type(record['passed']) is not int or record['passed'] <= 0
+                or record['log_sha256'] != hashlib.sha256(log).hexdigest()
+                or record['backend_source_hashes'] != sources):
+            raise ValueError('Invalid development test receipt or source/log mismatch')
+        _hash_map(record['test_hashes'])
+        if (not REQUIRED_TEST_PATHS <= set(record['test_hashes'])
+                or any(not name.startswith('tests/') or not name.endswith('.py')
+                       or '..' in Path(name).parts or '\\' in name
+                       for name in record['test_hashes'])):
+            raise ValueError('Development receipt is missing required backend tests')
+        text = re.sub(r'\x1b\[[0-?]*[ -/]*[@-~]', '', log.decode('utf-8-sig'))
+        lines = [line.strip() for line in text.splitlines() if line.strip()]
+        final = re.fullmatch(r'(?:=+\s*)?(\d+) passed(?:, (?!.*(?:failed|error))[^\r\n]*?)? in \d+(?:\.\d+)?s(?:\s*=+)?',
+                             lines[-1] if lines else '')
+        if final is None or int(final.group(1)) != record['passed']:
+>           raise ValueError('Development log final pytest passed count does not match the receipt')
+E           ValueError: Development log final pytest passed count does not match the receipt
+
+src\ai_workflow\graduation_main_evidence.py:156: ValueError
+=========================== short test summary info ===========================
+FAILED tests/test_graduation_main_evidence.py::test_validation_accepts_pytest_minutes_duration_suffix
+1 failed in 2.57s

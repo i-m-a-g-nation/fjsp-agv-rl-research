@@ -52,6 +52,25 @@ def test_no_evidence_approval_means_no_output_or_worker(tmp_path,monkeypatch):
     assert not (tmp_path/'out').exists()
 
 
+def test_real_worker_reports_bounded_failure_diagnostic():
+    reply=backend.supervised_json_process(Path(backend.__file__).parents[1]/'graduation/reference_main_worker.py',
+        {'TEST_ONLY-invalid-payload':True},30)
+    assert reply['status']=='FAILED' and reply['error_type']=='ValueError'
+    assert reply.get('stage')=='payload_validation'
+    assert reply.get('error')=='Unknown main worker payload'
+
+
+def test_parent_preserves_worker_failure_receipt(unit_context,tmp_path,monkeypatch):
+    reply={'status':'FAILED','error_type':'ValueError','stage':'approval_gate',
+        'error':'Approved execution runtime changed; new evidence is required'}
+    monkeypatch.setattr(backend,'supervised_json_process',lambda *a,**k:reply)
+    output=tmp_path/'out'
+    result=backend.run_main(tmp_path/'control',tmp_path/'evidence',output)
+    assert result['status']=='FAILED'
+    assert reply['error'] in result['error']
+    assert json.loads((output/'worker_receipt.json').read_text(encoding='utf-8'))==reply
+
+
 def test_worker_timeout_preserves_all480_requests(unit_context,tmp_path,monkeypatch):
     def timeout(*a,**k): raise subprocess.TimeoutExpired('worker',1)
     monkeypatch.setattr(backend,'supervised_json_process',timeout)

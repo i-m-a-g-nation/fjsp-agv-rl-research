@@ -217,8 +217,12 @@ def run_main(review_dir,evidence_dir,output_dir):
             reply=supervised_json_process(Path(__file__).parents[1]/'graduation/reference_main_worker.py',
                 {'review_dir':str(review.resolve()),'evidence_dir':str(evidence.resolve()),
                  'output_dir':str(folder),'deadline':time.monotonic()+available},available)
+            _write(folder/'worker_receipt.json',reply)
             if reply.get('status')=='BUDGET_EXHAUSTED':
                 raise BudgetExceeded('Managed main worker reached its deadline')
+            if reply.get('status')=='FAILED':
+                raise ValueError(f"Worker failed at {reply.get('stage','unknown')}: "
+                                 f"{reply.get('error_type','unknown')}: {str(reply.get('error','No diagnostic'))[:500]}")
             if reply!={'status':'WORKER_FINISHED','completed_rows':480,'input_set_sha256':digest(cases)}:
                 raise ValueError('Worker completion receipt is incomplete')
         except (subprocess.TimeoutExpired,BudgetExceeded) as exc:
