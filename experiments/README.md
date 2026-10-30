@@ -24,6 +24,7 @@ The printed path must belong to `.conda-env` or the environment selected by `FJS
 | Upper-bound objective rule (`solver_v2`) on the 5 failed G3A requests | [`exp_034`](exp_034_graduation_solver_v2_check.py) | [G3 section 17](../docs/graduation_g3_protocol_draft.md#17-solver_v2目标上界验收规则2026-10-30) |
 | G3A grid rerun with `solver_v2` (240 pairs / 480 solves) | [`exp_035`](exp_035_graduation_main_v2.py) | [G3 section 18](../docs/graduation_g3_protocol_draft.md#18-用-solver_v2-重跑正式网格2026-10-30) |
 | Per-action scoring policy (behaviour cloning + self-critical REINFORCE) vs EDD/MDD/ATC | [`exp_036`](exp_036_scoring_policy.py) | [Findings](results/exp_036_scoring_policy_v1/findings.md) |
+| Sampling decoding vs rule portfolios at equal rollout counts | [`exp_037`](exp_037_sampling_decoding.py) | [Findings](results/exp_037_sampling_decoding_v1/findings.md) |
 
 **Recorded result tables and validation reports are snapshots of the stated inputs, source and settings.** They are examples for reproduction, not a claim that the latest checkout has just passed validation. Timed CP-SAT results may vary; only `OPTIMAL` proves local optimality. Preserve prior outputs and use a new run directory when the script supports one. Development plans in [`docs/superpowers/`](../docs/superpowers/) are history, not required setup reading.
 
