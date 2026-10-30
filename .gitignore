@@ -22,3 +22,5 @@ experiments/*_scratch*.png
 papers/auto_fetched/
 experiments/ai_memory/
 experiments/runs/
+tmp/
+*.bundle

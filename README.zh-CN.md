@@ -6,6 +6,8 @@ English version: [README.md](README.md)
 
 本项目研究柔性作业车间调度（FJSP），以 Phase 1 静态平台和 Phase 2A 动态事件、冻结执行历史及重调度为基础。阶段边界与用户放行的扩展以 [AGENTS.md](AGENTS.md) 和上述状态入口为准。
 
+开发分支为 `main`。原 `codex/phase2a-protocol` 分支已于 2026-10-30 快进合并到 `main`，此后不再单独维护。
+
 ## 环境与检查
 
 创建项目专用 Conda 环境，不使用 `base`：

@@ -6,6 +6,8 @@ Chinese version: [README.zh-CN.md](README.zh-CN.md)
 
 The project studies flexible job shop scheduling (FJSP). Its foundation is the Phase 1 static platform and Phase 2A dynamic events, frozen execution history and rescheduling. Project boundaries and authorized extensions are recorded in [AGENTS.md](AGENTS.md) and the current-status entry above.
 
+Development happens on `main`. The former `codex/phase2a-protocol` branch was fast-forward merged into `main` on 2026-10-30 and is no longer maintained separately.
+
 ## Environment and checks
 
 Create a dedicated Conda environment; do not use `base`:
