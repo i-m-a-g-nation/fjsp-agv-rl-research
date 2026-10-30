@@ -1,0 +1,40 @@
+{
+  "checks": {
+    "part_a_v2_all_accepted": true,
+    "part_b_all_accepted": true,
+    "part_b_repeats_identical": true,
+    "part_c_all_optimal_and_match_enumeration": true
+  },
+  "created_utc": "2026-10-30T19:01:49+00:00",
+  "environment": {
+    "git_commit": "b5051443acc5cc3ca0b1fd1bceef4a8c1f9c0bbc",
+    "ortools": "9.15.6755",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.15"
+  },
+  "experiment": "exp_034_graduation_solver_v2_check",
+  "part_a_v1_errors": 5,
+  "part_a_v2_objective_above_tardiness": 5,
+  "rows": 44,
+  "settings": {
+    "A_and_C": {
+      "num_workers": 1,
+      "seed": 42,
+      "time_limit": 1.0
+    },
+    "B": {
+      "max_deterministic_time": 0.3,
+      "num_workers": 1,
+      "seed": 42,
+      "time_limit": 30.0
+    }
+  },
+  "source_sha256": {
+    "experiments/exp_034_graduation_solver_v2_check.py": "d334a4e4436b755b778ee4fb2ecf31a6eff83f88280a4e55ecbd016cc9b91429",
+    "src/graduation/enumeration.py": "47946b894670c246a0b36fffebd6d6334291acd2eb9bf4754c680c08881acc62",
+    "src/graduation/feasibility.py": "7a4fcb72adb761e40e4f168124019c3139e2a845849aef1d6a101053d128b925",
+    "src/graduation/solver.py": "82716e579f94781f32b65de6f971ac25b6ddcb905b04f8767d66cea53b9600fb",
+    "src/graduation/solver_v2.py": "0845732a5715c22cc44e436fd91f1103b01ad619319fd4df0ad6540117e97d35"
+  },
+  "status": "PASSED"
+}

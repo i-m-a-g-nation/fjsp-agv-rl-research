@@ -20,6 +20,8 @@ The printed path must belong to `.conda-env` or the environment selected by `FJS
 | Paper/code evidence extraction and review | [`exp_023`](exp_023_paper_code_validation.py) | [Field extraction](../docs/paper_field_validation.md), [state semantics](../docs/paper_state_semantic_validation.md) |
 | Observation encoding, policy pilot and validation iteration | [`exp_024`](exp_024_state_encoding_check.py), [`exp_025`](exp_025_neural_policy_pilot.py), [`exp_026`](exp_026_validation_iteration.py) | [Encoding](../docs/graduation_state_encoding_validation.md), [policy pilot](../docs/graduation_neural_policy_pilot.md), [validation iteration](../docs/graduation_validation_iteration.md) |
 | Audit / controlled-template controller | [`exp_027`](exp_027_research_controller.py) | [Profiles, commands and boundaries](../docs/research_controller_validation.md) |
+| Graduation G3A reference batch and solver-consistency diagnosis | `exp_028`–`exp_033` | [G3 protocol and records](../docs/graduation_g3_protocol_draft.md) |
+| Upper-bound objective rule (`solver_v2`) on the 5 failed G3A requests | [`exp_034`](exp_034_graduation_solver_v2_check.py) | [G3 section 17](../docs/graduation_g3_protocol_draft.md#17-solver_v2目标上界验收规则2026-10-30) |
 
 **Recorded result tables and validation reports are snapshots of the stated inputs, source and settings.** They are examples for reproduction, not a claim that the latest checkout has just passed validation. Timed CP-SAT results may vary; only `OPTIMAL` proves local optimality. Preserve prior outputs and use a new run directory when the script supports one. Development plans in [`docs/superpowers/`](../docs/superpowers/) are history, not required setup reading.
 
