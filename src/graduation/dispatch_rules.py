@@ -19,6 +19,8 @@ from src.graduation.rl_environment import (
 
 DISPATCH_RULES = ('EDD', 'MDD', 'ATC')
 ATC_K = 1.0
+# Nine rule variants: the compute-matched baseline for nine policy rollouts.
+RULE_PORTFOLIO = (('EDD', ATC_K), ('MDD', ATC_K), *(('ATC', k) for k in (0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0)))
 
 
 def maintenance_start(env: ParallelMaintenanceEnv, machine: int) -> int:
@@ -26,10 +28,12 @@ def maintenance_start(env: ParallelMaintenanceEnv, machine: int) -> int:
     return item.fixed_start if env.mode == 'fixed' else max(env.machine_tails[machine], item.window_start)
 
 
-def rule_action(env: ParallelMaintenanceEnv, legal: list[int], rule: str) -> int:
+def rule_action(env: ParallelMaintenanceEnv, legal: list[int], rule: str, *, atc_k: float = ATC_K) -> int:
     """Return the rule's action among the given legal actions."""
     if rule not in DISPATCH_RULES:
         raise ValueError(f'rule must be one of {DISPATCH_RULES}')
+    if type(atc_k) not in (int, float) or not math.isfinite(atc_k) or atc_k <= 0:
+        raise ValueError('atc_k must be finite and positive')
     tails, data = env.machine_tails, env.data
     production = [a for a in legal if a < MAINTENANCE_OFFSET]
     maintenance = [a for a in legal if a >= MAINTENANCE_OFFSET]
@@ -49,7 +53,7 @@ def rule_action(env: ParallelMaintenanceEnv, legal: list[int], rule: str) -> int
             return (d, p, action)
         if rule == 'MDD':
             return (max(d, t + p), p, action)
-        return (-math.exp(-max(0, d - p - t) / (ATC_K * pbar)) / p, action)
+        return (-math.exp(-max(0, d - p - t) / (atc_k * pbar)) / p, action)
 
     action = min(candidates, key=key)
     if first is not None and maintenance_start(env, first - MAINTENANCE_OFFSET) < tails[action % MAX_MACHINES]:
@@ -57,12 +61,13 @@ def rule_action(env: ParallelMaintenanceEnv, legal: list[int], rule: str) -> int
     return action
 
 
-def solve_dispatch_rule(data: ParallelMaintenanceInstance, *, mode: str, rule: str) -> MaintenanceScheduleResult:
+def solve_dispatch_rule(data: ParallelMaintenanceInstance, *, mode: str, rule: str,
+                        atc_k: float = ATC_K) -> MaintenanceScheduleResult:
     """Construct one complete plan; the environment G1-checks the terminal plan."""
     env = ParallelMaintenanceEnv(data, mode=mode)
     for _ in range(len(data.tasks) + data.num_machines):
         legal = [a for a, ok in enumerate(env.action_masks()) if ok]
-        step = env.step(rule_action(env, legal, rule))
+        step = env.step(rule_action(env, legal, rule, atc_k=atc_k))
         if step.terminated:
             return step.result
     raise EpisodeInvariantError('Dispatch rule did not terminate within n+m steps')

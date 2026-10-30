@@ -130,3 +130,20 @@ def run_episode(policy: ScoringPolicy, data: ParallelMaintenanceInstance, *, mod
         if step.terminated:
             return Episode(step.result, step.result.total_tardiness, tuple(decisions))
     raise EpisodeInvariantError('Policy did not terminate within n+m steps')
+
+
+def best_of_rollouts(policy: ScoringPolicy, data: ParallelMaintenanceInstance, *, mode: str,
+                     samples: int, seed: int) -> MaintenanceScheduleResult:
+    """Greedy plus ``samples`` sampled rollouts; return the plan with least tardiness.
+
+    Uses 1 + samples rollouts. Ties keep the earliest rollout (greedy first).
+    """
+    if type(samples) is not int or samples < 0 or type(seed) is not int:
+        raise ValueError('samples must be a nonnegative integer and seed an integer')
+    best = run_episode(policy, data, mode=mode)
+    rng = np.random.default_rng(seed)
+    for _ in range(samples):
+        episode = run_episode(policy, data, mode=mode, rng=rng)
+        if episode.total_tardiness < best.total_tardiness:
+            best = episode
+    return best.result

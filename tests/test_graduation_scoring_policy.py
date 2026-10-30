@@ -147,3 +147,45 @@ def test_exp_036_smoke(tmp_path):
     assert json.loads((tmp_path / 'out' / 'training_log.json').read_text(encoding='utf-8'))
     with pytest.raises(FileExistsError):
         experiment.run_experiment(tmp_path / 'out', protocol)
+
+
+def test_atc_k_parameter_and_portfolio():
+    from src.graduation.dispatch_rules import RULE_PORTFOLIO
+    instance = make_instances(range(30000, 30006), sampler_seed=3, balanced=True)[4]
+    default = solve_dispatch_rule(instance.data, mode=instance.mode, rule='ATC')
+    explicit = solve_dispatch_rule(instance.data, mode=instance.mode, rule='ATC', atc_k=1.0)
+    assert default.records == explicit.records
+    assert len(RULE_PORTFOLIO) == 9 and len(set(RULE_PORTFOLIO)) == 9
+    for bad in (0, -1.0, float('nan'), True):
+        with pytest.raises(ValueError):
+            solve_dispatch_rule(instance.data, mode=instance.mode, rule='ATC', atc_k=bad)
+
+
+def test_best_of_rollouts_never_worse_than_greedy_and_is_reproducible():
+    from src.graduation.scoring_policy import best_of_rollouts
+    instance = make_instances(range(30000, 30006), sampler_seed=3, balanced=True)[4]
+    policy = ScoringPolicy(seed=0)
+    greedy = run_episode(policy, instance.data, mode=instance.mode).result
+    assert best_of_rollouts(policy, instance.data, mode=instance.mode, samples=0, seed=0).records == greedy.records
+    best = [best_of_rollouts(policy, instance.data, mode=instance.mode, samples=6, seed=3) for _ in range(2)]
+    assert best[0].records == best[1].records
+    assert best[0].total_tardiness <= greedy.total_tardiness
+    assert check_parallel_maintenance_feasibility(best[0], instance.data, mode=instance.mode) == (True, [])
+    with pytest.raises(ValueError):
+        best_of_rollouts(policy, instance.data, mode=instance.mode, samples=-1, seed=0)
+
+
+def test_exp_037_smoke(tmp_path):
+    from experiments import exp_037_sampling_decoding as experiment
+    protocol = copy.deepcopy(experiment.PROTOCOL)
+    protocol['test']['seeds'] = [40000, 40006]
+    manifest = experiment.run_experiment(tmp_path / 'out', protocol)
+    assert manifest['test_instances'] == 6
+    means = manifest['test_summary']['means']['all']
+    for name in ('policy_s0', 'policy_s1', 'policy_s2'):
+        assert means[f'{name}_r9'] <= means[f'{name}_r3'] <= means[f'{name}_r1']
+    assert means['best_of_9_rules'] <= means['best_of_3_rules'] <= means['MDD']
+    gaps = manifest['external_g3_n8']['mean_gap_to_optimum']
+    assert manifest['external_g3_n8']['instances'] == 160 and min(gaps.values()) >= 0
+    with pytest.raises(FileExistsError):
+        experiment.run_experiment(tmp_path / 'out', protocol)
