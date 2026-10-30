@@ -64,7 +64,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1
 
 | 要查的证据 | 入口 |
 |---|---|
-| 静态 benchmark 来源与结果文件 | [算例说明](instances/README.md)、[保存结果](experiments/results/README.md) |
+| 静态 benchmark 来源与结果文件 | [算例说明](instances/README.md)、[保存结果](experiments/results/README.md)、[Phase 1 结果汇总与有效性威胁](docs/phase1_results_summary.md) |
 | 动态协议与连续事件重放 | [Phase 2A 协议](docs/phase2a_experiment_protocol.md)、[顺序验证](docs/phase2a_sequential_validation.md) |
 | 毕设与科研执行 | [毕设工作流](docs/graduation_workflow.md)、[通用工作流](docs/research_workflow.md)、[控制器说明](docs/research_controller_validation.md) |
 | 工程验证与课题验收的区别 | [Phase 2A 自检](docs/phase2a_acceptance.md)、[研究验收对照](docs/research_acceptance_map.md) |

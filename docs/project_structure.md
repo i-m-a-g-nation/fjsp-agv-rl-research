@@ -32,7 +32,7 @@
 
 | 目的 | 实验入口 | 解释文档/保存证据 |
 |---|---|---|
-| 静态基础与求解器对照 | [`exp_001`](../experiments/exp_001_toy_instance.py)、[`exp_002`](../experiments/exp_002_solver_check.py) | [Phase 1 复现清单](reproducibility_phase1.md) |
+| 静态基础与求解器对照 | [`exp_001`](../experiments/exp_001_toy_instance.py)、[`exp_002`](../experiments/exp_002_solver_check.py) | [Phase 1 复现清单](reproducibility_phase1.md)、[历史结果汇总与有效性威胁](phase1_results_summary.md) |
 | 动态固定协议 | [`exp_019`](../experiments/exp_019_phase2a_protocol.py) | [协议与验证](phase2a_experiment_protocol.md)；`results/exp_019_phase2a_protocol_v1/` |
 | 连续动态事件 | [`exp_020`](../experiments/exp_020_sequential_reschedule.py) | [顺序重放验证](phase2a_sequential_validation.md)；`results/exp_020_sequential_reschedule_v1/` |
 | 毕设 G2 参考解 | [`exp_021`](../experiments/exp_021_graduation_solver_check.py) | [G2 验证](graduation_g2_validation.md)；`results/exp_021_graduation_g2_v1/` |

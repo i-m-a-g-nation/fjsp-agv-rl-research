@@ -64,7 +64,7 @@ The checker verifies exact operation coverage, precedence, machine capacity and 
 
 | Evidence to inspect | Entry |
 |---|---|
-| Static benchmark inputs and result files | [Instance provenance](instances/README.md), [saved results](experiments/results/README.md) |
+| Static benchmark inputs and result files | [Instance provenance](instances/README.md), [saved results](experiments/results/README.md), [Phase 1 results summary and threats to validity](docs/phase1_results_summary.md) |
 | Dynamic protocol and sequential replay | [Phase 2A protocol](docs/phase2a_experiment_protocol.md), [sequential validation](docs/phase2a_sequential_validation.md) |
 | Graduation and research execution | [Graduation workflow](docs/graduation_workflow.md), [research workflow](docs/research_workflow.md), [controller guide](docs/research_controller_validation.md) |
 | Engineering evidence versus research acceptance | [Phase 2A checklist](docs/phase2a_acceptance.md), [research acceptance map](docs/research_acceptance_map.md) |
