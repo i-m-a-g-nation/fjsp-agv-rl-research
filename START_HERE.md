@@ -8,7 +8,7 @@
 - 删除了与研究无关的 AI 科研工作流（`src/ai_workflow/`、LangGraph/RAG、论文抽取、会话/沙箱/预算控制）、opencode 配置、
   过程计划文档（`docs/superpowers/`）、已被替代的毕设探索代码（旧 NumPy RL、状态编码、候选/诊断/补救、solver v1、
   参考试跑）以及对应测试和结果。
-- 库代码合并为一个包 `src/fjsp_lab/`（`fjsp` / `dynamic` / `maintenance`），测试从约 120 个文件精简为 8 个文件、123 个用例
+- 库代码合并为一个包 `src/fjsp_lab/`（`fjsp` / `dynamic` / `maintenance`），测试从约 120 个文件精简为 7 个文件、123 个用例
   （覆盖率 87%），实验脚本从 43 个精简为 8 个。
 - 新代码在相同输入上与旧代码结果**完全一致**，见 [等价性核对](experiments/archive/restructure_equivalence)；
   旧结果原样保存在 `experiments/archive/`。
