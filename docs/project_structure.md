@@ -52,6 +52,6 @@
 
 - **验证证据**：`docs/*_validation.md`、[Phase 2A 交付自检](phase2a_acceptance.md)、[验收对照](research_acceptance_map.md)，以及相应 `experiments/results/` 原始产物。验证报告、带日期文档及结果表是对应源码/输入/配置下的快照，不代表持续更新的当前状态；当前状态只在 [START_HERE.md](../START_HERE.md) 维护。
 - **模型与设计草案**：`docs/math_model_*`、`docs/*_draft.*`。文件存在不代表功能落地或协议已冻结，尤其 [G3 草案](graduation_g3_protocol_draft.md) 和 [RL 方案](graduation_rl_design_draft.md)。
-- **文献与阅读材料**：[`papers/`](../papers/) 是文献分类索引；[`notes/`](../notes/) 保存阅读、审查及讨论笔记。毕设方向的检索整理与候选创新点见[毕设文献地图](../notes/literature_map_graduation.md)。内容需核对原文，不能替代实验结果或验收。
+- **文献与阅读材料**：[`papers/`](../papers/) 是文献分类索引；[`notes/`](../notes/) 保存阅读、审查及讨论笔记。毕设方向的检索整理与候选创新点见[毕设文献地图](../notes/literature_map_graduation.md)，论文章节与证据对应见[论文主线](graduation_thesis_outline.md)。内容需核对原文，不能替代实验结果或验收。
 - **开发历史**：[`docs/superpowers/`](superpowers/) 保存开发规格、计划与过程记录（部分计划文件被实验脚本按哈希引用，勿移动）；[review_status.md](review_status.md) 汇总审查历史；[status_log.md](status_log.md) 保存合并前的逐轮进度。日常不必逐份阅读，先从对应能力的使用/验证文档进入。
 - **未来目标**：[自动科研迭代需求](autonomous_research_loop_requirements.md) 记录尚待实现的目标，不是现有执行器的使用手册。
