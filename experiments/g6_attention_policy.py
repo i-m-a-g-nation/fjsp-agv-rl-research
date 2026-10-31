@@ -17,10 +17,13 @@ import time
 
 from _common import parse_args, provenance, sha256, write_json
 
+from concurrent.futures import ProcessPoolExecutor
+
+import numpy as np
 import torch
 
 from fjsp_lab.maintenance.attention_policy import (
-    AttentionPolicy, config_for, imitation_step, reinforce_step, rollout, save,
+    AttentionPolicy, StateDataset, config_for, imitation_minibatch, reinforce_step, rollout, save, teacher_states,
 )
 from fjsp_lab.maintenance.instance import ParallelMaintenanceInstance
 
@@ -33,7 +36,8 @@ def add_args(parser) -> None:
     parser.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
     parser.add_argument('--train-limit', type=int, default=None)
     parser.add_argument('--bc-epochs', type=int, default=8)
-    parser.add_argument('--bc-batch', type=int, default=64)
+    parser.add_argument('--bc-batch', type=int, default=1024, help='teacher states per imitation update')
+    parser.add_argument('--workers', type=int, default=6, help='processes that replay the teacher episodes')
     parser.add_argument('--bc-lr', type=float, default=1e-3)
     parser.add_argument('--rl-steps', type=int, default=1000)
     parser.add_argument('--rl-batch', type=int, default=32)
@@ -54,6 +58,12 @@ def read_rows(path: Path, limit: int | None = None) -> list[dict]:
             if limit is not None and len(rows) >= limit:
                 break
     return rows
+
+
+def replay(job):
+    kind, record, mode, actions = job
+    states, targets = teacher_states(kind, (ParallelMaintenanceInstance.from_record(record), mode), actions)
+    return [s.astype(np.float16) for s in states], targets
 
 
 def greedy_mean(model, rows, *, device, batch) -> float:
@@ -93,21 +103,27 @@ def main() -> int:
 
     def update(optimizer, accumulate):
         optimizer.zero_grad()
-        value = accumulate()          # back-propagates step by step
+        value = accumulate()          # back-propagates inside
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
         return value
 
+    # Imitation: replay every teacher episode once (in parallel), then shuffle states into mini-batches.
+    jobs = [(kind, r['instance'], r['mode'], r['teacher_actions']) for r in train_rows]
+    with ProcessPoolExecutor(max_workers=args.workers) as pool:
+        dataset = StateDataset.concatenate(list(pool.map(replay, jobs, chunksize=64)))
+    LOGGER.info('teacher states: %d (%.1f min)', len(dataset), (time.monotonic() - started) / 60)
+    order_rng = np.random.default_rng(args.seed)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.bc_lr)
     for epoch in range(args.bc_epochs):
-        order = list(range(len(train_rows)))
-        rng.shuffle(order)
+        order = order_rng.permutation(len(dataset))
         model.train()
-        for start in range(0, len(order), args.bc_batch):
-            chunk = [train_rows[k] for k in order[start:start + args.bc_batch]]
-            update(optimizer, lambda: imitation_step(model, [r['problem'] for r in chunk],
-                                                     [r['teacher_actions'] for r in chunk], device=args.device))
+        losses = [update(optimizer, lambda: imitation_minibatch(model, dataset, order[start:start + args.bc_batch],
+                                                                device=args.device))
+                  for start in range(0, len(order), args.bc_batch)]
+        LOGGER.info('bc %d: train loss %.4f', epoch + 1, statistics.fmean(losses))
         checkpoint('bc', epoch + 1)
+    del dataset
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.rl_lr)
     generator = torch.Generator().manual_seed(args.seed)

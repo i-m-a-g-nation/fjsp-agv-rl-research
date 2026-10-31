@@ -12,6 +12,7 @@ objective is total tardiness. K_i = 1 for all machines is the original model.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 
 from fjsp_lab.fjsp.instance import FJSPInstance
 
@@ -112,8 +113,17 @@ class ParallelMaintenanceInstance:
 
 
 def to_fjsp_instance(data: ParallelMaintenanceInstance) -> FJSPInstance:
-    """Return a fresh production-only instance; maintenance is never a fake job."""
+    """The production-only instance (maintenance is never a fake job).
+
+    FJSPInstance is immutable, so the instance is built once per (processing
+    times, machine count) and shared.
+    """
     if not isinstance(data, ParallelMaintenanceInstance):
         raise ValueError('Expected a ParallelMaintenanceInstance')
-    jobs = [[[(machine, task.processing_time) for machine in range(data.num_machines)]] for task in data.tasks]
-    return FJSPInstance.from_jobs_array(jobs, num_machines=data.num_machines)
+    return _production_instance(tuple(task.processing_time for task in data.tasks), data.num_machines)
+
+
+@lru_cache(maxsize=4096)
+def _production_instance(processing_times: tuple[int, ...], num_machines: int) -> FJSPInstance:
+    jobs = [[[(machine, p) for machine in range(num_machines)]] for p in processing_times]
+    return FJSPInstance.from_jobs_array(jobs, num_machines=num_machines)

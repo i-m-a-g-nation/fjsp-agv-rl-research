@@ -95,7 +95,8 @@ def test_short_training_is_reproducible_and_selects_on_validation():
 def test_attention_policy_rollout_imitation_reinforce_and_checkpoint(kind, tmp_path, small, periodic):
     torch = pytest.importorskip('torch')
     from fjsp_lab.maintenance.attention_policy import (
-        AttentionPolicy, config_for, imitation_step, load, reinforce_step, rollout, save,
+        AttentionPolicy, StateDataset, config_for, imitation_minibatch, load, reinforce_step, rollout, save,
+        teacher_states,
     )
     from fjsp_lab.maintenance.sequence_env import teacher_actions
     torch.manual_seed(0)
@@ -106,12 +107,23 @@ def test_attention_policy_rollout_imitation_reinforce_and_checkpoint(kind, tmp_p
     outcomes = [solve_metaheuristic(d, mode=m, algorithm='IGA', evaluations=200) for d, m in problems]
     teachers = [actions_for_plan(o.result, d, m) if kind == 'action' else teacher_actions(list(o.sequence), d, m)
                 for o, (d, m) in zip(outcomes, problems)]
-    assert imitation_step(model, problems, teachers) > 0
+    dataset = StateDataset.concatenate([teacher_states(kind, p, a) for p, a in zip(problems, teachers)])
+    assert len(dataset) == sum(len(a) for a in teachers)
+    assert imitation_minibatch(model, dataset, np.arange(len(dataset))) > 0
     assert all(p.grad is not None for p in model.parameters())
-    model.zero_grad()
-    assert reinforce_step(model, problems, samples=3, generator=torch.Generator().manual_seed(1),
-                          scale=[1.0, 1.0]) >= 0
-    assert any(p.grad is not None and p.grad.abs().sum() > 0 for p in model.parameters())
+
+    def reinforce_gradient(chunk_rows):
+        model.zero_grad()
+        mean = reinforce_step(model, problems, samples=3, generator=torch.Generator().manual_seed(1),
+                              scale=[1.0, 1.0], chunk_rows=chunk_rows)
+        return mean, [p.grad.clone() for p in model.parameters()]
+
+    mean_one, per_step = reinforce_gradient(1)
+    mean_all, chunked = reinforce_gradient(10**6)
+    assert mean_one == mean_all >= 0
+    scale = max(g.abs().max().item() for g in per_step)       # float32 sums differ only by rounding
+    assert all(torch.allclose(a, b, rtol=1e-4, atol=1e-5 * scale) for a, b in zip(per_step, chunked))
+    assert any(g.abs().sum() > 0 for g in chunked)
     digest = save(model.eval(), tmp_path / 'm.pt')
     again = load(tmp_path / 'm.pt', expected_sha256=digest)
     assert again.config == model.config
