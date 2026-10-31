@@ -153,3 +153,15 @@ def test_sequence_env_replays_metaheuristic_sequences(mode, periodic):
         for action in actions:
             step = env.step(action)
         assert step.terminated and accepted(step.result, periodic, mode) == outcome.result.total_tardiness
+
+
+def test_gantt_draws_accepted_plans_and_refuses_infeasible_ones(periodic, tmp_path):
+    from fjsp_lab.maintenance.feasibility import InfeasiblePlanError
+    from fjsp_lab.maintenance.gantt import plot_fixed_vs_joint
+    fixed, joint = (solve_metaheuristic(periodic, mode=mode, algorithm='IGA', evaluations=200).result
+                    for mode in MODES)
+    plot_fixed_vs_joint(periodic, fixed, joint, tmp_path / 'g.png')
+    assert (tmp_path / 'g.png').read_bytes()[:4] == b'\x89PNG'
+    joint.total_tardiness += 1
+    with pytest.raises(InfeasiblePlanError):
+        plot_fixed_vs_joint(periodic, fixed, joint, tmp_path / 'bad.png')
