@@ -1,9 +1,0 @@
-{
-  "actual_formal_solver_calls": 0,
-  "all_scope_control_packet_bytes_unchanged": true,
-  "cli_exit_code": 1,
-  "new_evidence_not_approved": true,
-  "output_not_created": true,
-  "status": "PASSED",
-  "stdout": "Main workflow stopped: FileNotFoundError: [Errno 2] No such file or directory: 'D:\\\\UserData\\\\.codex\\\\worktrees\\\\research-workflow-guards\\\\fjsp-agv-rl-research\\\\experiments\\\\runs\\\\g3_main_review_17bc1aa7_attempt2\\\\evidence_approval.json'"
-}

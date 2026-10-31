@@ -1,5 +1,0 @@
-本次结论人审仅确认FAILED批次事实及475份接受子集。
-结论哈希：106f4ba8bcbdc9c9c955a4c7458958af4b236497235a0fe61658cf0e3e70ee6a。
-480次请求已处理，5份ERROR及原始诊断缺口继续保留，根因未定位。
-不认可完整G3通过、RL优势、大创物流协同或课题达标，不授权重跑或训练。
-控制状态CONCLUSION_RECORDED_EXPERIMENT_FAILED，experiment_status=FAILED，research_status=not_achieved；原账本未改变。

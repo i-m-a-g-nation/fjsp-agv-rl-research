@@ -1,80 +1,61 @@
-# FJSP-AGV-RL Research
+# fjsp-lab：调度研究实验平台
 
-Chinese version: [README.zh-CN.md](README.zh-CN.md)
+> A small, test-covered research platform for scheduling: static flexible job
+> shop (FJSP), dynamic rescheduling, and identical parallel machines with
+> mandatory maintenance windows (total tardiness). Every algorithm returns a
+> plan only after an independent feasibility checker accepts it.
 
-**Start with [START_HERE.md](START_HERE.md) for the maintained project status, latest evidence and next step.** Use the [project structure guide](docs/project_structure.md) to find code and the [experiment guide](experiments/README.md) to choose a reproducible run. This README covers setup and stable project conventions.
+三条研究线共用一个 Python 包 `fjsp_lab`：
 
-The project studies flexible job shop scheduling (FJSP). Its foundation is the Phase 1 static platform and Phase 2A dynamic events, frozen execution history and rescheduling. Project boundaries and authorized extensions are recorded in [AGENTS.md](AGENTS.md) and the current-status entry above.
+| 子包 | 内容 | 阶段 |
+|---|---|---|
+| `fjsp_lab.fjsp` | 静态 FJSP：不可变实例、FJSPLib 读取、统一调度结果、解码、**合法性检查器**、7 条派工规则、CP-SAT、甘特图 | Phase 1 |
+| `fjsp_lab.dynamic` | 机器故障/维修、新工件到达、加工时间变化；冻结已开工工序；基线重调度；动态检查器 | Phase 2A |
+| `fjsp_lab.maintenance` | 毕设模型：同质平行机 + 每机一次必需维护（时间窗内），最小化总延期；检查器、算例生成、CP-SAT/枚举、构造式 MDP、EDD/MDD/ATC、GA/SA/改进 GA、学习型构造策略 | 毕设 |
 
-Development happens on `main`. The former `codex/phase2a-protocol` branch was fast-forward merged into `main` on 2026-10-30 and is no longer maintained separately.
+依赖方向单一：`fjsp ← dynamic`，`fjsp ← maintenance`（维护模型的生产部分直接用静态检查器校验）。
 
-## Environment and checks
+## 目录
 
-Create a dedicated Conda environment; do not use `base`:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
+```
+src/fjsp_lab/        库代码（见上表）
+tests/               pytest：fjsp/、maintenance/、test_dynamic.py
+experiments/         实验脚本（p1_*、p2_*、g*_*）、inputs/、results/（新结果）、archive/（旧结果）
+instances/           FJSPLib 子集（30 个）与 BKS 表
+docs/                models/ 数学模型；protocols/ 实验协议；plans/ 路线与论文大纲；history/ 历史验收快照
+notes/               文献笔记与毕设文献地图
+scripts/             setup_env.ps1（建环境）、run_checks.ps1（测试 + Phase 1/2A 实验）
 ```
 
-The default environment is the project's `.conda-env`. Set `FJSP_CONDA_ENV` before setup to use a custom local location; local environment paths do not belong in tracked files.
-
-For the recorded Python/dependency versions, use [`environment-phase1-repro.yml`](environment-phase1-repro.yml) with a new dedicated prefix instead of the rolling setup. It includes core, dev and research dependencies. See the [reconstruction instructions and tested boundary](docs/reproducibility_phase1.md). Version constraints are not a cross-platform binary lock.
-
-Run the local CI-style checks:
+## 快速开始
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1   # 建项目专用 Conda 环境 .conda-env
+powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1  # pytest + Phase 1/2A 实验
 ```
 
-Local checks and CI use `scripts/check_experiments.py` for static 001–004 and the dynamic smoke chain. Add `-Heavy` to the PowerShell entry for the complete benchmark/report chain; the full test suite runs in either mode. The CI workflow also has an explicit `full_benchmarks` manual input. Each experiment batch uses a new output directory.
+不安装也能运行：测试通过 `pyproject.toml` 的 `pythonpath = ["src"]`，实验脚本由 `experiments/_common.py` 加入 `src/`。
 
-For individual checks, verify the interpreter before running Python:
+```python
+from fjsp_lab.fjsp import create_toy_instance, solve_rule, check_feasibility
+result = solve_rule(create_toy_instance(), "EFT")
+assert check_feasibility(result)[0]
 
-```powershell
-.\.conda-env\python.exe -c "import sys; print(sys.executable)"
-.\.conda-env\python.exe experiments\exp_001_toy_instance.py
-.\.conda-env\python.exe experiments\exp_002_solver_check.py
-.\.conda-env\python.exe -m pytest
+from fjsp_lab.maintenance.generator import build_instance
+from fjsp_lab.maintenance.metaheuristics import solve_metaheuristic
+data = build_instance(24, 4, alpha=30, beta=75, tau=75, seed=101)
+plan = solve_metaheuristic(data, mode="joint", algorithm="IGA", evaluations=10000).result
+print(plan.total_tardiness)
 ```
 
-The printed executable must belong to the dedicated environment. If you set `FJSP_CONDA_ENV`, replace `.\.conda-env\python.exe` with that environment's Python. See the [experiment guide](experiments/README.md) for larger benchmark, dynamic, graduation and research-controller runs.
+## 正确性约定
 
-Model configuration is optional for offline experiments. For model-backed runs, put credentials in `.env` at the root of the **current worktree**, using [`.env.example`](.env.example) and the [model interface guide](docs/model_interface.md). The ignored local `.env` does not transfer through branch merges.
+- 输入数据不可变；所有时间和编号必须是 Python `int`（拒绝 `bool`、浮点）。
+- 每个算法在返回前调用对应检查器，失败就抛异常，不返回非法调度。
+- 静态检查器覆盖：每道工序恰好一次、工艺顺序、机器不重叠、可选机器、`end - start = processing_time`、加工时间与实例一致、makespan 一致。
+- 维护检查器在此之上再查：每台机器恰好一次维护、时长正确、整段落在窗口内、固定模式下起点等于给定值、与生产不重叠、总延期与独立重算一致。
+- CP-SAT 只有 `OPTIMAL` 才称最优；`FEASIBLE` 是限时可行解。
 
-## Code and data
+## 当前进度
 
-| Location | Purpose |
-|---|---|
-| [`src/data/`](src/data/), [`src/scheduling/`](src/scheduling/), [`src/solvers/`](src/solvers/) | FJSP instances, encoding/decoding, unified results, feasibility, rules and CP-SAT |
-| [`src/dynamic/`](src/dynamic/) | Dynamic events, state, frozen history and rescheduling |
-| [`src/graduation/`](src/graduation/) | Graduation maintenance/tardiness model, reference solvers and policy tools |
-| [`src/ai_workflow/`](src/ai_workflow/) | Research requirements, evidence, budgets, sessions and review/controller routes |
-| [`src/vis/`](src/vis/) | Gantt rendering |
-| [`instances/`](instances/README.md) | Smoke instances, tracked FJSPLib subset, provenance and bounds |
-| [`experiments/`](experiments/README.md) | Executable experiments, protocols and saved evidence |
-| [`tests/`](tests/), [`scripts/`](scripts/) | Tests, environment setup and checks |
-
-The [project structure guide](docs/project_structure.md) provides a task-to-file map. The [Phase 1 code walkthrough](docs/code_walkthrough_phase1.md) and [reproduction checklist](docs/reproducibility_phase1.md) explain the static foundation.
-
-## Scheduling and evidence conventions
-
-Instance data uses `jobs[job_id][op_id] = [(machine_id, processing_time), ...]`. Scheduling algorithms return a unified `ScheduleResult` containing `ScheduleRecord` entries. Results must pass the appropriate feasibility checker before being reported as valid.
-
-The checker verifies exact operation coverage, precedence, machine capacity and eligibility, processing times, and makespan consistency. CP-SAT uses optional operation-machine intervals, exactly-one assignment, precedence and `NoOverlap`, with a time limit. Only `OPTIMAL` proves local optimality; `FEASIBLE` is a time-limited feasible reference. Matching an upstream upper bound is not a local proof.
-
-| Evidence to inspect | Entry |
-|---|---|
-| Static benchmark inputs and result files | [Instance provenance](instances/README.md), [saved results](experiments/results/README.md), [Phase 1 results summary and threats to validity](docs/phase1_results_summary.md) |
-| Dynamic protocol and sequential replay | [Phase 2A protocol](docs/phase2a_experiment_protocol.md), [sequential validation](docs/phase2a_sequential_validation.md) |
-| Graduation and research execution | [Graduation workflow](docs/graduation_workflow.md), [research workflow](docs/research_workflow.md), [controller guide](docs/research_controller_validation.md) |
-| Engineering evidence versus research acceptance | [Phase 2A checklist](docs/phase2a_acceptance.md), [research acceptance map](docs/research_acceptance_map.md) |
-
-**Validation reports, dated documents and saved result tables are snapshots of their stated source, input and run configuration.** They do not replace the current status in [START_HERE.md](START_HERE.md). Reproduce the corresponding run before claiming a fresh validation result. Development specifications and plans in [`docs/superpowers/`](docs/superpowers/) are retained history, not required reading for everyday use.
-
-## Models and CI
-
-- Phase 1 model: [English source](docs/math_model_phase1.tex) / [PDF](docs/math_model_phase1_en.pdf); [Chinese source](docs/math_model_phase1_zh.tex) / [PDF](docs/math_model_phase1_zh.pdf).
-- Phase 2A model: [source](docs/math_model_phase2a.tex) / [PDF](docs/math_model_phase2a.pdf), with a [Chinese reading note](docs/phase2a_dynamic_model_zh.md).
-- [CI workflow](.github/workflows/ci.yml): benchmark metadata audit, report generation, dynamic smoke checks and pytest coverage, with an 80% minimum. Latest local validation belongs in [START_HERE.md](START_HERE.md).
-
-Random experiments record seeds; solver comparisons record time limits and worker settings. Preserve prior results and read each report together with its manifest and raw evidence. Correctness and reproducibility take priority over performance.
+见 [START_HERE.md](START_HERE.md)；开发规则见 [AGENTS.md](AGENTS.md)；实验索引见 [experiments/README.md](experiments/README.md)。

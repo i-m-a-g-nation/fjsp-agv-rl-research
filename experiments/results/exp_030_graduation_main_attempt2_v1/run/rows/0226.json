@@ -1,1 +1,0 @@
-{"case_id":"g3a-main-n24-m2-a30-b75-t75-s404-midpoint","error":"GraduationSolverError: Solver objective/bound disagrees with independent total tardiness","input_sha256":"1fb17cb1af9298f82e211a1a1753b1b860b1d62575f0c52dd5be95ce7945847b","metrics":null,"mode":"fixed","payload":null,"solver":{"num_workers":1,"seed":42,"time_limit":1.0},"solver_status":null,"status":"ERROR"}

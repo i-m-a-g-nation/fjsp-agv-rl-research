@@ -3,43 +3,34 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fjsp-agv-rl"
-version = "0.1.0"
-description = "FJSP + AGV + RL Research Platform"
+name = "fjsp-lab"
+version = "0.2.0"
+description = "Scheduling research platform: static/dynamic FJSP and parallel machines with maintenance"
 requires-python = ">=3.10"
 dependencies = [
     "numpy",
-    "pandas",
-    "matplotlib>=3.8.4,<3.10",
-    "pillow>=10.4,<12",
-    "pydantic",
-    "networkx",
     "scipy",
+    "matplotlib>=3.8.4,<3.10",
     "ortools",
-    "pytest",
 ]
 
 [project.optional-dependencies]
-dev = [
-    "pytest",
-    "pytest-cov",
-    "coverage>=7.10,<8",
-]
-research = [
-    "langgraph>=1.2.17,<2",
-    "langgraph-checkpoint-sqlite>=3.1.2,<4",
-    "faiss-cpu>=1.15.1,<2",
-    "pypdf>=6.21.2,<7",
-    "requests>=2.34.2,<3",
-    "langchain-openai>=1.7.2,<2",
-]
+dev = ["pytest", "pytest-cov"]
+# The attention policy needs PyTorch; install it in a separate environment
+# (see START_HERE.md) rather than in the project environment.
+torch = ["torch"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-p no:cacheprovider"
+filterwarnings = ["ignore:.*deprecated - use:DeprecationWarning"]
 
 [tool.coverage.run]
-source = ["src"]
-patch = ["subprocess"]
+source = ["src/fjsp_lab"]
 
 [tool.coverage.report]
 fail_under = 80

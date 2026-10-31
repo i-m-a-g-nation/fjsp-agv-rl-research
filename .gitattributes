@@ -1,64 +1,8 @@
-# Stable source bytes on Windows and Linux. Three current core sources were
-# archived with CRLF; retain that spelling rather than rewriting evidence hashes.
+# Source files: LF on every platform.
 *.py text eol=lf
-src/data/instance.py text eol=crlf
-src/scheduling/encoding.py text eol=crlf
-src/scheduling/feasibility.py text eol=crlf
 
-# Preserve exact evidence bytes so Git newline conversion cannot break hashes.
-experiments/protocols/phase2a_v1.json -text
-experiments/requests/graduation_reference_v1.json -text
-experiments/results/exp_019_phase2a_protocol_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_020_sequential_reschedule_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_021_graduation_g2_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_022_graduation_rules_v1/** -text whitespace=cr-at-eol
-experiments/results/model_api_validation_20261026_v1/** -text whitespace=cr-at-eol
-experiments/results/model_api_max_validation_20261026_v1/** -text whitespace=cr-at-eol
-experiments/requests/paper_code_validation_v1.json -text
-experiments/requests/paper_code_fields_v1.json -text whitespace=cr-at-eol
-experiments/requests/paper_state_semantic_v1.json -text whitespace=cr-at-eol
-experiments/results/exp_023_paper_fields_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_023_state_semantic_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_024_state_encoding_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_025_neural_policy_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_026_validation_iteration_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_027_research_controller_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_027_controlled_candidate_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_027_feedback_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_027_feedback_v1/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
-experiments/results/exp_028_graduation_reference_pilot_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_028_graduation_reference_pilot_v1/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
-experiments/results/exp_029_graduation_main_scope_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_029_graduation_main_scope_v1/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
-experiments/results/exp_030_graduation_main_evidence_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_030_graduation_main_evidence_v1/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
-experiments/results/exp_030_graduation_main_evidence_v2/** -text whitespace=cr-at-eol
-experiments/results/exp_030_graduation_main_evidence_v2/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
-experiments/results/exp_030_graduation_main_failed_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_030_graduation_main_failed_v1/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
-experiments/results/exp_030_graduation_main_evidence_v3/** -text whitespace=cr-at-eol
-experiments/results/exp_030_graduation_main_evidence_v3/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
-experiments/results/exp_030_graduation_main_attempt2_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_030_graduation_main_attempt2_v1/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
-experiments/results/exp_030_graduation_main_conclusion_ack_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_031_consistency_diagnostic_dev_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_031_consistency_diagnostic_dev_v1/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
-experiments/results/exp_032_graduation_remedy_scope_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_033_graduation_remedy_dev_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_033_graduation_remedy_dev_v1/**/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
-experiments/results/phase1_ci_3bb926d_v1/** -text whitespace=cr-at-eol
-experiments/results/phase1_ci_3bb926d_v1/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
-experiments/results/phase1_delivery_followup_v1/** -text whitespace=cr-at-eol
-experiments/results/phase1_delivery_followup_v1/**/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
-experiments/results/phase1_hardening_v1/** -text whitespace=cr-at-eol
-experiments/results/phase1_closeout_v1/** -text whitespace=cr-at-eol
-experiments/results/phase1_closeout_v1/**/*.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
-experiments/results/phase1_closeout_v1/**/*.md whitespace=-blank-at-eof,cr-at-eol
-# Preserve original pytest traceback whitespace in this historical failure log.
-experiments/results/phase1_hardening_v1/integration_first_attempt.log whitespace=-blank-at-eol,-blank-at-eof,cr-at-eol
-experiments/results/exp_025_neural_policy_phase1_v2/** -text whitespace=cr-at-eol
-experiments/results/exp_026_validation_iteration_phase1_v2/** -text whitespace=cr-at-eol
-experiments/results/exp_023_real_paper_code_v1/** -text whitespace=cr-at-eol
-experiments/results/exp_023_real_paper_code_v1/repository_cache/code/** whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab,cr-at-eol
-# Keep the generated empty diagnostics section byte-identical to the run.
-experiments/results/exp_021_graduation_g2_v1/report.md whitespace=-blank-at-eof,cr-at-eol
+# Experiment inputs and outputs keep their exact bytes: manifests record
+# SHA-256 hashes, so Git must never convert newlines in these files.
+experiments/inputs/** -text
+experiments/results/** -text
+experiments/archive/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof,-space-before-tab

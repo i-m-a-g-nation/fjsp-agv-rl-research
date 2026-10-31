@@ -1,6 +1,0 @@
-[EXCERPT: selected character spans from physical PDF pages; other text is outside this context.]
-
-[Physical PDF page 15; source characters 2546:2635; page text SHA256 624b3c2487fb6b019f96fab83f5b967c06b0317481d7b8c31318936058e3b3b8]
-In this work, we
-set Rshape and Ropt to constants with values of 1 and 200,
-respectively.

@@ -1,4 +1,4 @@
-﻿# FJSP-AGV-RL Research Project Rules
+# FJSP-AGV-RL Research Project Rules
 
 本项目研究柔性作业车间调度 FJSP，后续扩展 AGV、动态扰动与强化学习。
 
@@ -39,12 +39,13 @@ Phase 1 已建立静态 FJSP 基础实验平台。
 
 ## 已放行的扩展（毕设路线）
 
-以下内容已在用户确认的毕设范围内实现（各项的批准/推进记录见对应 `docs/graduation_*` 文档开头），代码在 `src/graduation/`，总览见 `docs/graduation_model_draft.md` 与 `docs/research_acceptance_map.md`：
+以下内容已在用户确认的毕设范围内实现，代码在 `src/fjsp_lab/maintenance/`，模型见 `docs/models/graduation_model.md`，历史批准记录见 `docs/history/`：
 
 - G1：同质平行机、每任务一道工序、0 时刻到达、每机一次必需维护（时间窗内）、总延期目标，及其数据与合法性检查器。
 - G2：固定/联合维护的小规模 CP-SAT 参考模型与独立枚举核对。
-- R1/R2：有限步、带动作掩码的调度构造环境及规则基线。
-- 有界 NumPy masked-MLP REINFORCE 试训（仅用于上述毕设简化模型）。
+- R1/R2：有限步、带动作掩码的调度构造环境及 EDD/MDD/ATC 规则基线。
+- 智能优化算法：GA、SA、改进 GA（IGA）。
+- 学习型构造策略（仅用于上述毕设简化模型）：NumPy 逐动作打分 MLP（模仿 + REINFORCE）；PyTorch 注意力策略（模仿 IGA 教师 + REINFORCE，共享基线，无 PPO）。
 
 每个新阶段（例如正式 G3 批次、PPO、新的训练预算）仍需用户单独批准，已有批准不自动延伸。
 
@@ -59,11 +60,18 @@ Phase 1 已建立静态 FJSP 基础实验平台。
 
 这些是后续阶段。
 
+## 代码结构
+
+- 库代码只在 `src/fjsp_lab/`：`fjsp`（Phase 1）、`dynamic`（Phase 2A，依赖 `fjsp`）、`maintenance`（毕设，生产部分复用 `fjsp` 检查器）。子包之间不得反向依赖。
+- 实验脚本在 `experiments/`（`p1_*`、`p2_*`、`g*_*`），共用 `experiments/_common.py`；测试在 `tests/`，按子包分目录。
+- 只为有意义的行为写测试：合法性检查器的每类违规、每个算法输出过检查器、确定性/可复现、关键数值回归。不写只为凑覆盖率的测试。
+
 ## 分支与证据规则
 
-- 日常开发在 `main` 上进行；功能分支完成后合并回 `main`。
-- `experiments/results/` 是已归档证据，不得改写或删除；新运行写入新目录（`experiments/runs/` 已被忽略）。
-- 大量归档证据按路径和 SHA-256 绑定 `src/` 源码、`.gitattributes` 换行规则及部分 `docs/superpowers/` 计划文件。移动、重命名或改写这些文件会使旧证据无法核验或续跑；确需重构时先与用户确认，并为新证据重新运行。
+- 日常开发在 `main` 上进行；功能分支完成后合并回 `main`。每次推送需用户明确同意。
+- `experiments/archive/` 是重构前的已归档证据，逐字节不得改写；其 manifest 绑定旧源码，需在分支 `archive/pre-restructure-2026-10-31` 上核验。
+- `experiments/results/` 是当前代码的已归档证据，不得改写或删除；新运行写入新目录（`experiments/runs/` 已被忽略）。归档前先提交代码，使 manifest 中 `git_dirty` 为 false。
+- 每个结果的 manifest 记录 git 提交和 `src/fjsp_lab` 全部源码的 SHA-256；改动源码后旧结果仍可在其提交上核验，新结论需要重新运行。
 
 ## Conda 环境规则
 
@@ -82,6 +90,8 @@ python -c "import sys; print(sys.executable)"
 如果环境不存在，先运行：
 
 powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
+
+需要 PyTorch 的脚本（`experiments/g6_attention_policy.py`）在本机已安装 PyTorch 的环境中运行，不要在项目环境或其他环境重复安装 PyTorch；不需要 PyTorch 时一律用项目专用环境。
 
 ## 核心数据格式
 
@@ -157,15 +167,11 @@ jobs = [
 
 ## 测试要求
 
-Phase 1 完成后运行：
+提交前运行（或 `scripts/run_checks.ps1`）：
 
-python experiments/exp_001_toy_instance.py
 pytest
-
-加入 CP-SAT 后运行：
-
-python experiments/exp_002_solver_check.py
-pytest
+python experiments/p1_static_fjsp.py --time-limit 2
+python experiments/p2_dynamic_protocol.py
 
 失败必须如实报告，不允许假装成功。
 

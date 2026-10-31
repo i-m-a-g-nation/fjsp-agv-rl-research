@@ -1,1 +1,0 @@
-{"active_seconds":26.672000000005937,"active_seconds_reserved":0.0,"limits":{"max_active_seconds":60,"max_output_tokens":0,"max_provider_calls":0},"model_calls":0,"remaining_active_seconds":33.32799999999406,"segments":[{"finished_seconds":21.672000000005937,"id":1,"reserved_seconds":60.0},{"finished_seconds":5.0,"id":2,"reserved_seconds":38.32799999999406}]}
