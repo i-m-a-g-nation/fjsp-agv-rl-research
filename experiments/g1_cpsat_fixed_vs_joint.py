@@ -91,6 +91,7 @@ def main() -> int:
     args = parse_args(__doc__.splitlines()[0], 'g1_cpsat_fixed_vs_joint',
                       lambda p: p.add_argument('--long', action='store_true', help='add the 60 s n=24 reference'))
     logging.basicConfig(level=logging.INFO, format='%(message)s')
+    prov = provenance(__file__)   # recorded at start: the code that actually runs
     cases = g3a_cases()
     rows, plans = [], {}
     for index, case in enumerate(cases):
@@ -116,7 +117,7 @@ def main() -> int:
         'experiment': 'g1_cpsat_fixed_vs_joint', 'short_setting': SHORT, 'long_setting': LONG if args.long else None,
         'solves': len(rows), 'accepted': sum(r['status'] == 'ACCEPTED' for r in rows),
         'complete_pairs': sum(p['status'] == 'COMPLETE' for p in pairs), 'summary': summarize(pairs),
-        **provenance(__file__)})
+        **prov})
     return 0
 
 

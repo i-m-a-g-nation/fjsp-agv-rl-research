@@ -1,0 +1,66 @@
+{
+  "counts": {
+    "train": 20000,
+    "validation": 300
+  },
+  "created_utc": "2026-10-31T11:35:56+00:00",
+  "elapsed_seconds": 804.9,
+  "experiment": "g5_teacher_data",
+  "file_sha256": {
+    "train.jsonl": "5bf28d4d9fdc00fdfeaa30417e036c3a93242f97d1f13ca82acb2f0d70404ea7",
+    "validation.jsonl": "6c9c044a2973bb5cf4e63d685c0b115eb5fde6825c4c216a5b946758df0f9768"
+  },
+  "git_commit": "74cdf568c41c2dce23d91908fd0e4bfdd887fc39",
+  "git_dirty": false,
+  "kind": "sequence",
+  "limit": null,
+  "packages": {
+    "numpy": "2.4.5",
+    "ortools": "9.15.6755",
+    "scipy": "1.17.1"
+  },
+  "platform": "Windows-10-10.0.26200-SP0",
+  "python": "3.11.15",
+  "set": "g4",
+  "source_sha256": {
+    "experiments/_common.py": "56e6b1573c2a0fcb520fff9e4a2ba07f5c56ed6d0d87f1857c562672ca9aa13c",
+    "experiments/g5_teacher_data.py": "e27531d4bf2cf3670e7840eef1c623fbff9c22ce0ba55c18343e02948c7332ee",
+    "src/fjsp_lab/__init__.py": "5cb0ec7ad1d2cf5f20fcf125ec9374d7068848f9933b3cadecde8cd3f9a11012",
+    "src/fjsp_lab/dynamic/__init__.py": "12f8c018580766c6b9a7a02182b15f004eba5176de6bdacb84c8c6605371a8ea",
+    "src/fjsp_lab/dynamic/events.py": "a23f8c85a8be4a1b6515a84717b9f4fb4d6f3029b0f586284d340d8fa5e3ffe8",
+    "src/fjsp_lab/dynamic/feasibility.py": "9491488aa255c6204d477bf10319040772952309e7bafbdf7033d16d3cf02b76",
+    "src/fjsp_lab/dynamic/perturbation.py": "bc26bb267c29a4745fe2fe76a386ec33c302757deb1bd8a0ef06a0690300392d",
+    "src/fjsp_lab/dynamic/replay.py": "b9a18784e9ef0ba954679a5d9014507c37fde8dd7db6709ff4342004f44af0fe",
+    "src/fjsp_lab/dynamic/reschedule.py": "e67a283979cabcb6855fcc514bb38b0c8fa0eb396bc6361c5a3b8331dd24d5e9",
+    "src/fjsp_lab/dynamic/snapshot.py": "f34cdf371d2f12bc55f546284a9665e3fa18d7eb70e10fd413f30aeb6261f073",
+    "src/fjsp_lab/dynamic/state.py": "a0a0bdf8a6dd7cd28d4335b8c5eb345baf2d84729bda7bf6f50bb322a3f02146",
+    "src/fjsp_lab/fjsp/__init__.py": "82d1b68ebcd6b5fd7f20ff6de014725ad902de28a71d076e182f06043e16fc10",
+    "src/fjsp_lab/fjsp/benchmark.py": "fb5404344f1d75d5c56e27b53ac57b9249a6898df5283fd57ffaafcdeea890ef",
+    "src/fjsp_lab/fjsp/cpsat.py": "627b9aa810477fc135140377761c6255e96c2953bd10f67926645a61b752c66e",
+    "src/fjsp_lab/fjsp/decoding.py": "f9bdb2ab0c0422d0b88c7bc2ec42d5be01b9740d16e9e25421428452ed135a9b",
+    "src/fjsp_lab/fjsp/feasibility.py": "8d26f1034278e0c3ca4f139a5c1a33ad13a2eb0381e8a777186a64f8b240c8c8",
+    "src/fjsp_lab/fjsp/gantt.py": "18442b1e511b22221aee0360b6a071e8bea54c0a9c74e750172c9f42860b0e1e",
+    "src/fjsp_lab/fjsp/instance.py": "8a6d199068bd6dde2e5135bc925ca3a66e9752468e6b76282fef899d3b853dd3",
+    "src/fjsp_lab/fjsp/rules.py": "c31a235a389aef7123443f90bf20058c3a3e4859805582ec6bd52e371ad249f0",
+    "src/fjsp_lab/fjsp/schedule.py": "8f553772474a84bf56fbc08da7883b89fdad490c279caeb9001ff1b6bc09ba83",
+    "src/fjsp_lab/maintenance/__init__.py": "73d1afdf5d1632ffc5f0aac8cd572c9ace6eab1eab088861dc3ffd17bdedf12b",
+    "src/fjsp_lab/maintenance/attention_policy.py": "2a60c36d027970344d13b77a0546ee6918511b1f6646b0fa2687d4c9c320b6aa",
+    "src/fjsp_lab/maintenance/cpsat.py": "18e07e34ea02e01ef70e77809fe0c515d36b2ad1d0dbd7419de0e66c8134d6a7",
+    "src/fjsp_lab/maintenance/enumeration.py": "d06d55c10b01ef6db005af755292b4925cfad3e1944966ba0a2ebb0d314fc3f5",
+    "src/fjsp_lab/maintenance/env.py": "fb55288600114ddf16b38a7a67525f4efb24c88bb6b4a79262ff404b9c771a85",
+    "src/fjsp_lab/maintenance/feasibility.py": "776581253d81e07f4608f2fff6704edcbed204d15cb97304d34de2b76ff69308",
+    "src/fjsp_lab/maintenance/features.py": "b37442fa4d791dfad0c93a4157774311163aabb4e047f0141f17afb7f7503fd0",
+    "src/fjsp_lab/maintenance/generator.py": "ca91e46b44684c5028950528a2839e177c9f2b69572198c819d364b592d1b90a",
+    "src/fjsp_lab/maintenance/instance.py": "f4132373647c5ebd923920bcc8e9ece8577d722c44ef3ed09e3a56aa4d83d590",
+    "src/fjsp_lab/maintenance/metaheuristics.py": "3638f0f6d2b5d39342ad5e54c8d157310684d5f0b93b3dac06320a4ed2d5ac65",
+    "src/fjsp_lab/maintenance/rules.py": "c8225ab9817b00bfd2c5c93f7bad41faafcdb4aae45a41985a5b0480c344b7a6",
+    "src/fjsp_lab/maintenance/schedule.py": "f922ab9dfc9298344842045accd0f15640dc324d4846bd1e454ea20b7c2ca62e",
+    "src/fjsp_lab/maintenance/scoring_policy.py": "dcbe7cacafa15f1d45dadcc5e42d4e0789befaa2feaeea749d9b301439800294",
+    "src/fjsp_lab/maintenance/sequence_env.py": "8e3329600d6ed8b687995c477de1d39145024b9f8e5b65288438b9602fd9550e"
+  },
+  "teacher": {
+    "algorithm": "IGA",
+    "evaluations": 5000,
+    "seed": 0
+  }
+}

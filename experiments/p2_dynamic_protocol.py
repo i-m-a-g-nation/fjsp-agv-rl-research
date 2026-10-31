@@ -35,6 +35,7 @@ def main() -> int:
     args = parse_args(__doc__.splitlines()[0], 'p2_dynamic_protocol',
                       lambda p: p.add_argument('--protocol', type=Path, default=ROOT / 'experiments/inputs/phase2a_v1.json'))
     logging.basicConfig(level=logging.INFO, format='%(message)s')
+    prov = provenance(__file__)   # recorded at start: the code that actually runs
     protocol = parse_protocol(args.protocol.read_bytes())
     rows = []
     for instance_id, path in protocol.instances:
@@ -72,7 +73,7 @@ def main() -> int:
     write_json(args.output_dir / 'manifest.json', {
         'experiment': 'p2_dynamic_protocol', 'protocol_id': protocol.protocol_id,
         'protocol_sha256': sha256(args.protocol), 'expected_runs': protocol.expected_runs, 'passed_runs': passed,
-        'status': 'COMPLETED' if complete else 'FAILED', **provenance(__file__)})
+        'status': 'COMPLETED' if complete else 'FAILED', **prov})
     LOGGER.info('%d/%d runs passed both checkers', passed, protocol.expected_runs)
     return 0 if complete else 1
 

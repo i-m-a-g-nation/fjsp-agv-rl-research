@@ -21,18 +21,25 @@ if str(ROOT / 'src') not in sys.path:
 from fjsp_lab.maintenance import check_parallel_maintenance_feasibility  # noqa: E402
 
 
-def parse_args(description: str, name: str, extra=None) -> argparse.Namespace:
-    """Common CLI: ``--output-dir`` (default experiments/runs/<name>-<UTC stamp>)."""
+def parse_args(description: str, name: str, extra=None, resumable: bool = False) -> argparse.Namespace:
+    """Common CLI: ``--output-dir`` (default experiments/runs/<name>-<UTC stamp>).
+
+    A resumable script also accepts ``--resume`` to continue an interrupted run
+    in an existing directory; it must then skip the work already written.
+    """
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('--output-dir', type=Path, default=None,
                         help='new directory for this run; use experiments/results/<name> to archive it')
+    if resumable:
+        parser.add_argument('--resume', action='store_true', help='continue an interrupted run in --output-dir')
     if extra is not None:
         extra(parser)
     args = parser.parse_args()
     if args.output_dir is None:
         stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
         args.output_dir = ROOT / 'experiments' / 'runs' / f'{name}-{stamp}'
-    args.output_dir.mkdir(parents=True, exist_ok=False)   # never overwrite earlier evidence
+    # Never overwrite earlier evidence; only an explicit resume may reuse a directory.
+    args.output_dir.mkdir(parents=True, exist_ok=resumable and args.resume)
     return args
 
 

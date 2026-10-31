@@ -59,6 +59,7 @@ def evaluate(instances, policies: dict) -> list[dict]:
 def main() -> int:
     args = parse_args(__doc__.splitlines()[0], 'g2_scoring_policy')
     logging.basicConfig(level=logging.INFO, format='%(message)s')
+    prov = provenance(__file__)   # recorded at start: the code that actually runs
     started = time.monotonic()
     train_set, val_set, test_set = (split_instances(name) for name in ('train', 'validation', 'test'))
     (args.output_dir / 'checkpoints').mkdir()
@@ -83,7 +84,7 @@ def main() -> int:
         'training_seeds': TRAINING_SEEDS, 'hyperparameters': HYPERPARAMETERS, 'rollouts': ROLLOUTS,
         'checkpoint_sha256': digests, 'final_model': final,
         'selected': {name: h[-1] for name, h in histories.items()}, 'test_summary': summary,
-        'elapsed_seconds': round(time.monotonic() - started, 1), **provenance(__file__)})
+        'elapsed_seconds': round(time.monotonic() - started, 1), **prov})
     LOGGER.info('test means: %s', json.dumps(summary['all']['mean']))
     return 0
 

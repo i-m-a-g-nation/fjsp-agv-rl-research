@@ -46,6 +46,7 @@ def main() -> int:
     args = parse_args(__doc__.splitlines()[0], 'g3_metaheuristics',
                       lambda p: p.add_argument('--budgets', type=int, nargs='+', default=list(BUDGETS)))
     logging.basicConfig(level=logging.INFO, format='%(message)s')
+    prov = provenance(__file__)   # recorded at start: the code that actually runs
     started = time.monotonic()
     jobs = [(case, mode, tuple(args.budgets)) for case in g3a_cases() for mode in ('fixed', 'joint')]
     with ProcessPoolExecutor(max_workers=PROCESSES) as pool:
@@ -55,7 +56,7 @@ def main() -> int:
         'experiment': 'g3_metaheuristics', 'algorithms': ALGORITHMS, 'settings': DEFAULT_SETTINGS,
         'budgets': args.budgets, 'seeds': SEEDS, 'instances': len(rows),
         'runs': len(rows) * len(ALGORITHMS) * len(args.budgets) * len(SEEDS), 'parallel_processes': PROCESSES,
-        'elapsed_seconds': round(time.monotonic() - started, 1), **provenance(__file__)})
+        'elapsed_seconds': round(time.monotonic() - started, 1), **prov})
     return 0
 
 

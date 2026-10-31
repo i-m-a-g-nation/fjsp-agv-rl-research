@@ -49,6 +49,7 @@ def main() -> int:
     args = parse_args(__doc__.splitlines()[0], 'p1_static_fjsp',
                       lambda p: p.add_argument('--time-limit', type=float, default=10.0))
     logging.basicConfig(level=logging.INFO, format='%(message)s')
+    prov = provenance(__file__)   # recorded at start: the code that actually runs
     bounds = {r['instance_name']: (int(r['fjsplib_lb']), int(r['fjsplib_ub']))
               for r in read_csv(ROOT / 'instances/fjsplib_bks.csv')}
     toy = create_toy_instance()
@@ -66,7 +67,7 @@ def main() -> int:
         'schedules': len(rows), 'all_feasible': all(r['feasible'] for r in rows),
         'cpsat_status': {s: sum(r['status'] == s for r in cp) for s in ('OPTIMAL', 'FEASIBLE', 'NO_SCHEDULE')},
         'cpsat_matches_fjsplib_ub': sum(r['makespan'] == r['fjsplib_ub'] for r in cp if r['fjsplib_ub'] is not None),
-        **provenance(__file__)})
+        **prov})
     return 0 if all(r['feasible'] for r in rows) else 1
 
 

@@ -69,6 +69,7 @@ def greedy_mean(model, rows, *, device, batch) -> float:
 def main() -> int:
     args = parse_args(__doc__.splitlines()[0], 'g6_attention_policy', add_args)
     logging.basicConfig(level=logging.INFO, format='%(message)s')
+    prov = provenance(__file__, packages=('numpy', 'torch'))   # recorded at start: the code that actually runs
     torch.manual_seed(args.seed)
     rng = random.Random(args.seed)
     train_rows = read_rows(args.data_dir / 'train.jsonl', args.train_limit)
@@ -128,7 +129,7 @@ def main() -> int:
         'reference_validation': reference, 'best': best, 'history': history,
         'elapsed_minutes': round((time.monotonic() - started) / 60, 2), 'torch': torch.__version__,
         'cuda': torch.version.cuda, 'data_manifest_sha256': sha256(args.data_dir / 'manifest.json'),
-        **provenance(__file__, packages=('numpy', 'torch'))})
+        **prov})
     LOGGER.info('best %s', json.dumps(best))
     return 0
 

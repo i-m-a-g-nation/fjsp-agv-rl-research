@@ -24,3 +24,6 @@ experiments/ai_memory/
 experiments/runs/
 tmp/
 *.bundle
+
+# Large, deterministically regenerable teacher data (hash recorded in its manifest.json)
+experiments/results/*/train.jsonl

@@ -58,6 +58,7 @@ def main() -> int:
 
     args = parse_args(__doc__.splitlines()[0], 'g5_teacher_data', extra)
     logging.basicConfig(level=logging.INFO, format='%(message)s')
+    prov = provenance(__file__)   # recorded at start: the code that actually runs
     spec, started, counts = SETS[args.set], time.monotonic(), {}
     for split, make in spec['splits'].items():
         instances = make()[:args.limit]
@@ -72,7 +73,7 @@ def main() -> int:
         'experiment': 'g5_teacher_data', 'set': args.set, 'kind': spec['kind'], 'teacher': spec['teacher'],
         'counts': counts, 'limit': args.limit,
         'file_sha256': {f'{s}.jsonl': sha256(args.output_dir / f'{s}.jsonl') for s in counts},
-        'elapsed_seconds': round(time.monotonic() - started, 1), **provenance(__file__)})
+        'elapsed_seconds': round(time.monotonic() - started, 1), **prov})
     return 0
 
 

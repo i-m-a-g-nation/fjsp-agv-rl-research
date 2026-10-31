@@ -43,6 +43,7 @@ def timed(function):
 def main() -> int:
     args = parse_args(__doc__.splitlines()[0], 'g4_comparison', add_args)
     logging.basicConfig(level=logging.INFO, format='%(message)s')
+    prov = provenance(__file__)   # recorded at start: the code that actually runs
     policy_manifest = json.loads((args.policy / 'manifest.json').read_text(encoding='utf-8'))
     final = policy_manifest['final_model']
     policy = ScoringPolicy.load(args.policy / 'checkpoints' / f'{final}.npz',
@@ -133,7 +134,7 @@ def main() -> int:
         'experiment': 'g4_comparison', 'final_policy': final,
         'inputs_sha256': {str(p): sha256(p) for p in (args.cpsat / 'rows.csv', args.policy / 'manifest.json',
                                                       args.meta / 'rows.csv')},
-        'summary': summary, 'joint_gain_on_best_known': joint_gain, **provenance(__file__)})
+        'summary': summary, 'joint_gain_on_best_known': joint_gain, **prov})
     LOGGER.info('means: %s', json.dumps(summary['all']['mean']))
     return 0
 
