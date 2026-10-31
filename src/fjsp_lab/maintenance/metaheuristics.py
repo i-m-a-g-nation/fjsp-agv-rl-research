@@ -27,6 +27,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import math
 import random
+import time
 
 from fjsp_lab.maintenance.feasibility import build_plan, require_feasible, validate_problem
 from fjsp_lab.maintenance.instance import ParallelMaintenanceInstance
@@ -56,9 +57,10 @@ class SearchOutcome:
     best_evaluation: int
     sequence: tuple[int, ...]
     result: MaintenanceScheduleResult
+    trace: tuple[tuple[float, int, int], ...] = ()   # (seconds, evaluations, best value) at each improvement
 
 
-class _Problem:
+class TokenDecoder:
     """Integer arrays and the list decoder for one instance and mode."""
 
     def __init__(self, data: ParallelMaintenanceInstance, mode: str, initial: list[list[int]] = ()):
@@ -181,14 +183,21 @@ def _order_crossover(a: list[int], b: list[int], rng: random.Random) -> list[int
 
 
 class _Tracker:
-    """Best-so-far bookkeeping under a hard evaluation budget."""
+    """Best-so-far bookkeeping under a hard evaluation budget and an optional time limit."""
 
-    def __init__(self, problem: _Problem, budget: int):
-        self.problem, self.budget = problem, budget
+    def __init__(self, problem: TokenDecoder, budget: int, time_limit: float | None = None):
+        self.problem, self.budget, self.time_limit = problem, budget, time_limit
         self.best_value, self.best_sequence, self.best_evaluation = None, None, 0
+        self.started, self.trace = time.perf_counter(), []
+
+    @property
+    def elapsed(self) -> float:
+        return time.perf_counter() - self.started
 
     @property
     def left(self) -> int:
+        if self.time_limit is not None and self.elapsed >= self.time_limit:
+            return 0
         return self.budget - self.problem.evaluations
 
     def evaluate(self, sequence: list[int]) -> int:
@@ -196,6 +205,7 @@ class _Tracker:
         if self.best_value is None or value < self.best_value:
             self.best_value, self.best_sequence = value, sequence[:]
             self.best_evaluation = self.problem.evaluations
+            self.trace.append((self.elapsed, self.problem.evaluations, value))
         return value
 
 
@@ -216,7 +226,7 @@ def _local_search(tracker: _Tracker, value: int, sequence: list[int], moves: int
     return value, sequence
 
 
-def _genetic(tracker: _Tracker, problem: _Problem, settings: dict, rng: random.Random, improved: bool) -> None:
+def _genetic(tracker: _Tracker, problem: TokenDecoder, settings: dict, rng: random.Random, improved: bool) -> None:
     size = problem.size
     seeds = problem.initial + (problem.heuristic_sequences() if improved else [])
     starts = seeds[:settings['population']]
@@ -245,7 +255,7 @@ def _genetic(tracker: _Tracker, problem: _Problem, settings: dict, rng: random.R
         population = offspring
 
 
-def _annealing(tracker: _Tracker, problem: _Problem, settings: dict, rng: random.Random) -> None:
+def _annealing(tracker: _Tracker, problem: TokenDecoder, settings: dict, rng: random.Random) -> None:
     current = problem.heuristic_sequences()[1]  # EDD order, maintenance tokens last
     value = tracker.evaluate(current)
     deltas = []
@@ -254,8 +264,12 @@ def _annealing(tracker: _Tracker, problem: _Problem, settings: dict, rng: random
         if delta > 0:
             deltas.append(delta)
     start_t = (sum(deltas) / len(deltas)) / -math.log(settings['initial_acceptance']) if deltas else 1.0
-    steps = max(1, tracker.left)
-    cooling = settings['final_temperature_ratio'] ** (1.0 / steps)
+    ratio = settings['final_temperature_ratio']
+    timed = tracker.time_limit is not None
+    if timed:
+        begin, horizon = tracker.elapsed, max(1e-9, tracker.time_limit - tracker.elapsed)
+    else:
+        cooling = ratio ** (1.0 / max(1, tracker.left))
     temperature = start_t
     while tracker.left > 0 and tracker.best_value > 0:
         candidate = _neighbour(current, rng)
@@ -263,13 +277,18 @@ def _annealing(tracker: _Tracker, problem: _Problem, settings: dict, rng: random
         delta = candidate_value - value
         if delta <= 0 or rng.random() < math.exp(-delta / temperature):
             current, value = candidate, candidate_value
-        temperature *= cooling
+        # Geometric cooling over the evaluation budget, or over the time limit when one is given.
+        temperature = start_t * ratio ** ((tracker.elapsed - begin) / horizon) if timed else temperature * cooling
 
 
 def solve_metaheuristic(data: ParallelMaintenanceInstance, *, mode: str, algorithm: str,
                         evaluations: int = 2000, seed: int = 0, settings: dict | None = None,
-                        initial_sequences: list[list[int]] = ()) -> SearchOutcome:
-    """Run GA, SA or IGA under an evaluation budget; return the accepted best plan."""
+                        initial_sequences: list[list[int]] = (), time_limit: float | None = None) -> SearchOutcome:
+    """Run GA, SA or IGA under an evaluation budget (and optional time limit); return the accepted best plan.
+
+    With ``time_limit`` the search also stops after that many seconds, and SA
+    cools over the time limit instead of the evaluation budget.
+    """
     if algorithm not in ALGORITHMS:
         raise ValueError(f'algorithm must be one of {ALGORITHMS}')
     if type(evaluations) is not int or evaluations < 1:
@@ -278,10 +297,14 @@ def solve_metaheuristic(data: ParallelMaintenanceInstance, *, mode: str, algorit
         raise ValueError('seed must be an integer')
     if initial_sequences and algorithm == 'SA':
         raise ValueError('initial_sequences apply to GA and IGA only')
-    problem = _Problem(data, mode, list(initial_sequences))
+    if time_limit is not None and (type(time_limit) not in (int, float) or not 0 < time_limit < math.inf):
+        raise ValueError('time_limit must be None or a positive finite number')
+    tracker_start = time.perf_counter()
+    problem = TokenDecoder(data, mode, list(initial_sequences))
     config = {**DEFAULT_SETTINGS[algorithm], **(settings or {})}
     rng = random.Random(seed)
-    tracker = _Tracker(problem, evaluations)
+    tracker = _Tracker(problem, evaluations, time_limit)
+    tracker.started = tracker_start
     if algorithm == 'SA':
         _annealing(tracker, problem, config, rng)
     else:
@@ -291,7 +314,7 @@ def solve_metaheuristic(data: ParallelMaintenanceInstance, *, mode: str, algorit
     if problem.evaluations > evaluations:
         raise MetaheuristicError('Evaluation budget exceeded')
     return SearchOutcome(algorithm, mode, seed, problem.evaluations, tracker.best_evaluation,
-                         tuple(tracker.best_sequence), problem.result(tracker.best_sequence))
+                         tuple(tracker.best_sequence), problem.result(tracker.best_sequence), tuple(tracker.trace))
 
 
 def plan_to_sequence(result: MaintenanceScheduleResult, data: ParallelMaintenanceInstance) -> list[int]:
@@ -314,4 +337,4 @@ def plan_to_sequence(result: MaintenanceScheduleResult, data: ParallelMaintenanc
 
 def decoded_value(data: ParallelMaintenanceInstance, mode: str, sequence: list[int]) -> int:
     """Total tardiness of a token sequence under the decoder."""
-    return _Problem(data, mode).decode(sequence)
+    return TokenDecoder(data, mode).decode(sequence)

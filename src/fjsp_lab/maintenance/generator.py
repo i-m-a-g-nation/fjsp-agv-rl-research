@@ -236,3 +236,21 @@ def sample_periodic_instances(seeds: range, *, sampler_seed: int, sizes, profile
         data = build_periodic_instance(n, m, cycle_counts(profile, m), alpha, beta, tau, seed)
         instances.append(SampledInstance(data, mode, n, m, alpha, beta, tau, seed))
     return instances
+
+
+# --- G4 instance sets (docs/protocols/g4_periodic_protocol.md) ----------------
+G4_SIZES = tuple((n, m) for n in (20, 50, 100) for m in (2, 4, 8))
+G4_GRID = {'num_tasks': (20, 50, 100), 'num_machines': (2, 4, 8), 'profile': CYCLE_PROFILES,
+           'alpha_percent': (10, 20), 'beta_percent': (25, 50), 'tau_percent': (75, 125),
+           'instance_seeds': (1001, 1002)}
+G4_SPLITS = {'train': (range(200000, 220000), 21), 'validation': (range(230000, 230300), 22)}
+
+
+def g4_cases() -> list[PeriodicCase]:
+    """The 288 test cases of the G4 grid, each solved in fixed and joint mode."""
+    return [periodic_case(n, m, profile, a, b, t, s) for n, m, profile, a, b, t, s in product(*G4_GRID.values())]
+
+
+def g4_split(name: str) -> list[SampledInstance]:
+    seeds, sampler_seed = G4_SPLITS[name]
+    return sample_periodic_instances(seeds, sampler_seed=sampler_seed, sizes=G4_SIZES)

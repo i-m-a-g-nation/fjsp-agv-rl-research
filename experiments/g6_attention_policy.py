@@ -1,8 +1,9 @@
 """Graduation: train the attention policy, behaviour cloning on IGA teachers then REINFORCE.
 
 Runs in the PyTorch environment (see START_HERE.md). Reads a g5_teacher_data
-run; never touches a test split. Checkpoint selection uses the validation
-mean greedy tardiness only. Writes best.pt and summary.json.
+run and uses its MDP kind (``action`` for g3a, ``sequence`` for g4); never
+touches a test split. Checkpoint selection uses the validation mean greedy
+tardiness only. Writes best.pt and summary.json.
 """
 
 from __future__ import annotations
@@ -19,7 +20,7 @@ from _common import parse_args, provenance, sha256, write_json
 import torch
 
 from fjsp_lab.maintenance.attention_policy import (
-    AttentionPolicy, PolicyConfig, imitation_loss, reinforce_loss, rollout, save,
+    AttentionPolicy, config_for, imitation_step, reinforce_step, rollout, save,
 )
 from fjsp_lab.maintenance.instance import ParallelMaintenanceInstance
 
@@ -40,6 +41,7 @@ def add_args(parser) -> None:
     parser.add_argument('--rl-lr', type=float, default=1e-4)
     parser.add_argument('--eval-every', type=int, default=10)
     parser.add_argument('--max-minutes', type=float, default=120.0)
+    parser.add_argument('--eval-batch', type=int, default=100)
 
 
 def read_rows(path: Path, limit: int | None = None) -> list[dict]:
@@ -54,7 +56,7 @@ def read_rows(path: Path, limit: int | None = None) -> list[dict]:
     return rows
 
 
-def greedy_mean(model, rows, *, device, batch=100) -> float:
+def greedy_mean(model, rows, *, device, batch) -> float:
     model.eval()
     values = []
     for start in range(0, len(rows), batch):
@@ -74,12 +76,13 @@ def main() -> int:
     reference = {'teacher': statistics.fmean(r['teacher_tardiness'] for r in val_rows),
                  'MDD': statistics.fmean(r['mdd_tardiness'] for r in val_rows)}
     LOGGER.info('train %d, validation %d, reference %s', len(train_rows), len(val_rows), reference)
-    model = AttentionPolicy(PolicyConfig()).to(args.device)
+    kind = json.loads((args.data_dir / 'manifest.json').read_text(encoding='utf-8')).get('kind', 'action')
+    model = AttentionPolicy(config_for(kind)).to(args.device)
     history, best = [], {'val_greedy': float('inf')}
     started = time.monotonic()
 
     def checkpoint(stage, step):
-        value = greedy_mean(model, val_rows, device=args.device)
+        value = greedy_mean(model, val_rows, device=args.device, batch=args.eval_batch)
         history.append({'stage': stage, 'step': step, 'val_greedy': value,
                         'minutes': round((time.monotonic() - started) / 60, 2)})
         LOGGER.info('%s %d: val greedy %.3f (%.1f min)', stage, step, value, history[-1]['minutes'])
@@ -87,11 +90,12 @@ def main() -> int:
             best.update(val_greedy=value, stage=stage, step=step, sha256=save(model, args.output_dir / 'best.pt'))
         model.train()
 
-    def update(optimizer, loss):
+    def update(optimizer, accumulate):
         optimizer.zero_grad()
-        loss.backward()
+        value = accumulate()          # back-propagates step by step
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
+        return value
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.bc_lr)
     for epoch in range(args.bc_epochs):
@@ -100,8 +104,8 @@ def main() -> int:
         model.train()
         for start in range(0, len(order), args.bc_batch):
             chunk = [train_rows[k] for k in order[start:start + args.bc_batch]]
-            update(optimizer, imitation_loss(model, [r['problem'] for r in chunk],
-                                             [r['teacher_actions'] for r in chunk], device=args.device))
+            update(optimizer, lambda: imitation_step(model, [r['problem'] for r in chunk],
+                                                     [r['teacher_actions'] for r in chunk], device=args.device))
         checkpoint('bc', epoch + 1)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.rl_lr)
@@ -112,14 +116,14 @@ def main() -> int:
             break
         chunk = rng.sample(train_rows, args.rl_batch)
         model.train()
-        loss, _ = reinforce_loss(model, [r['problem'] for r in chunk], samples=args.rl_samples, generator=generator,
-                                 device=args.device, scale=[r['teacher_tardiness'] + 1.0 for r in chunk])
-        update(optimizer, loss)
+        update(optimizer, lambda: reinforce_step(model, [r['problem'] for r in chunk], samples=args.rl_samples,
+                                                 generator=generator, device=args.device,
+                                                 scale=[r['teacher_tardiness'] + 1.0 for r in chunk]))
         if step % args.eval_every == 0:
             checkpoint('rl', step)
 
     write_json(args.output_dir / 'summary.json', {
-        'experiment': 'g6_attention_policy',
+        'experiment': 'g6_attention_policy', 'kind': kind,
         'arguments': {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
         'reference_validation': reference, 'best': best, 'history': history,
         'elapsed_minutes': round((time.monotonic() - started) / 60, 2), 'torch': torch.__version__,

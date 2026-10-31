@@ -1,5 +1,8 @@
 """Every maintenance algorithm returns a checker-accepted plan; exact methods agree."""
 
+import random
+
+import numpy as np
 import pytest
 
 from fjsp_lab.maintenance import check_parallel_maintenance_feasibility
@@ -9,6 +12,7 @@ from fjsp_lab.maintenance.env import ParallelMaintenanceEnv, actions_for_plan
 from fjsp_lab.maintenance.generator import build_instance, build_periodic_instance
 from fjsp_lab.maintenance.metaheuristics import ALGORITHMS, decoded_value, plan_to_sequence, solve_metaheuristic
 from fjsp_lab.maintenance.rules import RULE_PORTFOLIO, solve_dispatch_rule
+from fjsp_lab.maintenance.sequence_env import SEQUENCE_FEATURE_COUNT, SequenceEnv, teacher_actions
 
 MODES = ('fixed', 'joint')
 FACTORS = [(a, b, t, s) for a in (10, 30) for b in (25, 75) for t in (75, 125) for s in (1, 2)]
@@ -121,3 +125,31 @@ def test_metaheuristic_plans_replay_through_the_environment(mode, fixture, reque
     tampered.total_tardiness += 1
     with pytest.raises(ValueError):
         actions_for_plan(tampered, data, mode)
+
+
+@pytest.mark.parametrize('mode', MODES)
+@pytest.mark.parametrize('fixture', ['large', 'periodic', 'periodic_big'])
+def test_sequence_env_matches_the_decoder_on_random_episodes(mode, fixture, request):
+    data, rng = request.getfixturevalue(fixture), random.Random(5)
+    for _ in range(3):
+        env = SequenceEnv(data, mode=mode)
+        while not env.done:
+            legal, rows = env.candidates()
+            assert rows.shape == (len(legal), SEQUENCE_FEATURE_COUNT) and np.all(np.isfinite(rows))
+            env.step(rng.choice(legal))
+        listed = set(env.sequence)
+        full = env.sequence + [t for t in range(env.n, env.decoder.size) if t not in listed]
+        assert accepted(env.result, data, mode) == env.total == decoded_value(data, mode, full)
+    with pytest.raises(RuntimeError):
+        env.step(0)
+
+
+@pytest.mark.parametrize('mode', MODES)
+def test_sequence_env_replays_metaheuristic_sequences(mode, periodic):
+    for algorithm in ('IGA', 'SA'):
+        outcome = solve_metaheuristic(periodic, mode=mode, algorithm=algorithm, evaluations=400, seed=1)
+        actions = teacher_actions(list(outcome.sequence), periodic, mode)
+        env = SequenceEnv(periodic, mode=mode)
+        for action in actions:
+            step = env.step(action)
+        assert step.terminated and accepted(step.result, periodic, mode) == outcome.result.total_tardiness

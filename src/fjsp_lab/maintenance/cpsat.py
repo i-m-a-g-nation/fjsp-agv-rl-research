@@ -49,13 +49,24 @@ def check_objective_metadata(status: str, objective: float, bound: float, total:
         raise CpSatError('OPTIMAL objective/bound differ from the plan tardiness')
 
 
+class _Incumbents(cp_model.CpSolverSolutionCallback):
+    def __init__(self, trace: list):
+        super().__init__()
+        self.trace = trace
+
+    def on_solution_callback(self):
+        self.trace.append((self.WallTime(), self.ObjectiveValue(), self.BestObjectiveBound()))
+
+
 def solve_cpsat(data: ParallelMaintenanceInstance, *, mode: str, time_limit: float = 10.0,
-                num_workers: int = 1, seed: int = 42,
-                max_deterministic_time: float | None = None) -> MaintenanceScheduleResult:
+                num_workers: int = 1, seed: int = 42, max_deterministic_time: float | None = None,
+                trace: list | None = None) -> MaintenanceScheduleResult:
     """Solve once and return a checker-accepted plan with solver status, bound and gap.
 
     ``max_deterministic_time`` optionally stops on CP-SAT's deterministic clock,
-    which unlike wall-clock time gives repeatable single-worker runs.
+    which unlike wall-clock time gives repeatable single-worker runs. A given
+    ``trace`` list receives (seconds, objective, bound) for every incumbent;
+    an incumbent's objective is an upper bound on its exact tardiness.
     """
     validate_problem(data, mode)
     if type(time_limit) not in (int, float) or not math.isfinite(time_limit) or time_limit <= 0:
@@ -111,7 +122,7 @@ def solve_cpsat(data: ParallelMaintenanceInstance, *, mode: str, time_limit: flo
     solver.parameters.num_search_workers = num_workers
     solver.parameters.random_seed = seed
     solver.parameters.log_search_progress = False
-    status = solver.Solve(model)
+    status = solver.Solve(model, _Incumbents(trace) if trace is not None else None)
     name = solver.StatusName(status)
     if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
         raise CpSatError(f'CP-SAT returned {name}; no accepted schedule')

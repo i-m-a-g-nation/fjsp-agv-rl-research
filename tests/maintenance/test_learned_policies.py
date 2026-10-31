@@ -91,26 +91,30 @@ def test_short_training_is_reproducible_and_selects_on_validation():
     assert history[-1]['val_mean_tardiness'] == min(h['val_mean_tardiness'] for h in history[:-1])
 
 
-def test_attention_policy_rollout_imitation_and_checkpoint(tmp_path, small, periodic):
+@pytest.mark.parametrize('kind', ['action', 'sequence'])
+def test_attention_policy_rollout_imitation_reinforce_and_checkpoint(kind, tmp_path, small, periodic):
     torch = pytest.importorskip('torch')
     from fjsp_lab.maintenance.attention_policy import (
-        AttentionPolicy, PolicyConfig, imitation_loss, load, reinforce_loss, rollout, save,
+        AttentionPolicy, config_for, imitation_step, load, reinforce_step, rollout, save,
     )
+    from fjsp_lab.maintenance.sequence_env import teacher_actions
     torch.manual_seed(0)
-    model = AttentionPolicy(PolicyConfig(width=32, layers=1, heads=4, feedforward=64))
+    model = AttentionPolicy(config_for(kind, width=32, layers=1, heads=4, feedforward=64))
     problems = [(small, 'fixed'), (periodic, 'joint')]
     greedy, _ = rollout(model, problems, samples=2, greedy=True)
     assert greedy[0][0] == greedy[0][1] and all(v >= 0 for g in greedy for v in g)
-    teachers = [actions_for_plan(solve_metaheuristic(d, mode=m, algorithm='IGA', evaluations=200).result, d, m)
-                for d, m in problems]
-    loss = imitation_loss(model, problems, teachers)
-    loss.backward()
-    assert loss.item() > 0
-    rl, mean = reinforce_loss(model, problems, samples=3, generator=torch.Generator().manual_seed(1), scale=[1.0, 1.0])
-    rl.backward()
-    assert mean >= 0
+    outcomes = [solve_metaheuristic(d, mode=m, algorithm='IGA', evaluations=200) for d, m in problems]
+    teachers = [actions_for_plan(o.result, d, m) if kind == 'action' else teacher_actions(list(o.sequence), d, m)
+                for o, (d, m) in zip(outcomes, problems)]
+    assert imitation_step(model, problems, teachers) > 0
+    assert all(p.grad is not None for p in model.parameters())
+    model.zero_grad()
+    assert reinforce_step(model, problems, samples=3, generator=torch.Generator().manual_seed(1),
+                          scale=[1.0, 1.0]) >= 0
+    assert any(p.grad is not None and p.grad.abs().sum() > 0 for p in model.parameters())
     digest = save(model.eval(), tmp_path / 'm.pt')
     again = load(tmp_path / 'm.pt', expected_sha256=digest)
+    assert again.config == model.config
     assert rollout(again, problems, samples=1, greedy=True)[0] == rollout(model, problems, samples=1, greedy=True)[0]
     with pytest.raises(ValueError):
         load(tmp_path / 'm.pt', expected_sha256='0' * 64)
