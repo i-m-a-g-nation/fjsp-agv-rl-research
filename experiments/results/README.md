@@ -21,3 +21,4 @@
 | `g4_search_curves_retimed/` | 机器空闲时重跑的 IGA、SA |
 | `g4_policy_curves/` | RL 单实例计时 |
 | `g4_summary/` | 汇总、曲线图和 [findings.md](g4_summary/findings.md) |
+| `g4_gantt/` | 甘特图示例（PNG/PDF）：n20-m2 固定 86 → 联合 66；n20-m4 固定 129 → 联合 67；n50-m4 两者都是 26 |
