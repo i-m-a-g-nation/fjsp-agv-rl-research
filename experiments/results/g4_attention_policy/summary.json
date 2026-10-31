@@ -1,0 +1,635 @@
+{
+  "arguments": {
+    "bc_batch": 1024,
+    "bc_epochs": 8,
+    "bc_lr": 0.001,
+    "data_dir": "experiments\\results\\g4_teacher_data",
+    "device": "cuda",
+    "eval_batch": 100,
+    "eval_every": 20,
+    "max_minutes": 240.0,
+    "output_dir": "experiments\\results\\g4_attention_policy",
+    "rl_batch": 16,
+    "rl_lr": 0.0001,
+    "rl_samples": 16,
+    "rl_steps": 100000,
+    "seed": 0,
+    "train_limit": null,
+    "workers": 6
+  },
+  "best": {
+    "sha256": "adbfb13c8f72302d08c642018912a80cc715ad54bced7d8dddf5f68b4b3c2370",
+    "stage": "rl",
+    "step": 1180,
+    "val_greedy": 52.166666666666664
+  },
+  "created_utc": "2026-10-31T12:03:00+00:00",
+  "cuda": "12.4",
+  "data_manifest_sha256": "f47d5b34b1e3eae59e932e5392a95d54bb6d44a0da73f180a21eea6698bc6b37",
+  "elapsed_minutes": 240.06,
+  "experiment": "g6_attention_policy",
+  "git_commit": "858a32b5da7edb0b682d6bf3723758aa9a7e70ae",
+  "git_dirty": false,
+  "history": [
+    {
+      "minutes": 3.48,
+      "stage": "bc",
+      "step": 1,
+      "val_greedy": 62.86
+    },
+    {
+      "minutes": 5.66,
+      "stage": "bc",
+      "step": 2,
+      "val_greedy": 61.336666666666666
+    },
+    {
+      "minutes": 7.95,
+      "stage": "bc",
+      "step": 3,
+      "val_greedy": 62.11
+    },
+    {
+      "minutes": 10.21,
+      "stage": "bc",
+      "step": 4,
+      "val_greedy": 58.693333333333335
+    },
+    {
+      "minutes": 12.51,
+      "stage": "bc",
+      "step": 5,
+      "val_greedy": 58.74333333333333
+    },
+    {
+      "minutes": 14.81,
+      "stage": "bc",
+      "step": 6,
+      "val_greedy": 58.53
+    },
+    {
+      "minutes": 17.09,
+      "stage": "bc",
+      "step": 7,
+      "val_greedy": 60.623333333333335
+    },
+    {
+      "minutes": 19.39,
+      "stage": "bc",
+      "step": 8,
+      "val_greedy": 60.806666666666665
+    },
+    {
+      "minutes": 22.5,
+      "stage": "rl",
+      "step": 20,
+      "val_greedy": 55.52
+    },
+    {
+      "minutes": 25.97,
+      "stage": "rl",
+      "step": 40,
+      "val_greedy": 53.79666666666667
+    },
+    {
+      "minutes": 29.1,
+      "stage": "rl",
+      "step": 60,
+      "val_greedy": 53.86666666666667
+    },
+    {
+      "minutes": 32.3,
+      "stage": "rl",
+      "step": 80,
+      "val_greedy": 53.96
+    },
+    {
+      "minutes": 35.7,
+      "stage": "rl",
+      "step": 100,
+      "val_greedy": 53.516666666666666
+    },
+    {
+      "minutes": 38.97,
+      "stage": "rl",
+      "step": 120,
+      "val_greedy": 53.303333333333335
+    },
+    {
+      "minutes": 42.2,
+      "stage": "rl",
+      "step": 140,
+      "val_greedy": 53.5
+    },
+    {
+      "minutes": 45.71,
+      "stage": "rl",
+      "step": 160,
+      "val_greedy": 53.45666666666666
+    },
+    {
+      "minutes": 48.98,
+      "stage": "rl",
+      "step": 180,
+      "val_greedy": 53.42
+    },
+    {
+      "minutes": 51.4,
+      "stage": "rl",
+      "step": 200,
+      "val_greedy": 53.49
+    },
+    {
+      "minutes": 53.57,
+      "stage": "rl",
+      "step": 220,
+      "val_greedy": 53.18333333333333
+    },
+    {
+      "minutes": 56.7,
+      "stage": "rl",
+      "step": 240,
+      "val_greedy": 53.4
+    },
+    {
+      "minutes": 60.05,
+      "stage": "rl",
+      "step": 260,
+      "val_greedy": 53.25666666666667
+    },
+    {
+      "minutes": 63.31,
+      "stage": "rl",
+      "step": 280,
+      "val_greedy": 53.15
+    },
+    {
+      "minutes": 66.47,
+      "stage": "rl",
+      "step": 300,
+      "val_greedy": 53.21666666666667
+    },
+    {
+      "minutes": 69.73,
+      "stage": "rl",
+      "step": 320,
+      "val_greedy": 53.276666666666664
+    },
+    {
+      "minutes": 72.88,
+      "stage": "rl",
+      "step": 340,
+      "val_greedy": 52.92333333333333
+    },
+    {
+      "minutes": 76.18,
+      "stage": "rl",
+      "step": 360,
+      "val_greedy": 53.02333333333333
+    },
+    {
+      "minutes": 78.02,
+      "stage": "rl",
+      "step": 380,
+      "val_greedy": 53.026666666666664
+    },
+    {
+      "minutes": 80.95,
+      "stage": "rl",
+      "step": 400,
+      "val_greedy": 52.56666666666667
+    },
+    {
+      "minutes": 83.81,
+      "stage": "rl",
+      "step": 420,
+      "val_greedy": 53.126666666666665
+    },
+    {
+      "minutes": 86.38,
+      "stage": "rl",
+      "step": 440,
+      "val_greedy": 52.843333333333334
+    },
+    {
+      "minutes": 89.84,
+      "stage": "rl",
+      "step": 460,
+      "val_greedy": 52.89333333333333
+    },
+    {
+      "minutes": 93.01,
+      "stage": "rl",
+      "step": 480,
+      "val_greedy": 52.78333333333333
+    },
+    {
+      "minutes": 96.2,
+      "stage": "rl",
+      "step": 500,
+      "val_greedy": 52.8
+    },
+    {
+      "minutes": 99.25,
+      "stage": "rl",
+      "step": 520,
+      "val_greedy": 52.77333333333333
+    },
+    {
+      "minutes": 101.39,
+      "stage": "rl",
+      "step": 540,
+      "val_greedy": 52.913333333333334
+    },
+    {
+      "minutes": 103.06,
+      "stage": "rl",
+      "step": 560,
+      "val_greedy": 52.64
+    },
+    {
+      "minutes": 104.67,
+      "stage": "rl",
+      "step": 580,
+      "val_greedy": 53.14
+    },
+    {
+      "minutes": 107.06,
+      "stage": "rl",
+      "step": 600,
+      "val_greedy": 52.92
+    },
+    {
+      "minutes": 110.1,
+      "stage": "rl",
+      "step": 620,
+      "val_greedy": 53.056666666666665
+    },
+    {
+      "minutes": 112.84,
+      "stage": "rl",
+      "step": 640,
+      "val_greedy": 52.96666666666667
+    },
+    {
+      "minutes": 115.94,
+      "stage": "rl",
+      "step": 660,
+      "val_greedy": 52.663333333333334
+    },
+    {
+      "minutes": 119.04,
+      "stage": "rl",
+      "step": 680,
+      "val_greedy": 52.77
+    },
+    {
+      "minutes": 122.2,
+      "stage": "rl",
+      "step": 700,
+      "val_greedy": 53.10333333333333
+    },
+    {
+      "minutes": 125.31,
+      "stage": "rl",
+      "step": 720,
+      "val_greedy": 53.27333333333333
+    },
+    {
+      "minutes": 128.55,
+      "stage": "rl",
+      "step": 740,
+      "val_greedy": 52.53666666666667
+    },
+    {
+      "minutes": 131.72,
+      "stage": "rl",
+      "step": 760,
+      "val_greedy": 52.406666666666666
+    },
+    {
+      "minutes": 134.66,
+      "stage": "rl",
+      "step": 780,
+      "val_greedy": 52.526666666666664
+    },
+    {
+      "minutes": 136.44,
+      "stage": "rl",
+      "step": 800,
+      "val_greedy": 52.71333333333333
+    },
+    {
+      "minutes": 138.51,
+      "stage": "rl",
+      "step": 820,
+      "val_greedy": 52.71666666666667
+    },
+    {
+      "minutes": 141.83,
+      "stage": "rl",
+      "step": 840,
+      "val_greedy": 52.95666666666666
+    },
+    {
+      "minutes": 143.68,
+      "stage": "rl",
+      "step": 860,
+      "val_greedy": 52.82
+    },
+    {
+      "minutes": 145.39,
+      "stage": "rl",
+      "step": 880,
+      "val_greedy": 53.17666666666667
+    },
+    {
+      "minutes": 147.22,
+      "stage": "rl",
+      "step": 900,
+      "val_greedy": 52.91
+    },
+    {
+      "minutes": 149.0,
+      "stage": "rl",
+      "step": 920,
+      "val_greedy": 52.85
+    },
+    {
+      "minutes": 150.78,
+      "stage": "rl",
+      "step": 940,
+      "val_greedy": 52.93333333333333
+    },
+    {
+      "minutes": 153.58,
+      "stage": "rl",
+      "step": 960,
+      "val_greedy": 52.776666666666664
+    },
+    {
+      "minutes": 157.1,
+      "stage": "rl",
+      "step": 980,
+      "val_greedy": 52.64666666666667
+    },
+    {
+      "minutes": 160.76,
+      "stage": "rl",
+      "step": 1000,
+      "val_greedy": 52.85
+    },
+    {
+      "minutes": 164.09,
+      "stage": "rl",
+      "step": 1020,
+      "val_greedy": 52.39
+    },
+    {
+      "minutes": 167.4,
+      "stage": "rl",
+      "step": 1040,
+      "val_greedy": 52.416666666666664
+    },
+    {
+      "minutes": 169.96,
+      "stage": "rl",
+      "step": 1060,
+      "val_greedy": 52.346666666666664
+    },
+    {
+      "minutes": 171.77,
+      "stage": "rl",
+      "step": 1080,
+      "val_greedy": 52.593333333333334
+    },
+    {
+      "minutes": 173.51,
+      "stage": "rl",
+      "step": 1100,
+      "val_greedy": 52.74666666666667
+    },
+    {
+      "minutes": 175.47,
+      "stage": "rl",
+      "step": 1120,
+      "val_greedy": 52.68
+    },
+    {
+      "minutes": 177.27,
+      "stage": "rl",
+      "step": 1140,
+      "val_greedy": 52.21333333333333
+    },
+    {
+      "minutes": 179.02,
+      "stage": "rl",
+      "step": 1160,
+      "val_greedy": 52.63666666666666
+    },
+    {
+      "minutes": 180.8,
+      "stage": "rl",
+      "step": 1180,
+      "val_greedy": 52.166666666666664
+    },
+    {
+      "minutes": 182.52,
+      "stage": "rl",
+      "step": 1200,
+      "val_greedy": 53.47666666666667
+    },
+    {
+      "minutes": 184.29,
+      "stage": "rl",
+      "step": 1220,
+      "val_greedy": 52.5
+    },
+    {
+      "minutes": 186.14,
+      "stage": "rl",
+      "step": 1240,
+      "val_greedy": 52.6
+    },
+    {
+      "minutes": 187.9,
+      "stage": "rl",
+      "step": 1260,
+      "val_greedy": 52.42666666666667
+    },
+    {
+      "minutes": 190.02,
+      "stage": "rl",
+      "step": 1280,
+      "val_greedy": 52.85
+    },
+    {
+      "minutes": 193.05,
+      "stage": "rl",
+      "step": 1300,
+      "val_greedy": 52.56666666666667
+    },
+    {
+      "minutes": 196.19,
+      "stage": "rl",
+      "step": 1320,
+      "val_greedy": 52.836666666666666
+    },
+    {
+      "minutes": 199.24,
+      "stage": "rl",
+      "step": 1340,
+      "val_greedy": 52.406666666666666
+    },
+    {
+      "minutes": 202.29,
+      "stage": "rl",
+      "step": 1360,
+      "val_greedy": 52.77
+    },
+    {
+      "minutes": 205.51,
+      "stage": "rl",
+      "step": 1380,
+      "val_greedy": 52.63666666666666
+    },
+    {
+      "minutes": 208.65,
+      "stage": "rl",
+      "step": 1400,
+      "val_greedy": 52.39
+    },
+    {
+      "minutes": 211.82,
+      "stage": "rl",
+      "step": 1420,
+      "val_greedy": 52.37
+    },
+    {
+      "minutes": 215.06,
+      "stage": "rl",
+      "step": 1440,
+      "val_greedy": 52.47666666666667
+    },
+    {
+      "minutes": 217.94,
+      "stage": "rl",
+      "step": 1460,
+      "val_greedy": 52.69
+    },
+    {
+      "minutes": 219.78,
+      "stage": "rl",
+      "step": 1480,
+      "val_greedy": 52.733333333333334
+    },
+    {
+      "minutes": 221.71,
+      "stage": "rl",
+      "step": 1500,
+      "val_greedy": 52.54666666666667
+    },
+    {
+      "minutes": 223.57,
+      "stage": "rl",
+      "step": 1520,
+      "val_greedy": 52.60666666666667
+    },
+    {
+      "minutes": 225.34,
+      "stage": "rl",
+      "step": 1540,
+      "val_greedy": 52.61
+    },
+    {
+      "minutes": 227.25,
+      "stage": "rl",
+      "step": 1560,
+      "val_greedy": 52.233333333333334
+    },
+    {
+      "minutes": 229.81,
+      "stage": "rl",
+      "step": 1580,
+      "val_greedy": 52.82333333333333
+    },
+    {
+      "minutes": 231.65,
+      "stage": "rl",
+      "step": 1600,
+      "val_greedy": 52.57666666666667
+    },
+    {
+      "minutes": 233.5,
+      "stage": "rl",
+      "step": 1620,
+      "val_greedy": 52.626666666666665
+    },
+    {
+      "minutes": 235.34,
+      "stage": "rl",
+      "step": 1640,
+      "val_greedy": 52.43333333333333
+    },
+    {
+      "minutes": 237.09,
+      "stage": "rl",
+      "step": 1660,
+      "val_greedy": 52.70333333333333
+    },
+    {
+      "minutes": 238.78,
+      "stage": "rl",
+      "step": 1680,
+      "val_greedy": 52.71333333333333
+    }
+  ],
+  "kind": "sequence",
+  "packages": {
+    "numpy": "2.2.6",
+    "torch": "2.6.0+cu124"
+  },
+  "platform": "Windows-10-10.0.26200-SP0",
+  "python": "3.10.20",
+  "reference_validation": {
+    "MDD": 63.28333333333333,
+    "teacher": 53.876666666666665
+  },
+  "source_sha256": {
+    "experiments/_common.py": "71a66cd5d4a397d709df14d66818624333243b43adea9eac47007d69ee85a705",
+    "experiments/g6_attention_policy.py": "cbe495da40ee5ead71d73e00cf8c10819ee65999101b74be18b71484af538a11",
+    "src/fjsp_lab/__init__.py": "5cb0ec7ad1d2cf5f20fcf125ec9374d7068848f9933b3cadecde8cd3f9a11012",
+    "src/fjsp_lab/dynamic/__init__.py": "12f8c018580766c6b9a7a02182b15f004eba5176de6bdacb84c8c6605371a8ea",
+    "src/fjsp_lab/dynamic/events.py": "a23f8c85a8be4a1b6515a84717b9f4fb4d6f3029b0f586284d340d8fa5e3ffe8",
+    "src/fjsp_lab/dynamic/feasibility.py": "9491488aa255c6204d477bf10319040772952309e7bafbdf7033d16d3cf02b76",
+    "src/fjsp_lab/dynamic/perturbation.py": "bc26bb267c29a4745fe2fe76a386ec33c302757deb1bd8a0ef06a0690300392d",
+    "src/fjsp_lab/dynamic/replay.py": "b9a18784e9ef0ba954679a5d9014507c37fde8dd7db6709ff4342004f44af0fe",
+    "src/fjsp_lab/dynamic/reschedule.py": "e67a283979cabcb6855fcc514bb38b0c8fa0eb396bc6361c5a3b8331dd24d5e9",
+    "src/fjsp_lab/dynamic/snapshot.py": "f34cdf371d2f12bc55f546284a9665e3fa18d7eb70e10fd413f30aeb6261f073",
+    "src/fjsp_lab/dynamic/state.py": "a0a0bdf8a6dd7cd28d4335b8c5eb345baf2d84729bda7bf6f50bb322a3f02146",
+    "src/fjsp_lab/fjsp/__init__.py": "82d1b68ebcd6b5fd7f20ff6de014725ad902de28a71d076e182f06043e16fc10",
+    "src/fjsp_lab/fjsp/benchmark.py": "fb5404344f1d75d5c56e27b53ac57b9249a6898df5283fd57ffaafcdeea890ef",
+    "src/fjsp_lab/fjsp/cpsat.py": "627b9aa810477fc135140377761c6255e96c2953bd10f67926645a61b752c66e",
+    "src/fjsp_lab/fjsp/decoding.py": "f9bdb2ab0c0422d0b88c7bc2ec42d5be01b9740d16e9e25421428452ed135a9b",
+    "src/fjsp_lab/fjsp/feasibility.py": "8d26f1034278e0c3ca4f139a5c1a33ad13a2eb0381e8a777186a64f8b240c8c8",
+    "src/fjsp_lab/fjsp/gantt.py": "18442b1e511b22221aee0360b6a071e8bea54c0a9c74e750172c9f42860b0e1e",
+    "src/fjsp_lab/fjsp/instance.py": "8a6d199068bd6dde2e5135bc925ca3a66e9752468e6b76282fef899d3b853dd3",
+    "src/fjsp_lab/fjsp/rules.py": "c31a235a389aef7123443f90bf20058c3a3e4859805582ec6bd52e371ad249f0",
+    "src/fjsp_lab/fjsp/schedule.py": "8f553772474a84bf56fbc08da7883b89fdad490c279caeb9001ff1b6bc09ba83",
+    "src/fjsp_lab/maintenance/__init__.py": "73d1afdf5d1632ffc5f0aac8cd572c9ace6eab1eab088861dc3ffd17bdedf12b",
+    "src/fjsp_lab/maintenance/attention_policy.py": "cb7130398165519f081221747a1a46f6c0ebb2268f23f705b187b8c484c33f0d",
+    "src/fjsp_lab/maintenance/cpsat.py": "18e07e34ea02e01ef70e77809fe0c515d36b2ad1d0dbd7419de0e66c8134d6a7",
+    "src/fjsp_lab/maintenance/enumeration.py": "d06d55c10b01ef6db005af755292b4925cfad3e1944966ba0a2ebb0d314fc3f5",
+    "src/fjsp_lab/maintenance/env.py": "fb55288600114ddf16b38a7a67525f4efb24c88bb6b4a79262ff404b9c771a85",
+    "src/fjsp_lab/maintenance/feasibility.py": "776581253d81e07f4608f2fff6704edcbed204d15cb97304d34de2b76ff69308",
+    "src/fjsp_lab/maintenance/features.py": "b37442fa4d791dfad0c93a4157774311163aabb4e047f0141f17afb7f7503fd0",
+    "src/fjsp_lab/maintenance/generator.py": "ca91e46b44684c5028950528a2839e177c9f2b69572198c819d364b592d1b90a",
+    "src/fjsp_lab/maintenance/instance.py": "7ce914f54736d31d8712a847175c24c171f20e234f46397a5afe677088ac8d80",
+    "src/fjsp_lab/maintenance/metaheuristics.py": "3638f0f6d2b5d39342ad5e54c8d157310684d5f0b93b3dac06320a4ed2d5ac65",
+    "src/fjsp_lab/maintenance/rules.py": "c8225ab9817b00bfd2c5c93f7bad41faafcdb4aae45a41985a5b0480c344b7a6",
+    "src/fjsp_lab/maintenance/schedule.py": "f922ab9dfc9298344842045accd0f15640dc324d4846bd1e454ea20b7c2ca62e",
+    "src/fjsp_lab/maintenance/scoring_policy.py": "dcbe7cacafa15f1d45dadcc5e42d4e0789befaa2feaeea749d9b301439800294",
+    "src/fjsp_lab/maintenance/sequence_env.py": "8e3329600d6ed8b687995c477de1d39145024b9f8e5b65288438b9602fd9550e"
+  },
+  "torch": "2.6.0+cu124"
+}
