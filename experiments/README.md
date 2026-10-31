@@ -28,6 +28,7 @@ The printed path must belong to `.conda-env` or the environment selected by `FJS
 | G3B: policy vs rules vs CP-SAT (1 s and 60 s) on the 480 G3A instances | [`exp_038`](exp_038_g3b_comparison.py) | [G3 section 19](../docs/graduation_g3_protocol_draft.md#19-g3b策略规则与-cp-sat-正式对比2026-10-30) |
 | Rule-baseline re-check with the literature ATC look-ahead k=2 (exp_037 test + G3A grid) | [`exp_039`](exp_039_atc_k2_baseline.py) | [Findings](results/exp_039_atc_k2_baseline_v1/findings.md) |
 | GA / SA / improved GA vs rules, learned policy and CP-SAT on the G3A grid; fixed-vs-joint gain by factor | [`exp_040`](exp_040_metaheuristics.py) | [Findings](results/exp_040_metaheuristics_v1/findings.md) |
+| Improved GA seeded with learned-policy plans vs rule-seeded control | [`exp_041`](exp_041_seeded_iga.py) | [Findings](results/exp_041_seeded_iga_v1/findings.md) |
 
 **Recorded result tables and validation reports are snapshots of the stated inputs, source and settings.** They are examples for reproduction, not a claim that the latest checkout has just passed validation. Timed CP-SAT results may vary; only `OPTIMAL` proves local optimality. Preserve prior outputs and use a new run directory when the script supports one. Development plans in [`docs/superpowers/`](../docs/superpowers/) are history, not required setup reading.
 
