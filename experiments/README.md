@@ -16,6 +16,9 @@
 | `g4_comparison.py` | 论文主表：规则、打分策略、元启发式、CP-SAT 1 s/60 s 在 G3A 上汇总；读取 g1/g2/g3 的输出 | 项目 | ~2 min |
 | `g5_teacher_data.py` | 注意力策略的教师数据：2 万个训练实例的 IGA-10k 轨迹 + 验证集参考值 | 项目 | ~6 min |
 | `g6_attention_policy.py` | 注意力策略：模仿 IGA 教师 + REINFORCE，只用验证集选模型 | PyTorch | ≤2 h |
+| `g7_g4_search_curves.py` | G4：规则、GA/SA/IGA（随时间的最好值轨迹）、CP-SAT（各个可行解）在 576 个测试实例上；`--methods/--processes` 可只重跑部分方法 | 项目 | ~2 h |
+| `g8_g4_policy_curves.py` | G4：注意力策略单实例计时（GPU 贪心 + 采样 4/16/64；CPU 贪心 + 采样 4） | PyTorch | ~20 min |
+| `g9_g4_summary.py` | G4：质量—时间曲线、H1–H3、探索性分组检验、曲线图 | 项目 | <1 min |
 
 实例划分（`fjsp_lab.maintenance.generator.SPLITS`）按种子区间互不重叠：训练 10000–11999、验证 20000–20199、
 测试 30000–30599（6 种规模各 100）、教师训练 100000–119999。测试集只在训练结束后使用一次。
