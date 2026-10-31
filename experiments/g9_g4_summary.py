@@ -70,6 +70,8 @@ def best_known(search: dict, policy: dict) -> int:
 def wilcoxon_test(rows: list[dict], method: str, other: str, t: float) -> dict:
     from scipy.stats import wilcoxon
 
+    if not rows:
+        return {'method': method, 'other': other, 'budget': t, 'instances': 0}
     both = [r for r in rows if r['values'][t][method] is not None and r['values'][t][other] is not None]
     diffs = [r['gap'][t][method] - r['gap'][t][other] for r in both]
     nonzero = [d for d in diffs if d != 0]
@@ -106,6 +108,7 @@ def main() -> int:
                      'best_known': bk, 'values': values, 'gap': gap})
     groups = {'all': rows, **{f'n{n}': [r for r in rows if r['num_tasks'] == n] for n in (20, 50, 100)},
               'n>=50': [r for r in rows if r['num_tasks'] >= 50]}
+    groups = {name: selected for name, selected in groups.items() if selected}
     curves = []
     for name, selected in groups.items():
         for t in BUDGETS:
@@ -114,7 +117,7 @@ def main() -> int:
                 curves.append({'group': name, 'budget': t, 'method': m, 'coverage': len(found) / len(selected),
                                'mean_gap': statistics.fmean(found) if found else None,
                                'median_gap': statistics.median(found) if found else None})
-    large = groups['n>=50']
+    large = groups.get('n>=50', [])
     h1 = [wilcoxon_test(large, 'RL', other, t) for t in H1_BUDGETS for other in ('IGA', 'SA', 'GA')]
     h2 = [wilcoxon_test(large, 'RL', other, t) for t in H2_BUDGETS for other in ('IGA', 'SA')]
     pairs = {}
@@ -140,6 +143,8 @@ def main() -> int:
                           str(args.policy / 'rows.jsonl'): sha256(args.policy / 'rows.jsonl')}, **prov})
     plot(curves, args.output_dir / 'curves.png')
     for test in h1:
+        if not test['instances']:
+            continue
         LOGGER.info('H1 t=%s RL vs %s: gap %.4f vs %.4f, W/T/L %d/%d/%d, p=%s, RL coverage %.2f', test['budget'],
                     test['other'], test['mean_gap_method'] or float('nan'), test['mean_gap_other'] or float('nan'),
                     test['wins'], test['ties'], test['losses'], test['wilcoxon_p'], test['method_coverage'])
