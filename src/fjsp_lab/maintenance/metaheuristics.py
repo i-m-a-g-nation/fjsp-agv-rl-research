@@ -1,15 +1,18 @@
 """GA, SA and improved GA (IGA) for parallel machines with mandatory maintenance.
 
-A solution is one permutation of the n job tokens (0..n-1) and the m
-maintenance tokens (n..n+m-1). The list decoder reads it left to right:
+A solution is one permutation of the n job tokens (0..n-1) and one token
+per maintenance window (n.., machine-major, windows in time order). The list
+decoder reads it left to right:
 
-* a job goes to the machine where it completes earliest. On a machine not
-  yet maintained, it may run before maintenance only if maintenance still
-  fits afterwards (fixed: end <= f_i; joint: end <= U_i - q_i); otherwise
-  that machine's maintenance is inserted first and the job follows it;
-* a maintenance token schedules that machine's maintenance now (fixed: at
-  f_i; joint: at max(tail, L_i)) unless it was already inserted;
-* machines still unmaintained at the end are maintained last.
+* a job goes to the machine where it completes earliest. On that machine it
+  may run before the next pending maintenance only if that maintenance still
+  fits afterwards (fixed: end <= f_ik; joint: end <= U_ik - q_ik); otherwise
+  the pending maintenance (and, if needed, the following ones) is inserted
+  first and the job follows it;
+* a maintenance token schedules that window's maintenance now (fixed: at
+  f_ik; joint: at max(tail, L_ik)), together with any earlier pending
+  windows of the machine, unless it was already inserted;
+* windows still pending at the end are maintained last, in order.
 
 These rules keep every decoded plan inside the windows, so search never
 needs repair or penalties. The decoder has no size cap (unlike the
@@ -64,58 +67,68 @@ class _Problem:
         self.n, self.m = len(data.tasks), data.num_machines
         self.p = [task.processing_time for task in data.tasks]
         self.d = [task.due_date for task in data.tasks]
-        self.q = [item.duration for item in data.maintenance]
-        self.lo = [item.window_start for item in data.maintenance]
         fixed = mode == 'fixed'
-        # Latest time a job may end before maintenance on machine i.
-        self.limit = [item.fixed_start if fixed else item.window_end - item.duration for item in data.maintenance]
-        self.fixed_start = [item.fixed_start for item in data.maintenance]
+        # Per machine and window: duration, window start, latest end of a job
+        # that runs before this maintenance, and the fixed start.
+        self.q = [[item.duration for item in windows] for windows in data.windows]
+        self.lo = [[item.window_start for item in windows] for windows in data.windows]
+        self.limit = [[item.fixed_start if fixed else item.window_end - item.duration for item in windows]
+                      for windows in data.windows]
+        self.fixed_start = [[item.fixed_start for item in windows] for windows in data.windows]
+        # Maintenance token n + i stands for window self.token_window[i] of self.token_machine[i].
+        self.token_machine = [machine for machine, windows in enumerate(data.windows) for _ in windows]
+        self.token_window = [k for windows in data.windows for k in range(len(windows))]
+        self.size = self.n + len(self.token_machine)
         self.evaluations = 0
         for sequence in initial:
-            if sorted(sequence) != list(range(self.n + self.m)):
+            if sorted(sequence) != list(range(self.size)):
                 raise ValueError('Every initial sequence must be a permutation of all job and maintenance tokens')
         self.initial = [list(sequence) for sequence in initial]
 
-    def _maintenance_start(self, machine: int, tail: int) -> int:
-        return self.fixed_start[machine] if self.mode == 'fixed' else max(tail, self.lo[machine])
+    def _maintenance_start(self, machine: int, window: int, tail: int) -> int:
+        return self.fixed_start[machine][window] if self.mode == 'fixed' else max(tail, self.lo[machine][window])
 
     def decode(self, sequence, plan: bool = False):
         """Total tardiness of a token sequence; with plan=True also the placements."""
         self.evaluations += 1
         n, m, p, d, q, limit = self.n, self.m, self.p, self.d, self.q, self.limit
-        tails, done = [0] * m, [False] * m
+        counts = [len(windows) for windows in q]
+        tails, nxt = [0] * m, [0] * m
         jobs, maintenance, total = [], [], 0
         for token in sequence:
             if token < n:
                 duration, best = p[token], None
                 for machine in range(m):
-                    tail, start_m = tails[machine], None
-                    if done[machine] or tail + duration <= limit[machine]:
-                        start = tail
-                    else:
-                        start_m = self._maintenance_start(machine, tail)
-                        start = start_m + q[machine]
+                    start, k, inserted = tails[machine], nxt[machine], None
+                    while k < counts[machine] and start + duration > limit[machine][k]:
+                        start_m = self._maintenance_start(machine, k, start)
+                        inserted = (inserted or []) + [(machine, k, start_m)]
+                        start = start_m + q[machine][k]
+                        k += 1
                     if best is None or start + duration < best[0]:
-                        best = (start + duration, machine, start, start_m)
-                end, machine, start, start_m = best
-                if start_m is not None:
-                    done[machine] = True
-                    maintenance.append((machine, start_m))
+                        best = (start + duration, machine, start, inserted, k)
+                end, machine, start, inserted, k = best
+                if inserted:
+                    maintenance += inserted
+                    nxt[machine] = k
                 tails[machine] = end
                 if end > d[token]:
                     total += end - d[token]
                 if plan:
                     jobs.append((token, machine, start))
             else:
-                machine = token - n
-                if not done[machine]:
-                    start_m = self._maintenance_start(machine, tails[machine])
-                    done[machine] = True
-                    maintenance.append((machine, start_m))
-                    tails[machine] = start_m + q[machine]
+                machine, window = self.token_machine[token - n], self.token_window[token - n]
+                while nxt[machine] <= window:
+                    k = nxt[machine]
+                    start_m = self._maintenance_start(machine, k, tails[machine])
+                    maintenance.append((machine, k, start_m))
+                    tails[machine] = start_m + q[machine][k]
+                    nxt[machine] = k + 1
         for machine in range(m):
-            if not done[machine]:
-                maintenance.append((machine, self._maintenance_start(machine, tails[machine])))
+            for k in range(nxt[machine], counts[machine]):
+                start_m = self._maintenance_start(machine, k, tails[machine])
+                maintenance.append((machine, k, start_m))
+                tails[machine] = start_m + q[machine][k]
         return (total, jobs, maintenance) if plan else total
 
     def result(self, sequence) -> MaintenanceScheduleResult:
@@ -128,13 +141,15 @@ class _Problem:
         return require_feasible(result, self.data, mode=self.mode, source='Metaheuristic')
 
     def heuristic_sequences(self) -> list[list[int]]:
-        """EDD, SPT and slack orders, each with maintenance tokens first and last."""
+        """EDD, SPT and slack orders; first-window tokens first or all maintenance tokens last."""
         jobs = range(self.n)
         orders = [sorted(jobs, key=lambda j: (self.d[j], self.p[j], j)),
                   sorted(jobs, key=lambda j: (self.p[j], self.d[j], j)),
                   sorted(jobs, key=lambda j: (self.d[j] - self.p[j], j))]
-        tokens = list(range(self.n, self.n + self.m))
-        return [variant for order in orders for variant in (tokens + order, order + tokens)]
+        tokens = list(range(self.n, self.size))
+        first = [t for t in tokens if self.token_window[t - self.n] == 0]
+        later = [t for t in tokens if self.token_window[t - self.n] > 0]
+        return [variant for order in orders for variant in (first + order + later, order + tokens)]
 
 
 def _swap(sequence: list[int], rng: random.Random) -> list[int]:
@@ -202,7 +217,7 @@ def _local_search(tracker: _Tracker, value: int, sequence: list[int], moves: int
 
 
 def _genetic(tracker: _Tracker, problem: _Problem, settings: dict, rng: random.Random, improved: bool) -> None:
-    size = problem.n + problem.m
+    size = problem.size
     seeds = problem.initial + (problem.heuristic_sequences() if improved else [])
     starts = seeds[:settings['population']]
     while len(starts) < settings['population']:
@@ -286,10 +301,13 @@ def plan_to_sequence(result: MaintenanceScheduleResult, data: ParallelMaintenanc
     the source plan did, so the decoded value can be worse than the plan's.
     """
     n = len(data.tasks)
+    first_token = [n]
+    for windows in data.windows:
+        first_token.append(first_token[-1] + len(windows))
     events = [(r.start, 1, r.job_id) for r in result.records]
-    events += [(r.start, 0, n + r.machine_id) for r in result.maintenance_records]
+    events += [(r.start, 0, first_token[r.machine_id] + r.window) for r in result.maintenance_records]
     sequence = [token for _, _, token in sorted(events)]
-    if sorted(sequence) != list(range(n + data.num_machines)):
+    if sorted(sequence) != list(range(n + data.num_windows)):
         raise ValueError('Plan does not cover every job and maintenance exactly once')
     return sequence
 

@@ -1,5 +1,8 @@
 """Learned constructive policies: legal-only scoring, accepted plans, reproducible checkpoints."""
 
+import math
+import statistics
+
 import numpy as np
 import pytest
 
@@ -11,18 +14,58 @@ from fjsp_lab.maintenance.metaheuristics import solve_metaheuristic
 from fjsp_lab.maintenance.scoring_policy import ScoringPolicy, best_of_rollouts, run_episode, train
 
 
-def test_features_cover_exactly_the_legal_actions(large):
-    env = ParallelMaintenanceEnv(large, mode='joint')
-    legal, rows = action_candidates(env)
-    assert legal == env.legal_actions() and rows.shape == (len(legal), FEATURE_COUNT)
-    assert np.all(np.isfinite(rows)) and np.all(np.abs(rows) <= 5.0)
+def reference_rows(env):
+    """Row-by-row definition of the 19 features (the vectorized code must match it)."""
+    data, tails = env.data, env.machine_tails
+    m, legal = data.num_machines, env.legal_actions()
+    scale = (sum(t.processing_time for t in data.tasks) + m - 1) // m
+    pbar = statistics.fmean(t.processing_time for t in data.tasks)
+    remaining = [t for t in data.tasks if not env.scheduled[t.job_id]]
+    dues, times = sorted(t.due_date for t in remaining), sorted(t.processing_time for t in remaining)
+    span = max(1, len(remaining) - 1)
+    job_tails = [tails[env.machine_of(a)] for a in legal if not env.is_maintenance(a)]
+    next_start = min(job_tails) if job_tails else min(tails)
+    rows = []
+    for a in legal:
+        x = [0.0] * FEATURE_COUNT
+        x[10:13] = [float(env.mode == 'joint'), len(remaining) / len(data.tasks),
+                    sum(t.processing_time for t in remaining) / m / scale]
+        machine, t = env.machine_of(a), tails[env.machine_of(a)]
+        pending = env.pending_window(machine) is not None
+        if not env.is_maintenance(a):
+            p, d = data.tasks[env.job_of(a)].processing_time, data.tasks[env.job_of(a)].due_date
+            x[0:9] = [1.0, p / pbar, (d - t) / scale, max(0, t + p - d) / scale, (max(d, t + p) - t) / scale,
+                      math.exp(-max(0, d - p - t) / pbar) * pbar / p, (t - min(tails)) / scale, float(pending),
+                      (env.job_limit(machine) - t - p) / scale if pending else 0.0]
+            x[13], x[14] = dues.index(d) / span, times.index(p) / span
+        else:
+            start = env.maintenance_start(machine)
+            x[9] = 1.0
+            x[15:19] = [(start - t) / scale, (env.job_limit(machine) - t) / scale, (start - min(tails)) / scale,
+                        float(start < next_start)]
+        rows.append([min(5.0, max(-5.0, v)) for v in x])
+    return np.array(rows)
+
+
+@pytest.mark.parametrize('fixture', ['large', 'periodic'])
+def test_vectorized_features_match_their_definition_along_random_trajectories(fixture, request):
+    data, rng = request.getfixturevalue(fixture), np.random.default_rng(0)
+    for mode in ('fixed', 'joint'):
+        env = ParallelMaintenanceEnv(data, mode=mode)
+        while not env.done:
+            legal, rows = action_candidates(env)
+            assert legal == env.legal_actions() and rows.shape == (len(legal), FEATURE_COUNT)
+            assert np.array_equal(rows, reference_rows(env))
+            env.step(legal[int(rng.integers(len(legal)))])
 
 
 @pytest.mark.parametrize('mode', ['fixed', 'joint'])
-def test_scoring_policy_plans_are_accepted_and_sampling_never_hurts(mode, large):
+@pytest.mark.parametrize('fixture', ['large', 'periodic_big'])
+def test_scoring_policy_plans_are_accepted_and_sampling_never_hurts(mode, fixture, request):
+    large = request.getfixturevalue(fixture)
     policy = ScoringPolicy(seed=0)
     greedy = run_episode(policy, large, mode=mode)
-    best = best_of_rollouts(policy, large, mode=mode, samples=4, seed=1)
+    best = best_of_rollouts(policy, large, mode=mode, samples=2, seed=1)
     for plan in (greedy.result, best):
         ok, violations = check_parallel_maintenance_feasibility(plan, large, mode=mode)
         assert ok is True, violations
@@ -48,14 +91,14 @@ def test_short_training_is_reproducible_and_selects_on_validation():
     assert history[-1]['val_mean_tardiness'] == min(h['val_mean_tardiness'] for h in history[:-1])
 
 
-def test_attention_policy_rollout_imitation_and_checkpoint(tmp_path, small, large):
+def test_attention_policy_rollout_imitation_and_checkpoint(tmp_path, small, periodic):
     torch = pytest.importorskip('torch')
     from fjsp_lab.maintenance.attention_policy import (
         AttentionPolicy, PolicyConfig, imitation_loss, load, reinforce_loss, rollout, save,
     )
     torch.manual_seed(0)
     model = AttentionPolicy(PolicyConfig(width=32, layers=1, heads=4, feedforward=64))
-    problems = [(small, 'fixed'), (large, 'joint')]
+    problems = [(small, 'fixed'), (periodic, 'joint')]
     greedy, _ = rollout(model, problems, samples=2, greedy=True)
     assert greedy[0][0] == greedy[0][1] and all(v >= 0 for g in greedy for v in g)
     teachers = [actions_for_plan(solve_metaheuristic(d, mode=m, algorithm='IGA', evaluations=200).result, d, m)

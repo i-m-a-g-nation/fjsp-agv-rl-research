@@ -1,0 +1,18 @@
+OK   g3a: 240 cases, same ids/groups/data
+OK   split train: same instances, modes and factors  600 instances
+OK   split validation: same instances, modes and factors  200 instances
+OK   split test: same instances, modes and factors  600 instances
+OK   split teacher_train: same instances, modes and factors  600 instances
+OK   dispatch rules: 9-rule portfolio, identical plans  1280 problems
+OK   env + features: identical legal actions and feature rows on random trajectories
+OK   scoring policy s0: identical greedy+8-sample plans
+OK   scoring policy training: identical history and weights
+OK   GA/SA/IGA: identical sequences, budgets and plans
+OK   seeded IGA: identical to initial_sequences
+OK   teacher actions: identical replay sequences
+OK   enumeration = old enumeration = CP-SAT optimum on 32 tiny problems
+OK   CP-SAT (deterministic time): identical plans and status
+OK   FJSP: same parsed benchmarks and identical rule schedules  30 files x 7 rules
+OK   Phase 2A protocol: same cases and identical rescheduled plans  27 cases x 3 rules
+
+ALL EQUIVALENT

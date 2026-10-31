@@ -72,7 +72,7 @@ def rollout(model: AttentionPolicy, problems: list[tuple[ParallelMaintenanceInst
     With ``greedy`` every sample is the argmax episode.
     """
     envs = [ParallelMaintenanceEnv(data, mode=mode) for data, mode in problems for _ in range(samples)]
-    remaining = [len(env.data.tasks) + env.data.num_machines for env in envs]
+    remaining = [env.total_steps for env in envs]
     tardiness = [None] * len(envs)
     log_terms = [[] for _ in envs]
     with torch.set_grad_enabled(track_gradients):

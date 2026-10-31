@@ -1,10 +1,12 @@
 """Immutable inputs of the graduation model.
 
 n single-operation jobs on m identical machines, all released at time 0.
-Every machine (idle ones included) needs exactly one maintenance of
-duration q_i that lies completely inside its window [L_i, U_i). In fixed
-mode the maintenance starts at ``fixed_start``; in joint mode the
-scheduler chooses the start. The objective is total tardiness.
+Machine i has K_i >= 1 preventive-maintenance windows [L_ik, U_ik)
+(disjoint, ordered in time; K_i may differ between machines). Every window,
+on idle machines too, needs exactly one maintenance of duration q_ik lying
+completely inside it. In fixed mode each maintenance starts at its
+``fixed_start``; in joint mode the scheduler chooses the start. The
+objective is total tardiness. K_i = 1 for all machines is the original model.
 """
 
 from __future__ import annotations
@@ -70,15 +72,31 @@ class ParallelMaintenanceInstance:
             raise ValueError('maintenance entries must be typed requirements')
         if sorted(task.job_id for task in tasks) != list(range(len(tasks))):
             raise ValueError('Task IDs must be unique and cover 0..n-1')
-        if sorted(item.machine_id for item in maintenance) != list(range(self.num_machines)):
-            raise ValueError('Every machine, including idle machines, needs exactly one maintenance requirement')
+        if sorted({item.machine_id for item in maintenance}) != list(range(self.num_machines)):
+            raise ValueError('Every machine, including idle machines, needs at least one maintenance window')
+        maintenance = tuple(sorted(maintenance, key=lambda item: (item.machine_id, item.window_start)))
+        windows = tuple(tuple(item for item in maintenance if item.machine_id == machine)
+                        for machine in range(self.num_machines))
+        for machine_windows in windows:
+            for earlier, later in zip(machine_windows, machine_windows[1:]):
+                if earlier.window_end > later.window_start:
+                    raise ValueError(f'Maintenance windows of machine {earlier.machine_id} must not overlap')
         object.__setattr__(self, 'tasks', tuple(sorted(tasks, key=lambda task: task.job_id)))
-        object.__setattr__(self, 'maintenance', tuple(sorted(maintenance, key=lambda item: item.machine_id)))
-
+        object.__setattr__(self, 'maintenance', maintenance)
+        object.__setattr__(self, '_windows', windows)
 
     @property
     def num_tasks(self) -> int:
         return len(self.tasks)
+
+    @property
+    def windows(self) -> tuple[tuple[MaintenanceRequirement, ...], ...]:
+        """windows[machine][k]: the k-th maintenance window of a machine, in time order."""
+        return self._windows
+
+    @property
+    def num_windows(self) -> int:
+        return len(self.maintenance)
 
     def to_record(self) -> dict:
         """Compact JSON-ready form (lists of field values)."""

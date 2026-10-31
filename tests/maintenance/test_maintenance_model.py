@@ -10,7 +10,9 @@ from fjsp_lab.maintenance import (
 )
 from fjsp_lab.fjsp.schedule import ScheduleRecord
 from fjsp_lab.maintenance.feasibility import build_plan
-from fjsp_lab.maintenance.generator import build_instance, sample_instances, split_instances
+from fjsp_lab.maintenance.generator import (
+    build_instance, cycle_counts, periodic_case, sample_instances, split_instances,
+)
 
 
 def two_machine_instance():
@@ -21,7 +23,7 @@ def two_machine_instance():
 
 def valid_plan(data):
     # machine 0: job 0 [0,3), maintenance [3,5), job 2 [5,9); machine 1: job 1 [0,2), maintenance [4,5)
-    return build_plan(data, [(0, 0, 0), (2, 0, 5), (1, 1, 0)], [(0, 3), (1, 4)])
+    return build_plan(data, [(0, 0, 0), (2, 0, 5), (1, 1, 0)], [(0, 0, 3), (1, 0, 4)])
 
 
 def codes(result, data, mode):
@@ -42,7 +44,7 @@ def test_requirement_validation(kwargs, message):
 
 def test_every_machine_needs_one_requirement_and_ids_are_dense():
     tasks = (ProductionTask(0, 1, 1),)
-    with pytest.raises(ValueError, match='Every machine'):
+    with pytest.raises(ValueError, match='at least one maintenance window'):
         ParallelMaintenanceInstance(tasks, 2, (MaintenanceRequirement(0, 1, 0, 2),))
     with pytest.raises(ValueError, match='cover 0..n-1'):
         ParallelMaintenanceInstance((ProductionTask(1, 1, 1),), 1, (MaintenanceRequirement(0, 1, 0, 2),))
@@ -131,3 +133,46 @@ def test_checker_rejects_bad_mode_arguments():
     unfixed = replace(data, maintenance=tuple(replace(m, fixed_start=None) for m in data.maintenance))
     with pytest.raises(ValueError, match='fixed mode'):
         check_parallel_maintenance_feasibility(valid_plan(unfixed), unfixed, mode='fixed')
+
+
+def periodic_instance():
+    # machine 0: windows [2, 6) and [10, 14), q = 2; machine 1: one window [0, 20), q = 3
+    tasks = (ProductionTask(0, 2, 2), ProductionTask(1, 3, 9), ProductionTask(2, 4, 4))
+    maintenance = (MaintenanceRequirement(0, 2, 10, 14, 11), MaintenanceRequirement(0, 2, 2, 6, 2),
+                   MaintenanceRequirement(1, 3, 0, 20, 5))
+    return ParallelMaintenanceInstance(tasks, 2, maintenance)
+
+
+def test_periodic_windows_are_ordered_and_must_not_overlap():
+    data = periodic_instance()
+    assert [w.window_start for w in data.windows[0]] == [2, 10] and data.num_windows == 3
+    with pytest.raises(ValueError, match='overlap'):
+        ParallelMaintenanceInstance(data.tasks, 2, data.maintenance + (MaintenanceRequirement(0, 1, 5, 8),))
+    assert ParallelMaintenanceInstance.from_record(data.to_record()) == data
+
+
+def test_periodic_plan_needs_one_maintenance_in_every_window():
+    data = periodic_instance()
+    # machine 0: job 0 [0,2), maintenance [2,4), job 1 [4,7), maintenance [10,12); machine 1: job 2 [0,4), maintenance [5,8)
+    plan = build_plan(data, [(0, 0, 0), (1, 0, 4), (2, 1, 0)], [(0, 0, 2), (0, 1, 10), (1, 0, 5)])
+    assert check_parallel_maintenance_feasibility(plan, data, mode='joint') == (True, [])
+    assert check_parallel_maintenance_feasibility(plan, data, mode='fixed')[0] is False   # window 1 fixed at 11
+    first, second, other = plan.maintenance_records
+    assert 'MISSING_MAINTENANCE' in codes(replace(plan, maintenance_records=[first, other]), data, 'joint')
+    assert 'INVALID_MAINTENANCE_WINDOW' in codes(
+        replace(plan, maintenance_records=[first, replace(second, window=2), other]), data, 'joint')
+    misplaced = replace(second, window=0)          # the [10, 12) maintenance claimed for window [2, 6)
+    assert {'MAINTENANCE_OUTSIDE_WINDOW', 'DUPLICATE_MAINTENANCE', 'MISSING_MAINTENANCE'} <= codes(
+        replace(plan, maintenance_records=[first, misplaced, other]), data, 'joint')
+
+
+def test_periodic_generator_keeps_windows_disjoint_and_load_independent_of_count():
+    for profile in ('uniform2', 'mixed'):
+        for n, m in ((20, 8), (50, 4), (100, 2)):
+            data = periodic_case(n, m, profile, 20, 50, 75, 11).data
+            assert [len(w) for w in data.windows] == list(cycle_counts(profile, m))
+            w = (sum(t.processing_time for t in data.tasks) + m - 1) // m
+            for windows in data.windows:
+                total = sum(item.duration for item in windows)
+                assert 0.2 * w <= total <= 0.2 * w + 2 * len(windows)
+    assert periodic_case(20, 2, 'mixed', 10, 25, 75, 1).data.tasks == build_instance(20, 2, 10, 25, 75, 1).tasks

@@ -1,9 +1,10 @@
 """CP-SAT reference model for fixed / joint maintenance, minimizing total tardiness.
 
 Each job has one start and end and an optional interval on every machine
-(exactly one present). Each machine has one mandatory maintenance interval
-with start in [L_i, U_i - q_i] (fixed mode: start = f_i) and NoOverlap over
-its jobs and maintenance. t_j = max(0, C_j - d_j), minimize sum t_j.
+(exactly one present). Every maintenance window k of machine i has one
+mandatory interval with start in [L_ik, U_ik - q_ik] (fixed mode: start =
+f_ik); NoOverlap over each machine's jobs and maintenance intervals.
+t_j = max(0, C_j - d_j), minimize sum t_j.
 
 Acceptance: the extracted plan must pass the checker, and with T the plan's
 recomputed total tardiness, ``0 <= bound <= T <= objective`` with integral
@@ -29,9 +30,9 @@ class CpSatError(RuntimeError):
 
 def numeric_domain_ok(data: ParallelMaintenanceInstance) -> bool:
     """Conservative bound that keeps every CP-SAT domain and aggregate exact."""
-    n, m = len(data.tasks), data.num_machines
+    n, m, w = len(data.tasks), data.num_machines, data.num_windows
     horizon = max(item.window_end for item in data.maintenance) + sum(task.processing_time for task in data.tasks)
-    return max(horizon * (4 * n * m + 4 * m + 4 * n + 1), max(task.due_date for task in data.tasks)) <= 2**50
+    return max(horizon * (4 * n * m + 4 * w + 4 * n + 1), max(task.due_date for task in data.tasks)) <= 2**50
 
 
 def check_objective_metadata(status: str, objective: float, bound: float, total: int) -> None:
@@ -88,14 +89,15 @@ def solve_cpsat(data: ParallelMaintenanceInstance, *, mode: str, time_limit: flo
         late = model.NewIntVar(0, horizon, f't{j}')
         model.AddMaxEquality(late, [0, ends[j] - task.due_date])
         tardiness.append(late)
-    for requirement in data.maintenance:
-        machine = requirement.machine_id
-        start = model.NewIntVar(requirement.window_start, requirement.window_end - requirement.duration, f'ms{machine}')
-        end = model.NewIntVar(0, horizon, f'me{machine}')
-        machine_intervals[machine].append(model.NewIntervalVar(start, requirement.duration, end, f'maintenance{machine}'))
-        maintenance[machine] = start
-        if mode == 'fixed':
-            model.Add(start == requirement.fixed_start)
+    for machine, windows in enumerate(data.windows):
+        for k, requirement in enumerate(windows):
+            name = f'{machine}_{k}'
+            start = model.NewIntVar(requirement.window_start, requirement.window_end - requirement.duration, f'ms{name}')
+            end = model.NewIntVar(0, horizon, f'me{name}')
+            machine_intervals[machine].append(model.NewIntervalVar(start, requirement.duration, end, f'maintenance{name}'))
+            maintenance[machine, k] = start
+            if mode == 'fixed':
+                model.Add(start == requirement.fixed_start)
         model.AddNoOverlap(machine_intervals[machine])
     model.Minimize(sum(tardiness))
     invalid = model.Validate()
@@ -123,7 +125,7 @@ def solve_cpsat(data: ParallelMaintenanceInstance, *, mode: str, time_limit: flo
             if end - start != task.processing_time:
                 raise CpSatError('Extracted production duration mismatch')
             jobs.append((task.job_id, selected[0], start))
-        result = build_plan(data, jobs, [(machine, solver.Value(start)) for machine, start in maintenance.items()])
+        result = build_plan(data, jobs, [(machine, k, solver.Value(start)) for (machine, k), start in maintenance.items()])
         result.solver_status = name
         result.solver_objective_value = float(solver.ObjectiveValue())
         result.solver_objective_bound = float(solver.BestObjectiveBound())

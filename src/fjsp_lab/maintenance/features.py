@@ -1,9 +1,11 @@
 """Per-action features shared by the learned policies.
 
-Each legal action gets one feature row, so one small network scores every
-action regardless of task indices or instance size. Times are divided by
-the base load S = ceil(sum p / m) and processing times by their mean.
-EDD, MDD and ATC keys are expressible from these rows.
+Each legal action gets one feature row, so one network scores every action
+regardless of task indices or instance size. Times are divided by the base
+load S = ceil(sum p / m) and processing times by their mean. EDD, MDD and
+ATC keys are expressible from these rows. Maintenance features refer to the
+machine's next pending window. Rows are computed with NumPy over all
+candidates at once (an n=100, m=8 state has up to 800 job actions).
 """
 
 from __future__ import annotations
@@ -13,7 +15,7 @@ import statistics
 
 import numpy as np
 
-from fjsp_lab.maintenance.env import MAINTENANCE_OFFSET, MAX_MACHINES, ParallelMaintenanceEnv
+from fjsp_lab.maintenance.env import ParallelMaintenanceEnv
 
 FEATURE_NAMES = (
     'is_task', 'p_over_mean', 'slack_to_start', 'immediate_tardiness', 'mdd_key',
@@ -28,52 +30,59 @@ CLIP = 5.0
 
 def action_candidates(env: ParallelMaintenanceEnv) -> tuple[list[int], np.ndarray]:
     """Return the legal actions and their float64 feature rows (same order)."""
-    data, mode, tails = env.data, env.mode, env.machine_tails
+    data, mode = env.data, env.mode
     legal = env.legal_actions()
     if not legal:
         raise ValueError('No legal action to featurize')
     m = data.num_machines
-    scale = (sum(task.processing_time for task in data.tasks) + m - 1) // m
+    tails = np.array(env.machine_tails, dtype=np.int64)
+    p_all = np.array([task.processing_time for task in data.tasks], dtype=np.int64)
+    d_all = np.array([task.due_date for task in data.tasks], dtype=np.int64)
+    scale = (int(p_all.sum()) + m - 1) // m
     pbar = statistics.fmean(task.processing_time for task in data.tasks)
-    scheduled, maintained = env.scheduled, env.maintained
-    remaining = [task for task in data.tasks if not scheduled[task.job_id]]
-    dues = sorted(task.due_date for task in remaining)
-    times = sorted(task.processing_time for task in remaining)
-    rank_span = max(1, len(remaining) - 1)
-    production_tails = [tails[a % MAX_MACHINES] for a in legal if a < MAINTENANCE_OFFSET]
-    next_task_start = min(production_tails) if production_tails else min(tails)
-    shared = (1.0 if mode == 'joint' else 0.0, len(remaining) / len(data.tasks),
-              sum(task.processing_time for task in remaining) / m / scale)
+    remaining = ~np.array(env.scheduled)
+    dues, times = np.sort(d_all[remaining]), np.sort(p_all[remaining])
+    rank_span = max(1, int(remaining.sum()) - 1)
+    pending = ~np.array(env.maintained)
+    limit = np.array([env.job_limit(i) if pending[i] else 0 for i in range(m)], dtype=np.int64)
+    min_tail = int(tails.min())
+
+    actions = np.array(legal, dtype=np.int64)
+    is_job = actions < env.maintenance_offset
+    jobs, job_machines = actions[is_job] // m, actions[is_job] % m
+    maintenance_machines = actions[~is_job] - env.maintenance_offset
+    next_task_start = int(tails[job_machines].min()) if len(job_machines) else min_tail
+
     rows = np.zeros((len(legal), FEATURE_COUNT))
-    for k, action in enumerate(legal):
-        x = rows[k]
-        x[10:13] = shared
-        if action < MAINTENANCE_OFFSET:
-            job, machine = divmod(action, MAX_MACHINES)
-            task, t = data.tasks[job], tails[machine]
-            p, d = task.processing_time, task.due_date
-            item = data.maintenance[machine]
-            boundary = item.fixed_start if mode == 'fixed' else item.window_end - item.duration
-            x[0] = 1.0
-            x[1] = p / pbar
-            x[2] = (d - t) / scale
-            x[3] = max(0, t + p - d) / scale
-            x[4] = (max(d, t + p) - t) / scale
-            x[5] = math.exp(-max(0, d - p - t) / pbar) * pbar / p
-            x[6] = (t - min(tails)) / scale
-            x[7] = 0.0 if maintained[machine] else 1.0
-            x[8] = 0.0 if maintained[machine] else (boundary - t - p) / scale
-            x[13] = dues.index(d) / rank_span
-            x[14] = times.index(p) / rank_span
-        else:
-            machine = action - MAINTENANCE_OFFSET
-            item, t = data.maintenance[machine], tails[machine]
-            start = env.maintenance_start(machine)
-            latest = item.fixed_start if mode == 'fixed' else item.window_end - item.duration
-            x[9] = 1.0
-            x[15] = (start - t) / scale
-            x[16] = (latest - t) / scale
-            x[17] = (start - min(tails)) / scale
-            x[18] = 1.0 if start < next_task_start else 0.0
+    rows[:, 10] = 1.0 if mode == 'joint' else 0.0
+    rows[:, 11] = remaining.sum() / len(data.tasks)
+    rows[:, 12] = p_all[remaining].sum() / m / scale
+
+    t, p, d = tails[job_machines], p_all[jobs], d_all[jobs]
+    x = rows[is_job]
+    x[:, 0] = 1.0
+    x[:, 1] = p / pbar
+    x[:, 2] = (d - t) / scale
+    x[:, 3] = np.maximum(0, t + p - d) / scale
+    x[:, 4] = (np.maximum(d, t + p) - t) / scale
+    x[:, 5] = np.fromiter((math.exp(v) for v in (-np.maximum(0, d - p - t) / pbar)), float, len(jobs)) * pbar / p
+    x[:, 6] = (t - min_tail) / scale
+    machine_pending = pending[job_machines]
+    x[:, 7] = machine_pending.astype(float)
+    x[:, 8] = np.where(machine_pending, (limit[job_machines] - t - p) / scale, 0.0)
+    x[:, 13] = np.searchsorted(dues, d, side='left') / rank_span
+    x[:, 14] = np.searchsorted(times, p, side='left') / rank_span
+    rows[is_job] = x
+
+    if len(maintenance_machines):
+        y = rows[~is_job]
+        t = tails[maintenance_machines]
+        start = np.array([env.maintenance_start(int(i)) for i in maintenance_machines], dtype=np.int64)
+        y[:, 9] = 1.0
+        y[:, 15] = (start - t) / scale
+        y[:, 16] = (limit[maintenance_machines] - t) / scale
+        y[:, 17] = (start - min_tail) / scale
+        y[:, 18] = (start < next_task_start).astype(float)
+        rows[~is_job] = y
     np.clip(rows, -CLIP, CLIP, out=rows)
     return legal, rows

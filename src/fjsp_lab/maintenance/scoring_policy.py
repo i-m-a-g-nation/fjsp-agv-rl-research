@@ -130,7 +130,7 @@ def run_episode(policy: ScoringPolicy, data: ParallelMaintenanceInstance, *, mod
     """Greedy when rng is None, otherwise sample; only legal actions are scored."""
     env = ParallelMaintenanceEnv(data, mode=mode)
     decisions = []
-    for _ in range(len(data.tasks) + data.num_machines):
+    for _ in range(env.total_steps):
         legal, features = action_candidates(env)
         hidden, probabilities = policy.forward(features)
         choice = int(np.argmax(probabilities)) if rng is None else int(rng.choice(len(legal), p=probabilities))

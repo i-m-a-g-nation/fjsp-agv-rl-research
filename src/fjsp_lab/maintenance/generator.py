@@ -152,3 +152,87 @@ SPLITS = {
 def split_instances(name: str) -> list[SampledInstance]:
     seeds, sampler_seed, balanced = SPLITS[name]
     return sample_instances(seeds, sampler_seed=sampler_seed, balanced=balanced)
+
+
+# --- periodic preventive maintenance (several windows per machine) -----------
+#
+# Machine i has K_i windows over the planning horizon W (the base load):
+#
+#     T_i  = ceil(W / K_i)                         period of machine i
+#     q_i  = max(1, ceil(alpha T_i / 100))         duration of each maintenance
+#     s_i  = min(ceil(beta T_i / 100), T_i - q_i - floor(25 T_i / 100))   window slack
+#     L_ik = k T_i + floor(v_ik T_i / 100),  U_ik = L_ik + q_i + s_i      (k = 0..K_i-1)
+#     f_ik = L_ik + floor(s_i / 2)                 fixed start (midpoint; earliest/latest as above)
+#
+# with v_ik in [0, 25] drawn per (machine, window). The cap on s_i keeps the
+# windows of a machine disjoint. alpha is the share of each period spent in
+# maintenance, so the total maintenance load does not depend on K_i. Jobs and
+# due dates are those of build_instance for the same (n, seed).
+
+CYCLE_PROFILES = ('uniform2', 'mixed')     # K_i = 2 for all; K_i = 1, 2, 3, 1, 2, 3, ...
+
+
+def cycle_counts(profile: str, m: int) -> tuple[int, ...]:
+    if profile == 'uniform2':
+        return (2,) * m
+    if profile == 'mixed':
+        return tuple(1 + i % 3 for i in range(m))
+    raise ValueError(f'profile must be one of {CYCLE_PROFILES}')
+
+
+def build_periodic_instance(n: int, m: int, cycles: tuple[int, ...], alpha: int, beta: int, tau: int, seed: int,
+                            fixed_policy: str = 'window_midpoint') -> ParallelMaintenanceInstance:
+    """One instance with cycles[i] maintenance windows on machine i."""
+    if fixed_policy not in FIXED_POLICIES:
+        raise ValueError(f'fixed_policy must be one of {FIXED_POLICIES}')
+    if len(cycles) != m or any(type(k) is not int or k < 1 for k in cycles):
+        raise ValueError('cycles must give a positive window count for every machine')
+    p, u, _ = base_workload(n, seed)
+    w = (sum(p) + m - 1) // m
+    tasks = tuple(ProductionTask(j, p[j], (tau * w * u[j] + 9999) // 10000) for j in range(n))
+    maintenance = []
+    for machine, count in enumerate(cycles):
+        period = (w + count - 1) // count
+        q = max(1, (alpha * period + 99) // 100)
+        slack = min((beta * period + 99) // 100, period - q - 25 * period // 100)
+        if slack < 0:
+            raise ValueError('Maintenance does not fit its period; lower alpha or the window count')
+        offset = {'window_midpoint': slack // 2, 'window_earliest': 0, 'window_latest': slack}[fixed_policy]
+        v = _draws(n, seed, f'periodic_start|m={m}|machine={machine}|cycles={count}', *START_QUANTILE_RANGE, count)
+        for k in range(count):
+            start = k * period + v[k] * period // 100
+            maintenance.append(MaintenanceRequirement(machine, q, start, start + q + slack, start + offset))
+    return ParallelMaintenanceInstance(tasks, m, tuple(maintenance))
+
+
+@dataclass(frozen=True)
+class PeriodicCase:
+    case_id: str
+    num_tasks: int
+    num_machines: int
+    profile: str
+    alpha_percent: int
+    beta_percent: int
+    tau_percent: int
+    instance_seed: int
+    data: ParallelMaintenanceInstance
+
+
+def periodic_case(n: int, m: int, profile: str, alpha: int, beta: int, tau: int, seed: int) -> PeriodicCase:
+    return PeriodicCase(f'g4-n{n}-m{m}-{profile}-a{alpha}-b{beta}-t{tau}-s{seed}', n, m, profile, alpha, beta, tau,
+                        seed, build_periodic_instance(n, m, cycle_counts(profile, m), alpha, beta, tau, seed))
+
+
+def sample_periodic_instances(seeds: range, *, sampler_seed: int, sizes, profiles=CYCLE_PROFILES,
+                              alphas=(10, 20), betas=(25, 50), taus=(75, 125)) -> list[SampledInstance]:
+    """Draw size, cycle profile, factors and mode per instance seed (learning sets)."""
+    rng = random.Random(sampler_seed)
+    instances = []
+    for seed in seeds:
+        n, m = rng.choice(sizes)
+        profile = rng.choice(profiles)
+        alpha, beta, tau = rng.choice(alphas), rng.choice(betas), rng.choice(taus)
+        mode = rng.choice(('fixed', 'joint'))
+        data = build_periodic_instance(n, m, cycle_counts(profile, m), alpha, beta, tau, seed)
+        instances.append(SampledInstance(data, mode, n, m, alpha, beta, tau, seed))
+    return instances

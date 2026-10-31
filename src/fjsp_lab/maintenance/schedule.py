@@ -11,6 +11,7 @@ class MaintenanceRecord:
     start: int
     end: int
     duration: int
+    window: int = 0          # index k of the machine's maintenance window
 
 
 @dataclass
