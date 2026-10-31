@@ -65,9 +65,9 @@ def plot_fixed_vs_joint(data: ParallelMaintenanceInstance, fixed: MaintenanceSch
     handles = [mpatches.Patch(color=ON_TIME, label='job on time'), mpatches.Patch(color=TARDY, label='job tardy'),
                mpatches.Patch(facecolor='white', edgecolor=MAINTENANCE, hatch='///', label='maintenance'),
                mpatches.Patch(color=WINDOW, label='maintenance window')]
-    fig.legend(handles=handles, loc='upper center', ncol=4, fontsize=8, frameon=False)
     if title:
-        fig.suptitle(title, y=0.995, fontsize=11)
-    fig.tight_layout(rect=(0, 0, 1, 0.95))
+        fig.suptitle(title, fontsize=11)
+    fig.tight_layout(rect=(0, 0.05, 1, 1))
+    fig.legend(handles=handles, loc='lower center', ncol=4, fontsize=9, frameon=False)
     fig.savefig(path, dpi=200, bbox_inches='tight')
     plt.close(fig)
