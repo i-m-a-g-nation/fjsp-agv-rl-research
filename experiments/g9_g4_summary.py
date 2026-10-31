@@ -1,6 +1,8 @@
 """Graduation G4: quality-time curves, the pre-registered tests H1-H3 and a figure.
 
-Inputs: ``--search`` (g7_g4_search_curves run) and ``--policy`` (g8_g4_policy_curves run).
+Inputs: ``--search`` (one or more g7_g4_search_curves runs; a later run replaces
+the methods it contains, e.g. a re-timing of IGA and SA) and ``--policy``
+(g8_g4_policy_curves run).
 Value of a method at time budget t (seconds per instance):
 * rules: their value (all finish within milliseconds);
 * IGA, GA: best value found within t (from the improvement trace);
@@ -85,13 +87,16 @@ def wilcoxon_test(rows: list[dict], method: str, other: str, t: float) -> dict:
 
 def main() -> int:
     def extra(parser):
-        parser.add_argument('--search', type=Path, required=True)
+        parser.add_argument('--search', type=Path, nargs='+', required=True)
         parser.add_argument('--policy', type=Path, required=True)
 
     args = parse_args(__doc__.splitlines()[0], 'g9_g4_summary', extra)
     logging.basicConfig(level=logging.INFO, format='%(message)s')
     prov = provenance(__file__)
-    search, policy = read_jsonl(args.search / 'rows.jsonl'), read_jsonl(args.policy / 'rows.jsonl')
+    search, policy = read_jsonl(args.search[0] / 'rows.jsonl'), read_jsonl(args.policy / 'rows.jsonl')
+    for override in args.search[1:]:
+        for key, row in read_jsonl(override / 'rows.jsonl').items():
+            search[key].update({m: row[m] for m in ('EDD', 'MDD', 'ATC', 'IGA', 'GA', 'SA', 'CP-SAT') if m in row})
     if set(search) != set(policy):
         raise ValueError('Search and policy runs cover different instances')
     rows = []
@@ -145,8 +150,8 @@ def main() -> int:
         'H3_joint_vs_fixed_on_best_known': h3,
         'exploratory_post_hoc_by_size': [{'group': g, **t} for g, t in zip(
             [g for g in ('n50', 'n100') if g in groups for _ in range(12)], exploratory)],
-        'inputs_sha256': {str(args.search / 'rows.jsonl'): sha256(args.search / 'rows.jsonl'),
-                          str(args.policy / 'rows.jsonl'): sha256(args.policy / 'rows.jsonl')}, **prov})
+        'inputs_sha256': {str(path / 'rows.jsonl'): sha256(path / 'rows.jsonl') for path in [*args.search, args.policy]},
+        **prov})
     plot(curves, args.output_dir / 'curves.png')
     for test in h1:
         if not test['instances']:
