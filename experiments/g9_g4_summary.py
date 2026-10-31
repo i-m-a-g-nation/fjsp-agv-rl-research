@@ -158,24 +158,30 @@ def main() -> int:
 
 
 def plot(curves: list[dict], path: Path) -> None:
+    """Mean gap (log scale) vs time budget; hollow markers where a method covers < 100% of instances."""
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.5), sharey=False)
+    styles = {'MDD': ('tab:gray', '--'), 'GA': ('tab:orange', '-'), 'SA': ('tab:green', '-'), 'IGA': ('tab:red', '-'),
+              'CP-SAT': ('tab:purple', ':'), 'RL': ('tab:blue', '-'), 'RL-cpu': ('tab:cyan', '--')}
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4.8), sharey=True)
     for ax, group in zip(axes, ('n20', 'n50', 'n100')):
-        for method in ('MDD', 'GA', 'SA', 'IGA', 'CP-SAT', 'RL'):
-            points = [(c['budget'], c['mean_gap']) for c in curves
-                      if c['group'] == group and c['method'] == method and c['mean_gap'] is not None
-                      and c['coverage'] == 1.0]
-            if points:
-                ax.plot(*zip(*points), marker='o', label=method)
+        for method, (color, line) in styles.items():
+            points = [(c['budget'], c['mean_gap'], c['coverage']) for c in curves
+                      if c['group'] == group and c['method'] == method and c['mean_gap']]
+            if not points:
+                continue
+            ax.plot([b for b, _, _ in points], [g for _, g, _ in points], line, color=color, label=method)
+            for b, g, coverage in points:
+                ax.plot(b, g, 'o', color=color, markerfacecolor=color if coverage == 1.0 else 'white')
         ax.set_xscale('log')
+        ax.set_yscale('log')
         ax.set_title(group.replace('n', 'n = '))
         ax.set_xlabel('time budget per instance (s)')
         ax.grid(True, which='both', alpha=0.3)
-    axes[0].set_ylabel('mean gap to best known')
-    axes[-1].legend()
+    axes[0].set_ylabel('mean gap to best known (log)')
+    axes[-1].legend(fontsize=8)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)
