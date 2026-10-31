@@ -25,7 +25,7 @@
 - **毕设算法**：新的逐动作打分策略（共享 MLP，先模仿最好规则、再用自评 REINFORCE 微调）在 600 个未见测试实例上，平均总延期比 EDD 低约 13%、比 MDD/ATC 低约 4%–5%（3 个种子一致，p < 1e-10）；在证得最优的 G3 n=8 实例上，距最优差距约为单一规则的一半。加入采样解码后，[exp_037](experiments/results/exp_037_sampling_decoding_v1/findings.md) 在全新测试集上按相同回放次数比较：3 次回放比"逐实例三规则取最好"低约 5%，9 次回放比 9 规则组合低约 1%（3 个种子一致）。n24-m2 只是部分修好：3 次回放下 2 个种子领先约 3%、1 个种子落后。按墙钟时间算规则更便宜。详见 [exp_036](experiments/results/exp_036_scoring_policy_v1/findings.md)。旧 REINFORCE 记录保持不变。
 - **毕设 G3B（已完成）**：[exp_038](experiments/results/exp_038_g3b_comparison_v1/findings.md) 在 G3 的 480 个正式实例上，最终模型 1 次回放比 MDD 低 8%、3 次回放比三规则取最好低 5.9%；n=24 时比 1 秒 CP-SAT 好 17%–29%，但比 60 秒 CP-SAT 差 6%–11%。策略的价值在于毫秒级速度，不在解的质量。
 - **大创**：运输、AGV、缓冲区与生产—物流仿真均未实现，[最小范围草案](docs/innovation_minimum_scope_draft.md)尚未获批。
-- **下一步候选**（需用户决定优先级）：① 7 篇付费文献（含 D1、A2）已通读，研究空白在英文文献范围内成立，见[毕设文献地图](notes/literature_map_graduation.md)"核对发现"；待处理：ATC 默认 k=1 不在原文推荐区间（建议补 k=2 对照），NP 难归约需导师确认，并请导师取舍候选创新点 I1–I4；② 在动态重调度场景下比较策略与 CP-SAT，把速度优势落到实处（对应 I4）；③ 冻结大创最小物流模型后开始实现。
+- **下一步候选**（需用户决定优先级）：① 7 篇付费文献（含 D1、A2）已通读，研究空白在英文文献范围内成立，见[毕设文献地图](notes/literature_map_graduation.md)"核对发现"；ATC 的 k 值已用 [exp_039](experiments/results/exp_039_atc_k2_baseline_v1/findings.md) 复核：文献推荐的 k=2 在本问题上比 k=1 差 14%–16%，原对照更严格、已有结论不变；NP 难归约需导师确认，并请导师取舍候选创新点 I1–I4；② 在动态重调度场景下比较策略与 CP-SAT，把速度优势落到实处（对应 I4）；③ 冻结大创最小物流模型后开始实现。
 
 逐轮的详细进度、预算账本和证据链接见[进度记录](docs/status_log.md)；带日期的验证文档都是当时的快照。
 
