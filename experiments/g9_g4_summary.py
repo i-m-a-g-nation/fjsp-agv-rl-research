@@ -120,6 +120,10 @@ def main() -> int:
     large = groups.get('n>=50', [])
     h1 = [wilcoxon_test(large, 'RL', other, t) for t in H1_BUDGETS for other in ('IGA', 'SA', 'GA')]
     h2 = [wilcoxon_test(large, 'RL', other, t) for t in H2_BUDGETS for other in ('IGA', 'SA')]
+    # Exploratory, added after the pre-registered results were seen (reported separately as post hoc).
+    exploratory = [wilcoxon_test(groups[g], method, other, t)
+                   for g in ('n50', 'n100') if g in groups for t in (0.2, 0.5, 1.0, 2.0)
+                   for method, other in (('RL', 'IGA'), ('RL', 'SA'), ('RL-cpu', 'IGA'))]
     pairs = {}
     for r in rows:
         pairs.setdefault(r['case_id'], {})[r['mode']] = r
@@ -139,6 +143,8 @@ def main() -> int:
         'experiment': 'g9_g4_summary', 'instances': len(rows), 'budgets': BUDGETS, 'methods': METHODS,
         'H1_rl_vs_search_short_budgets_n_ge_50': h1, 'H2_rl_vs_search_long_budgets_n_ge_50': h2,
         'H3_joint_vs_fixed_on_best_known': h3,
+        'exploratory_post_hoc_by_size': [{'group': g, **t} for g, t in zip(
+            [g for g in ('n50', 'n100') if g in groups for _ in range(12)], exploratory)],
         'inputs_sha256': {str(args.search / 'rows.jsonl'): sha256(args.search / 'rows.jsonl'),
                           str(args.policy / 'rows.jsonl'): sha256(args.policy / 'rows.jsonl')}, **prov})
     plot(curves, args.output_dir / 'curves.png')
