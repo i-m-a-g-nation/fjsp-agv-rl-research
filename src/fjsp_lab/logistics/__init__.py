@@ -21,11 +21,11 @@ from fjsp_lab.logistics.feasibility import (
     check_logistics_feasibility,
     require_feasible,
 )
-from fjsp_lab.logistics.instance import LogisticsInstance, load_fjspt, parse_fjspt
+from fjsp_lab.logistics.instance import LogisticsInstance, load_fjspt, parse_fjspt, parse_layout
 from fjsp_lab.logistics.schedule import LogisticsSchedule, TransportRecord, required_transports
 
 __all__ = [
-    "LogisticsInstance", "load_fjspt", "parse_fjspt",
+    "LogisticsInstance", "load_fjspt", "parse_fjspt", "parse_layout",
     "LogisticsSchedule", "TransportRecord", "required_transports",
     "LogisticsViolation", "InfeasibleLogisticsError", "check_logistics_feasibility", "require_feasible",
 ]

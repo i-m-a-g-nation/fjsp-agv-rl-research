@@ -94,6 +94,19 @@ class LogisticsInstance:
         return None if capacity is None else 1 + capacity
 
 
+def parse_layout(layout_text: str, machines: int) -> list[list[int]]:
+    """Travel matrix in our location order from a layout file whose location 0 is the L/U station.
+
+    The file is a (machines + 1) square matrix; its location f >= 1 is machine
+    f - 1 (the convention of the FJSPT benchmark layouts).
+    """
+    rows = [[int(value) for value in line.split()] for line in layout_text.splitlines() if line.strip()]
+    if len(rows) != machines + 1 or any(len(row) != machines + 1 for row in rows):
+        raise ValueError(f'layout must have {machines + 1} rows for {machines} machines plus L/U')
+    file_index = [f + 1 for f in range(machines)] + [0]          # our location -> file location
+    return [[rows[file_index[a]][file_index[b]] for b in range(machines + 1)] for a in range(machines + 1)]
+
+
 def parse_fjspt(instance_text: str, layout_text: str, *, buffer_capacity: int | None = None,
                 return_to_lu: bool = False, blocking: bool = False, handling_time: int = 0,
                 num_vehicles: int | None = None) -> LogisticsInstance:
@@ -126,11 +139,7 @@ def parse_fjspt(instance_text: str, layout_text: str, *, buffer_capacity: int | 
         jobs.append(operations)
     if position != len(tokens):
         raise ValueError('FJSPT instance has trailing data')
-    rows = [[int(value) for value in line.split()] for line in layout_text.splitlines() if line.strip()]
-    if len(rows) != machines + 1:
-        raise ValueError(f'layout must have {machines + 1} rows for {machines} machines plus L/U')
-    file_index = [f + 1 for f in range(machines)] + [0]          # our location -> file location
-    travel = [[rows[file_index[a]][file_index[b]] for b in range(machines + 1)] for a in range(machines + 1)]
+    travel = parse_layout(layout_text, machines)
     production = FJSPInstance.from_jobs_array(jobs, num_machines=machines)
     return LogisticsInstance.create(production, travel, num_vehicles=num_vehicles or vehicles,
                                     buffer_capacity=buffer_capacity, handling_time=handling_time,

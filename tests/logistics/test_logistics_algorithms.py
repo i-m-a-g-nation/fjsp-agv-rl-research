@@ -210,3 +210,43 @@ def test_decoupling_costs_nothing_when_transport_is_free():
     data = LogisticsInstance.create(production, zero, num_vehicles=1, return_to_lu=False)
     schedule, _ = solve_decoupled(data, transport_lags=False, time_limit=30)
     assert schedule.makespan == solve_cpsat(data, time_limit=30).makespan
+
+
+def test_deadlock_avoidance_finishes_where_plain_rules_deadlock():
+    from fjsp_lab.logistics.simulator import is_safe
+    crossing = FJSPInstance.from_jobs_array([[[(0, 2)], [(1, 2)]], [[(1, 2)], [(0, 2)]]], num_machines=2)
+    data = LogisticsInstance.create(crossing, layout(2, 1), num_vehicles=2, buffer_capacity=0)
+    for rule in RULES:
+        plan = solve_rule(data, rule, seed=0, avoid_deadlock=True)
+        assert check_logistics_feasibility(plan, data)[0] is True
+    # After job 0 is sent to M0, also sending job 1 to M1 dooms the system (no swap in the simulator).
+    sim = LogisticsSimulator(data)
+    first = next(c for c in sim.candidates() if (c.job, c.machine) == (0, 0))
+    assert is_safe(sim, first)
+    sim.apply(first)
+    second = next(c for c in sim.candidates() if (c.job, c.machine) == (1, 1))
+    assert not is_safe(sim, second)
+
+
+def test_deadlock_avoidance_changes_nothing_when_no_deadlock_threatens():
+    for name, data in cases():
+        for rule in ('EFT', 'MWKR+NV', 'RANDOM'):
+            assert solve_rule(data, rule, seed=4, avoid_deadlock=True) == solve_rule(data, rule, seed=4), (name, rule)
+
+
+def test_deadlock_avoidance_on_tight_buffers():
+    production = load_project_benchmark_file(MK01)
+    for buffer in (0, 1):
+        data = LogisticsInstance.create(production, layout(production.num_machines), num_vehicles=2,
+                                        buffer_capacity=buffer)
+        for rule in RULES:
+            plan = solve_rule(data, rule, seed=1, avoid_deadlock=True)
+            assert check_logistics_feasibility(plan, data)[0] is True
+
+
+def test_clone_is_independent():
+    _, data = next(cases())
+    sim = LogisticsSimulator(data)
+    twin = sim.clone()
+    twin.apply(twin.candidates()[0])
+    assert sim.transports == [] and sim.vehicle_free == [0] * data.num_vehicles and len(sim.awaiting) == data.num_jobs

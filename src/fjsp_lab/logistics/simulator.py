@@ -15,8 +15,18 @@ needs no vehicle, so it remains a candidate until the job is decided).
 
 Same-time events are handled in a fixed order: operation ends, pickups,
 deliveries; then idle machines start waiting jobs; then decisions are taken.
-If nothing is pending and no decision is possible before every job is done,
-the system is deadlocked and ``SimulationDeadlock`` is raised.
+A policy may also return ``None`` to wait for the next event. If nothing is
+pending and no decision is taken before every job is done, the system is
+deadlocked and ``SimulationDeadlock`` is raised.
+
+``avoid_deadlock(policy)`` wraps a policy with a one-step lookahead: a
+decision is taken only if, after it, a conservative rollout finishes every
+job on a copy of the simulator. The rollout moves the jobs already released
+into the shop first (joint EFT among them) and releases a new job from L/U
+only when the shop is empty. A successful rollout proves that the state is
+not doomed; a failed one does not prove the opposite, so the guard is
+conservative. Unsafe decisions are skipped in the policy's order of
+preference; if none is safe the simulator waits.
 """
 
 from __future__ import annotations
@@ -55,7 +65,7 @@ class Candidate:
         return max(self.delivery, self.machine_ready) + self.processing_time
 
 
-Policy = Callable[['LogisticsSimulator', list[Candidate]], Candidate]
+Policy = Callable[['LogisticsSimulator', list[Candidate]], 'Candidate | None']
 
 
 class LogisticsSimulator:
@@ -81,6 +91,17 @@ class LogisticsSimulator:
         self.transports: list[TransportRecord] = []
         self._events: list[tuple[int, int, int, tuple]] = []
         self._counter = 0
+
+    def clone(self) -> LogisticsSimulator:
+        """Independent copy of the current state (for lookahead rollouts)."""
+        twin = object.__new__(LogisticsSimulator)
+        for name, value in self.__dict__.items():
+            if isinstance(value, list):
+                value = [deque(item) if isinstance(item, deque) else item for item in value]
+            elif isinstance(value, set):
+                value = set(value)
+            twin.__dict__[name] = value
+        return twin
 
     # --- events -----------------------------------------------------------------
     def _push(self, time: int, kind: int, payload: tuple) -> None:
@@ -196,8 +217,8 @@ class LogisticsSimulator:
         self._push(choice.delivery, _DELIVERY, (job, choice.machine))
 
     # --- main loop --------------------------------------------------------------
-    def run(self, policy: Policy) -> LogisticsSchedule:
-        """Simulate to the end with ``policy``; return the checker-accepted schedule."""
+    def advance(self, policy: Policy) -> None:
+        """Simulate to the end with ``policy`` (raises SimulationDeadlock); builds no schedule."""
         while True:
             while self._events and self._events[0][0] == self.now:
                 _, kind, _, payload = heapq.heappop(self._events)
@@ -206,16 +227,22 @@ class LogisticsSimulator:
             options = self.candidates()
             while options:
                 choice = policy(self, options)
+                if choice is None:
+                    break
                 if choice not in options:
                     raise ValueError('Policy returned a decision that is not a current candidate')
                 self.apply(choice)
                 self._start_waiting_jobs()
                 options = self.candidates()
             if all(self.done):
-                break
+                return
             if not self._events:
                 raise SimulationDeadlock(f'Deadlock at time {self.now}: jobs {sorted(self.awaiting)} cannot move')
             self.now = self._events[0][0]
+
+    def run(self, policy: Policy) -> LogisticsSchedule:
+        """Simulate to the end with ``policy``; return the checker-accepted schedule."""
+        self.advance(policy)
         production = ScheduleResult.from_records(self.records, instance=self.instance.production)
         schedule = LogisticsSchedule(production, tuple(self.transports),
                                      logistics_makespan(production, self.transports, self.instance))
@@ -225,3 +252,47 @@ class LogisticsSimulator:
 def simulate(instance: LogisticsInstance, policy: Policy) -> LogisticsSchedule:
     """Run one simulation of ``instance`` under ``policy``."""
     return LogisticsSimulator(instance).run(policy)
+
+
+def _eft_key(c: Candidate) -> tuple:
+    return (c.finish, c.pickup, c.job, c.machine, -1 if c.vehicle is None else c.vehicle)
+
+
+def _unreleased(sim: LogisticsSimulator, job: int) -> bool:
+    """Still waiting at L/U for its first trip (no decision taken yet)."""
+    return sim.next_op[job] == 0 and job in sim.awaiting
+
+
+def _rollout_flush(sim: LogisticsSimulator, options: list[Candidate]) -> Candidate | None:
+    """Finish the jobs in the shop before releasing another one (a completion certificate, not a good schedule)."""
+    released = [c for c in options if not _unreleased(sim, c.job)]
+    if released:
+        return min(released, key=_eft_key)
+    in_shop = any(not sim.done[j] and not _unreleased(sim, j) for j in range(len(sim.done)))
+    return None if in_shop else min(options, key=_eft_key)
+
+
+def is_safe(sim: LogisticsSimulator, choice: Candidate) -> bool:
+    """True if the conservative rollout finishes every job after ``choice`` (proof that it is not doomed)."""
+    twin = sim.clone()
+    twin.apply(choice)
+    try:
+        twin.advance(_rollout_flush)
+    except SimulationDeadlock:
+        return False
+    return True
+
+
+def avoid_deadlock(policy: Policy) -> Policy:
+    """Wrap ``policy``: skip decisions after which the rollout deadlocks; wait if none is safe."""
+    def guarded(sim: LogisticsSimulator, options: list[Candidate]) -> Candidate | None:
+        remaining = list(options)
+        while remaining:
+            choice = policy(sim, remaining)
+            if choice is None:
+                return None
+            if is_safe(sim, choice):
+                return choice
+            remaining.remove(choice)
+        return None
+    return guarded

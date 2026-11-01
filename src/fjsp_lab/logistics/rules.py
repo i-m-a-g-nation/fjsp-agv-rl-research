@@ -9,7 +9,9 @@
   They model "schedule production first, then dispatch vehicles".
 * ``RANDOM``: uniform over the current decisions (seeded).
 
-Every rule returns a schedule only after the logistics checker accepts it.
+With ``avoid_deadlock=True`` every rule is wrapped by the simulator's
+lookahead guard (``simulator.avoid_deadlock``). Every rule returns a schedule
+only after the logistics checker accepts it.
 """
 
 from __future__ import annotations
@@ -20,6 +22,7 @@ from typing import Callable
 from fjsp_lab.logistics.instance import LogisticsInstance
 from fjsp_lab.logistics.schedule import LogisticsSchedule
 from fjsp_lab.logistics.simulator import Candidate, LogisticsSimulator, Policy, simulate
+from fjsp_lab.logistics.simulator import avoid_deadlock as guard
 
 
 def _joint_eft(sim: LogisticsSimulator, options: list[Candidate]) -> Candidate:
@@ -63,7 +66,8 @@ def _random(seed: int) -> Policy:
 RULES = ('EFT', 'FIFO+NV', 'SPT+NV', 'MWKR+NV', 'RANDOM')
 
 
-def solve_rule(instance: LogisticsInstance, rule: str, *, seed: int = 0) -> LogisticsSchedule:
+def solve_rule(instance: LogisticsInstance, rule: str, *, seed: int = 0,
+               avoid_deadlock: bool = False) -> LogisticsSchedule:
     """Simulate ``instance`` under one rule; raises SimulationDeadlock if the rule deadlocks."""
     if rule == 'EFT':
         policy = _joint_eft
@@ -73,4 +77,4 @@ def solve_rule(instance: LogisticsInstance, rule: str, *, seed: int = 0) -> Logi
         policy = _decoupled(rule[:-3])
     else:
         raise ValueError(f'Unknown rule {rule!r}; expected one of {RULES}')
-    return simulate(instance, policy)
+    return simulate(instance, guard(policy) if avoid_deadlock else policy)
