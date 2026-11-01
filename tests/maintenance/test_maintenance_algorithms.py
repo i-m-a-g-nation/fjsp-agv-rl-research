@@ -1,16 +1,22 @@
 """Every maintenance algorithm returns a checker-accepted plan; exact methods agree."""
 
+import copy
+import itertools
 import random
 
 import numpy as np
 import pytest
 
-from fjsp_lab.maintenance import check_parallel_maintenance_feasibility
+from fjsp_lab.maintenance import (
+    MaintenanceRequirement, ParallelMaintenanceInstance, ProductionTask, check_parallel_maintenance_feasibility,
+)
 from fjsp_lab.maintenance.cpsat import CpSatError, check_objective_metadata, solve_cpsat
 from fjsp_lab.maintenance.enumeration import EnumerationLimitError, enumerate_parallel_maintenance
 from fjsp_lab.maintenance.env import ParallelMaintenanceEnv, actions_for_plan
 from fjsp_lab.maintenance.generator import build_instance, build_periodic_instance
-from fjsp_lab.maintenance.metaheuristics import ALGORITHMS, decoded_value, plan_to_sequence, solve_metaheuristic
+from fjsp_lab.maintenance.metaheuristics import (
+    ALGORITHMS, TokenDecoder, decoded_value, plan_to_sequence, solve_metaheuristic,
+)
 from fjsp_lab.maintenance.rules import RULE_PORTFOLIO, solve_dispatch_rule
 from fjsp_lab.maintenance.sequence_env import SEQUENCE_FEATURE_COUNT, SequenceEnv, teacher_actions
 
@@ -165,3 +171,55 @@ def test_gantt_draws_accepted_plans_and_refuses_infeasible_ones(periodic, tmp_pa
     joint.total_tardiness += 1
     with pytest.raises(InfeasiblePlanError):
         plot_fixed_vs_joint(periodic, fixed, joint, tmp_path / 'bad.png')
+
+
+EDGE_CASES = {
+    'zero-slack window at 0, due date 0': ((ProductionTask(0, 3, 0),), 1, (MaintenanceRequirement(0, 2, 0, 2, 0),)),
+    'one job, seven idle machines still maintained':
+        ((ProductionTask(0, 1, 5),), 8, tuple(MaintenanceRequirement(i, 1, 0, 3, 1) for i in range(8))),
+    'job longer than every gap between three windows':
+        ((ProductionTask(0, 50, 60), ProductionTask(1, 2, 3)), 1,
+         (MaintenanceRequirement(0, 2, 0, 4, 1), MaintenanceRequirement(0, 2, 4, 8, 5),
+          MaintenanceRequirement(0, 2, 8, 12, 9))),
+    'touching windows [0,4) and [4,8)':
+        ((ProductionTask(0, 3, 3), ProductionTask(1, 3, 9)), 1,
+         (MaintenanceRequirement(0, 2, 0, 4, 2), MaintenanceRequirement(0, 2, 4, 8, 4))),
+    'times around 1e12':
+        ((ProductionTask(0, 3, 10**12),), 1, (MaintenanceRequirement(0, 1, 10**12, 10**12 + 5, 10**12),)),
+}
+
+
+@pytest.mark.parametrize('name', list(EDGE_CASES))
+@pytest.mark.parametrize('mode', MODES)
+def test_edge_cases_are_solved_consistently_by_every_method(name, mode):
+    data = ParallelMaintenanceInstance(*EDGE_CASES[name])
+    exact = solve_cpsat(data, mode=mode, time_limit=5)
+    assert exact.solver_status == 'OPTIMAL'
+    values = [accepted(solve_dispatch_rule(data, mode=mode, rule=rule), data, mode) for rule in ('EDD', 'MDD', 'ATC')]
+    values.append(accepted(solve_metaheuristic(data, mode=mode, algorithm='IGA', evaluations=300).result, data, mode))
+    assert min(values) >= accepted(exact, data, mode)
+
+
+def _best_reachable(env, actions=()):
+    """Exhaustive search of an environment (tiny instances only)."""
+    best = None
+    for action in env.legal_actions():
+        child = copy.deepcopy(env)
+        step = child.step(action)
+        value = step.result.total_tardiness if step.terminated else _best_reachable(child)
+        best = value if best is None else min(best, value)
+    return best
+
+
+@pytest.mark.parametrize('periodic', [False, True], ids=['one-window', 'periodic'])
+def test_both_construction_spaces_contain_a_proven_optimum(periodic):
+    """Exhaustive check on tiny instances: the decoder's permutations and the job x machine MDP reach the optimum."""
+    instances = TINY_PERIODIC if periodic else TINY
+    for data in instances:
+        for mode in MODES:
+            exact = solve_cpsat(data, mode=mode, time_limit=10)
+            assert exact.solver_status == 'OPTIMAL'
+            decoder = TokenDecoder(data, mode)
+            assert min(decoder.decode(list(p)) for p in itertools.permutations(range(decoder.size))) \
+                == exact.total_tardiness
+            assert _best_reachable(ParallelMaintenanceEnv(data, mode=mode)) == exact.total_tardiness

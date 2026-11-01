@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from fjsp_lab.fjsp import RULES, check_feasibility, create_toy_instance, load_project_benchmark_file, solve_rule
+from fjsp_lab.fjsp import RULES, FJSPInstance, check_feasibility, create_toy_instance, load_project_benchmark_file, solve_rule
 from fjsp_lab.fjsp.cpsat import solve_cpsat
 from fjsp_lab.fjsp.gantt import plot_gantt
 
@@ -63,3 +63,27 @@ def test_gantt_writes_png(tmp_path):
     path = tmp_path / 'toy.png'
     plot_gantt(solve_rule(create_toy_instance(), 'FIFO'), save_path=path)
     assert path.read_bytes()[:8] == b'\x89PNG\r\n\x1a\n'
+
+
+@pytest.mark.parametrize('jobs, num_machines', [
+    ([[[(0, 1)]]], None),                                        # smallest possible instance
+    ([[[(0, 3)], [(0, 2)]]], 5),                                 # four machines are never eligible
+    ([[[(m % 3, 1 + m % 5)] for m in range(300)]], 3),            # one job with 300 operations
+    ([[[(0, 10**12), (1, 10**12 + 1)]], [[(0, 10**12)]]], None),  # very large integer times
+])
+def test_extreme_but_valid_instances_give_feasible_schedules(jobs, num_machines):
+    instance = FJSPInstance.from_jobs_array(jobs, num_machines=num_machines)
+    makespans = set()
+    for rule in RULES:
+        result = solve_rule(instance, rule)
+        assert check_feasibility(result, expected_instance=instance)[0] is True
+        makespans.add(result.makespan)
+    exact = solve_cpsat(instance, time_limit=5)
+    assert check_feasibility(exact, expected_instance=instance)[0] is True
+    assert exact.makespan <= min(makespans)
+
+
+def test_cpsat_refuses_times_beyond_its_exact_integer_range():
+    instance = FJSPInstance.from_jobs_array([[[(0, 2**62)]], [[(0, 2**62)]]])
+    with pytest.raises(ValueError, match='integer range'):
+        solve_cpsat(instance, time_limit=1)

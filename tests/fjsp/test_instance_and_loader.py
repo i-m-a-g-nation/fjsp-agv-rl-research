@@ -32,6 +32,8 @@ def test_instance_is_immutable():
     ([[[(0, 3), (0, 4)]]], 'duplicate'),
     ([[[(0, True)]]], 'integer'),
     ([[[(0, 2.0)]]], 'integer'),
+    ([[[(0, -1)]]], 'positive'),
+    ([[[(-1, 2)]]], 'non-negative'),
 ])
 def test_invalid_instance_data_is_rejected(jobs, message):
     with pytest.raises(ValueError, match=message):

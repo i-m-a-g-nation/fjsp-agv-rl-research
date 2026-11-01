@@ -143,3 +143,25 @@ def test_protocol_parser_is_strict():
                    {'instances': [{'id': 'x', 'path': '../x.fjs'}]}):
         with pytest.raises(ValueError):
             parse_protocol(json.dumps({**good, **change}).encode('utf-8'))
+
+
+def test_extreme_events_reschedule_feasibly_or_fail_loudly():
+    instance = FJSPInstance.from_jobs_array([[[(0, 5)], [(1, 4)]], [[(1, 3)], [(0, 2)]]])
+    base = reschedule_from_state(DynamicFJSPState.from_instance(instance), rule='fifo')
+    # zero-length breakdown and a machine that is down for a very long time
+    for time, repair in ((0, 0), (1, 10**9)):
+        frozen = tuple(frozen_records_at_time(base, time))
+        state = DynamicFJSPState.from_instance(instance, current_time=time).apply_event(
+            MachineBreakdown(time=time, machine_id=1, repair_time=repair))
+        both_checks(reschedule_from_state(state, frozen), state, frozen)
+    # changing the duration of an operation that is already running cannot yield a plan
+    frozen = tuple(frozen_records_at_time(base, 2))
+    state = DynamicFJSPState.from_instance(instance, current_time=2).apply_event(
+        ProcessingTimeChange(time=2, job_id=0, op_id=0, machine_id=0, new_processing_time=9))
+    with pytest.raises(RuntimeError, match='PT_INSTANCE_MISMATCH'):
+        reschedule_from_state(state, frozen)
+    with pytest.raises(ValueError, match='out of range'):
+        DynamicFJSPState.from_instance(instance).apply_event(JobArrival(time=0, operations=(((7, 2),),)))
+    episode = replay_events(instance, [JobArrival(time=3, operations=(((i % 2, 1 + i % 4),),)) for i in range(50)])
+    assert episode.final_result is not None
+    both_checks(episode.steps[-1].result, episode.steps[-1].state, episode.steps[-1].frozen_records)
