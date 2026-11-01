@@ -12,16 +12,17 @@
 | `fjsp_lab.fjsp` | 静态 FJSP：不可变实例、FJSPLib 读取、统一调度结果、解码、**合法性检查器**、7 条派工规则、CP-SAT、甘特图 | Phase 1 |
 | `fjsp_lab.dynamic` | 机器故障/维修、新工件到达、加工时间变化；冻结已开工工序；基线重调度；动态检查器 | Phase 2A |
 | `fjsp_lab.maintenance` | 毕设模型：同质平行机 + 周期性必需维护（每台机器一个或多个时间窗，每窗内完整维护一次），最小化总延期；检查器、算例生成、CP-SAT/枚举、构造式 MDP、EDD/MDD/ATC、GA/SA/改进 GA、注意力 RL 策略（主方法）与 NumPy 打分策略（早期对照） | 毕设 |
+| `fjsp_lab.logistics` | 大创 L1：柔性作业车间 + AGV 运输（显式空驶、L/U 站）+ 有限/无限输入缓冲 + 加工后阻塞；FJSPT 算例读取、协同检查器、事件仿真器、联合/解耦规则、小规模 CP-SAT | 大创 |
 
-依赖方向单一：`fjsp ← dynamic`，`fjsp ← maintenance`（维护模型的生产部分直接用静态检查器校验）。
+依赖方向单一：`fjsp ← dynamic`，`fjsp ← maintenance`，`fjsp ← logistics`（维护模型和物流模型的生产部分都直接用静态检查器校验）。
 
 ## 目录
 
 ```
 src/fjsp_lab/        库代码（见上表）
-tests/               pytest：fjsp/、maintenance/、test_dynamic.py
+tests/               pytest：fjsp/、maintenance/、logistics/、test_dynamic.py
 experiments/         实验脚本（p1_*、p2_*、g*_*）、inputs/、results/（新结果）、archive/（旧结果）
-instances/           FJSPLib 子集（30 个）与 BKS 表
+instances/           FJSPLib 子集（30 个）与 BKS 表；external/（第三方无许可证数据，只在本地，git 忽略）
 docs/                models/ 数学模型；protocols/ 实验协议；plans/ 路线与论文大纲；history/ 历史验收快照
 notes/               文献笔记与毕设文献地图
 scripts/             setup_env.ps1（建环境）、run_checks.ps1（测试 + Phase 1/2A 实验）

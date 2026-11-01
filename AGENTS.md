@@ -47,13 +47,20 @@ Phase 1 已建立静态 FJSP 基础实验平台。
 - 智能优化算法：GA、SA、改进 GA（IGA）。
 - 学习型构造策略（仅用于上述毕设简化模型）：NumPy 逐动作打分 MLP（模仿 + REINFORCE）；PyTorch 注意力策略（模仿 IGA 教师 + REINFORCE，共享基线，无 PPO）。
 
-每个新阶段（例如正式 G3 批次、PPO、新的训练预算）仍需用户单独批准，已有批准不自动延伸。
+## 已放行的扩展（大创路线）
+
+2026-11-01 用户批准大创第一阶段 L1，代码在 `src/fjsp_lab/logistics/`（只依赖 `fjsp`），模型见 `docs/models/logistics_model_zh.md`，建模依据见 `docs/plans/innovation_modeling_decisions.md`：
+
+- L1：柔性作业车间 + 同质单载 AGV（显式空驶与载货行驶、L/U 站）+ 机器输入缓冲有限/无限 + 加工后阻塞；
+  数据结构、事件仿真器、协同检查器、规则基线、静态小规模 CP-SAT 参考模型。**不含强化学习。**
+
+每个新阶段（例如正式 G3 批次、PPO、新的训练预算、大创的 RL 或动态事件阶段）仍需用户单独批准，已有批准不自动延伸。
 
 ## 当前禁止事项
 
 除非用户明确要求，否则禁止实现：
 
-- AGV 调度、运输时间、缓冲区、AGV 路径冲突避免（大创路线，最小范围草案尚未获批）。
+- 超出 L1 的 AGV 内容：路径冲突与碰撞、充电、异构或多载 AGV；大创的强化学习（尚未获批）。
 - 毕设简化模型以外的强化学习，以及 DQN、PPO、GNN、多智能体强化学习。
 - 能耗目标。
 - 多目标 Pareto 优化。
@@ -62,7 +69,7 @@ Phase 1 已建立静态 FJSP 基础实验平台。
 
 ## 代码结构
 
-- 库代码只在 `src/fjsp_lab/`：`fjsp`（Phase 1）、`dynamic`（Phase 2A，依赖 `fjsp`）、`maintenance`（毕设，生产部分复用 `fjsp` 检查器）。子包之间不得反向依赖。
+- 库代码只在 `src/fjsp_lab/`：`fjsp`（Phase 1）、`dynamic`（Phase 2A，依赖 `fjsp`）、`maintenance`（毕设，生产部分复用 `fjsp` 检查器）、`logistics`（大创 L1，生产部分复用 `fjsp` 检查器）。子包之间不得反向依赖。
 - 实验脚本在 `experiments/`（`p1_*`、`p2_*`、`g*_*`），共用 `experiments/_common.py`；测试在 `tests/`，按子包分目录。
 - 只为有意义的行为写测试：合法性检查器的每类违规、每个算法输出过检查器、确定性/可复现、关键数值回归。不写只为凑覆盖率的测试。
 
@@ -179,7 +186,7 @@ python experiments/p2_dynamic_protocol.py
 
 - 优先小步修改。
 - 不要一次性重写整个项目。
-- 不要越界实现 AGV、RL、GNN、运输或多目标优化。
+- 不要越界实现已放行范围之外的 AGV、RL、GNN、运输或多目标优化内容。
 - 所有新增功能必须配测试。
 - 所有实验结果必须可复现。
 - 所有算法结果必须过 feasibility checker。
