@@ -163,3 +163,50 @@ def test_rules_and_cpsat_without_blocking():
         assert relaxed.solver_status == strict.solver_status == 'OPTIMAL'
         assert check_logistics_feasibility(relaxed, free)[0] is True
         assert relaxed.makespan <= strict.makespan                  # blocking can only hurt
+
+
+def test_fixed_machine_plan_is_kept_and_contradictions_are_proven():
+    from fjsp_lab.logistics.cpsat import LogisticsCpSatError
+    crossing = FJSPInstance.from_jobs_array([[[(0, 2)], [(1, 2)]], [[(1, 2)], [(0, 2)]]], num_machines=2)
+    data = LogisticsInstance.create(crossing, layout(2, 1), num_vehicles=1, buffer_capacity=0)
+    # Both jobs first, then each other's machine: with blocking, no buffer and a single vehicle
+    # the jobs cannot swap (two vehicles could pick both up at the same instant).
+    with pytest.raises(LogisticsCpSatError) as caught:
+        solve_cpsat(data, time_limit=10, machine_plan=[[(0, 0), (1, 1)], [(1, 0), (0, 1)]])
+    assert caught.value.status == 'INFEASIBLE'
+    two = LogisticsInstance.create(crossing, layout(2, 1), num_vehicles=2, buffer_capacity=0)
+    assert solve_cpsat(two, time_limit=10, machine_plan=[[(0, 0), (1, 1)], [(1, 0), (0, 1)]]).solver_status == 'OPTIMAL'
+    serial = [[(1, 1), (0, 0)], [(1, 0), (0, 1)]]      # job 1 runs M1 then M0 before job 0 starts
+    result = solve_cpsat(data, time_limit=10, machine_plan=serial)
+    by_machine = {}
+    for r in sorted(result.production.records, key=lambda r: r.start):
+        by_machine.setdefault(r.machine_id, []).append((r.job_id, r.op_id))
+    assert [by_machine[0], by_machine[1]] == serial
+    with pytest.raises(ValueError):
+        solve_cpsat(data, time_limit=10, machine_plan=[[(0, 0)], [(1, 0), (0, 1)]])
+
+
+def test_decoupled_never_beats_the_joint_optimum():
+    from fjsp_lab.logistics.decoupled import DecoupledPlanInfeasible, solve_decoupled
+    production = create_toy_instance()
+    for blocking, buffer in ((False, None), (True, None), (True, 0)):
+        data = LogisticsInstance.create(production, layout(production.num_machines), num_vehicles=2,
+                                        buffer_capacity=buffer, blocking=blocking)
+        joint = solve_cpsat(data, time_limit=30)
+        assert joint.solver_status == 'OPTIMAL'
+        for lags in (False, True):
+            try:
+                schedule, plan = solve_decoupled(data, transport_lags=lags, time_limit=30)
+            except DecoupledPlanInfeasible:
+                continue
+            assert check_logistics_feasibility(schedule, data)[0] is True
+            assert schedule.makespan >= joint.makespan and plan.estimate <= schedule.makespan
+
+
+def test_decoupling_costs_nothing_when_transport_is_free():
+    from fjsp_lab.logistics.decoupled import solve_decoupled
+    production = create_toy_instance()
+    zero = [[0] * (production.num_machines + 1) for _ in range(production.num_machines + 1)]
+    data = LogisticsInstance.create(production, zero, num_vehicles=1, return_to_lu=False)
+    schedule, _ = solve_decoupled(data, transport_lags=False, time_limit=30)
+    assert schedule.makespan == solve_cpsat(data, time_limit=30).makespan

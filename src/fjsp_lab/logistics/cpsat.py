@@ -18,6 +18,10 @@ job (without blocking: until the operation ends, or the next operation starts
 if the job stays), the job uses one of the 1 + B places of the station
 (cumulative). Objective: minimize the makespan of docs/models/logistics_model_zh.md.
 
+With ``machine_plan`` (the ordered operations of every machine) the machine
+choices and orders are fixed and only vehicles and times are optimized: the
+second stage of the decoupled baseline in ``logistics.decoupled``.
+
 Only OPTIMAL is called optimal; FEASIBLE is a time-limited reference. The
 extracted schedule must pass the logistics checker.
 """
@@ -25,6 +29,7 @@ extracted schedule must pass the logistics checker.
 from __future__ import annotations
 
 import math
+from typing import Sequence
 
 from ortools.sat.python import cp_model
 
@@ -33,9 +38,15 @@ from fjsp_lab.logistics.feasibility import logistics_makespan, require_feasible
 from fjsp_lab.logistics.instance import LogisticsInstance
 from fjsp_lab.logistics.schedule import LogisticsSchedule, TransportRecord
 
+MachinePlan = Sequence[Sequence[tuple[int, int]]]     # machine -> its operations (job, op) in order
+
 
 class LogisticsCpSatError(RuntimeError):
-    """No accepted schedule could be extracted from this solver run."""
+    """No accepted schedule could be extracted from this solver run (``status``: solver status, if any)."""
+
+    def __init__(self, message: str, status: str | None = None):
+        super().__init__(message)
+        self.status = status
 
 
 def horizon(instance: LogisticsInstance) -> int:
@@ -47,10 +58,16 @@ def horizon(instance: LogisticsInstance) -> int:
 
 
 def solve_cpsat(instance: LogisticsInstance, *, time_limit: float = 10.0, num_workers: int = 1,
-                seed: int = 0) -> LogisticsSchedule:
+                seed: int = 0, machine_plan: MachinePlan | None = None) -> LogisticsSchedule:
     """Solve once; return the checker-accepted schedule with solver status and bound."""
     if not isinstance(instance, LogisticsInstance):
         raise ValueError('Expected a LogisticsInstance')
+    if machine_plan is not None:
+        planned = [(op, machine) for machine, ops in enumerate(machine_plan) for op in ops]
+        if (len(machine_plan) != instance.num_machines or len(planned) != instance.production.total_ops
+                or len({op for op, _ in planned}) != len(planned)
+                or not all(instance.production.is_machine_eligible(*op, machine) for op, machine in planned)):
+            raise ValueError('machine_plan must list every operation once, on an eligible machine')
     if type(time_limit) not in (int, float) or not math.isfinite(time_limit) or time_limit <= 0:
         raise ValueError('time_limit must be finite and positive')
     production, lu = instance.production, instance.lu
@@ -83,6 +100,10 @@ def solve_cpsat(instance: LogisticsInstance, *, time_limit: float = 10.0, num_wo
             model.Add(location[key] == sum(machine * choice[key, machine] for machine, _ in op.machine_options))
             if op.op_id > 0:
                 model.Add(start[key] >= end[job.job_id, op.op_id - 1])
+    if machine_plan is not None:
+        for machine, ops in enumerate(machine_plan):
+            for key in ops:
+                model.Add(choice[key, machine] == 1)
 
     # Trips.
     trips = []                       # (job, leg, needed, origin_var_or_int, destination_var_or_int, D, P, Q)
@@ -141,7 +162,7 @@ def solve_cpsat(instance: LogisticsInstance, *, time_limit: float = 10.0, num_wo
 
     # Blocking and buffers.
     trip_of = {(j, leg): trip for j, leg, *trip in trips}
-    occupation, places = [[] for _ in range(m)], [[] for _ in range(m)]
+    occupation, places, freed_at = [[] for _ in range(m)], [[] for _ in range(m)], {}
     for job in production.jobs:
         j, n = job.job_id, job.num_ops
         for o in range(n):
@@ -158,6 +179,7 @@ def solve_cpsat(instance: LogisticsInstance, *, time_limit: float = 10.0, num_wo
             else:
                 model.Add(release == end[j, o])
             freed = release if instance.blocking else end[j, o]   # end of the machine occupation
+            freed_at[j, o] = freed
             for machine, _ in job.operations[o].machine_options:
                 lit = choice[(j, o), machine]
                 hold = model.NewIntVar(0, H, f'h{j}_{o}_{machine}')
@@ -165,6 +187,10 @@ def solve_cpsat(instance: LogisticsInstance, *, time_limit: float = 10.0, num_wo
                 if instance.station_capacity(machine) is not None:
                     stay = model.NewIntVar(0, H, f'b{j}_{o}_{machine}')
                     places[machine].append(model.NewOptionalIntervalVar(reserve, stay, release, lit, f'b{j}_{o}_{machine}'))
+    if machine_plan is not None:                                    # keep each machine's order
+        for ops in machine_plan:
+            for a, b in zip(ops, ops[1:]):
+                model.Add(start[b] >= freed_at[a])
     for machine in range(m):
         model.AddNoOverlap(occupation[machine])
         if places[machine]:
@@ -183,7 +209,7 @@ def solve_cpsat(instance: LogisticsInstance, *, time_limit: float = 10.0, num_wo
     status = solver.Solve(model)
     name = solver.StatusName(status)
     if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-        raise LogisticsCpSatError(f'CP-SAT returned {name}; no schedule')
+        raise LogisticsCpSatError(f'CP-SAT returned {name}; no schedule', status=name)
     try:
         records = []
         for job in production.jobs:
