@@ -28,6 +28,7 @@ from dataclasses import dataclass
 import math
 import random
 import time
+from typing import Sequence
 
 from fjsp_lab.maintenance.feasibility import build_plan, require_feasible, validate_problem
 from fjsp_lab.maintenance.instance import ParallelMaintenanceInstance
@@ -61,12 +62,20 @@ class SearchOutcome:
 
 
 class TokenDecoder:
-    """Integer arrays and the list decoder for one instance and mode."""
+    """Integer arrays and the list decoder for one instance and mode.
+
+    A solution is a permutation of n job tokens (0..n-1) and one maintenance
+    token per window (n..). Names follow the model notation: ``p``/``d`` per
+    job; ``q``, ``lo`` (= L_ik), ``limit`` and ``fixed_start`` (= f_ik) per
+    machine and window.
+    """
 
     def __init__(self, data: ParallelMaintenanceInstance, mode: str, initial: list[list[int]] = ()):
         validate_problem(data, mode)
-        self.data, self.mode = data, mode
-        self.n, self.m = len(data.tasks), data.num_machines
+        self.data = data
+        self.mode = mode
+        self.n = len(data.tasks)
+        self.m = data.num_machines
         self.p = [task.processing_time for task in data.tasks]
         self.d = [task.due_date for task in data.tasks]
         fixed = mode == 'fixed'
@@ -90,9 +99,14 @@ class TokenDecoder:
     def _maintenance_start(self, machine: int, window: int, tail: int) -> int:
         return self.fixed_start[machine][window] if self.mode == 'fixed' else max(tail, self.lo[machine][window])
 
-    def decode(self, sequence, plan: bool = False):
-        """Total tardiness of a token sequence; with plan=True also the placements."""
+    def decode(self, sequence: Sequence[int], plan: bool = False) -> int | tuple[int, list, list]:
+        """Total tardiness of a token sequence; with plan=True also the placements.
+
+        The placements are (job, machine, start) and (machine, window, start) triples.
+        """
         self.evaluations += 1
+        # Local names: this loop runs once per search evaluation, and local
+        # lookups are noticeably faster than attribute lookups in CPython.
         n, m, p, d, q, limit = self.n, self.m, self.p, self.d, self.q, self.limit
         counts = [len(windows) for windows in q]
         tails, nxt = [0] * m, [0] * m
@@ -133,7 +147,7 @@ class TokenDecoder:
                 tails[machine] = start_m + q[machine][k]
         return (total, jobs, maintenance) if plan else total
 
-    def result(self, sequence) -> MaintenanceScheduleResult:
+    def result(self, sequence: Sequence[int]) -> MaintenanceScheduleResult:
         """Build, independently re-score and check the decoded plan."""
         total, jobs, maintenance = self.decode(sequence, plan=True)
         self.evaluations -= 1  # building the final plan is not a search evaluation

@@ -1,5 +1,11 @@
 """Finite schedule-construction environment (MDP) for rules and learned policies.
 
+Role: the job x machine MDP used by the EDD/MDD/ATC rules, the NumPy scoring
+policy and the single-window G3A runs. Its construction space provably
+contains an optimum (thesis chapter 2, proposition 2.8). The RL main method
+uses the decoder MDP in ``sequence_env`` instead (about n + m candidates per
+step rather than n x m).
+
 State: per-machine tail clock, which jobs are scheduled and, per machine, the
 next maintenance window still to be done. Actions for an instance with n jobs
 and m machines (no size cap):
@@ -24,7 +30,7 @@ from dataclasses import dataclass
 
 from fjsp_lab.maintenance.cpsat import numeric_domain_ok
 from fjsp_lab.maintenance.feasibility import build_plan, require_feasible, validate_problem
-from fjsp_lab.maintenance.instance import ParallelMaintenanceInstance
+from fjsp_lab.maintenance.instance import MaintenanceRequirement, ParallelMaintenanceInstance
 from fjsp_lab.maintenance.schedule import MaintenanceScheduleResult
 
 REWARD_SCALE = 100
@@ -81,7 +87,7 @@ class ParallelMaintenanceEnv:
     def done(self) -> bool:
         return self._status != 'ACTIVE'
 
-    def pending_window(self, machine: int):
+    def pending_window(self, machine: int) -> MaintenanceRequirement | None:
         """The machine's next maintenance window still to be done, or None."""
         windows = self.data.windows[machine]
         k = self._next_window[machine]

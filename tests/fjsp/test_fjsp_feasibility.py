@@ -4,7 +4,7 @@ from dataclasses import replace
 
 import pytest
 
-from fjsp_lab.fjsp import FJSPInstance, ScheduleResult, check_feasibility, create_toy_instance, decode_schedule
+from fjsp_lab.fjsp import FJSPInstance, ScheduleRecord, ScheduleResult, check_feasibility, create_toy_instance, decode_schedule
 
 
 def valid_schedule() -> ScheduleResult:
@@ -24,36 +24,35 @@ def test_valid_schedule_passes():
     assert passed and violations == []
 
 
+def with_records(result, records):
+    return replace(result, records=tuple(records), makespan=max(r.end for r in records))
+
+
 def mutate(index, **changes):
     result = valid_schedule()
-    result.records[index] = replace(result.records[index], **changes)
-    return result
+    records = list(result.records)
+    records[index] = replace(records[index], **changes)
+    return replace(result, records=tuple(records))
 
 
 def test_missing_and_duplicate_operation():
     result = valid_schedule()
-    result.records.pop()
-    assert {'OP_COUNT_MISMATCH', 'MISSING_OP'} <= codes(result)
-    result = valid_schedule()
-    result.records[-1] = replace(result.records[0])
-    assert 'DUPLICATE_OP' in codes(result)
+    assert {'OP_COUNT_MISMATCH', 'MISSING_OP'} <= codes(replace(result, records=result.records[:-1]))
+    assert 'DUPLICATE_OP' in codes(replace(result, records=result.records[:-1] + result.records[:1]))
 
 
 def test_precedence_violation():
     result = valid_schedule()
     second = next(i for i, r in enumerate(result.records) if (r.job_id, r.op_id) == (0, 1))
-    record = result.records[second]
-    result.records[second] = replace(record, start=0, end=record.processing_time)
-    result.compute_makespan()
-    assert 'PRECEDENCE_VIOLATION' in codes(result)
+    records = list(result.records)
+    records[second] = replace(records[second], start=0, end=records[second].processing_time)
+    assert 'PRECEDENCE_VIOLATION' in codes(with_records(result, records))
 
 
 def test_machine_overlap():
     instance = FJSPInstance.from_jobs_array([[[(0, 3)]], [[(0, 2)]]])
-    result = ScheduleResult(instance=instance)
-    result.add_record(0, 0, 0, 0, 3)
-    result.add_record(1, 0, 0, 2, 2)
-    result.compute_makespan()
+    result = ScheduleResult.from_records(
+        [ScheduleRecord.placed(0, 0, 0, 0, 3), ScheduleRecord.placed(1, 0, 0, 2, 2)], instance=instance)
     assert 'MACHINE_OVERLAP' in codes(result)
 
 
@@ -67,8 +66,7 @@ def test_ineligible_machine_and_wrong_durations():
 
 def test_makespan_must_match():
     result = valid_schedule()
-    result.makespan += 1
-    assert 'MAKESPAN_MISMATCH' in codes(result)
+    assert 'MAKESPAN_MISMATCH' in codes(replace(result, makespan=result.makespan + 1))
 
 
 @pytest.mark.parametrize('field, value', [('start', 1.0), ('end', True), ('job_id', '0')])
@@ -80,8 +78,16 @@ def test_result_must_reference_the_expected_instance():
     result = valid_schedule()
     other = FJSPInstance.from_jobs_array([[[(0, 3)]]])
     assert 'INSTANCE_MISMATCH' in codes(result, expected_instance=other)
-    result.instance = None
-    assert codes(result) == {'NO_INSTANCE'}
+    assert codes(replace(result, instance=None)) == {'NO_INSTANCE'}
+
+
+def test_results_cannot_be_changed_after_construction():
+    result = valid_schedule()
+    assert isinstance(result.records, tuple)
+    with pytest.raises(AttributeError):
+        result.makespan = 0
+    with pytest.raises(AttributeError):
+        result.records[0].start = 5
 
 
 def test_empty_schedule_is_infeasible():

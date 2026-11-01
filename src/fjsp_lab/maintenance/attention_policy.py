@@ -6,9 +6,11 @@ never enter the softmax, so every finished episode is a checker-accepted plan
 from the environment. Episodes run in lockstep so one forward pass serves
 every active environment. Two MDPs are supported (``PolicyConfig.kind``):
 
-* ``'action'``: ``env.ParallelMaintenanceEnv`` (job x machine actions, 19 features);
 * ``'sequence'``: ``sequence_env.SequenceEnv`` (next decoder token, 20 features),
-  which keeps the candidate set at about n + m for large instances.
+  which keeps the candidate set at about n + m for large instances. **This is
+  the thesis main method** (G4, periodic windows, n up to 100).
+* ``'action'``: ``env.ParallelMaintenanceEnv`` (job x machine actions, 19 features);
+  used only for the earlier single-window G3A runs, kept to reproduce them.
 
 Training: behaviour cloning on teacher states (replayed once, possibly in
 parallel processes, then shuffled into large state mini-batches), then
@@ -23,7 +25,7 @@ This module needs PyTorch; the rest of the project does not import it.
 
 from __future__ import annotations
 
-from contextlib import nullcontext
+from contextlib import AbstractContextManager, nullcontext
 from dataclasses import dataclass
 import hashlib
 from pathlib import Path
@@ -71,7 +73,7 @@ class AttentionPolicy(nn.Module):
         return self.head(hidden).squeeze(-1).masked_fill(padding, float('-inf'))
 
 
-def make_env(kind: str, data: ParallelMaintenanceInstance, mode: str):
+def make_env(kind: str, data: ParallelMaintenanceInstance, mode: str) -> ParallelMaintenanceEnv | SequenceEnv:
     if kind == 'action':
         return ParallelMaintenanceEnv(data, mode=mode)
     if kind == 'sequence':
@@ -79,11 +81,11 @@ def make_env(kind: str, data: ParallelMaintenanceInstance, mode: str):
     raise ValueError("kind must be 'action' or 'sequence'")
 
 
-def candidates(env) -> tuple[list[int], np.ndarray]:
+def candidates(env: ParallelMaintenanceEnv | SequenceEnv) -> tuple[list[int], np.ndarray]:
     return action_candidates(env) if isinstance(env, ParallelMaintenanceEnv) else env.candidates()
 
 
-def precision(device) -> object:
+def precision(device: torch.device | str) -> AbstractContextManager:
     """bf16 autocast on CUDA (softmax and losses stay in float32); full precision on the CPU."""
     return torch.autocast('cuda', dtype=torch.bfloat16) if str(device).startswith('cuda') else nullcontext()
 
@@ -153,7 +155,7 @@ class StateDataset:
         return cls(np.concatenate(arrays).astype(np.float16), np.concatenate(([0], np.cumsum(sizes))),
                    np.array([t for _, targets in parts for t in targets], dtype=np.int64))
 
-    def batch(self, indices: np.ndarray, device) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    def batch(self, indices: np.ndarray, device: torch.device | str) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         states = [self.rows[self.offsets[i]:self.offsets[i + 1]] for i in indices]
         features, padding = _batch(states, device)
         return features, padding, torch.from_numpy(self.targets[indices]).to(device)

@@ -16,6 +16,7 @@ requires bound == T == objective. T, not the objective, is the reported metric.
 from __future__ import annotations
 
 import math
+from dataclasses import replace
 
 from ortools.sat.python import cp_model
 
@@ -137,13 +138,13 @@ def solve_cpsat(data: ParallelMaintenanceInstance, *, mode: str, time_limit: flo
                 raise CpSatError('Extracted production duration mismatch')
             jobs.append((task.job_id, selected[0], start))
         result = build_plan(data, jobs, [(machine, k, solver.Value(start)) for (machine, k), start in maintenance.items()])
-        result.solver_status = name
-        result.solver_objective_value = float(solver.ObjectiveValue())
-        result.solver_objective_bound = float(solver.BestObjectiveBound())
-        result.solver_wall_time = float(solver.WallTime())
+        objective = float(solver.ObjectiveValue())
+        bound = float(solver.BestObjectiveBound())
         total = result.total_tardiness
-        check_objective_metadata(name, result.solver_objective_value, result.solver_objective_bound, total)
-        result.solver_gap = (total - result.solver_objective_bound) / max(1.0, total)
+        check_objective_metadata(name, objective, bound, total)
+        result = replace(result, solver_status=name, solver_objective_value=objective, solver_objective_bound=bound,
+                         solver_wall_time=float(solver.WallTime()),
+                         solver_gap=(total - bound) / max(1.0, total))
         return require_feasible(result, data, mode=mode, source='CP-SAT')
     except CpSatError:
         raise

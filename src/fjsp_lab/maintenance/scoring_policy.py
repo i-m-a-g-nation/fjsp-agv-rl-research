@@ -1,5 +1,11 @@
 """Per-action scoring MLP (NumPy), trained by behaviour cloning then REINFORCE.
 
+Role: **early comparison, not the thesis method.** It produced the archived
+single-window results exp_036-041 (``experiments/g2_scoring_policy.py``,
+``g4_comparison.py``) and is kept so they stay reproducible. The thesis
+method is the attention policy on the decoder MDP (``attention_policy``,
+kind ``'sequence'``).
+
 score(a) = w2 . tanh(W1 x_a + b1); the policy is a softmax over the legal
 actions only, so masked actions never receive probability or gradient.
 Every returned plan comes from the construction environment, which checks it.
@@ -18,6 +24,7 @@ import io
 import math
 from pathlib import Path
 import statistics
+from typing import Callable
 
 import numpy as np
 
@@ -234,7 +241,8 @@ def reinforce_epoch(policy: ScoringPolicy, instances: list[SampledInstance], *, 
 
 def train(train_set: list[SampledInstance], val_set: list[SampledInstance], *, seed: int, hidden_size: int = 32,
           bc_epochs: int = 15, bc_learning_rate: float = 3e-3, rl_epochs: int = 12,
-          rl_learning_rate: float = 1e-3, log=None) -> tuple[ScoringPolicy, list[dict]]:
+          rl_learning_rate: float = 1e-3,
+          log: Callable[[dict], None] | None = None) -> tuple[ScoringPolicy, list[dict]]:
     """Train and return the policy restored to its best validation checkpoint plus the log."""
     rng = np.random.default_rng(seed)
     policy = ScoringPolicy(seed=seed, hidden_size=hidden_size)

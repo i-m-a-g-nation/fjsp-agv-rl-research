@@ -22,6 +22,7 @@ from dataclasses import dataclass
 import hashlib
 from itertools import product
 import random
+from typing import Sequence
 
 from fjsp_lab.maintenance.instance import MaintenanceRequirement, ParallelMaintenanceInstance, ProductionTask
 
@@ -127,7 +128,8 @@ class SampledInstance:
     seed: int
 
 
-def sample_instances(seeds: range, *, sampler_seed: int, sizes=SIZES, balanced: bool = False) -> list[SampledInstance]:
+def sample_instances(seeds: range, *, sampler_seed: int, sizes: Sequence[tuple[int, int]] = SIZES,
+                     balanced: bool = False) -> list[SampledInstance]:
     """Draw size, factors and mode per instance seed (balanced cycles through the sizes)."""
     rng = random.Random(sampler_seed)
     instances = []
@@ -223,8 +225,10 @@ def periodic_case(n: int, m: int, profile: str, alpha: int, beta: int, tau: int,
                         seed, build_periodic_instance(n, m, cycle_counts(profile, m), alpha, beta, tau, seed))
 
 
-def sample_periodic_instances(seeds: range, *, sampler_seed: int, sizes, profiles=CYCLE_PROFILES,
-                              alphas=(10, 20), betas=(25, 50), taus=(75, 125)) -> list[SampledInstance]:
+def sample_periodic_instances(seeds: range, *, sampler_seed: int, sizes: Sequence[tuple[int, int]],
+                              profiles: Sequence[str] = CYCLE_PROFILES, alphas: Sequence[int] = (10, 20),
+                              betas: Sequence[int] = (25, 50), taus: Sequence[int] = (75, 125)
+                              ) -> list[SampledInstance]:
     """Draw size, cycle profile, factors and mode per instance seed (learning sets)."""
     rng = random.Random(sampler_seed)
     instances = []

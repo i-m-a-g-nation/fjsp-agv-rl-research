@@ -32,8 +32,7 @@ def reschedule_from_state(
     _validate_frozen_records(state, frozen)
 
     instance = state.instance
-    result = ScheduleResult(instance=instance)
-    result.records.extend(sorted(frozen, key=lambda r: (r.start, r.machine_id, r.job_id, r.op_id)))
+    records = sorted(frozen, key=lambda r: (r.start, r.machine_id, r.job_id, r.op_id))
 
     job_next_op = {job.job_id: 0 for job in instance.jobs}
     job_ready_time = {
@@ -86,12 +85,12 @@ def reschedule_from_state(
 
         selected = _select_candidate(candidates, rule)
         job_id, op_id, machine_id, _ready_time, start, finish, processing_time = selected
-        result.add_record(job_id, op_id, machine_id, start, processing_time)
+        records.append(ScheduleRecord.placed(job_id, op_id, machine_id, start, processing_time))
         job_next_op[job_id] += 1
         job_ready_time[job_id] = finish
         machine_ready_time[machine_id] = finish
 
-    result.compute_makespan()
+    result = ScheduleResult.from_records(records, instance=instance)
     feasible, violations = check_feasibility(result, expected_instance=instance)
     if not feasible:
         raise RuntimeError(f"dynamic reschedule produced infeasible schedule: {violations}")

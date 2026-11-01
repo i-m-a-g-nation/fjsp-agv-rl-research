@@ -8,6 +8,7 @@ Used only to cross-check the CP-SAT model on small cases.
 
 from __future__ import annotations
 
+from dataclasses import replace
 from itertools import combinations_with_replacement, permutations, product
 from math import prod
 from time import perf_counter
@@ -90,7 +91,7 @@ def enumerate_parallel_maintenance(data: ParallelMaintenanceInstance, *, mode: s
     result = build_plan(data, best_records, [(machine, k, s) for (machine, k), s in zip(keys, best_maintenance)])
     if result.total_tardiness != best_total:
         raise RuntimeError('Enumerated tardiness differs from independent recomputation')
-    result.solver_status = 'OPTIMAL'
-    result.solver_objective_value = result.solver_objective_bound = float(best_total)
-    result.solver_gap, result.solver_wall_time = 0.0, perf_counter() - started
+    result = replace(result, solver_status='OPTIMAL', solver_objective_value=float(best_total),
+                     solver_objective_bound=float(best_total), solver_gap=0.0,
+                     solver_wall_time=perf_counter() - started)
     return require_feasible(result, data, mode=mode, source='Enumeration')

@@ -2,14 +2,17 @@
 
 Modules, from data to methods:
 
-* ``instance``, ``schedule``: immutable inputs and the plan type;
+* ``instance``, ``schedule``: immutable inputs and the immutable plan type;
 * ``feasibility``: the checker every plan must pass;
-* ``generator``: deterministic G3A instances and learning splits;
+* ``generator``: deterministic G3A (single window) and G4 (periodic) instances and learning splits;
 * ``cpsat``, ``enumeration``: exact reference (CP-SAT) and tiny brute-force oracle;
-* ``env``, ``rules``: construction MDP and EDD/MDD/ATC dispatching;
+* ``env``, ``rules``: job x machine construction MDP and EDD/MDD/ATC dispatching;
 * ``metaheuristics``: GA, SA and improved GA on a token-sequence decoder;
-* ``features``, ``scoring_policy``, ``attention_policy``: learned constructive
-  policies (NumPy MLP; PyTorch Transformer, imported separately).
+* ``sequence_env``: construction MDP over that decoder;
+* ``attention_policy``: **thesis main method** — PyTorch attention policy on
+  ``sequence_env`` (imported separately, needs PyTorch);
+* ``features``, ``scoring_policy``: per-action features and the NumPy scoring
+  MLP, an early comparison kept to reproduce the archived single-window runs.
 """
 
 from fjsp_lab.maintenance.feasibility import (

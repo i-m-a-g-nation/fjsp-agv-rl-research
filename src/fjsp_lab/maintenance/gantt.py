@@ -13,6 +13,7 @@ from pathlib import Path
 import matplotlib
 matplotlib.use('Agg')
 
+from matplotlib.axes import Axes
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 
@@ -23,7 +24,7 @@ from fjsp_lab.maintenance.schedule import MaintenanceScheduleResult
 ON_TIME, TARDY, MAINTENANCE, WINDOW = '#4c72b0', '#c44e52', '#555555', '#e8e8e8'
 
 
-def draw_plan(ax, result: MaintenanceScheduleResult, data: ParallelMaintenanceInstance, *, mode: str,
+def draw_plan(ax: Axes, result: MaintenanceScheduleResult, data: ParallelMaintenanceInstance, *, mode: str,
               title: str = '', horizon: float | None = None, labels: bool | None = None) -> None:
     """Draw one checker-accepted plan on a matplotlib axis."""
     require_feasible(result, data, mode=mode, source='Gantt input')

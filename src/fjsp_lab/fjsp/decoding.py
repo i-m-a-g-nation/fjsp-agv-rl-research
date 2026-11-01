@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Dict, List, Tuple
 
 from fjsp_lab.fjsp.instance import FJSPInstance, validate_instance
-from fjsp_lab.fjsp.schedule import ScheduleResult
+from fjsp_lab.fjsp.schedule import ScheduleRecord, ScheduleResult
 
 
 def decode_schedule(
@@ -47,7 +47,7 @@ def decode_schedule(
             raise ValueError(f"assignment row {index}: machine {machine_id} is ineligible")
         next_op[job_id] += 1
 
-    result = ScheduleResult(instance=instance)
+    records: List[ScheduleRecord] = []
 
     # job_next_start stores the finish time of the latest scheduled operation
     # for each job, enforcing route precedence during placement.
@@ -65,11 +65,10 @@ def decode_schedule(
         start = max(job_next_start[job_id], machine_next_available[machine_id])
         end = start + pt
 
-        result.add_record(job_id, op_id, machine_id, start, pt)
+        records.append(ScheduleRecord.placed(job_id, op_id, machine_id, start, pt))
 
         # Advance both resources touched by this operation.
         job_next_start[job_id] = end
         machine_next_available[machine_id] = end
 
-    result.compute_makespan()
-    return result
+    return ScheduleResult.from_records(records, instance=instance)

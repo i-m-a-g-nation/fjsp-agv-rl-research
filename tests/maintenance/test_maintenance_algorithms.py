@@ -3,6 +3,7 @@
 import copy
 import itertools
 import random
+from dataclasses import replace
 
 import numpy as np
 import pytest
@@ -127,8 +128,7 @@ def test_metaheuristic_plans_replay_through_the_environment(mode, fixture, reque
     data = request.getfixturevalue(fixture)
     outcome = solve_metaheuristic(data, mode=mode, algorithm='IGA', evaluations=300)
     assert len(actions_for_plan(outcome.result, data, mode)) == data.num_tasks + data.num_windows
-    tampered = outcome.result
-    tampered.total_tardiness += 1
+    tampered = replace(outcome.result, total_tardiness=outcome.result.total_tardiness + 1)
     with pytest.raises(ValueError):
         actions_for_plan(tampered, data, mode)
 
@@ -168,7 +168,7 @@ def test_gantt_draws_accepted_plans_and_refuses_infeasible_ones(periodic, tmp_pa
                     for mode in MODES)
     plot_fixed_vs_joint(periodic, fixed, joint, tmp_path / 'g.png')
     assert (tmp_path / 'g.png').read_bytes()[:4] == b'\x89PNG'
-    joint.total_tardiness += 1
+    joint = replace(joint, total_tardiness=joint.total_tardiness + 1)
     with pytest.raises(InfeasiblePlanError):
         plot_fixed_vs_joint(periodic, fixed, joint, tmp_path / 'bad.png')
 

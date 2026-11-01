@@ -16,7 +16,8 @@ Nothing is repaired or filled in; invalid plans yield violations.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+from typing import Iterable
 
 from fjsp_lab.fjsp.feasibility import check_feasibility
 from fjsp_lab.fjsp.instance import FJSPInstance
@@ -157,18 +158,18 @@ def validate_problem(data: ParallelMaintenanceInstance, mode: str) -> None:
         raise ValueError('fixed mode requires fixed_start for every maintenance window')
 
 
-def build_plan(data: ParallelMaintenanceInstance, jobs, maintenance_starts) -> MaintenanceScheduleResult:
+def build_plan(data: ParallelMaintenanceInstance, jobs: Iterable[tuple[int, int, int]],
+               maintenance_starts: Iterable[tuple[int, int, int]]) -> MaintenanceScheduleResult:
     """Assemble a plan from (job, machine, start) and (machine, window, start) placements.
 
     Fills makespan and total tardiness; the caller still has to run the checker.
     """
-    result = MaintenanceScheduleResult(instance=to_fjsp_instance(data))
-    for job, machine, start in jobs:
-        result.add_record(job, 0, machine, start, data.tasks[job].processing_time)
-    result.maintenance_records = []
+    records = [ScheduleRecord.placed(job, 0, machine, start, data.tasks[job].processing_time)
+               for job, machine, start in jobs]
+    maintenance = []
     for machine, window, start in sorted(maintenance_starts):
         duration = data.windows[machine][window].duration
-        result.maintenance_records.append(MaintenanceRecord(machine, start, start + duration, duration, window))
-    result.compute_makespan()
-    result.total_tardiness = calculate_total_tardiness(data, result)
-    return result
+        maintenance.append(MaintenanceRecord(machine, start, start + duration, duration, window))
+    result = MaintenanceScheduleResult.from_records(
+        records, instance=to_fjsp_instance(data), maintenance_records=tuple(maintenance))
+    return replace(result, total_tardiness=calculate_total_tardiness(data, result))

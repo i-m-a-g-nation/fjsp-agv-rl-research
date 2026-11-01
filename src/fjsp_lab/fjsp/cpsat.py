@@ -14,7 +14,7 @@ from typing import Tuple
 from ortools.sat.python import cp_model
 
 from fjsp_lab.fjsp.instance import FJSPInstance, validate_instance
-from fjsp_lab.fjsp.schedule import ScheduleResult
+from fjsp_lab.fjsp.schedule import ScheduleRecord, ScheduleResult
 from fjsp_lab.fjsp.feasibility import check_feasibility
 
 
@@ -183,13 +183,7 @@ def _extract_result(
     """Extract and validate a ScheduleResult from a CP-SAT solution."""
 
     solver_status = "OPTIMAL" if status_name == "OPTIMAL" else "FEASIBLE"
-    result = ScheduleResult(
-        instance=instance,
-        solver_status=solver_status,
-        solver_objective_bound=float(solver.BestObjectiveBound()),
-        solver_wall_time=float(solver.WallTime()),
-        solver_config=solver_config,
-    )
+    records: list[ScheduleRecord] = []
 
     # Extract exactly the active interval for each operation and convert it to
     # the common ScheduleResult representation used by all solvers.
@@ -205,7 +199,7 @@ def _extract_result(
                             f"Job {j_id} Op {o_id} Machine {m_id}: "
                             f"end={end_val} != start={start_val} + pt={pt}"
                         )
-                    result.add_record(j_id, o_id, m_id, start=start_val, processing_time=pt)
+                    records.append(ScheduleRecord.placed(j_id, o_id, m_id, start_val, pt))
                     assigned = True
                     break
             if not assigned:
@@ -213,10 +207,20 @@ def _extract_result(
                     f"Job {j_id} Op {o_id}: no machine assigned by solver"
                 )
 
-    result.compute_makespan()
-    if result.solver_objective_bound is not None and math.isfinite(result.solver_objective_bound):
-        gap = (float(result.makespan) - result.solver_objective_bound) / max(1.0, abs(float(result.makespan)))
-        result.solver_gap = max(0.0, gap)
+    bound = float(solver.BestObjectiveBound())
+    makespan = max((r.end for r in records), default=0)
+    gap = None
+    if math.isfinite(bound):
+        gap = max(0.0, (float(makespan) - bound) / max(1.0, abs(float(makespan))))
+    result = ScheduleResult.from_records(
+        records,
+        instance=instance,
+        solver_status=solver_status,
+        solver_objective_bound=bound,
+        solver_gap=gap,
+        solver_wall_time=float(solver.WallTime()),
+        solver_config=solver_config,
+    )
 
     # CP-SAT constraints and the independent feasibility checker should agree.
     # Keeping both checks makes model mistakes visible during development.

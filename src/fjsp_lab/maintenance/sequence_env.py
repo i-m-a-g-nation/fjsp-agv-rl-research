@@ -1,5 +1,10 @@
 """Construction MDP over the metaheuristic token decoder (used by RL on large instances).
 
+Role: the MDP of the thesis main method (attention policy, kind ``'sequence'``).
+Unlike ``env.ParallelMaintenanceEnv`` the machine is chosen by the decoder's
+earliest-completion rule, so whether this space always contains an optimum is
+not proven; it has only been checked exhaustively on tiny instances.
+
 An episode builds a token sequence for ``TokenDecoder`` one token at a time:
 
 * a job token places the job on the machine where it completes earliest;
@@ -34,7 +39,13 @@ SEQUENCE_FEATURE_NAMES = (
     'maintenance_idle', 'maintenance_slack', 'windows_left', 'machine_load', 'jobs_fitting_before',
 )
 SEQUENCE_FEATURE_COUNT = len(SEQUENCE_FEATURE_NAMES)
+SEQUENCE_COLUMN = {name: index for index, name in enumerate(SEQUENCE_FEATURE_NAMES)}   # name -> column
 CLIP = 5.0
+
+
+def _padded(rows: list[list[int]], width: int) -> np.ndarray:
+    """Rows of unequal length (one per machine) as an int64 matrix, padded with zeros to ``width``."""
+    return np.array([row + [0] * (width - len(row)) for row in rows], dtype=np.int64)
 
 
 class SequenceEpisodeError(RuntimeError):
@@ -48,21 +59,34 @@ class SequenceStep:
 
 
 class SequenceEnv:
+    """Token-by-token construction over ``TokenDecoder``, vectorized with NumPy.
+
+    Array names follow the model notation: ``p``/``d`` processing times and
+    due dates per job; per machine i and window k, ``q[i, k]`` duration,
+    ``lo[i, k]`` window start L_ik, ``limit[i, k]`` latest end of a job run
+    before that maintenance, ``fixed[i, k]`` the fixed start f_ik. Window
+    matrices are zero-padded; ``counts[i]`` = K_i says how many are real.
+    """
+
     def __init__(self, data: ParallelMaintenanceInstance, *, mode: str):
         self.decoder = TokenDecoder(data, mode)
-        self.data, self.mode = data, mode
-        d = self.decoder
-        self.n, self.m = d.n, d.m
-        self.p, self.d = np.array(d.p, dtype=np.int64), np.array(d.d, dtype=np.int64)
-        self.counts = np.array([len(w) for w in d.q], dtype=np.int64)
-        kmax = int(self.counts.max())
-        pad = lambda rows, fill: np.array([row + [fill] * (kmax - len(row)) for row in rows], dtype=np.int64)
-        self.q, self.limit = pad(d.q, 0), pad(d.limit, 0)
-        self.lo = pad(d.lo, 0)
-        self.fixed = pad([[f if f is not None else 0 for f in row] for row in d.fixed_start], 0)
+        self.data = data
+        self.mode = mode
+        decoder = self.decoder
+        self.n = decoder.n
+        self.m = decoder.m
+        self.p = np.array(decoder.p, dtype=np.int64)
+        self.d = np.array(decoder.d, dtype=np.int64)
+        self.counts = np.array([len(windows) for windows in decoder.q], dtype=np.int64)
+        width = int(self.counts.max())
+        self.q = _padded(decoder.q, width)
+        self.limit = _padded(decoder.limit, width)
+        self.lo = _padded(decoder.lo, width)
+        self.fixed = _padded([[f if f is not None else 0 for f in row] for row in decoder.fixed_start], width)
+        # Token of window 0 of each machine; window k of machine i is first_token[i] + k.
         self.first_token = np.concatenate(([0], np.cumsum(self.counts)[:-1])) + self.n
-        self.scale = (int(self.p.sum()) + self.m - 1) // self.m
-        self.pbar = statistics.fmean(d.p)
+        self.scale = (int(self.p.sum()) + self.m - 1) // self.m       # base load S = ceil(sum p / m)
+        self.pbar = statistics.fmean(decoder.p)
         self.reset()
 
     def reset(self) -> None:
@@ -153,40 +177,40 @@ class SequenceEnv:
         rows = np.zeros((len(legal), SEQUENCE_FEATURE_COUNT))
         remaining_p = self.p[jobs]
         min_tail = int(self.tails.min())
-        rows[:, 12] = 1.0 if self.mode == 'joint' else 0.0
-        rows[:, 13] = len(jobs) / self.n
-        rows[:, 14] = remaining_p.sum() / self.m / self.scale
+        rows[:, SEQUENCE_COLUMN['joint_mode']] = 1.0 if self.mode == 'joint' else 0.0
+        rows[:, SEQUENCE_COLUMN['jobs_remaining']] = len(jobs) / self.n
+        rows[:, SEQUENCE_COLUMN['work_per_machine']] = remaining_p.sum() / self.m / self.scale
         if len(jobs):
             start, machine, forced = self._placements(jobs)
             p, d = remaining_p, self.d[jobs]
             finish = start + p
             x = rows[:len(jobs)]
-            x[:, 0] = 1.0
-            x[:, 1] = p / self.pbar
-            x[:, 2] = (d - finish) / self.scale
-            x[:, 3] = np.maximum(0, finish - d) / self.scale
-            x[:, 4] = (np.maximum(d, finish) - min_tail) / self.scale
-            x[:, 5] = np.fromiter((math.exp(v) for v in (-np.maximum(0, d - finish) / self.pbar)), float,
+            x[:, SEQUENCE_COLUMN['is_job']] = 1.0
+            x[:, SEQUENCE_COLUMN['p_over_mean']] = p / self.pbar
+            x[:, SEQUENCE_COLUMN['slack_after']] = (d - finish) / self.scale
+            x[:, SEQUENCE_COLUMN['tardiness_if_now']] = np.maximum(0, finish - d) / self.scale
+            x[:, SEQUENCE_COLUMN['mdd_key']] = (np.maximum(d, finish) - min_tail) / self.scale
+            x[:, SEQUENCE_COLUMN['atc_index']] = np.fromiter((math.exp(v) for v in (-np.maximum(0, d - finish) / self.pbar)), float,
                                   len(jobs)) * self.pbar / p
-            x[:, 6] = (start - min_tail) / self.scale
-            x[:, 7] = (forced > 0).astype(float)
-            x[:, 8] = (start - self.tails[machine]) / self.scale
+            x[:, SEQUENCE_COLUMN['start_delay']] = (start - min_tail) / self.scale
+            x[:, SEQUENCE_COLUMN['forces_maintenance']] = (forced > 0).astype(float)
+            x[:, SEQUENCE_COLUMN['lost_time']] = (start - self.tails[machine]) / self.scale
             span = max(1, len(jobs) - 1)
-            x[:, 9] = np.searchsorted(np.sort(d), d, side='left') / span
-            x[:, 10] = np.searchsorted(np.sort(p), p, side='left') / span
+            x[:, SEQUENCE_COLUMN['due_rank']] = np.searchsorted(np.sort(d), d, side='left') / span
+            x[:, SEQUENCE_COLUMN['processing_rank']] = np.searchsorted(np.sort(p), p, side='left') / span
         if len(machines):
             k = self.nxt[machines]
             tails = self.tails[machines]
             begin = self._maintenance_start(machines, k, tails)
             y = rows[len(jobs):]
-            y[:, 11] = 1.0
-            y[:, 15] = (begin - tails) / self.scale
-            y[:, 16] = (self.limit[machines, k] - tails) / self.scale
-            y[:, 17] = (self.counts[machines] - k) / self.counts.max()
-            y[:, 18] = (tails - min_tail) / self.scale
+            y[:, SEQUENCE_COLUMN['is_maintenance']] = 1.0
+            y[:, SEQUENCE_COLUMN['maintenance_idle']] = (begin - tails) / self.scale
+            y[:, SEQUENCE_COLUMN['maintenance_slack']] = (self.limit[machines, k] - tails) / self.scale
+            y[:, SEQUENCE_COLUMN['windows_left']] = (self.counts[machines] - k) / self.counts.max()
+            y[:, SEQUENCE_COLUMN['machine_load']] = (tails - min_tail) / self.scale
             if len(jobs):
                 fits = tails[:, None] + remaining_p[None, :] <= self.limit[machines, k][:, None]
-                y[:, 19] = fits.mean(axis=1)
+                y[:, SEQUENCE_COLUMN['jobs_fitting_before']] = fits.mean(axis=1)
         np.clip(rows, -CLIP, CLIP, out=rows)
         return legal, rows
 
