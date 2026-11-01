@@ -20,6 +20,7 @@
 | `g8_g4_policy_curves.py` | G4：注意力策略单实例计时（GPU 贪心 + 采样 4/16/64；CPU 贪心 + 采样 4） | PyTorch | ~20 min |
 | `g9_g4_summary.py` | G4：质量—时间曲线、H1–H3、探索性分组检验、曲线图 | 项目 | <1 min |
 | `g10_gantt_examples.py` | 甘特图示例：每种规模选协同降幅为中位数的案例（规则先定后画），画 IGA 的固定与联合两种方案 | 项目 | ~1 min |
+| `l1_benchmark.py` | 大创 L1：Deroussi & Norre 10 个 FJSPT 算例；参考解重放；CP-SAT 60 s × 8 线程与联合/解耦/随机规则，在基准约定和"阻塞 + 输入缓冲 ∞/2/1/0"下对比。需本地数据 `instances/external/FJSPT`（无许可证，不入库） | 项目 | ≤50 min |
 
 实例划分（`fjsp_lab.maintenance.generator.SPLITS`）按种子区间互不重叠：训练 10000–11999、验证 20000–20199、
 测试 30000–30599（6 种规模各 100）、教师训练 100000–119999。测试集只在训练结束后使用一次。

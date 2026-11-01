@@ -32,10 +32,15 @@
 | Phase 1 静态 FJSP | 实例/读取、7 条规则、CP-SAT、检查器、甘特图；30 个 FJSPLib 实例；极端输入回归测试 | —（维护中） |
 | Phase 2A 动态 | 三类事件、冻结、基线重调度、动态检查器；243 次协议运行全部通过 | 物流/AGV 等扩展 |
 | 毕设（平行机 + 维护） | 单窗口与周期性多窗口模型、检查器、CP-SAT（与枚举核对）、EDD/MDD/ATC、GA/SA/IGA、NumPy 打分策略、注意力策略（解码器 MDP）；G3A 与 G4 实验；甘特图示例；论文大纲（RL 主线） | 导师确认、消融（需批准）、文献、论文正文 |
-| 大创（生产—物流协同） | L1（2026-11-01 获批）：[物流模型](docs/models/logistics_model_zh.md)、`fjsp_lab.logistics`（算例读取、协同检查器、事件仿真器、联合/解耦规则、CP-SAT）；建模决策与两轮查新 | L1 基准对齐与缓冲实验（需下载 FJSPT 算例）；动态事件、RL（需批准）；论文 |
+| 大创（生产—物流协同） | L1（2026-11-01 获批）：[物流模型](docs/models/logistics_model_zh.md)、`fjsp_lab.logistics`（算例读取、协同检查器、事件仿真器、联合/解耦规则、CP-SAT）；建模决策与两轮查新；[基准对齐与缓冲实验](experiments/results/l1_benchmark/findings.md) | 解耦优化对照、更大算例；动态事件、RL（需批准）；论文 |
 
 ## 关键结果
 
+- **大创 L1**（[findings](experiments/results/l1_benchmark/findings.md)）：
+  - 模型语义与公开 FJSPT 基准对齐：Deroussi & Norre 的 10 个参考解重放后全部复现报告值；
+  - CP-SAT 在 9 个算例上证得与参考值相同的最优值；fjsp7 找到 108，比公开的 112 更好（最优值在 [104, 108]）；
+  - 阻塞 + 无缓冲使最优值平均上升 6.8%–12.8%，B ≥ 1 时影响不到约 1%（算例小）；
+  - 规则比 CP-SAT 差 24%–51%；联合贪心规则 EFT 不优于解耦规则（探索性）。
 - **固定 vs 联合维护**：
   - G3A 中 n=8 证得最优，联合维护降低约 30%–56%（[exp_035](experiments/archive/exp_035_graduation_main_v2_v1/findings.md)）；
   - G4 中 n=20/50/100 平均降低 49%/11%/7%，窗口越宽收益越大。
@@ -58,8 +63,9 @@
    - 文献补充（含知网）；
    - 写正文。
 2. **大创**：L1 代码已完成（[物流模型](docs/models/logistics_model_zh.md)；建模依据见[建模决策建议](docs/plans/innovation_modeling_decisions.md)，查新见[查新报告](docs/plans/innovation_novelty_search.md)）。接下来：
-   - 经用户同意后，把 Deroussi & Norre 的 FJSPT 算例下载到 `instances/external/`，用公开参考值核对模型语义（L/U 编号约定等）；
-   - 在基准算例上做缓冲容量实验（B = ∞/2/1/0，CP-SAT + 联合/解耦规则 + 死锁率）；
+   - 基准对齐与缓冲实验已完成（见关键结果），算例在本地 `instances/external/FJSPT`（无许可证，不入库）；
+   - 下一步建议：加一个**解耦优化**对照（先排机器、再只优化车辆），才能按研究计划测量"联合与解耦的差距"；
+     用更大的算例（工件更多、机器负荷更高）研究缓冲，因为 10 个小算例在 B ≥ 1 时缓冲几乎不起作用；
    - 之后的动态事件与 RL 阶段需单独批准。用户希望 2027 年 3 月前完成。
 3. 可选：用新代码重跑单窗口 G3A 的 `g1 --long`、g2–g4。
 
