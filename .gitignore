@@ -27,3 +27,6 @@ tmp/
 
 # Large, deterministically regenerable teacher data (hash recorded in its manifest.json)
 experiments/results/*/train.jsonl
+
+# Third-party benchmark data without a redistribution licence (read from here, never committed)
+instances/external/
