@@ -57,7 +57,7 @@
    - 加快单实例推理（CPU/编译），把 RL 曲线左移；
    - 文献补充（含知网）；
    - 写正文。
-2. **大创**：先确认[最小范围草案](docs/plans/innovation_scope_draft.md)中的 5 个建模问题并批准范围，再新建 `fjsp_lab.logistics`（只依赖 `fjsp`），做法沿用"原检查器不改、外加一层检查"。用户希望 2027 年 3 月前完成。
+2. **大创**：先确认[最小范围草案](docs/plans/innovation_scope_draft.md)中的 5 个建模问题（推荐答案与创新性评估见[建模决策建议](docs/plans/innovation_modeling_decisions.md)，两轮查新（含知网）见[查新报告](docs/plans/innovation_novelty_search.md)）并批准范围，再新建 `fjsp_lab.logistics`（只依赖 `fjsp`），做法沿用"原检查器不改、外加一层检查"。用户希望 2027 年 3 月前完成。
 3. 可选：用新代码重跑单窗口 G3A 的 `g1 --long`、g2–g4。
 
 ## 已知局限（扩展前需注意）
