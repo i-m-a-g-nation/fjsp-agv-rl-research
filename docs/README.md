@@ -4,8 +4,8 @@
 |---|---|
 | `models/` | 数学模型：Phase 1 静态 FJSP（中/英 PDF 与 LaTeX）、Phase 2A 动态模型、[毕设模型](models/graduation_model.md) |
 | `protocols/` | 预先确定的实验协议：[G3A](protocols/g3a_protocol.md)（固定 vs 联合维护网格，含 solver_v2 验收规则说明）、[Phase 2A](protocols/phase2a_experiment_protocol.md) |
-| `plans/` | [路线图](plans/ROADMAP.md)、[论文大纲](plans/thesis_outline.md)、[大创最小范围草案](plans/innovation_scope_draft.md) |
-| `history/` | 各阶段当时的验收与验证快照（G1/G2/R1/R2、Phase 1/2A 验收、研究验收对照）；文中代码路径是重构前的旧路径，结论以对应归档结果为准 |
+| `plans/` | [论文大纲](plans/thesis_outline.md)、[大创最小范围草案](plans/innovation_scope_draft.md) |
+| `history/` | 各阶段当时的验收与验证快照（G1/G2/R1/R2、Phase 1/2A 验收、研究验收对照）及 2026-07 长期路线图 `ROADMAP_2026-07.md`；文中代码路径是重构前的旧路径，结论以对应归档结果为准 |
 
 当前进度只在 [START_HERE](../START_HERE.md) 维护。代码与文档中的旧路径对应关系：
 

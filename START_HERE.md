@@ -88,6 +88,6 @@
 - 模型：[毕设模型](docs/models/graduation_model.md)、[论文第 2 章草稿（模型与证明，LaTeX/PDF）](docs/models/thesis_ch2_model_zh.tex)、Phase 1/2A 数学模型（`docs/models/`）
 - 协议：[G4 协议](docs/protocols/g4_periodic_protocol.md)、[G3A 协议](docs/protocols/g3a_protocol.md)、[Phase 2A 协议](docs/protocols/phase2a_experiment_protocol.md)
 - 2026-10-31 重构：旧代码在分支 `archive/pre-restructure-2026-10-31`，新旧结果一致性见 [restructure_equivalence](experiments/archive/restructure_equivalence/)
-- 计划：[路线图](docs/plans/ROADMAP.md)、[论文大纲](docs/plans/thesis_outline.md)、[大创草案](docs/plans/innovation_scope_draft.md)
+- 计划：[论文大纲](docs/plans/thesis_outline.md)、[大创草案](docs/plans/innovation_scope_draft.md)
 - 文献：[毕设文献地图](notes/literature_map_graduation.md)
 - 历史验收快照（引用旧路径）：`docs/history/`

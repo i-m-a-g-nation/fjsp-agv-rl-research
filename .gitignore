@@ -30,3 +30,6 @@ experiments/results/*/train.jsonl
 
 # Third-party benchmark data without a redistribution licence (read from here, never committed)
 instances/external/
+
+# Local editor settings
+.vscode/

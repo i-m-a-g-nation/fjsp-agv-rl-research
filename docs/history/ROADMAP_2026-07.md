@@ -1,6 +1,6 @@
 # FJSP Research Platform Roadmap
 
-最后审阅：2026-07-14（2026-11-01 只更新了文档分工一节）  
+最后审阅：2026-07-14（2026-11-01 只更新了文档分工一节；2026-11-02 移入 docs/history/ 作为历史快照）  
 当前进度：不在本文维护，以 [START_HERE](../../START_HERE.md) 为准  
 路线类型：长期研究平台，按阶段评审推进
 
@@ -13,7 +13,7 @@
 
 本项目采用以下文档分工：
 
-- `docs/plans/ROADMAP.md`（本文）：管理长期目标和阶段推进规则。
+- `docs/history/ROADMAP_2026-07.md`（本文，原 `docs/plans/ROADMAP.md`）：长期目标和阶段推进规则（2026-07 版本）。
 - `AGENTS.md`：管理当前阶段允许实施和明确禁止的内容。
 - `START_HERE.md`：当前进度、关键结果与下一步（唯一维护处）。
 - `README.md`：代码结构与使用方法。
