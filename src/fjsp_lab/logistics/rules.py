@@ -66,9 +66,8 @@ def _random(seed: int) -> Policy:
 RULES = ('EFT', 'FIFO+NV', 'SPT+NV', 'MWKR+NV', 'RANDOM')
 
 
-def solve_rule(instance: LogisticsInstance, rule: str, *, seed: int = 0,
-               avoid_deadlock: bool = False) -> LogisticsSchedule:
-    """Simulate ``instance`` under one rule; raises SimulationDeadlock if the rule deadlocks."""
+def rule_policy(rule: str, *, seed: int = 0, avoid_deadlock: bool = False) -> Policy:
+    """The simulator policy of one rule (optionally wrapped by the deadlock guard)."""
     if rule == 'EFT':
         policy = _joint_eft
     elif rule == 'RANDOM':
@@ -77,4 +76,10 @@ def solve_rule(instance: LogisticsInstance, rule: str, *, seed: int = 0,
         policy = _decoupled(rule[:-3])
     else:
         raise ValueError(f'Unknown rule {rule!r}; expected one of {RULES}')
-    return simulate(instance, guard(policy) if avoid_deadlock else policy)
+    return guard(policy) if avoid_deadlock else policy
+
+
+def solve_rule(instance: LogisticsInstance, rule: str, *, seed: int = 0,
+               avoid_deadlock: bool = False) -> LogisticsSchedule:
+    """Simulate ``instance`` under one rule; raises SimulationDeadlock if the rule deadlocks."""
+    return simulate(instance, rule_policy(rule, seed=seed, avoid_deadlock=avoid_deadlock))

@@ -11,7 +11,8 @@ Modules, from data to methods:
 * ``sequences``: earliest schedule from machine and vehicle sequences (replay, search decoding);
 * ``cpsat``: small-instance CP-SAT reference (optionally with a fixed machine plan);
 * ``decoupled``: machines-first-then-vehicles baseline (two CP-SAT stages);
-* ``metaheuristics``: SA (reference) and GA over operation, machine, trip and vehicle choices.
+* ``metaheuristics``: SA (reference) and GA over operation, machine, trip and vehicle choices;
+* ``generator``, ``policy``: L2 training instances and the learned scoring policy (imitation + REINFORCE).
 
 Depends only on ``fjsp_lab.fjsp``. Model: docs/models/logistics_model_zh.md.
 """
