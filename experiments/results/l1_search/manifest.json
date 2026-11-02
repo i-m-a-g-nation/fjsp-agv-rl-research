@@ -1,0 +1,127 @@
+{
+  "configs": {
+    "bench": {
+      "blocking": false,
+      "buffer": null
+    },
+    "block-0": {
+      "blocking": true,
+      "buffer": 0
+    },
+    "block-1": {
+      "blocking": true,
+      "buffer": 1
+    },
+    "block-2": {
+      "blocking": true,
+      "buffer": 2
+    },
+    "block-inf": {
+      "blocking": true,
+      "buffer": null
+    }
+  },
+  "experiment": "l1_search",
+  "inputs_sha256": {
+    "DeroussiNorre/fjsp1.txt": "abc436a6be28d06f026c46f1f92322992859ccbea295a082e996c7a44177a62b",
+    "DeroussiNorre/fjsp10.txt": "22a591e326e4f264e537afac47ff7d25782080731d4d2098eaf8cbda991cf952",
+    "DeroussiNorre/fjsp2.txt": "57e562271fe2cb880c5721a6b40e3d34f98d013c5fa145f1c8f4c4be8ea04a85",
+    "DeroussiNorre/fjsp3.txt": "4c8d5fda398ad0f5500b2511dc233d6e992814054f7e2c859156c48a07cc7ed4",
+    "DeroussiNorre/fjsp4.txt": "4201384a778a1737c37ec6ed2f69fd78ceba646c16b465daf0b2c11c09f872dd",
+    "DeroussiNorre/fjsp5.txt": "e2dc9492e9b407175caed5cc561be382b5a4badffabe05ec9b90e1425ca19ee8",
+    "DeroussiNorre/fjsp6.txt": "d2cd22d8d2b7d4c61646ca8527cad064b28e0dcb7812110afb84690bb47589a6",
+    "DeroussiNorre/fjsp7.txt": "078bc5e5079574f8d4fde023998a2026cfb36d37db310f17951f407b494e12bf",
+    "DeroussiNorre/fjsp8.txt": "ea87ce639b4ab2b12a93411d433338e446ae3097adf7f79c097d6303041a94a7",
+    "DeroussiNorre/fjsp9.txt": "c6ee850debcd2658fd4c758cdee5cac8d5421ea663ed0698a4d95cff6a541c24",
+    "DeroussiNorre_layout.txt": "6e395ae73ddc09a0e1e2286f4fe881bbe299e86db28941969d196657347739c6",
+    "layout_4M.txt": "cb933fb9a232253e79d7f772ad0fca141cd7740e38b3823e5c7f5d484f98ff1a",
+    "layout_5M.txt": "a9ff278ddd951ded30984354db939a443ff4b7d536db6560f0cbed786252dc0a",
+    "layout_6M.txt": "dc2fdcc053f978a1adc0a25f9af206b0ed84a957e055d1dac9d3684e07436a1a",
+    "layout_8M.txt": "35d667c3272a0ffb4259bb1de63bb2eae44c6787f20c9d38e32c97f59fe8c4bf"
+  },
+  "large": {
+    "evaluations": 1000,
+    "methods": [
+      "SA"
+    ],
+    "seeds": [
+      0,
+      1
+    ]
+  },
+  "processes": 8,
+  "provenance": {
+    "created_utc": "2026-11-02T16:02:27+00:00",
+    "git_commit": "8673ba7f9e1f9f310d24dbff7b878a242118d1eb",
+    "git_dirty": false,
+    "packages": {
+      "numpy": "2.4.5",
+      "ortools": "9.15.6755",
+      "scipy": "1.17.1"
+    },
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.15",
+    "source_sha256": {
+      "experiments/_common.py": "71a66cd5d4a397d709df14d66818624333243b43adea9eac47007d69ee85a705",
+      "experiments/l1_search.py": "291eb8f1a0457bf971f97487ccd49f0e71ee48161d01e2a07e767d784240da55",
+      "src/fjsp_lab/__init__.py": "5cb0ec7ad1d2cf5f20fcf125ec9374d7068848f9933b3cadecde8cd3f9a11012",
+      "src/fjsp_lab/dynamic/__init__.py": "12f8c018580766c6b9a7a02182b15f004eba5176de6bdacb84c8c6605371a8ea",
+      "src/fjsp_lab/dynamic/events.py": "a23f8c85a8be4a1b6515a84717b9f4fb4d6f3029b0f586284d340d8fa5e3ffe8",
+      "src/fjsp_lab/dynamic/feasibility.py": "9491488aa255c6204d477bf10319040772952309e7bafbdf7033d16d3cf02b76",
+      "src/fjsp_lab/dynamic/perturbation.py": "bc26bb267c29a4745fe2fe76a386ec33c302757deb1bd8a0ef06a0690300392d",
+      "src/fjsp_lab/dynamic/replay.py": "b9a18784e9ef0ba954679a5d9014507c37fde8dd7db6709ff4342004f44af0fe",
+      "src/fjsp_lab/dynamic/reschedule.py": "404725ca041d974061a6bcf3337e29c2d4fe9ece8590925421cf274cde44e6c6",
+      "src/fjsp_lab/dynamic/snapshot.py": "f34cdf371d2f12bc55f546284a9665e3fa18d7eb70e10fd413f30aeb6261f073",
+      "src/fjsp_lab/dynamic/state.py": "a0a0bdf8a6dd7cd28d4335b8c5eb345baf2d84729bda7bf6f50bb322a3f02146",
+      "src/fjsp_lab/fjsp/__init__.py": "82d1b68ebcd6b5fd7f20ff6de014725ad902de28a71d076e182f06043e16fc10",
+      "src/fjsp_lab/fjsp/benchmark.py": "fb5404344f1d75d5c56e27b53ac57b9249a6898df5283fd57ffaafcdeea890ef",
+      "src/fjsp_lab/fjsp/cpsat.py": "bef757bb2bbc111652f5fbeb65d2e606c887b736ac2d24c8034a9a682bed3995",
+      "src/fjsp_lab/fjsp/decoding.py": "fa61286b04a05ac577f794cc96e460ff5dabdddeb9baf21e4827bd330e14a1bd",
+      "src/fjsp_lab/fjsp/feasibility.py": "8d26f1034278e0c3ca4f139a5c1a33ad13a2eb0381e8a777186a64f8b240c8c8",
+      "src/fjsp_lab/fjsp/gantt.py": "18442b1e511b22221aee0360b6a071e8bea54c0a9c74e750172c9f42860b0e1e",
+      "src/fjsp_lab/fjsp/instance.py": "8a6d199068bd6dde2e5135bc925ca3a66e9752468e6b76282fef899d3b853dd3",
+      "src/fjsp_lab/fjsp/rules.py": "c31a235a389aef7123443f90bf20058c3a3e4859805582ec6bd52e371ad249f0",
+      "src/fjsp_lab/fjsp/schedule.py": "587db1b8d16967702129acc65e02e8301b14e9bdc83e16d2bbfed5bdf6329bdc",
+      "src/fjsp_lab/logistics/__init__.py": "cfbd4c341adbc4c6e08140f27400da9d761f269809636d2f2161dd08f5761e2b",
+      "src/fjsp_lab/logistics/cpsat.py": "c0b5b9a66df1ea9febc0675dd4508bb8a18ae33871796f8afd65f58f289b3f23",
+      "src/fjsp_lab/logistics/decoupled.py": "9a6e606244c229a3528f1a29546a464c53ae1d6a2c71c75fb9bb18a4e42e330a",
+      "src/fjsp_lab/logistics/feasibility.py": "ca2dfdf9a00f21d76df19de0da56a09751d1a2bbdf83c15ba4cd5915ad363eb7",
+      "src/fjsp_lab/logistics/instance.py": "94fe2b65bc4bae48c851f1895314108a8877992136e71c512eabd2485bb226fb",
+      "src/fjsp_lab/logistics/metaheuristics.py": "88bbe9d0e7bcbca7c2b9463eb0a72c64b870e519d23de79acb5c5a2bb34c02ec",
+      "src/fjsp_lab/logistics/rules.py": "c587ce9bb7afe7f99b44596d6501aba6767e423ea8a96c43b71b63ab32a16277",
+      "src/fjsp_lab/logistics/schedule.py": "e7db8382ff9d419b2f8cc5f2721b6732d8a8abe90cf8d131c334db0c2da44bba",
+      "src/fjsp_lab/logistics/sequences.py": "720150621d3ba55cb45c17c249babaa0e3e0a1c2c013d4df39bec8553b203d23",
+      "src/fjsp_lab/logistics/simulator.py": "9fd9a6b035e7cc463164ecdff6bf865f09d48de6a0619aa8e07f4042c3f5f0af",
+      "src/fjsp_lab/maintenance/__init__.py": "3071864558c8bb8db2dbd2463dafaeb0fb297dff971ab2b6afc644e298e50caa",
+      "src/fjsp_lab/maintenance/attention_policy.py": "743b61058360746b894ce5f5dd67c5771c3438ab5848de14bdd5ebee06d90a1c",
+      "src/fjsp_lab/maintenance/cpsat.py": "852893803d361d419136809195c0c769814a9c97b0a78958663b094b7b415ae1",
+      "src/fjsp_lab/maintenance/enumeration.py": "22d337e8b2c3270af986f4298397e5b2dc91932871cb1fbc13b8d9a972a31ed1",
+      "src/fjsp_lab/maintenance/env.py": "28284666fa55d446dab4333b900dc507f392459c61cfd761564e1e6bab122086",
+      "src/fjsp_lab/maintenance/feasibility.py": "f0ecb685f6f989e390890580ff722bf7d2d89553a1e6a772c4510098b9f598a1",
+      "src/fjsp_lab/maintenance/features.py": "23c8f5414db7fcf4ec5fbdf1c058bb19fe84627c4cf97060ea4e6d6f988a979d",
+      "src/fjsp_lab/maintenance/gantt.py": "b09297d14d0261564a567c38fed448a72852ad646815e905a6a659cbb0a6f1f5",
+      "src/fjsp_lab/maintenance/generator.py": "8ee62783aa6ec8170075b401b81811d62766e6874891f10b789faa3214eb8f1d",
+      "src/fjsp_lab/maintenance/instance.py": "7ce914f54736d31d8712a847175c24c171f20e234f46397a5afe677088ac8d80",
+      "src/fjsp_lab/maintenance/metaheuristics.py": "a2e38f7b4949e0df78ef4485e67939ec70efce150bc3fe20476bf97a7c8e4891",
+      "src/fjsp_lab/maintenance/rules.py": "c8225ab9817b00bfd2c5c93f7bad41faafcdb4aae45a41985a5b0480c344b7a6",
+      "src/fjsp_lab/maintenance/schedule.py": "cc5c4e7565213079ee0741dbbaaf22eb6fa960bb79c249b4ae99e3628b140a66",
+      "src/fjsp_lab/maintenance/scoring_policy.py": "636300a11540c3c807745945018f7346759ead608b960fe7fbc5b8457ab8fb1a",
+      "src/fjsp_lab/maintenance/sequence_env.py": "24b5b06024ab8780cec72da1f1ba740213384a39f8e67250a6e31f3cb29ee4cf"
+    }
+  },
+  "references_sha256": {
+    "l1_benchmark/rows.csv": "333ba09f7167d05fe3aafbbfa3836f15df407afdb6da2232c1181a4b9820597c",
+    "l1_large/rows.csv": "235ae96cbae425e0af6500671b565e8c4b6ff3a48b96cbd2d7baa94439384916"
+  },
+  "small": {
+    "evaluations": 5000,
+    "methods": [
+      "SA",
+      "GA"
+    ],
+    "seeds": [
+      0,
+      1
+    ]
+  }
+}

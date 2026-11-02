@@ -1,0 +1,16 @@
+part,config,method,runs,mean_gap_to_cpsat,runs_on_optimal,mean_gap_to_optimum,fallback_share,infeasible,mean_change_vs_best_rule,mean_gap_to_lower_bound,mean_increase_vs_bench_best_of_seeds
+small,bench,SA,20,0.085,18,0.0791,0.0,0,,,
+small,bench,GA,20,0.124,18,0.111,0.0,0,,,
+large,bench,SA,12,,,,0.0,0,-0.0252,1.2853,0.0
+small,block-inf,SA,20,0.11,20,0.11,0.9408,0,,,
+small,block-inf,GA,20,0.117,20,0.117,0.1882,0,,,
+large,block-inf,SA,12,,,,0.9745,0,-0.0292,1.3652,0.042
+small,block-2,SA,20,0.1164,20,0.1164,0.941,0,,,
+small,block-2,GA,20,0.1129,20,0.1129,0.2752,0,,,
+large,block-2,SA,12,,,,0.9872,0,-0.0546,1.3586,0.03
+small,block-1,SA,20,0.1022,18,0.1009,0.9594,0,,,
+small,block-1,GA,20,0.1119,18,0.1126,0.4664,0,,,
+large,block-1,SA,12,,,,0.9752,0,-0.0495,1.4796,0.0897
+small,block-0,SA,20,0.0895,10,0.0837,0.9931,0,,,
+small,block-0,GA,20,0.0949,10,0.1028,0.8506,0,,,
+large,block-0,SA,12,,,,0.9904,0,-0.0824,2.2721,0.4065
