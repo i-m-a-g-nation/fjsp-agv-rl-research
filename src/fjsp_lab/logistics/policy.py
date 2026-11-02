@@ -267,7 +267,7 @@ def behaviour_cloning_epoch(policy: LogisticsPolicy, samples: list[tuple[np.ndar
 def reinforce_epoch(policy: LogisticsPolicy, instances: Sequence[LogisticsInstance], *,
                     rng: np.random.Generator, learning_rate: float, batch_size: int = 8,
                     samples_per_instance: int = 4) -> float:
-    """REINFORCE with the shared per-instance baseline; returns the mean sampled makespan ratio to the baseline."""
+    """REINFORCE with the shared per-instance baseline; returns the mean sampled makespan / instance scale."""
     order = rng.permutation(len(instances))
     ratios = []
     for start in range(0, len(order), batch_size):
@@ -276,8 +276,9 @@ def reinforce_epoch(policy: LogisticsPolicy, instances: Sequence[LogisticsInstan
             episodes = [run_episode(policy, instances[index], rng=rng, record=True)
                         for _ in range(samples_per_instance)]
             baseline = float(np.mean([e.makespan for e in episodes]))
+            unit = scale(instances[index])
             for episode in episodes:
-                ratios.append(episode.makespan / baseline)
+                ratios.append(episode.makespan / unit)
                 advantage = (baseline - episode.makespan) / baseline
                 count += 1
                 if advantage == 0:
@@ -321,7 +322,7 @@ def train(train_set: Sequence[LogisticsInstance], val_set: Sequence[LogisticsIns
         checkpoint('imitation', epoch, 'loss', behaviour_cloning_epoch(policy, samples, rng=rng,
                                                                        learning_rate=bc_learning_rate))
     for epoch in range(1, rl_epochs + 1):
-        checkpoint('reinforce', epoch, 'train_ratio_to_baseline', reinforce_epoch(
+        checkpoint('reinforce', epoch, 'train_sampled_makespan_over_scale', reinforce_epoch(
             policy, train_set, rng=rng, learning_rate=rl_learning_rate, batch_size=rl_batch_size,
             samples_per_instance=samples_per_instance))
     policy.load_state(best[1])
