@@ -284,8 +284,14 @@ def is_safe(sim: LogisticsSimulator, choice: Candidate) -> bool:
 
 
 def avoid_deadlock(policy: Policy) -> Policy:
-    """Wrap ``policy``: skip decisions after which the rollout deadlocks; wait if none is safe."""
+    """Wrap ``policy``: skip decisions after which the rollout deadlocks; wait if none is safe.
+
+    With unlimited station capacity nothing can deadlock (a waiting job can
+    always be carried away once a vehicle is free), so no check is made.
+    """
     def guarded(sim: LogisticsSimulator, options: list[Candidate]) -> Candidate | None:
+        if all(capacity is None for capacity in sim.instance.buffer_capacity):
+            return policy(sim, options)
         remaining = list(options)
         while remaining:
             choice = policy(sim, remaining)

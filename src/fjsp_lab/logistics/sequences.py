@@ -5,8 +5,13 @@ vehicle drives (in order), every time is set as early as the precedences
 allow: operation after its inbound trip and the job's previous operation,
 after the machine's previous occupant has left (picked up, with blocking);
 trip after the operation it leaves and after the vehicle's previous trip plus
-the empty run. Buffer capacity is not a precedence and is left to the
-checker. Contradictory sequences form a cycle and raise ValueError.
+the empty run. A finite station capacity c is enforced as a precedence too:
+the visits of a machine are served in its sequence order, and the inbound
+trip of the k-th visit is dispatched only after the (k - c)-th visit has
+left. This is sufficient for the capacity (and exact when places are
+reserved in processing order), so with finite buffers some schedules cannot
+be expressed; with unlimited buffers every semi-active schedule can.
+Contradictory sequences form a cycle and raise ValueError.
 
 Also reads the FJSPT reference-solution files of Berterottière et al.:
 ``Mk  ops`` (machine k, global 1-based operation ids numbered job by job) and
@@ -50,56 +55,93 @@ def decode_sequences(instance: LogisticsInstance, machine_sequences: Sequence[Se
     def p(job: int, op: int) -> int:
         return production.get_processing_time(job, op, machine_of[job, op])
 
-    S = {key: 0 for key in machine_of}
-    D = {key: 0 for key in route}
-    P = dict(D)
+    # Precedence graph: an edge (a, b, w) means time[b] >= time[a] + w. Nodes are ('S', op) operation
+    # starts, ('D', trip) dispatches and ('P', trip) pickups; every time is also >= 0.
+    edges: list[tuple[tuple, tuple, int]] = []
+    for (job, op) in machine_of:
+        if op > 0:
+            edges.append((('S', (job, op - 1)), ('S', (job, op)), p(job, op - 1)))
+        if (job, op) in route:
+            edges.append((('P', (job, op)), ('S', (job, op)), instance.loaded_time(*route[job, op])))
+    for (job, leg) in route:
+        if leg > 0:
+            edges.append((('S', (job, leg - 1)), ('P', (job, leg)), p(job, leg - 1)))
+        edges.append((('D', (job, leg)), ('P', (job, leg)), 0))
 
-    def end(job: int, op: int) -> int:
-        return S[job, op] + p(job, op)
+    def release(job: int, op: int) -> tuple[tuple, int]:
+        """(node, offset) of the moment the machine is free again after operation (job, op)."""
+        last = op == production.jobs[job].num_ops - 1
+        if not instance.blocking or (last and not instance.return_to_lu):
+            return ('S', (job, op)), p(job, op)
+        if not last and machine_of[job, op + 1] == machine_of[job, op]:
+            return ('S', (job, op + 1)), 0
+        return ('P', (job, op + 1)), 0
+
+    for sequence in machine_sequences:
+        for a, b in zip(sequence, sequence[1:]):
+            node, offset = release(*a)
+            edges.append((node, ('S', b), offset))
+
+    # Visits (maximal runs of a job on one machine) in each machine's order, for the capacity precedence.
+    position = {op: i for sequence in machine_sequences for i, op in enumerate(sequence)}
+    visits = [[] for _ in machine_sequences]
+    for job in production.jobs:
+        first = 0
+        for last in range(job.num_ops):
+            if last + 1 < job.num_ops and machine_of[job.job_id, last + 1] == machine_of[job.job_id, first]:
+                continue
+            visits[machine_of[job.job_id, first]].append((position[job.job_id, first], job.job_id, first, last))
+            first = last + 1
+    for machine, machine_visits in enumerate(visits):
+        machine_visits.sort()
+        capacity = instance.station_capacity(machine)
+        if capacity is None:
+            continue
+        for k in range(capacity, len(machine_visits)):
+            _, job, first, _ = machine_visits[k]
+            _, earlier, _, earlier_last = machine_visits[k - capacity]
+            if instance.blocking and (earlier, earlier_last + 1) in route:      # place freed at pickup
+                edges.append((('P', (earlier, earlier_last + 1)), ('D', (job, first)), 0))
+            else:                                                                  # or at the end of the visit
+                edges.append((('S', (earlier, earlier_last)), ('D', (job, first)), p(earlier, earlier_last)))
+    for trips in vehicle_sequences:
+        here, previous = lu, None
+        for trip in trips:
+            if previous is not None:
+                edges.append((('P', previous), ('D', trip), instance.loaded_time(*route[previous])))
+            edges.append((('D', trip), ('P', trip), instance.travel[here][route[trip][0]]))
+            here, previous = route[trip][1], trip
+
+    # Longest paths by topological order (Kahn); a cycle means contradictory sequences.
+    nodes = [('S', key) for key in machine_of] + [(kind, trip) for trip in route for kind in 'DP']
+    successors: dict[tuple, list[tuple[tuple, int]]] = {node: [] for node in nodes}
+    indegree = dict.fromkeys(nodes, 0)
+    for a, b, w in edges:
+        if a == b:
+            if w > 0:
+                raise ValueError('Machine and vehicle sequences contradict each other (cyclic precedences)')
+            continue
+        successors[a].append((b, w))
+        indegree[b] += 1
+    time = dict.fromkeys(nodes, 0)
+    ready = [node for node in nodes if indegree[node] == 0]
+    done = 0
+    while ready:
+        node = ready.pop()
+        done += 1
+        for nxt, w in successors[node]:
+            time[nxt] = max(time[nxt], time[node] + w)
+            indegree[nxt] -= 1
+            if indegree[nxt] == 0:
+                ready.append(nxt)
+    if done != len(nodes):
+        raise ValueError('Machine and vehicle sequences contradict each other (cyclic precedences)')
+    S = {key: time['S', key] for key in machine_of}
+    D = {trip: time['D', trip] for trip in route}
+    P = {trip: time['P', trip] for trip in route}
 
     def delivery(trip: Trip) -> int:
         return P[trip] + instance.loaded_time(*route[trip])
-
-    def release(job: int, op: int) -> int:
-        """When the machine is free again after operation (job, op)."""
-        last = op == production.jobs[job].num_ops - 1
-        if not instance.blocking or (last and not instance.return_to_lu):
-            return end(job, op)
-        if not last and machine_of[job, op + 1] == machine_of[job, op]:
-            return S[job, op + 1]
-        return P[job, op + 1]
-
-    limit = 2 * (len(S) + len(D)) + 10
-    for _ in range(limit):
-        changed = False
-
-        def raise_to(times: dict, key: tuple, value: int) -> None:
-            nonlocal changed
-            if value > times[key]:
-                times[key], changed = value, True
-
-        for (job, op) in S:
-            if op > 0:
-                raise_to(S, (job, op), end(job, op - 1))
-            if (job, op) in route:
-                raise_to(S, (job, op), delivery((job, op)))
-        for (job, leg) in route:
-            if leg > 0:
-                raise_to(P, (job, leg), end(job, leg - 1))
-            raise_to(P, (job, leg), D[job, leg])
-        for sequence in machine_sequences:
-            for a, b in zip(sequence, sequence[1:]):
-                raise_to(S, b, release(*a))
-        for trips in vehicle_sequences:
-            position, free = lu, 0
-            for trip in trips:
-                raise_to(D, trip, free)
-                raise_to(P, trip, D[trip] + instance.travel[position][route[trip][0]])
-                position, free = route[trip][1], delivery(trip)
-        if not changed:
-            break
-    else:
-        raise ValueError('Machine and vehicle sequences contradict each other (cyclic precedences)')
 
     records = [ScheduleRecord.placed(job, op, machine_of[job, op], S[job, op], p(job, op)) for job, op in sorted(S)]
     transports = [TransportRecord(job, leg, vehicle_of[job, leg], *route[job, leg], D[job, leg], P[job, leg],

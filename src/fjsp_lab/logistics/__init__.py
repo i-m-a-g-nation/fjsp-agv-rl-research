@@ -8,9 +8,10 @@ Modules, from data to methods:
 * ``feasibility``: the checker every schedule must pass (production part by
   the unchanged static FJSP checker);
 * ``simulator``, ``rules``: event-driven simulation and joint / decoupled rules;
-* ``sequences``: earliest schedule from machine and vehicle sequences (reference-solution replay);
+* ``sequences``: earliest schedule from machine and vehicle sequences (replay, search decoding);
 * ``cpsat``: small-instance CP-SAT reference (optionally with a fixed machine plan);
-* ``decoupled``: machines-first-then-vehicles baseline (two CP-SAT stages).
+* ``decoupled``: machines-first-then-vehicles baseline (two CP-SAT stages);
+* ``metaheuristics``: SA (reference) and GA over operation, machine, trip and vehicle choices.
 
 Depends only on ``fjsp_lab.fjsp``. Model: docs/models/logistics_model_zh.md.
 """
