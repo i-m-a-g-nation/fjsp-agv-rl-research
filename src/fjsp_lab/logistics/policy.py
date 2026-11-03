@@ -16,11 +16,17 @@ baseline (mean makespan of the K samples of the same instance), Adam. The
 checkpoint is chosen on the validation set only, by the mean ratio of the
 greedy makespan to the instance's best avoided rule. Every episode's
 schedule passes the checker (the simulator returns only accepted schedules).
+
+Sampling and validation episodes can run in worker processes
+(``train(workers=...)``): every sampled episode gets its own random seed,
+drawn by the main process, and is played by a fresh copy of the current
+weights, so results do not depend on the number of workers.
 Design: docs/plans/innovation_rl_design.md.
 """
 
 from __future__ import annotations
 
+from concurrent.futures import Executor, ProcessPoolExecutor
 from dataclasses import dataclass
 import hashlib
 import io
@@ -182,15 +188,19 @@ class LogisticsPolicy:
         return hashlib.sha256(buffer.getvalue()).hexdigest()
 
     @classmethod
+    def from_state(cls, state: dict[str, np.ndarray]) -> LogisticsPolicy:
+        policy = cls(seed=0, hidden_size=np.asarray(state['w2']).shape[0])
+        policy.load_state(state)
+        return policy
+
+    @classmethod
     def load(cls, path: Path, *, expected_sha256: str | None = None) -> LogisticsPolicy:
         raw = Path(path).read_bytes()
         if expected_sha256 is not None and hashlib.sha256(raw).hexdigest() != expected_sha256:
             raise ValueError('Checkpoint hash mismatch')
         with np.load(io.BytesIO(raw), allow_pickle=False) as archive:
             state = {name: archive[name] for name in archive.files}
-        policy = cls(seed=0, hidden_size=state['w2'].shape[0])
-        policy.load_state(state)
-        return policy
+        return cls.from_state(state)
 
 
 def run_episode(policy: LogisticsPolicy, instance: LogisticsInstance, *, rng: np.random.Generator | None = None,
@@ -264,17 +274,32 @@ def behaviour_cloning_epoch(policy: LogisticsPolicy, samples: list[tuple[np.ndar
     return float(np.mean(losses))
 
 
+def _play(task: tuple) -> Episode:
+    """Worker: one episode with a fresh copy of the weights (sampled with its own seed, or greedy if None)."""
+    state, instance, seed = task
+    rng = None if seed is None else np.random.default_rng(seed)
+    return run_episode(LogisticsPolicy.from_state(state), instance, rng=rng, record=seed is not None)
+
+
+def _play_all(tasks: list[tuple], executor: Executor | None) -> list[Episode]:
+    return list(executor.map(_play, tasks)) if executor is not None else [_play(task) for task in tasks]
+
+
 def reinforce_epoch(policy: LogisticsPolicy, instances: Sequence[LogisticsInstance], *,
                     rng: np.random.Generator, learning_rate: float, batch_size: int = 8,
-                    samples_per_instance: int = 4) -> float:
+                    samples_per_instance: int = 4, executor: Executor | None = None) -> float:
     """REINFORCE with the shared per-instance baseline; returns the mean sampled makespan / instance scale."""
     order = rng.permutation(len(instances))
     ratios = []
     for start in range(0, len(order), batch_size):
         total, count = _zero(policy), 0
-        for index in order[start:start + batch_size]:
-            episodes = [run_episode(policy, instances[index], rng=rng, record=True)
-                        for _ in range(samples_per_instance)]
+        batch = order[start:start + batch_size]
+        state = policy.state_dict()
+        tasks = [(state, instances[index], int(seed)) for index in batch
+                 for seed in rng.integers(0, 2 ** 63 - 1, size=samples_per_instance)]
+        played = _play_all(tasks, executor)
+        for position, index in enumerate(batch):
+            episodes = played[position * samples_per_instance:(position + 1) * samples_per_instance]
             baseline = float(np.mean([e.makespan for e in episodes]))
             unit = scale(instances[index])
             for episode in episodes:
@@ -291,26 +316,46 @@ def reinforce_epoch(policy: LogisticsPolicy, instances: Sequence[LogisticsInstan
     return float(np.mean(ratios))
 
 
-def mean_ratio(policy: LogisticsPolicy, instances: Sequence[LogisticsInstance], references: Sequence[int]) -> float:
+def mean_ratio(policy: LogisticsPolicy, instances: Sequence[LogisticsInstance], references: Sequence[int],
+               executor: Executor | None = None) -> float:
     """Mean greedy makespan / reference makespan (e.g. the best avoided rule)."""
-    return float(np.mean([run_episode(policy, instance).makespan / reference
-                          for instance, reference in zip(instances, references)]))
+    state = policy.state_dict()
+    episodes = _play_all([(state, instance, None) for instance in instances], executor)
+    return float(np.mean([e.makespan / reference for e, reference in zip(episodes, references)]))
 
 
 def train(train_set: Sequence[LogisticsInstance], val_set: Sequence[LogisticsInstance], *, seed: int,
           hidden_size: int = 32, bc_epochs: int = 10, bc_learning_rate: float = 3e-3, rl_epochs: int = 10,
           rl_learning_rate: float = 1e-3, samples_per_instance: int = 4, rl_batch_size: int = 8,
-          log: Callable[[dict], None] | None = None) -> tuple[LogisticsPolicy, list[dict]]:
-    """Train; return the policy restored to its best validation checkpoint and the history."""
+          workers: int = 1, log: Callable[[dict], None] | None = None) -> tuple[LogisticsPolicy, list[dict]]:
+    """Train; return the policy restored to its best validation checkpoint and the history.
+
+    ``workers`` > 1 plays the episodes in that many processes; the result is the same.
+    """
+    if workers < 1:
+        raise ValueError('workers must be >= 1')
+    settings = (train_set, val_set, seed, hidden_size, bc_epochs, bc_learning_rate, rl_epochs, rl_learning_rate,
+                samples_per_instance, rl_batch_size)
+    if workers > 1:
+        with ProcessPoolExecutor(max_workers=workers) as executor:
+            return _train(*settings, executor, log)
+    return _train(*settings, None, log)
+
+
+def _train(train_set: Sequence[LogisticsInstance], val_set: Sequence[LogisticsInstance], seed: int,
+           hidden_size: int, bc_epochs: int, bc_learning_rate: float, rl_epochs: int, rl_learning_rate: float,
+           samples_per_instance: int, rl_batch_size: int, executor: Executor | None,
+           log: Callable[[dict], None] | None) -> tuple[LogisticsPolicy, list[dict]]:
     rng = np.random.default_rng(seed)
     policy = LogisticsPolicy(seed=seed, hidden_size=hidden_size)
     references = [best_rule(instance)[1] for instance in val_set]
-    history = [{'phase': 'init', 'epoch': 0, 'val_ratio_to_best_rule': mean_ratio(policy, val_set, references)}]
+    history = [{'phase': 'init', 'epoch': 0,
+                'val_ratio_to_best_rule': mean_ratio(policy, val_set, references, executor)}]
     best = (history[0]['val_ratio_to_best_rule'], policy.state_dict(), 'init', 0)
 
     def checkpoint(phase: str, epoch: int, name: str, value: float) -> None:
         nonlocal best
-        val = mean_ratio(policy, val_set, references)
+        val = mean_ratio(policy, val_set, references, executor)
         history.append({'phase': phase, 'epoch': epoch, name: value, 'val_ratio_to_best_rule': val})
         if log is not None:
             log(history[-1])
@@ -324,7 +369,7 @@ def train(train_set: Sequence[LogisticsInstance], val_set: Sequence[LogisticsIns
     for epoch in range(1, rl_epochs + 1):
         checkpoint('reinforce', epoch, 'train_sampled_makespan_over_scale', reinforce_epoch(
             policy, train_set, rng=rng, learning_rate=rl_learning_rate, batch_size=rl_batch_size,
-            samples_per_instance=samples_per_instance))
+            samples_per_instance=samples_per_instance, executor=executor))
     policy.load_state(best[1])
     history.append({'phase': 'selected', 'epoch': best[3], 'from': best[2], 'val_ratio_to_best_rule': best[0]})
     return policy, history

@@ -56,3 +56,16 @@ def test_codec_reproduces_a_schedule_without_losing_quality():
         decoded, fallback = codec.decode(codec.from_schedule(schedule))
         assert not fallback and decoded.makespan <= schedule.makespan
         assert check_logistics_feasibility(decoded, data)[0] is True
+
+
+def test_time_limited_annealing_stops_on_time_and_is_checked():
+    import time
+    production = load_project_benchmark_file(MK01)
+    data = instance(production, None, blocking=False)
+    started = time.perf_counter()
+    outcome = solve_sa(data, evaluations=10 ** 9, seed=0, time_limit=0.5)
+    assert time.perf_counter() - started < 5.0
+    assert 4 < outcome.evaluations < 10 ** 9
+    assert check_logistics_feasibility(outcome.schedule, data) == (True, [])
+    with pytest.raises(ValueError):
+        solve_sa(data, evaluations=10, time_limit=0)

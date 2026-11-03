@@ -32,6 +32,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import random
+import time
 
 from fjsp_lab.logistics.instance import LogisticsInstance
 from fjsp_lab.logistics.rules import RULES, solve_rule
@@ -278,13 +279,18 @@ def solve_ga(instance: LogisticsInstance, *, evaluations: int = 500, seed: int =
 
 
 def solve_sa(instance: LogisticsInstance, *, evaluations: int = 500, seed: int = 0,
-             start_temperature: float = 0.05, end_temperature: float = 0.002) -> SearchOutcome:
+             start_temperature: float = 0.05, end_temperature: float = 0.002,
+             time_limit: float | None = None) -> SearchOutcome:
     """Simulated annealing from the best avoided rule schedule, same neighbourhood as the GA mutation.
 
-    Temperatures are fractions of the start makespan; geometric cooling over the budget.
+    Temperatures are fractions of the start makespan; geometric cooling over the
+    budget. With ``time_limit`` (seconds, rule starts included) the search also
+    stops when the time is up and cools over the elapsed fraction of the limit;
+    the result then depends on the machine's speed and is not bit-reproducible.
     """
-    if evaluations < 1:
-        raise ValueError('Need evaluations >= 1')
+    if evaluations < 1 or (time_limit is not None and not time_limit > 0):
+        raise ValueError('Need evaluations >= 1 and a positive time_limit (or None)')
+    started = time.perf_counter()
     rng = random.Random(seed)
     codec = Codec(instance)
     used = fallbacks = failed = 0
@@ -308,7 +314,13 @@ def solve_sa(instance: LogisticsInstance, *, evaluations: int = 500, seed: int =
     hot, cold = start_temperature * value, end_temperature * value
     steps = max(1, evaluations - used)
     while used < evaluations:
-        temperature = hot * (cold / hot) ** ((used - 4) / steps)
+        if time_limit is None:
+            progress = (used - 4) / steps
+        else:
+            progress = (time.perf_counter() - started) / time_limit
+            if progress >= 1:
+                break
+        temperature = hot * (cold / hot) ** min(1.0, progress)
         neighbour = _mutate(current, codec, rng)
         used += 1
         try:

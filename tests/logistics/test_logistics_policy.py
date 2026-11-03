@@ -105,3 +105,13 @@ def test_training_is_reproducible_and_selects_on_validation():
     assert history[-1]['phase'] == 'selected'
     assert history[-1]['val_ratio_to_best_rule'] == min(h['val_ratio_to_best_rule'] for h in history[:-1])
     assert best_rule(val_set[0])[1] > 0
+
+
+def test_parallel_training_matches_serial_training_exactly():
+    train_set = [g.data for g in split('train', 4, LAYOUTS)]
+    val_set = [g.data for g in split('validation', 2, LAYOUTS)]
+    kwargs = dict(seed=6, bc_epochs=1, rl_epochs=2, samples_per_instance=2, rl_batch_size=2)
+    serial, serial_history = train(train_set, val_set, workers=1, **kwargs)
+    parallel, parallel_history = train(train_set, val_set, workers=2, **kwargs)
+    assert all(np.array_equal(serial.state_dict()[k], parallel.state_dict()[k]) for k in serial.state_dict())
+    assert serial_history == parallel_history
