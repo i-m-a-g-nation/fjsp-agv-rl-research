@@ -30,17 +30,20 @@ BUDGET = {'train_instances': 400, 'validation_instances': 50, 'bc_epochs': 15, '
 
 
 def main() -> None:
-    args = parse_args(__doc__.splitlines()[0], 'l2_policy_pilot',
-                      lambda p: p.add_argument('--layout-dir', type=Path, default=ROOT / 'instances/external/HomayouniFontes'))
+    args = parse_args(__doc__.splitlines()[0], 'l2_policy_pilot', lambda p: (
+        p.add_argument('--layout-dir', type=Path, default=ROOT / 'instances/external/HomayouniFontes'),
+        p.add_argument('--rl-epochs', type=int, default=BUDGET['rl_epochs']),
+        p.add_argument('--samples', type=int, default=BUDGET['samples_per_instance'])))
+    budget = {**BUDGET, 'rl_epochs': args.rl_epochs, 'samples_per_instance': args.samples}
     files = {k: args.layout_dir / f'layout_{k}M.txt' for k in (4, 5, 6, 8)}
     layouts = {k: parse_layout(path.read_text(encoding='utf-8'), k) for k, path in files.items()}
-    train_set = split('train', BUDGET['train_instances'], layouts)
-    val_set = split('validation', BUDGET['validation_instances'], layouts)
+    train_set = split('train', budget['train_instances'], layouts)
+    val_set = split('validation', budget['validation_instances'], layouts)
     started = time.perf_counter()
-    policy, history = train([g.data for g in train_set], [g.data for g in val_set], seed=BUDGET['seed'],
-                            hidden_size=BUDGET['hidden_size'], bc_epochs=BUDGET['bc_epochs'],
-                            rl_epochs=BUDGET['rl_epochs'], samples_per_instance=BUDGET['samples_per_instance'],
-                            rl_batch_size=BUDGET['rl_batch_size'], log=lambda h: print(h, flush=True))
+    policy, history = train([g.data for g in train_set], [g.data for g in val_set], seed=budget['seed'],
+                            hidden_size=budget['hidden_size'], bc_epochs=budget['bc_epochs'],
+                            rl_epochs=budget['rl_epochs'], samples_per_instance=budget['samples_per_instance'],
+                            rl_batch_size=budget['rl_batch_size'], log=lambda h: print(h, flush=True))
     training_seconds = round(time.perf_counter() - started, 1)
     rows = []
     for g in val_set:
@@ -65,7 +68,7 @@ def main() -> None:
     write_csv(args.output_dir / 'validation_summary.csv', summary)
     digest = policy.save(args.output_dir / 'policy.npz')
     write_json(args.output_dir / 'manifest.json', {
-        'experiment': 'l2_policy_pilot', 'budget': BUDGET, 'training_seconds': training_seconds,
+        'experiment': 'l2_policy_pilot', 'budget': budget, 'training_seconds': training_seconds,
         'policy_sha256': digest, 'layouts_sha256': {p.name: sha256(p) for p in files.values()},
         'provenance': provenance(__file__)})
     for item in summary:
