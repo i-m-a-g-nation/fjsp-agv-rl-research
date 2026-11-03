@@ -5,7 +5,7 @@
 ## 新会话接手须知（先读这一节）
 
 1. 依次读本页、[AGENTS.md](AGENTS.md)（规则与禁止事项）、相关的协议或计划文档；不要凭记忆假设进度。
-2. 先跑一遍检查，确认环境和代码状态：`pytest`（项目专用环境，应为 170 passed、2 skipped）。
+2. 先跑一遍检查，确认环境和代码状态：`pytest`（项目专用环境，应为 222 passed、2 skipped）。
    PyTorch 相关测试在 PyTorch 环境里单独跑。
 3. **需要用户批准的事**：
    - 任何新阶段：新的训练预算、更大规模、PPO、大创 AGV 建模等，已有批准不自动延伸；
@@ -25,14 +25,14 @@
 | 除注意力策略外的全部代码与测试 | 项目专用 Conda 环境（`.conda-env` 或 `FJSP_CONDA_ENV`） |
 | `experiments/g6_attention_policy.py`、`g8_g4_policy_curves.py`（PyTorch，GPU） | 本机已有的 PyTorch 环境；不重复安装 PyTorch |
 
-## 各路线状态（2026-11-01）
+## 各路线状态（2026-11-03）
 
 | 路线 | 已有 | 未完成 |
 |---|---|---|
 | Phase 1 静态 FJSP | 实例/读取、7 条规则、CP-SAT、检查器、甘特图；30 个 FJSPLib 实例；极端输入回归测试 | —（维护中） |
 | Phase 2A 动态 | 三类事件、冻结、基线重调度、动态检查器；243 次协议运行全部通过 | 物流/AGV 等扩展 |
 | 毕设（平行机 + 维护） | 单窗口与周期性多窗口模型、检查器、CP-SAT（与枚举核对）、EDD/MDD/ATC、GA/SA/IGA、NumPy 打分策略、注意力策略（解码器 MDP）；G3A 与 G4 实验；甘特图示例；论文大纲（RL 主线） | 导师确认、消融（需批准）、文献、论文正文 |
-| 大创（生产—物流协同） | L1（2026-11-01 获批）：[物流模型](docs/models/logistics_model_zh.md)、`fjsp_lab.logistics`（算例读取、协同检查器、事件仿真器、联合/解耦规则、CP-SAT）；建模决策与两轮查新；[基准对齐与缓冲实验](experiments/results/l1_benchmark/findings.md)、[联合与解耦差距](experiments/results/l1_decoupled/findings.md)、[大算例与死锁规避](experiments/results/l1_large/findings.md)、[元启发式参考](experiments/results/l1_search/findings.md) | 阻塞感知邻域（可选）；动态事件、RL（需批准）；论文 |
+| 大创（生产—物流协同） | L1（2026-11-01 获批）：[物流模型](docs/models/logistics_model_zh.md)、`fjsp_lab.logistics`（算例读取、协同检查器、事件仿真器、联合/解耦规则、CP-SAT）；建模决策与两轮查新；[基准对齐与缓冲实验](experiments/results/l1_benchmark/findings.md)、[联合与解耦差距](experiments/results/l1_decoupled/findings.md)、[大算例与死锁规避](experiments/results/l1_large/findings.md)、[元启发式参考](experiments/results/l1_search/findings.md)；L2 强化学习（2026-11-02 获批）：`logistics.policy`、[正式训练](experiments/results/l2_formal_train/)与[正式测试](experiments/results/l2_formal_test/findings.md) | 阻塞感知邻域（可选）；动态事件（需批准）；论文 |
 
 ## 关键结果
 
@@ -47,6 +47,11 @@
     前瞻式死锁规避 420 次全部给出合法调度；缓冲效应明显（最好规则相对基准 +4%/+6%/+12%/+52%，对应 B=∞/2/1/0）；CP-SAT 不再适用；
   - **元启发式参考**（[findings](experiments/results/l1_search/findings.md)）：SA 在小算例上距证得最优约 8%–12%（规则 24%–51%），大算例上比最好规则好 2%–8%；
     以 SA 为参考的缓冲效应 +4%/+3%/+9%/+41%（B=∞/2/1/0），与规则结论一致；阻塞时搜索效率低（邻域多退回优先级解码）。
+- **大创 L2 正式测试**（[findings](experiments/results/l2_formal_test/findings.md)，[协议](docs/protocols/l2_formal_protocol.md)，3 个训练种子，测试集只用一次）：
+  - 预先登记的 H1–H4 在 3 个种子上全部成立：贪心策略优于 EFT；采样 32 次优于逐实例最好规则；同等时间下采样 32 次优于 SA（大算例 27–28/30，小算例幅度只有约 2%）；
+  - 大算例（Brandimarte，比训练算例大）：采样 32 次比逐实例最好规则好 16%，比大预算 SA 参考好约 10%（24–26/30）；贪心与大预算 SA 持平；
+  - 小算例：采样 32 次距证得最优约 12.5%（贪心约 21%），仍比大预算 SA 差约 3%；
+  - B=0 最弱（大算例上仍比大预算 SA 差 4%）；大算例采样 32 次平均 11 s（有限缓冲时 16–20 s）。
 - **固定 vs 联合维护**：
   - G3A 中 n=8 证得最优，联合维护降低约 30%–56%（[exp_035](experiments/archive/exp_035_graduation_main_v2_v1/findings.md)）；
   - G4 中 n=20/50/100 平均降低 49%/11%/7%，窗口越宽收益越大。
@@ -76,7 +81,8 @@
    - **L2 强化学习（2026-11-02 获批）**：[设计](docs/plans/innovation_rl_design.md)、`logistics.generator`、`logistics.policy` 已实现；
      两次试训（只用训练/验证集，未归档，`experiments/runs/l2_policy_pilot_v1|v2`）：模仿 + REINFORCE 60 轮后，贪心策略比单一规则 EFT 好约 8%，
      与"逐实例 4 条规则取最好"基本持平（1.016）；每实例采样 8/32 次取最好可好约 5%/8%。B=0 时最弱。验证集同时用于选模型，数字偏乐观；
-   - 下一步：冻结正式训练方案（预算、种子、预先登记的假设），经用户批准训练预算后再训练并只在测试集上评价一次；
+   - **L2 正式训练与测试已完成**（[协议](docs/protocols/l2_formal_protocol.md) 2026-11-03 获批；结果见关键结果）。测试集已使用，不得再用于调参；
+   - 可选的后续（均需批准）：针对 B=0 的改进、加快大算例采样（并行或减少 `is_safe` 回放）、消融（只模仿 / 无掩码）；
    - 之后的动态事件与 RL 阶段需单独批准。用户希望 2027 年 3 月前完成。
 3. 可选：用新代码重跑单窗口 G3A 的 `g1 --long`、g2–g4。
 

@@ -23,6 +23,9 @@
 | `l1_decoupled.py` | 大创 L1：解耦基线（D0 不计运输 / D1 计入载货行驶；先排机器再优化车辆，30 s + 30 s × 8 线程）与已归档的联合 CP-SAT 对比，同样 10 算例 × 5 配置 | 项目 | ≤100 min |
 | `l1_large.py` | 大创 L1：Brandimarte mk01–05、mk07 + Homayouni & Fontes 整数布局，2 台车，5 种配置；各规则普通与前瞻式死锁规避两种模式；与无求解器下界对比。需本地布局 `instances/external/HomayouniFontes` | 项目 | ~5 min |
 | `l1_search.py` | 大创 L1：SA（参考）与 GA 元启发式；A 部分 10 个小算例 × 5 配置对照 CP-SAT，B 部分 6 个大算例 × 5 配置对照最好规避规则与下界；8 进程并行 | 项目 | ~1 h |
+| `l2_policy_pilot.py` | 大创 L2 试训：模仿 + REINFORCE，只用训练/验证集，`--rl-epochs`、`--samples` 可改预算；不归档 | 项目 | 视预算而定 |
+| `l2_formal_train.py` | 大创 L2 正式训练（[协议](../docs/protocols/l2_formal_protocol.md)）：3 个种子顺序训练，每个种子 18 进程采样，验证集选模型；写检查点与哈希 | 项目 | ~1.6 h |
+| `l2_formal_test.py` | 大创 L2 正式测试：核对检查点哈希；T1（10 小算例）与 T2（Brandimarte 6 个）× 5 配置；规则、贪心/采样 8/32、同等时间与同等评估次数 SA；H1–H4 | 项目 | ~45 min |
 | `l1_benchmark.py` | 大创 L1：Deroussi & Norre 10 个 FJSPT 算例；参考解重放；CP-SAT 60 s × 8 线程与联合/解耦/随机规则，在基准约定和"阻塞 + 输入缓冲 ∞/2/1/0"下对比。需本地数据 `instances/external/FJSPT`（无许可证，不入库） | 项目 | ≤50 min |
 
 实例划分（`fjsp_lab.maintenance.generator.SPLITS`）按种子区间互不重叠：训练 10000–11999、验证 20000–20199、
