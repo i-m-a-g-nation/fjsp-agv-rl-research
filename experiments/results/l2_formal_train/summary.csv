@@ -1,0 +1,4 @@
+training_seed,selected_phase,selected_epoch,val_ratio_to_best_rule,val_better_than_best_rule,training_seconds
+0,reinforce,58,1.0011,48,1984.4
+1,reinforce,119,1.0022,47,2024.4
+2,reinforce,74,0.9979,45,1739.4
