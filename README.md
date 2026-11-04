@@ -2,17 +2,18 @@
 
 > A small, test-covered research platform for scheduling: static flexible job
 > shop (FJSP), dynamic rescheduling, and identical parallel machines with
-> mandatory maintenance windows (total tardiness). Every algorithm returns a
+> mandatory maintenance windows (total tardiness), and a production-logistics
+> line (FJSP with AGV transport, finite buffers and blocking). Every algorithm returns a
 > plan only after an independent feasibility checker accepts it.
 
-三条研究线共用一个 Python 包 `fjsp_lab`：
+四个子包组成一个 Python 包 `fjsp_lab`：
 
 | 子包 | 内容 | 阶段 |
 |---|---|---|
 | `fjsp_lab.fjsp` | 静态 FJSP：不可变实例、FJSPLib 读取、统一调度结果、解码、**合法性检查器**、7 条派工规则、CP-SAT、甘特图 | Phase 1 |
 | `fjsp_lab.dynamic` | 机器故障/维修、新工件到达、加工时间变化；冻结已开工工序；基线重调度；动态检查器 | Phase 2A |
 | `fjsp_lab.maintenance` | 毕设模型：同质平行机 + 周期性必需维护（每台机器一个或多个时间窗，每窗内完整维护一次），最小化总延期；检查器、算例生成、CP-SAT/枚举、构造式 MDP、EDD/MDD/ATC、GA/SA/改进 GA、注意力 RL 策略（主方法）与 NumPy 打分策略（早期对照） | 毕设 |
-| `fjsp_lab.logistics` | 大创 L1：柔性作业车间 + AGV 运输（显式空驶、L/U 站）+ 有限/无限输入缓冲 + 加工后阻塞；FJSPT 算例读取、协同检查器、事件仿真器、联合/解耦规则、小规模 CP-SAT | 大创 |
+| `fjsp_lab.logistics` | 大创：柔性作业车间 + 同质单载 AGV（显式空驶、L/U 站）+ 有限/无限输入缓冲 + 加工后阻塞；FJSPT 与布局读取、协同检查器、事件仿真器与前瞻式死锁规避、联合/解耦规则、小规模 CP-SAT 与解耦基线、序列解码与 SA/GA（L1）；算例生成器与带死锁规避掩码的逐候选打分策略（模仿 + REINFORCE，L2） | 大创 L1/L2 |
 
 依赖方向单一：`fjsp ← dynamic`，`fjsp ← maintenance`，`fjsp ← logistics`（维护模型和物流模型的生产部分都直接用静态检查器校验）。
 
@@ -21,9 +22,9 @@
 ```
 src/fjsp_lab/        库代码（见上表）
 tests/               pytest：fjsp/、maintenance/、logistics/、test_dynamic.py
-experiments/         实验脚本（p1_*、p2_*、g*_*）、inputs/、results/（新结果）、archive/（旧结果）
+experiments/         实验脚本（p1_* 静态、p2_* 动态、g*_* 毕设、l1_*/l2_* 大创）、inputs/、results/（新结果）、archive/（旧结果）
 instances/           FJSPLib 子集（30 个）与 BKS 表；external/（第三方无许可证数据，只在本地，git 忽略）
-docs/                models/ 数学模型；protocols/ 实验协议；plans/ 路线与论文大纲；history/ 历史验收快照
+docs/                models/ 数学模型与论文第 2 章；protocols/ 实验协议；plans/ 论文大纲与大创方案；history/ 历史验收快照
 notes/               文献笔记与毕设文献地图
 scripts/             setup_env.ps1（建环境）、run_checks.ps1（测试 + Phase 1/2A 实验）
 ```
@@ -54,6 +55,7 @@ print(plan.total_tardiness)
 - 输入数据不可变；所有时间和编号必须是 Python `int`（拒绝 `bool`、浮点）。
 - 每个算法在返回前调用对应检查器，失败就抛异常，不返回非法调度。
 - 静态检查器覆盖：每道工序恰好一次、工艺顺序、机器不重叠、可选机器、`end - start = processing_time`、加工时间与实例一致、makespan 一致。
+- 物流检查器在静态检查之上再查：每段必需运输恰好一次且路线正确、运输时长正确、车辆从 L/U 出发、不重叠、空驶时间足够、取货不早于加工结束、送达不晚于开工、阻塞与站点容量（1 + 缓冲）、makespan 一致。
 - 维护检查器在此之上再查：每个维护窗口恰好一次维护、时长正确、整段落在窗口内、固定模式下起点等于给定值、与生产不重叠、总延期与独立重算一致。
 - CP-SAT 只有 `OPTIMAL` 才称最优；`FEASIBLE` 是限时可行解。
 

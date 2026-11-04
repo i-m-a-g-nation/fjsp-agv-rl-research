@@ -22,3 +22,16 @@
 | `g4_policy_curves/` | RL 单实例计时 |
 | `g4_summary/` | 汇总、曲线图和 [findings.md](g4_summary/findings.md) |
 | `g4_gantt/` | 甘特图示例（PNG/PDF）：n20-m2 固定 86 → 联合 66；n20-m4 固定 129 → 联合 67；n50-m4 两者都是 26 |
+
+## 大创（生产—物流协同）
+
+各目录的提交见其 `findings.md` 与 `manifest.json`（均为 `git_dirty: false`）。第三方算例与布局只在本地 `instances/external/`，哈希记录在 manifest。
+
+| 结果 | 提交 | 内容 |
+|---|---|---|
+| `l1_benchmark/` | `c981fcb` | Deroussi & Norre 10 个算例：参考解重放、CP-SAT 与规则，基准约定与"阻塞 + 缓冲 ∞/2/1/0"；[findings](l1_benchmark/findings.md) |
+| `l1_decoupled/` | `e3cafa2` | 解耦基线（先排机器再排车）与联合 CP-SAT 的差距；[findings](l1_decoupled/findings.md) |
+| `l1_large/` | `0e37383` | Brandimarte 6 个大算例：规则普通/死锁规避、缓冲效应、下界；[findings](l1_large/findings.md) |
+| `l1_search/` | `8673ba7` | SA（参考）与 GA：小算例对照 CP-SAT，大算例对照规则与下界；[findings](l1_search/findings.md) |
+| `l2_formal_train/` | `3cfc48a` | L2 策略 3 个种子的正式训练：检查点（含哈希）、训练曲线、验证集结果 |
+| `l2_formal_test/` | `a685ac8` | L2 正式测试（测试集只用一次）：H1–H4 与描述性结果；[findings](l2_formal_test/findings.md) |
