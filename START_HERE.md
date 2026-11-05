@@ -32,7 +32,7 @@
 | Phase 1 静态 FJSP | 实例/读取、7 条规则、CP-SAT、检查器、甘特图；30 个 FJSPLib 实例；极端输入回归测试 | —（维护中） |
 | Phase 2A 动态 | 三类事件、冻结、基线重调度、动态检查器；243 次协议运行全部通过 | 物流/AGV 等扩展 |
 | 毕设（平行机 + 维护） | 单窗口与周期性多窗口模型、检查器、CP-SAT（与枚举核对）、EDD/MDD/ATC、GA/SA/IGA、NumPy 打分策略、注意力策略（解码器 MDP）；G3A 与 G4 实验；甘特图示例；论文大纲（RL 主线） | 创新点取舍、消融（需批准）、文献、论文正文 |
-| 大创（生产—物流协同） | L1（2026-11-01 获批）：[物流模型](docs/models/logistics_model_zh.md)、`fjsp_lab.logistics`（算例读取、协同检查器、事件仿真器、联合/解耦规则、CP-SAT）；建模决策与两轮查新；[基准对齐与缓冲实验](experiments/results/l1_benchmark/findings.md)、[联合与解耦差距](experiments/results/l1_decoupled/findings.md)、[大算例与死锁规避](experiments/results/l1_large/findings.md)、[元启发式参考](experiments/results/l1_search/findings.md)；L2 强化学习（2026-11-02 获批）：`logistics.policy`、[正式训练](experiments/results/l2_formal_train/)与[正式测试](experiments/results/l2_formal_test/findings.md) | 阻塞感知邻域（可选）；动态事件（需批准）；论文 |
+| 大创（生产—物流协同） | L1（2026-11-01 获批）：[物流模型](docs/models/logistics_model_zh.md)、`fjsp_lab.logistics`（算例读取、协同检查器、事件仿真器、联合/解耦规则、CP-SAT）；建模决策与两轮查新；[基准对齐与缓冲实验](experiments/results/l1_benchmark/findings.md)、[联合与解耦差距](experiments/results/l1_decoupled/findings.md)、[大算例与死锁规避](experiments/results/l1_large/findings.md)、[元启发式参考](experiments/results/l1_search/findings.md)；L2 强化学习（2026-11-02 获批）：`logistics.policy`、[正式训练](experiments/results/l2_formal_train/)与[正式测试](experiments/results/l2_formal_test/findings.md) | 论文初稿已完成（[大创论文](docs/manuscripts/innovation_paper_zh.tex)，待补全文献与定稿）；阻塞感知邻域（可选）；动态事件（需批准） |
 
 ## 关键结果
 
@@ -82,6 +82,7 @@
      两次试训（只用训练/验证集，未归档，`experiments/runs/l2_policy_pilot_v1|v2`）：模仿 + REINFORCE 60 轮后，贪心策略比单一规则 EFT 好约 8%，
      与"逐实例 4 条规则取最好"基本持平（1.016）；每实例采样 8/32 次取最好可好约 5%/8%。B=0 时最弱。验证集同时用于选模型，数字偏乐观；
    - **L2 正式训练与测试已完成**（[协议](docs/protocols/l2_formal_protocol.md) 2026-11-03 获批；结果见关键结果）。测试集已使用，不得再用于调参；
+   - **论文初稿**（2026-11-04）：[innovation_paper_zh.tex](docs/manuscripts/innovation_paper_zh.tex)（[PDF](docs/manuscripts/innovation_paper_zh.pdf)），14 页；参考文献中标注"待核对/待补全"的条目需按原文补全，投稿前再做一次数据库检索；
    - 可选的后续（均需批准）：针对 B=0 的改进、加快大算例采样（并行或减少 `is_safe` 回放）、消融（只模仿 / 无掩码）；
    - 之后的动态事件等阶段需用户单独批准（方向同样由用户决定，不需导师确认）。用户希望 2027 年 3 月前完成。
 3. 可选：用新代码重跑单窗口 G3A 的 `g1 --long`、g2–g4。
@@ -94,6 +95,7 @@
 
 ## 文档
 
+- 论文稿：[大创论文初稿](docs/manuscripts/innovation_paper_zh.tex)
 - 模型：[毕设模型](docs/models/graduation_model.md)、[论文第 2 章草稿（模型与证明，LaTeX/PDF）](docs/models/thesis_ch2_model_zh.tex)、Phase 1/2A 数学模型（`docs/models/`）
 - 协议：[G4 协议](docs/protocols/g4_periodic_protocol.md)、[G3A 协议](docs/protocols/g3a_protocol.md)、[Phase 2A 协议](docs/protocols/phase2a_experiment_protocol.md)
 - 2026-10-31 重构：旧代码在分支 `archive/pre-restructure-2026-10-31`，新旧结果一致性见 [restructure_equivalence](experiments/archive/restructure_equivalence/)
