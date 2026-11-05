@@ -101,8 +101,8 @@ def _batch(rows: list[np.ndarray], device) -> tuple[torch.Tensor, torch.Tensor]:
 
 
 def _run(model: AttentionPolicy, problems: list[Problem], samples: int, greedy: bool,
-         generator: torch.Generator | None, device: str, record: bool):
-    """Lockstep episodes; optionally record (features, padding, active, choice) per step."""
+         generator: torch.Generator | None, device: str, record: bool, keep_envs: bool = False):
+    """Lockstep episodes; optionally record (features, padding, active, choice) per step (and return the envs)."""
     envs = [make_env(model.config.kind, data, mode) for data, mode in problems for _ in range(samples)]
     tardiness, steps = [None] * len(envs), []
     with torch.no_grad():
@@ -127,14 +127,24 @@ def _run(model: AttentionPolicy, problems: list[Problem], samples: int, greedy: 
                     tardiness[k] = step.result.total_tardiness
     if any(t is None for t in tardiness):
         raise RuntimeError('An episode did not terminate')
-    return [tardiness[p * samples:(p + 1) * samples] for p in range(len(problems))], steps
+    grouped = [tardiness[p * samples:(p + 1) * samples] for p in range(len(problems))]
+    return (grouped, steps, envs) if keep_envs else (grouped, steps)
 
 
 def rollout(model: AttentionPolicy, problems: list[Problem], *, samples: int, greedy: bool,
-            generator: torch.Generator | None = None, device: str = 'cpu') -> tuple[list[list[int]], None]:
-    """Run ``samples`` episodes per problem; returns (tardiness[problem][sample], None)."""
-    tardiness, _ = _run(model, problems, samples, greedy, generator, device, record=False)
-    return tardiness, None
+            generator: torch.Generator | None = None, device: str = 'cpu', sequences: bool = False
+            ) -> tuple[list[list[int]], list[list[list[int]]] | None]:
+    """Run ``samples`` episodes per problem; returns (tardiness[problem][sample], sequences or None).
+
+    With ``sequences=True`` (``'sequence'`` MDP only) the second item holds each
+    episode's complete ``TokenDecoder`` sequence, e.g. to warm-start IGA.
+    """
+    if sequences and model.config.kind != 'sequence':
+        raise ValueError("Decoder sequences exist only for the 'sequence' MDP")
+    tardiness, _, envs = _run(model, problems, samples, greedy, generator, device, record=False, keep_envs=True)
+    if not sequences:
+        return tardiness, None
+    return tardiness, [[envs[p * samples + s].full_sequence for s in range(samples)] for p in range(len(problems))]
 
 
 @dataclass

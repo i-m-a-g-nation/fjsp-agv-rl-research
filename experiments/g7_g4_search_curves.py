@@ -12,6 +12,8 @@ is g8_g4_policy_curves.py; g9_g4_summary.py combines both.
 
 ``--methods`` and ``--processes`` allow re-timing a subset of the methods
 (e.g. IGA and SA with fewer parallel processes on an otherwise idle machine).
+``--grid`` picks the test grid (default ``g4``; G5 uses ``g5`` and ``g5-large``)
+and ``--cpsat-max-tasks`` limits CP-SAT to instances with at most that many jobs.
 """
 
 from __future__ import annotations
@@ -24,7 +26,7 @@ import time
 from _common import checked_tardiness, parse_args, provenance, write_json
 
 from fjsp_lab.maintenance.cpsat import CpSatError, solve_cpsat
-from fjsp_lab.maintenance.generator import G4_GRID, g4_cases
+from fjsp_lab.maintenance.generator import GRIDS, grid_cases
 from fjsp_lab.maintenance.metaheuristics import solve_metaheuristic
 from fjsp_lab.maintenance.rules import solve_dispatch_rule
 
@@ -82,7 +84,9 @@ def main() -> int:
                       extra=lambda p: (p.add_argument('--limit', type=int, default=None, help='first N cases (smoke)'),
                                        p.add_argument('--cpsat-seconds', type=float, default=CPSAT['time_limit']),
                                        p.add_argument('--methods', nargs='+', default=list(METHODS), choices=METHODS),
-                                       p.add_argument('--processes', type=int, default=PROCESSES)))
+                                       p.add_argument('--processes', type=int, default=PROCESSES),
+                                       p.add_argument('--grid', choices=tuple(GRIDS), default='g4'),
+                                       p.add_argument('--cpsat-max-tasks', type=int, default=None)))
     logging.basicConfig(level=logging.INFO, format='%(message)s')
     prov = provenance(__file__)   # recorded at start: the code that actually runs
     path = args.output_dir / 'rows.jsonl'
@@ -90,7 +94,12 @@ def main() -> int:
     if path.exists():
         with open(path, encoding='utf-8') as handle:
             done = {(row['case_id'], row['mode']) for row in map(json.loads, handle)}
-    jobs = [(case, mode, args.cpsat_seconds, tuple(args.methods)) for case in g4_cases()[:args.limit]
+    def methods_for(case):
+        if args.cpsat_max_tasks is not None and case.num_tasks > args.cpsat_max_tasks:
+            return tuple(m for m in args.methods if m != 'CP-SAT')
+        return tuple(args.methods)
+
+    jobs = [(case, mode, args.cpsat_seconds, methods_for(case)) for case in grid_cases(args.grid)[:args.limit]
             for mode in ('fixed', 'joint') if (case.case_id, mode) not in done]
     LOGGER.info('%d instances to run (%d already done)', len(jobs), len(done))
     started = time.monotonic()
@@ -102,7 +111,8 @@ def main() -> int:
             if count % 24 == 0:
                 LOGGER.info('%d/%d (%.0f min)', count, len(jobs), (time.monotonic() - started) / 60)
     write_json(args.output_dir / 'manifest.json', {
-        'experiment': 'g7_g4_search_curves', 'grid': G4_GRID, 'limit': args.limit, 'budgets': BUDGETS,
+        'experiment': 'g7_g4_search_curves', 'grid_name': args.grid, 'grid': GRIDS[args.grid], 'limit': args.limit,
+        'budgets': BUDGETS, 'cpsat_max_tasks': args.cpsat_max_tasks,
         'search_seconds': SEARCH_SECONDS, 'cpsat': {**CPSAT, 'time_limit': args.cpsat_seconds}, 'seed': SEED,
         'methods': args.methods, 'parallel_processes': args.processes, 'instances': len(done) + len(jobs),
         'elapsed_minutes_this_session': round((time.monotonic() - started) / 60, 1), **prov})

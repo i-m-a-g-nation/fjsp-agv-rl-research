@@ -11,7 +11,8 @@ from fjsp_lab.maintenance import (
 from fjsp_lab.fjsp.schedule import ScheduleRecord
 from fjsp_lab.maintenance.feasibility import build_plan
 from fjsp_lab.maintenance.generator import (
-    build_instance, cycle_counts, periodic_case, sample_instances, split_instances,
+    G4_SIZES, G4_SPLITS, GRIDS, build_instance, cycle_counts, g4_cases, grid_cases, periodic_case, sample_instances,
+    split_instances,
 )
 
 
@@ -176,3 +177,17 @@ def test_periodic_generator_keeps_windows_disjoint_and_load_independent_of_count
                 total = sum(item.duration for item in windows)
                 assert 0.2 * w <= total <= 0.2 * w + 2 * len(windows)
     assert periodic_case(20, 2, 'mixed', 10, 25, 75, 1).data.tasks == build_instance(20, 2, 10, 25, 75, 1).tasks
+
+
+def test_g5_test_grids_use_fresh_seeds_and_g5_large_exceeds_the_training_sizes():
+    used = set(GRIDS['g4']['instance_seeds']).union(*(seeds for seeds, _ in G4_SPLITS.values()))
+    for name in ('g5', 'g5-large'):
+        assert used.isdisjoint(GRIDS[name]['instance_seeds'])
+    assert [c.case_id for c in grid_cases('g4')] == [c.case_id for c in g4_cases()]
+    main, large = grid_cases('g5'), grid_cases('g5-large')
+    assert len(main) == 288 and len(large) == 64
+    assert {(c.num_tasks, c.num_machines) for c in main} == set(G4_SIZES)
+    assert all(c.num_tasks > max(n for n, _ in G4_SIZES) for c in large)
+    assert [c.data for c in grid_cases('g5-large')] == [c.data for c in large]
+    with pytest.raises(ValueError):
+        grid_cases('g6')

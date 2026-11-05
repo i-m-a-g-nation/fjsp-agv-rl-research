@@ -146,6 +146,7 @@ def test_sequence_env_matches_the_decoder_on_random_episodes(mode, fixture, requ
         listed = set(env.sequence)
         full = env.sequence + [t for t in range(env.n, env.decoder.size) if t not in listed]
         assert accepted(env.result, data, mode) == env.total == decoded_value(data, mode, full)
+        assert env.full_sequence == full
     with pytest.raises(RuntimeError):
         env.step(0)
 

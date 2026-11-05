@@ -104,6 +104,17 @@ def test_attention_policy_rollout_imitation_reinforce_and_checkpoint(kind, tmp_p
     problems = [(small, 'fixed'), (periodic, 'joint')]
     greedy, _ = rollout(model, problems, samples=2, greedy=True)
     assert greedy[0][0] == greedy[0][1] and all(v >= 0 for g in greedy for v in g)
+    if kind == 'sequence':                     # sequences for the warm-started IGA reproduce the episodes
+        from fjsp_lab.maintenance.metaheuristics import decoded_value
+        values, sequences = rollout(model, problems, samples=3, greedy=False, sequences=True,
+                                    generator=torch.Generator().manual_seed(2))
+        for (data, mode), tardiness, found in zip(problems, values, sequences):
+            assert [decoded_value(data, mode, s) for s in found] == tardiness
+            seeded = solve_metaheuristic(data, mode=mode, algorithm='IGA', evaluations=60, initial_sequences=found)
+            assert seeded.result.total_tardiness <= min(tardiness)
+    else:
+        with pytest.raises(ValueError):
+            rollout(model, problems, samples=1, greedy=True, sequences=True)
     outcomes = [solve_metaheuristic(d, mode=m, algorithm='IGA', evaluations=200) for d, m in problems]
     teachers = [actions_for_plan(o.result, d, m) if kind == 'action' else teacher_actions(list(o.sequence), d, m)
                 for o, (d, m) in zip(outcomes, problems)]

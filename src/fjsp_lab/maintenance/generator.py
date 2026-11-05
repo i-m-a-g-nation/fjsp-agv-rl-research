@@ -252,7 +252,20 @@ G4_SPLITS = {'train': (range(200000, 220000), 21), 'validation': (range(230000, 
 
 def g4_cases() -> list[PeriodicCase]:
     """The 288 test cases of the G4 grid, each solved in fixed and joint mode."""
-    return [periodic_case(n, m, profile, a, b, t, s) for n, m, profile, a, b, t, s in product(*G4_GRID.values())]
+    return grid_cases('g4')
+
+
+# G5 (docs/protocols/g5_supplement_protocol.md): fresh test seeds; G5-L goes beyond the training sizes.
+G5_GRID = {**G4_GRID, 'instance_seeds': (1003, 1004)}
+G5_LARGE_GRID = {**G4_GRID, 'num_tasks': (200,), 'num_machines': (4, 8), 'instance_seeds': (1003, 1004)}
+GRIDS = {'g4': G4_GRID, 'g5': G5_GRID, 'g5-large': G5_LARGE_GRID}
+
+
+def grid_cases(name: str) -> list[PeriodicCase]:
+    """The test cases of a named grid (``GRIDS``), each solved in fixed and joint mode."""
+    if name not in GRIDS:
+        raise ValueError(f'grid must be one of {tuple(GRIDS)}')
+    return [periodic_case(n, m, profile, a, b, t, s) for n, m, profile, a, b, t, s in product(*GRIDS[name].values())]
 
 
 def g4_split(name: str) -> list[SampledInstance]:

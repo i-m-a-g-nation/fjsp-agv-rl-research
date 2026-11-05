@@ -94,6 +94,7 @@ class SequenceEnv:
         self.nxt = np.zeros(self.m, dtype=np.int64)
         self.unscheduled = np.ones(self.n, dtype=bool)
         self.sequence: list[int] = []
+        self.full_sequence: list[int] | None = None     # complete decoder sequence once done
         self.total = 0
         self.result: MaintenanceScheduleResult | None = None
 
@@ -166,6 +167,7 @@ class SequenceEnv:
         result = self.decoder.result(full)                           # decodes again and runs the checker
         if result.total_tardiness != self.total:
             raise SequenceEpisodeError('Incremental tardiness differs from the decoder')
+        self.full_sequence = full
         self.result = result
 
     # --- features ---------------------------------------------------------------

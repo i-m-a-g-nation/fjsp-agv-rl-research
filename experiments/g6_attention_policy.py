@@ -3,7 +3,8 @@
 Runs in the PyTorch environment (see START_HERE.md). Reads a g5_teacher_data
 run and uses its MDP kind (``action`` for g3a, ``sequence`` for g4); never
 touches a test split. Checkpoint selection uses the validation mean greedy
-tardiness only. Writes best.pt and summary.json.
+tardiness only. Writes best.pt (best overall), best_bc.pt (best of the
+imitation stage, the imitation-only ablation of G5) and summary.json.
 """
 
 from __future__ import annotations
@@ -89,7 +90,7 @@ def main() -> int:
     LOGGER.info('train %d, validation %d, reference %s', len(train_rows), len(val_rows), reference)
     kind = json.loads((args.data_dir / 'manifest.json').read_text(encoding='utf-8')).get('kind', 'action')
     model = AttentionPolicy(config_for(kind)).to(args.device)
-    history, best = [], {'val_greedy': float('inf')}
+    history, best, best_bc = [], {'val_greedy': float('inf')}, {'val_greedy': float('inf')}
     started = time.monotonic()
 
     def checkpoint(stage, step):
@@ -99,6 +100,8 @@ def main() -> int:
         LOGGER.info('%s %d: val greedy %.3f (%.1f min)', stage, step, value, history[-1]['minutes'])
         if value < best['val_greedy']:
             best.update(val_greedy=value, stage=stage, step=step, sha256=save(model, args.output_dir / 'best.pt'))
+        if stage == 'bc' and value < best_bc['val_greedy']:
+            best_bc.update(val_greedy=value, stage=stage, step=step, sha256=save(model, args.output_dir / 'best_bc.pt'))
         model.train()
 
     def update(optimizer, accumulate):
@@ -142,7 +145,7 @@ def main() -> int:
     write_json(args.output_dir / 'summary.json', {
         'experiment': 'g6_attention_policy', 'kind': kind,
         'arguments': {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
-        'reference_validation': reference, 'best': best, 'history': history,
+        'reference_validation': reference, 'best': best, 'best_bc': best_bc, 'history': history,
         'elapsed_minutes': round((time.monotonic() - started) / 60, 2), 'torch': torch.__version__,
         'cuda': torch.version.cuda, 'data_manifest_sha256': sha256(args.data_dir / 'manifest.json'),
         **prov})

@@ -16,13 +16,15 @@
 | `g4_comparison.py` | 论文主表：规则、打分策略、元启发式、CP-SAT 1 s/60 s 在 G3A 上汇总；读取 g1/g2/g3 的输出 | 项目 | ~2 min |
 | `g5_teacher_data.py` | 注意力策略的教师数据：2 万个训练实例的 IGA-10k 轨迹 + 验证集参考值 | 项目 | ~6 min |
 | `g6_attention_policy.py` | 注意力策略：模仿 IGA 教师 + REINFORCE，只用验证集选模型 | PyTorch | ≤2 h |
-| `g7_g4_search_curves.py` | G4：规则、GA/SA/IGA（随时间的最好值轨迹）、CP-SAT（各个可行解）在 576 个测试实例上；`--methods/--processes` 可只重跑部分方法 | 项目 | ~2 h |
-| `g8_g4_policy_curves.py` | G4：注意力策略单实例计时（GPU 贪心 + 采样 4/16/64；CPU 贪心 + 采样 4） | PyTorch | ~20 min |
+| `g7_g4_search_curves.py` | G4：规则、GA/SA/IGA（随时间的最好值轨迹）、CP-SAT（各个可行解）在 576 个测试实例上；`--methods/--processes` 可只重跑部分方法；G5 用 `--grid g5/g5-large` 与 `--cpsat-max-tasks` | 项目 | ~2 h |
+| `g8_g4_policy_curves.py` | G4：注意力策略单实例计时（GPU 贪心 + 采样 4/16/64；CPU 贪心 + 采样 4）；G5 用 `--grid`、`--checkpoint best_bc`、`--save-sequences` | PyTorch | ~20 min |
 | `g9_g4_summary.py` | G4：质量—时间曲线、H1–H3、探索性分组检验、曲线图 | 项目 | <1 min |
 | `g10_gantt_examples.py` | 甘特图示例：每种规模选协同降幅为中位数的案例（规则先定后画），画 IGA 的固定与联合两种方案 | 项目 | ~1 min |
 | `l1_decoupled.py` | 大创 L1：解耦基线（D0 不计运输 / D1 计入载货行驶；先排机器再优化车辆，30 s + 30 s × 8 线程）与已归档的联合 CP-SAT 对比，同样 10 算例 × 5 配置 | 项目 | ≤100 min |
 | `l1_large.py` | 大创 L1：Brandimarte mk01–05、mk07 + Homayouni & Fontes 整数布局，2 台车，5 种配置；各规则普通与前瞻式死锁规避两种模式；与无求解器下界对比。需本地布局 `instances/external/HomayouniFontes` | 项目 | ~5 min |
 | `l1_search.py` | 大创 L1：SA（参考）与 GA 元启发式；A 部分 10 个小算例 × 5 配置对照 CP-SAT，B 部分 6 个大算例 × 5 配置对照最好规避规则与下界；8 进程并行 | 项目 | ~1 h |
+| `g11_g5_seeded_iga.py` | 毕设 G5：用注意力策略的序列热启动 IGA（读取 `g8 --save-sequences` 的输出），总时长 10 s，轨迹计入 RL 推理时间 | 项目 | ~2 h / 种子 |
+| `g12_g5_summary.py` | 毕设 G5：质量—时间曲线、预先登记的 H1–H5、种子差异、模仿消融、协同维护 | 项目 | <1 min |
 | `l2_policy_pilot.py` | 大创 L2 试训：模仿 + REINFORCE，只用训练/验证集，`--rl-epochs`、`--samples` 可改预算；不归档 | 项目 | 视预算而定 |
 | `l2_formal_train.py` | 大创 L2 正式训练（[协议](../docs/protocols/l2_formal_protocol.md)）：3 个种子顺序训练，每个种子 18 进程采样，验证集选模型；写检查点与哈希 | 项目 | ~1.6 h |
 | `l2_formal_test.py` | 大创 L2 正式测试：核对检查点哈希；T1（10 小算例）与 T2（Brandimarte 6 个）× 5 配置；规则、贪心/采样 8/32、同等时间与同等评估次数 SA；H1–H4 | 项目 | ~45 min |
