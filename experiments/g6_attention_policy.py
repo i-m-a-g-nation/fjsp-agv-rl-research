@@ -44,6 +44,8 @@ def add_args(parser) -> None:
     parser.add_argument('--rl-batch', type=int, default=32)
     parser.add_argument('--rl-samples', type=int, default=16)
     parser.add_argument('--rl-lr', type=float, default=1e-4)
+    parser.add_argument('--chunk-rows', type=int, default=4096,
+                        help='states re-scored per backward pass in REINFORCE (memory only; same gradient)')
     parser.add_argument('--eval-every', type=int, default=10)
     parser.add_argument('--max-minutes', type=float, default=120.0)
     parser.add_argument('--eval-batch', type=int, default=100)
@@ -137,7 +139,7 @@ def main() -> int:
         chunk = rng.sample(train_rows, args.rl_batch)
         model.train()
         update(optimizer, lambda: reinforce_step(model, [r['problem'] for r in chunk], samples=args.rl_samples,
-                                                 generator=generator, device=args.device,
+                                                 chunk_rows=args.chunk_rows, generator=generator, device=args.device,
                                                  scale=[r['teacher_tardiness'] + 1.0 for r in chunk]))
         if step % args.eval_every == 0:
             checkpoint('rl', step)

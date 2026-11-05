@@ -160,10 +160,26 @@ class StateDataset:
 
     @classmethod
     def concatenate(cls, parts: list[tuple[list[np.ndarray], list[int]]]) -> 'StateDataset':
-        arrays = [a for states, _ in parts for a in states]
-        sizes = np.array([len(a) for a in arrays], dtype=np.int64)
-        return cls(np.concatenate(arrays).astype(np.float16), np.concatenate(([0], np.cumsum(sizes))),
-                   np.array([t for _, targets in parts for t in targets], dtype=np.int64))
+        """Stack the replayed states into one float16 array.
+
+        Copies into a preallocated array and releases each part as soon as it
+        is copied (``parts`` is emptied), so peak memory stays near one copy
+        of the data; the values equal float16 conversion of the inputs.
+        """
+        sizes = np.array([len(a) for states, _ in parts for a in states], dtype=np.int64)
+        offsets = np.concatenate(([0], np.cumsum(sizes)))
+        width = next(a.shape[1] for states, _ in parts for a in states)
+        rows = np.empty((int(offsets[-1]), width), dtype=np.float16)
+        targets, state = [], 0
+        for index in range(len(parts)):
+            states, part_targets = parts[index]
+            parts[index] = None
+            for array in states:
+                rows[offsets[state]:offsets[state + 1]] = array
+                state += 1
+            targets += part_targets
+        parts.clear()
+        return cls(rows, offsets, np.array(targets, dtype=np.int64))
 
     def batch(self, indices: np.ndarray, device: torch.device | str) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         states = [self.rows[self.offsets[i]:self.offsets[i + 1]] for i in indices]

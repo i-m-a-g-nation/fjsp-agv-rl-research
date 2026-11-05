@@ -141,3 +141,19 @@ def test_attention_policy_rollout_imitation_reinforce_and_checkpoint(kind, tmp_p
     assert rollout(again, problems, samples=1, greedy=True)[0] == rollout(model, problems, samples=1, greedy=True)[0]
     with pytest.raises(ValueError):
         load(tmp_path / 'm.pt', expected_sha256='0' * 64)
+
+
+def test_state_dataset_stacking_equals_plain_concatenation():
+    pytest.importorskip('torch')
+    from fjsp_lab.maintenance.attention_policy import StateDataset
+    rng = np.random.default_rng(0)
+    parts = [([rng.normal(size=(int(k), 5)).astype(dtype) for k in rng.integers(1, 9, size=3)], [0, 1, 2])
+             for dtype in (np.float32, np.float16, np.float32)]
+    arrays = [a for states, _ in parts for a in states]
+    expected = np.concatenate(arrays).astype(np.float16)
+    sizes = [len(a) for a in arrays]
+    dataset = StateDataset.concatenate(parts)
+    assert parts == [] and dataset.rows.dtype == np.float16
+    assert np.array_equal(dataset.rows, expected)
+    assert dataset.offsets.tolist() == np.concatenate(([0], np.cumsum(sizes))).tolist()
+    assert dataset.targets.tolist() == [0, 1, 2] * 3
