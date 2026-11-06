@@ -39,7 +39,7 @@ Phase 1 已建立静态 FJSP 基础实验平台。
 
 ## 已放行的扩展（毕设路线）
 
-以下内容已在用户确认的毕设范围内实现，代码在 `src/fjsp_lab/maintenance/`，模型见 `docs/models/graduation_model.md`，历史批准记录见 `docs/history/`：
+以下内容已在用户确认的毕设范围内实现，代码在 `src/fjsp_lab/maintenance/`，模型见 `docs/models/graduation_model.md`，各阶段的批准时间见 `START_HERE.md` 与 git 历史（整理前的历史文档在标签 `pre-cleanup-2026-11-06`）：
 
 - G1：同质平行机、每任务一道工序、0 时刻到达、每机一次必需维护（时间窗内）、总延期目标，及其数据与合法性检查器。
 - G2：固定/联合维护的小规模 CP-SAT 参考模型与独立枚举核对。
@@ -72,7 +72,17 @@ Phase 1 已建立静态 FJSP 基础实验平台。
 ## 代码结构
 
 - 库代码只在 `src/fjsp_lab/`：`fjsp`（Phase 1）、`dynamic`（Phase 2A，依赖 `fjsp`）、`maintenance`（毕设，生产部分复用 `fjsp` 检查器）、`logistics`（大创 L1，生产部分复用 `fjsp` 检查器）。子包之间不得反向依赖。
-- 实验脚本在 `experiments/`（`p1_*`、`p2_*`、`g*_*`），共用 `experiments/_common.py`；测试在 `tests/`，按子包分目录。
+- 实验脚本在 `experiments/`（`p1_*`、`p2_*`、`g*_*`、`l1_*`、`l2_*`），共用 `experiments/_common.py`；测试在 `tests/`，按子包分目录。
+- 文档：`README.md`（入口）、`START_HERE.md`（进度，唯一维护处）、`docs/overview.md`（全景与流程图）、`docs/methods.md`（原理）、
+  `docs/glossary.md`（术语）；`docs/models|protocols|plans|literature|manuscripts` 分别放模型、协议、计划、文献、论文稿。
+  新增子包、实验批次或方法时，同步更新 overview 的图与表、methods 的对应小节和 glossary 的新术语。
+- 已删除的旧文档（`docs/history/`、早期文献笔记、CI 工作流等）在标签 `pre-cleanup-2026-11-06` 中可查。
+
+## 新会话接手
+
+1. 依次读 `START_HERE.md`、本文件、相关的协议或计划文档；不要凭记忆假设进度。
+2. 先跑一遍检查确认环境与代码状态（`pytest`，项目专用环境）；PyTorch 相关测试在 PyTorch 环境里单独跑。
+3. 有一个 `git stash`（`stash@{0}`）保存着重构前另一会话的未提交修改，用户选择不提交；未经用户同意不要应用或删除。
 - 只为有意义的行为写测试：合法性检查器的每类违规、每个算法输出过检查器、确定性/可复现、关键数值回归。不写只为凑覆盖率的测试。
 
 ## 分支与证据规则

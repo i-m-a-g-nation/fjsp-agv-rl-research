@@ -1,48 +1,78 @@
-# fjsp-lab：调度研究实验平台
+# fjsp-lab：车间调度研究平台
 
-> A small, test-covered research platform for scheduling: static flexible job
-> shop (FJSP), dynamic rescheduling, and identical parallel machines with
-> mandatory maintenance windows (total tardiness), and a production-logistics
-> line (FJSP with AGV transport, finite buffers and blocking). Every algorithm returns a
-> plan only after an independent feasibility checker accepts it.
+> A test-covered research platform for shop scheduling: flexible job shop (FJSP), dynamic rescheduling,
+> parallel machines with maintenance windows (graduation thesis), and FJSP with AGV transport and finite buffers
+> (innovation project). Every schedule is accepted only after an independent feasibility checker.
 
-四个子包组成一个 Python 包 `fjsp_lab`：
+## 这是什么
 
-| 子包 | 内容 | 阶段 |
-|---|---|---|
-| `fjsp_lab.fjsp` | 静态 FJSP：不可变实例、FJSPLib 读取、统一调度结果、解码、**合法性检查器**、7 条派工规则、CP-SAT、甘特图 | Phase 1 |
-| `fjsp_lab.dynamic` | 机器故障/维修、新工件到达、加工时间变化；冻结已开工工序；基线重调度；动态检查器 | Phase 2A |
-| `fjsp_lab.maintenance` | 毕设模型：同质平行机 + 周期性必需维护（每台机器一个或多个时间窗，每窗内完整维护一次），最小化总延期；检查器、算例生成、CP-SAT/枚举、构造式 MDP、EDD/MDD/ATC、GA/SA/改进 GA、注意力 RL 策略（主方法）与 NumPy 打分策略（早期对照） | 毕设 |
-| `fjsp_lab.logistics` | 大创：柔性作业车间 + 同质单载 AGV（显式空驶、L/U 站）+ 有限/无限输入缓冲 + 加工后阻塞；FJSPT 与布局读取、协同检查器、事件仿真器与前瞻式死锁规避、联合/解耦规则、小规模 CP-SAT 与解耦基线、序列解码与 SA/GA（L1）；算例生成器与带死锁规避掩码的逐候选打分策略（模仿 + REINFORCE，L2） | 大创 L1/L2 |
+工厂要决定"哪个工件在哪台机器上、什么时候加工"，这就是**调度**。本仓库是一个用 Python 写的调度研究平台，承载两个课题：
 
-依赖方向单一：`fjsp ← dynamic`，`fjsp ← maintenance`，`fjsp ← logistics`（维护模型和物流模型的生产部分都直接用静态检查器校验）。
+- **毕业设计**：多台相同机器加工一批工件，每台机器还要在规定时间窗内停机维护。研究如何同时安排生产和维护，使工件**总延期**最小，
+  主方法是**注意力网络强化学习**，并与派工规则、遗传算法/模拟退火、精确求解器比较。
+- **大创项目**：工件在机器之间由 **AGV 小车**搬运，机器前的**缓冲区**容量有限、可能**死锁**。研究如何联合安排加工与搬运，
+  使全部工件最早完工，方法包括事件仿真 + 死锁规避、强化学习打分策略、模拟退火、精确求解器。
+
+两者共用一个经过充分测试的底座：标准柔性作业车间（FJSP）的数据结构、统一的调度结果和**独立的合法性检查器**。
+
+```mermaid
+flowchart LR
+    DATA["算例<br/>基准 / 生成器"] --> BASE["fjsp 底座<br/>数据 · 检查器 · 规则 · CP-SAT"]
+    BASE --> DYN["dynamic<br/>动态重调度"]
+    BASE --> MAIN["maintenance<br/>毕设：维护 + 总延期 + RL"]
+    BASE --> LOG["logistics<br/>大创：AGV + 缓冲 + RL"]
+    MAIN & LOG & DYN --> EXP["experiments<br/>实验脚本"]
+    EXP --> RES["results<br/>归档结果 + 结论"]
+    RES --> DOC["docs<br/>论文稿 · 模型 · 协议"]
+```
+
+完整的结构图、各部分作用与关系见 **[项目全景](docs/overview.md)**。
+
+## 从哪里开始读
+
+| 你想… | 读这个 |
+|---|---|
+| 理解整个项目在做什么、各部分怎么连 | [docs/overview.md](docs/overview.md)（全景与流程图） |
+| 理解模型和算法的原理 | [docs/methods.md](docs/methods.md) |
+| 查一个不懂的术语 | [docs/glossary.md](docs/glossary.md) |
+| 知道现在做到哪、结论是什么、下一步做什么 | [START_HERE.md](START_HERE.md) |
+| 看某个实验的数据和结论 | [experiments/README.md](experiments/README.md) → `experiments/results/<名称>/findings.md` |
+| 写毕设论文 | [论文大纲](docs/plans/thesis_outline.md)、[第 2 章草稿](docs/models/thesis_ch2_model_zh.pdf)、[文献地图](docs/literature/graduation_literature_map.md) |
+| 改大创论文 | [大创论文初稿](docs/manuscripts/innovation_paper_zh.pdf)、[物流模型](docs/models/logistics_model_zh.md) |
+| 改代码 | [AGENTS.md](AGENTS.md)（开发规则），然后看 `src/fjsp_lab/` 对应子包开头的说明 |
 
 ## 目录
 
-```
-src/fjsp_lab/        库代码（见上表）
-tests/               pytest：fjsp/、maintenance/、logistics/、test_dynamic.py
-experiments/         实验脚本（p1_* 静态、p2_* 动态、g*_* 毕设、l1_*/l2_* 大创）、inputs/、results/（新结果）、archive/（旧结果）
-instances/           FJSPLib 子集（30 个）与 BKS 表；external/（第三方无许可证数据，只在本地，git 忽略）
-docs/                models/ 数学模型与论文第 2 章；protocols/ 实验协议；plans/ 论文大纲与大创方案；history/ 历史验收快照
-notes/               文献笔记与毕设文献地图
-scripts/             setup_env.ps1（建环境）、run_checks.ps1（测试 + Phase 1/2A 实验）
+```text
+src/fjsp_lab/        库代码
+  fjsp/              静态柔性作业车间底座（Phase 1）
+  dynamic/           动态事件与重调度（Phase 2A）
+  maintenance/       毕设：平行机 + 维护窗口 + 总延期；规则、GA/SA/IGA、CP-SAT、注意力强化学习
+  logistics/         大创：FJSP + AGV + 缓冲 + 阻塞；仿真器、死锁规避、规则、SA/GA、CP-SAT、强化学习
+tests/               自动测试（按子包分目录）
+experiments/         实验脚本；results/ 当前归档结果；archive/ 重构前的归档结果；inputs/ 协议输入
+instances/           30 个 FJSPLib 基准算例与已知最好值；external/ 第三方数据（仅本地，不入库）
+docs/                overview / methods / glossary（导读）；models/ 数学模型；protocols/ 实验协议；
+                     plans/ 论文大纲与大创设计；literature/ 文献；manuscripts/ 论文稿
+scripts/             setup_env.ps1 建环境；run_checks.ps1 一键检查
 ```
 
 ## 快速开始
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1   # 建项目专用 Conda 环境 .conda-env
-powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1  # pytest + Phase 1/2A 实验
+powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1   # 在项目内建专用 Conda 环境 .conda-env
+powershell -ExecutionPolicy Bypass -File .\scripts\run_checks.ps1  # 运行全部测试 + Phase 1/2A 实验
 ```
 
-不安装也能运行：测试通过 `pyproject.toml` 的 `pythonpath = ["src"]`，实验脚本由 `experiments/_common.py` 加入 `src/`。
+不安装也能用：测试通过 `pyproject.toml` 的 `pythonpath = ["src"]` 找到代码，实验脚本由 `experiments/_common.py` 把 `src/` 加入路径。
 
 ```python
+# 静态 FJSP：用 EFT 规则排一个玩具算例，并用检查器核对
 from fjsp_lab.fjsp import create_toy_instance, solve_rule, check_feasibility
 result = solve_rule(create_toy_instance(), "EFT")
 assert check_feasibility(result)[0]
 
+# 毕设模型：生成一个 24 工件、4 台机器的算例，用改进遗传算法（联合维护）求解
 from fjsp_lab.maintenance.generator import build_instance
 from fjsp_lab.maintenance.metaheuristics import solve_metaheuristic
 data = build_instance(24, 4, alpha=30, beta=75, tau=75, seed=101)
@@ -50,15 +80,15 @@ plan = solve_metaheuristic(data, mode="joint", algorithm="IGA", evaluations=1000
 print(plan.total_tardiness)
 ```
 
+注意力策略（`maintenance.attention_policy`、实验 `g6`、`g8`）需要 PyTorch，其余代码不需要。
+
 ## 正确性约定
 
-- 输入数据不可变；所有时间和编号必须是 Python `int`（拒绝 `bool`、浮点）。
-- 每个算法在返回前调用对应检查器，失败就抛异常，不返回非法调度。
-- 静态检查器覆盖：每道工序恰好一次、工艺顺序、机器不重叠、可选机器、`end - start = processing_time`、加工时间与实例一致、makespan 一致。
-- 物流检查器在静态检查之上再查：每段必需运输恰好一次且路线正确、运输时长正确、车辆从 L/U 出发、不重叠、空驶时间足够、取货不早于加工结束、送达不晚于开工、阻塞与站点容量（1 + 缓冲）、makespan 一致。
-- 维护检查器在此之上再查：每个维护窗口恰好一次维护、时长正确、整段落在窗口内、固定模式下起点等于给定值、与生产不重叠、总延期与独立重算一致。
-- CP-SAT 只有 `OPTIMAL` 才称最优；`FEASIBLE` 是限时可行解。
-
-## 当前进度
-
-见 [START_HERE.md](START_HERE.md)；开发规则见 [AGENTS.md](AGENTS.md)；实验索引见 [experiments/README.md](experiments/README.md)。
+- **先检查再返回**：每个算法在返回调度前都调用对应的检查器；不合法就抛异常，绝不把非法调度当作结果。
+- **检查器独立**：检查器不复用算法的计算，而是逐条核对约束并重新计算目标值。
+  - 静态检查：每道工序恰好一次、工艺顺序、机器不重叠、可选机器、时长正确、makespan 一致；
+  - 维护模型另查：每个窗口恰好一次维护、完整落在窗口内、不与加工重叠、总延期重算一致；
+  - 物流模型另查：每段运输恰好一次且路线正确、车辆行程连贯、取货不早于完工、送达不晚于开工、阻塞与工位容量。
+- **数据不可变**：算例创建后不能修改；时间与编号必须是整数。
+- **最优要有证明**：CP-SAT 返回 `OPTIMAL` 才说最优，`FEASIBLE` 只是限时可行解。
+- **结果可追溯**：每个结果目录的 `manifest.json` 记录 git 提交和全部源码的哈希；正式结果要求运行时没有未提交的改动。

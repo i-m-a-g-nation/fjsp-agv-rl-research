@@ -11,7 +11,7 @@
 
 本草案先给一个可精确验证的小模型，再确定最终研究算法。CP-SAT只作为小规模参考基线；完整任务书是否明确要求强化学习或特定智能算法，仍须确认。大创申请书的生产—物流/AGV/RL目标与本模型分开验收。
 
-后续用户明确表示“暂不清楚，但最好加强化学习”，2026-10-31 进一步把论文主线定为强化学习（见[论文大纲](../plans/thesis_outline.md)）；这是用户的选择，不是已核实的任务书强制要求。早期的 RL 设计与构造环境验证见 [RL方案](../history/graduation_rl_design_draft.md)、[R1验证](../history/graduation_rl_environment_validation.md)。
+后续用户明确表示“暂不清楚，但最好加强化学习”，2026-10-31 进一步把论文主线定为强化学习（见[论文大纲](../plans/thesis_outline.md)）；这是用户的选择，不是已核实的任务书强制要求。早期的 RL 设计与构造环境验证文档（已于 2026-11-06 整理时删除，可在标签 `pre-cleanup-2026-11-06` 中查看）。
 
 ## 2. 假设及确认状态
 
@@ -79,7 +79,7 @@ G2的CP-SAT表达沿用项目的optional interval/ExactlyOne/NoOverlap机制：�
 - 固定最早三个完工时刻为4、4、6，所有完工不早于对应可能的交期，最小总完工和为14，交期和为8，所以总延期下界6；A在机器0的2–4、C在机器0的4–6、B在机器1的2–4达到6。
 - 联合：机器0排A0–2、C2–4、维护4–6；机器1排B0–2、维护2–4。三个延期均为0，达到非负下界。
 
-这些是首版假设下的数学小例，先作为手工构造计划验证 G1，G2又用自动求解及独立枚举核对相同最优目标值。G1 同时拒绝漏维护、维护越窗、维护/加工重叠、漏任务、错误机器、时长不匹配及错误总延期等负例，见[G1验证](../history/graduation_g1_validation.md)和[G2验证](../history/graduation_g2_validation.md)。
+这些是首版假设下的数学小例，先作为手工构造计划验证 G1，G2又用自动求解及独立枚举核对相同最优目标值。G1 同时拒绝漏维护、维护越窗、维护/加工重叠、漏任务、错误机器、时长不匹配及错误总延期等负例，对应的回归测试在 `tests/maintenance/`（G1、G2 验证文档（已于 2026-11-06 整理时删除，可在标签 `pre-cleanup-2026-11-06` 中查看））。
 
 ## 6. 与现有代码的兼容方式（G1 已实现）
 
@@ -91,8 +91,8 @@ G2的CP-SAT表达沿用项目的optional interval/ExactlyOne/NoOverlap机制：�
 
 ## 7. 实施对应关系
 
-- G1（数据、总延期、维护记录、检查器）：见 [G1验证](../history/graduation_g1_validation.md)。
-- G2（固定/联合 CP-SAT 参考模型与独立枚举，严格区分 OPTIMAL/FEASIBLE）：见 [G2验证](../history/graduation_g2_validation.md)。
+- G1（数据、总延期、维护记录、检查器）：`maintenance.instance`、`schedule`、`feasibility`，测试见 `tests/maintenance/test_maintenance_model.py`。
+- G2（固定/联合 CP-SAT 参考模型与独立枚举，严格区分 OPTIMAL/FEASIBLE）：`maintenance.cpsat`、`enumeration`，测试见 `tests/maintenance/test_maintenance_algorithms.py`。
 - G3A（单窗口，固定 vs 联合）与 G4（周期性多窗口，规则、元启发式、RL 的质量—时间对比）：协议见 [G3A](../protocols/g3a_protocol.md)、[G4](../protocols/g4_periodic_protocol.md)，结果与结论见 START_HERE。
 - 比较算法时不能把固定与联合两种模型的可行域差异当作算法优势。
 
