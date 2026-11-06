@@ -25,6 +25,7 @@
 | `l1_search.py` | 大创 L1：SA（参考）与 GA 元启发式；A 部分 10 个小算例 × 5 配置对照 CP-SAT，B 部分 6 个大算例 × 5 配置对照最好规避规则与下界；8 进程并行 | 项目 | ~1 h |
 | `g11_g5_seeded_iga.py` | 毕设 G5：用注意力策略的序列热启动 IGA（读取 `g8 --save-sequences` 的输出），总时长 10 s，轨迹计入 RL 推理时间 | 项目 | ~2 h / 种子 |
 | `g12_g5_summary.py` | 毕设 G5：质量—时间曲线、预先登记的 H1–H5、种子差异、模仿消融、协同维护 | 项目 | <1 min |
+| `g13_iga_retime_check.py` | 毕设 G5：空闲机器上抽样复测 IGA 计时（36 个实例），与 G4/G5 的记录比较速度 | 项目 | 约 3 min |
 | `l2_policy_pilot.py` | 大创 L2 试训：模仿 + REINFORCE，只用训练/验证集，`--rl-epochs`、`--samples` 可改预算；不归档 | 项目 | 视预算而定 |
 | `l2_formal_train.py` | 大创 L2 正式训练（[协议](../docs/protocols/l2_formal_protocol.md)）：3 个种子顺序训练，每个种子 18 进程采样，验证集选模型；写检查点与哈希 | 项目 | ~1.6 h |
 | `l2_formal_test.py` | 大创 L2 正式测试：核对检查点哈希；T1（10 小算例）与 T2（Brandimarte 6 个）× 5 配置；规则、贪心/采样 8/32、同等时间与同等评估次数 SA；H1–H4 | 项目 | ~45 min |

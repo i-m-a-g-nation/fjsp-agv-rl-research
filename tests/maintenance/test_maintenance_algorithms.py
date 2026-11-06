@@ -91,6 +91,16 @@ def test_metaheuristics_respect_budget_and_return_accepted_plans(algorithm, mode
     assert again.sequence == outcome.sequence
 
 
+@pytest.mark.parametrize('mode', MODES)
+def test_iga_search_path_does_not_depend_on_where_it_stops(mode, periodic):
+    """g13 re-timing compares runs at equal decode counts, which needs a stop-independent path."""
+    short = solve_metaheuristic(periodic, mode=mode, algorithm='IGA', evaluations=400, seed=0)
+    long = solve_metaheuristic(periodic, mode=mode, algorithm='IGA', evaluations=1500, seed=0, time_limit=600.0)
+    path = [(decodes, value) for _, decodes, value in long.trace]
+    assert [(decodes, value) for _, decodes, value in short.trace] == [p for p in path if p[0] <= 400]
+    assert len(path) > len(short.trace)
+
+
 @pytest.mark.parametrize('fixture', ['large', 'periodic'])
 def test_iga_is_never_worse_than_its_initial_sequence(fixture, request):
     data = request.getfixturevalue(fixture)
