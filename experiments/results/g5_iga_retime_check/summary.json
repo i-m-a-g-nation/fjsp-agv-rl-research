@@ -1,0 +1,78 @@
+[
+  {
+    "decode_ratio_median": 0.9968412560434168,
+    "grid": "g5",
+    "new_decodes_per_second_median": 7440.700000000001,
+    "num_tasks": 100,
+    "record": "g5_search_curves",
+    "runs": 12,
+    "speed_ratio_median": 0.9926821935206034,
+    "speed_ratios": [
+      0.627,
+      0.63,
+      0.804,
+      0.988,
+      0.992,
+      0.992,
+      0.993,
+      1.006,
+      1.006,
+      1.008,
+      1.01,
+      1.174
+    ]
+  },
+  {
+    "decode_ratio_median": 0.6270281791169767,
+    "grid": "g4",
+    "new_decodes_per_second_median": 7668.9,
+    "num_tasks": 100,
+    "record": "g4_search_curves_retimed",
+    "runs": 12,
+    "speed_ratio_median": 0.6295738688647763,
+    "speed_ratios": [
+      0.61,
+      0.613,
+      0.622,
+      0.626,
+      0.627,
+      0.627,
+      0.632,
+      0.632,
+      0.633,
+      0.633,
+      0.639,
+      0.67
+    ]
+  },
+  {
+    "decode_ratio_median": 0.5828379222931527,
+    "grid": "g5",
+    "new_decodes_per_second_median": 20378.0,
+    "num_tasks": 20,
+    "record": "g5_search_curves",
+    "runs": 6,
+    "speed_ratio_median": 0.5780605911913285,
+    "speed_ratios": [
+      0.549,
+      0.578,
+      0.578,
+      0.593
+    ]
+  },
+  {
+    "decode_ratio_median": 1.0075086177784927,
+    "grid": "g4",
+    "new_decodes_per_second_median": 20382.5,
+    "num_tasks": 20,
+    "record": "g4_search_curves_retimed",
+    "runs": 6,
+    "speed_ratio_median": 0.7859846569646123,
+    "speed_ratios": [
+      0.571,
+      0.592,
+      0.98,
+      1.039
+    ]
+  }
+]

@@ -34,6 +34,8 @@
 | `g5_search_curves/`、`_large/` | 规则、IGA、SA；CP-SAT 只 n = 20 |
 | `g5_seeded_iga_seed{0,1,2}[_large]/` | RL 热启动 IGA |
 | `g5_summary/` | 汇总、H1–H5、曲线图和 [findings.md](g5_summary/findings.md) |
+| `g5_iga_retime_check/` | 空闲机器上抽样复测 IGA 计时（提交 1b405f1）和 [findings.md](g5_iga_retime_check/findings.md) |
+| `g5_iga_speed_sensitivity/` | 假设 IGA 快 1.3/1.6/2 倍时重做 H1、H3–H5（提交 bf88014，探索性） |
 
 ## 大创（生产—物流协同）
 

@@ -31,7 +31,7 @@
 |---|---|---|
 | Phase 1 静态 FJSP | 实例/读取、7 条规则、CP-SAT、检查器、甘特图；30 个 FJSPLib 实例；极端输入回归测试 | —（维护中） |
 | Phase 2A 动态 | 三类事件、冻结、基线重调度、动态检查器；243 次协议运行全部通过 | 物流/AGV 等扩展 |
-| 毕设（平行机 + 维护） | 单窗口与周期性多窗口模型、检查器、CP-SAT（与枚举核对）、EDD/MDD/ATC、GA/SA/IGA、NumPy 打分策略、注意力策略（解码器 MDP）；G3A、G4 与 G5 实验；甘特图示例；论文大纲（RL 主线） | 创新点取舍、IGA 计时抽样复测、文献、论文正文 |
+| 毕设（平行机 + 维护） | 单窗口与周期性多窗口模型、检查器、CP-SAT（与枚举核对）、EDD/MDD/ATC、GA/SA/IGA、NumPy 打分策略、注意力策略（解码器 MDP）；G3A、G4 与 G5 实验；甘特图示例；论文大纲（RL 主线） | 创新点取舍、文献、论文正文 |
 | 大创（生产—物流协同） | L1（2026-11-01 获批）：[物流模型](docs/models/logistics_model_zh.md)、`fjsp_lab.logistics`（算例读取、协同检查器、事件仿真器、联合/解耦规则、CP-SAT）；建模决策与两轮查新；[基准对齐与缓冲实验](experiments/results/l1_benchmark/findings.md)、[联合与解耦差距](experiments/results/l1_decoupled/findings.md)、[大算例与死锁规避](experiments/results/l1_large/findings.md)、[元启发式参考](experiments/results/l1_search/findings.md)；L2 强化学习（2026-11-02 获批）：`logistics.policy`、[正式训练](experiments/results/l2_formal_train/)与[正式测试](experiments/results/l2_formal_test/findings.md) | 论文初稿已完成（[大创论文](docs/manuscripts/innovation_paper_zh.tex)，待补全文献与定稿）；阻塞感知邻域（可选）；动态事件（需批准） |
 
 ## 关键结果
@@ -77,7 +77,8 @@
    - **G5 补充实验已完成**（[协议](docs/protocols/g5_supplement_protocol.md)，[findings](experiments/results/g5_summary/findings.md)）：
      新测试集（种子 1003/1004）与 n=200 推广集；3 个训练种子、只模仿消融、RL 热启动 IGA、规模推广。
      H1–H4 三个种子都满足，H5 两个种子满足，五个假设均成立；H5 的平均 gap 与检验方向相反（近零延期实例放大），已在 findings 中说明。
-     待办：n=100 上 IGA 解码速率比 G4 低约 37%，需在空闲机器上抽样复测；
+     计时核查（[复测与敏感性](experiments/results/g5_iga_retime_check/findings.md)，探索性）：单次运行速度可差约 1.6 倍，G5 的 IGA 很可能比 G4 慢 1.3–1.6 倍；
+     IGA 快 2 倍时 H1、H4、H5 结论不变，H3（10 s）无法用现有数据检验；
    之后可选：
    - 加快单实例推理（CPU/编译），把 RL 曲线左移；
    - 文献补充（含知网）；
