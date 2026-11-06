@@ -25,13 +25,13 @@
 | 除注意力策略外的全部代码与测试 | 项目专用 Conda 环境（`.conda-env` 或 `FJSP_CONDA_ENV`） |
 | `experiments/g6_attention_policy.py`、`g8_g4_policy_curves.py`（PyTorch，GPU） | 本机已有的 PyTorch 环境；不重复安装 PyTorch |
 
-## 各路线状态（2026-11-03）
+## 各路线状态（2026-11-06）
 
 | 路线 | 已有 | 未完成 |
 |---|---|---|
 | Phase 1 静态 FJSP | 实例/读取、7 条规则、CP-SAT、检查器、甘特图；30 个 FJSPLib 实例；极端输入回归测试 | —（维护中） |
 | Phase 2A 动态 | 三类事件、冻结、基线重调度、动态检查器；243 次协议运行全部通过 | 物流/AGV 等扩展 |
-| 毕设（平行机 + 维护） | 单窗口与周期性多窗口模型、检查器、CP-SAT（与枚举核对）、EDD/MDD/ATC、GA/SA/IGA、NumPy 打分策略、注意力策略（解码器 MDP）；G3A 与 G4 实验；甘特图示例；论文大纲（RL 主线） | 创新点取舍、消融（需批准）、文献、论文正文 |
+| 毕设（平行机 + 维护） | 单窗口与周期性多窗口模型、检查器、CP-SAT（与枚举核对）、EDD/MDD/ATC、GA/SA/IGA、NumPy 打分策略、注意力策略（解码器 MDP）；G3A、G4 与 G5 实验；甘特图示例；论文大纲（RL 主线） | 创新点取舍、IGA 计时抽样复测、文献、论文正文 |
 | 大创（生产—物流协同） | L1（2026-11-01 获批）：[物流模型](docs/models/logistics_model_zh.md)、`fjsp_lab.logistics`（算例读取、协同检查器、事件仿真器、联合/解耦规则、CP-SAT）；建模决策与两轮查新；[基准对齐与缓冲实验](experiments/results/l1_benchmark/findings.md)、[联合与解耦差距](experiments/results/l1_decoupled/findings.md)、[大算例与死锁规避](experiments/results/l1_large/findings.md)、[元启发式参考](experiments/results/l1_search/findings.md)；L2 强化学习（2026-11-02 获批）：`logistics.policy`、[正式训练](experiments/results/l2_formal_train/)与[正式测试](experiments/results/l2_formal_test/findings.md) | 论文初稿已完成（[大创论文](docs/manuscripts/innovation_paper_zh.tex)，待补全文献与定稿）；阻塞感知邻域（可选）；动态事件（需批准） |
 
 ## 关键结果
@@ -55,6 +55,11 @@
 - **固定 vs 联合维护**：
   - G3A 中 n=8 证得最优，联合维护降低约 30%–56%（[exp_035](experiments/archive/exp_035_graduation_main_v2_v1/findings.md)）；
   - G4 中 n=20/50/100 平均降低 49%/11%/7%，窗口越宽收益越大。
+- **G5 补充实验**（[findings](experiments/results/g5_summary/findings.md)）：
+  - 3 个训练种子：n=100、1 s 时 RL 的 gap 为 0.018–0.033，IGA 为 0.306；
+  - REINFORCE 相对只模仿使贪心总延期降低约 11%（n=100 约 13%）；
+  - RL 热启动 IGA：10 s 时全体 gap 0.007，IGA 0.022；n=100 时 0.001–0.002；
+  - n=200 推广：RL 平均总延期约 190，IGA（2 s）209；n=20 时仍是 SA 最好。
 - **G4 质量—时间对比**（[findings](experiments/results/g4_summary/findings.md)）：
   - n=100、0.2–2 s 内 RL 显著优于 IGA/SA，与最好解的差距约为 IGA 的 1/3；
   - n=50 时与 IGA 持平；n=20 和长时间预算时 IGA/SA 更好；
@@ -69,9 +74,10 @@
 ## 下一步（待用户决定）
 
 1. **毕设**：方向由用户（学生）决定，不需导师确认（2026-11-04 说明）；主线已定为 RL（2026-10-31），创新点表述见[论文大纲](docs/plans/thesis_outline.md)，由用户取舍。
-   - **G5 补充实验（2026-11-04 批准，进行中）**：[协议](docs/protocols/g5_supplement_protocol.md)。新测试集（种子 1003/1004）与 n=200 推广集；
-     训练种子 1、2 与只模仿检查点（E1/E2）、RL 热启动 IGA（E3）、规模推广（E4）；预先登记 H1–H5。
-     运行顺序：训练（GPU）→ 策略推理 → 搜索曲线与热启动 IGA（CPU，与训练错开）→ `g12_g5_summary.py`；
+   - **G5 补充实验已完成**（[协议](docs/protocols/g5_supplement_protocol.md)，[findings](experiments/results/g5_summary/findings.md)）：
+     新测试集（种子 1003/1004）与 n=200 推广集；3 个训练种子、只模仿消融、RL 热启动 IGA、规模推广。
+     H1–H4 三个种子都满足，H5 两个种子满足，五个假设均成立；H5 的平均 gap 与检验方向相反（近零延期实例放大），已在 findings 中说明。
+     待办：n=100 上 IGA 解码速率比 G4 低约 37%，需在空闲机器上抽样复测；
    之后可选：
    - 加快单实例推理（CPU/编译），把 RL 曲线左移；
    - 文献补充（含知网）；

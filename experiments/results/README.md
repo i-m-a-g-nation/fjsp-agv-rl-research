@@ -23,6 +23,18 @@
 | `g4_summary/` | 汇总、曲线图和 [findings.md](g4_summary/findings.md) |
 | `g4_gantt/` | 甘特图示例（PNG/PDF）：n20-m2 固定 86 → 联合 66；n20-m4 固定 129 → 联合 67；n50-m4 两者都是 26 |
 
+## G5 补充实验（提交 7999b06）
+
+| 结果 | 内容 |
+|---|---|
+| `g5_attention_policy_seed1/`、`_seed2/` | 训练种子 1、2（含模仿阶段检查点 `best_bc.pt`） |
+| `g5_bc_seed0/` | 种子 0 只跑模仿阶段 |
+| `g5_policy_curves_seed{0,1,2}[_large]/` | RL 单实例计时（G5-T / G5-L），含热启动用的序列 |
+| `g5_bc_curves_seed{0,1,2}[_large]/` | 只模仿模型的单实例计时 |
+| `g5_search_curves/`、`_large/` | 规则、IGA、SA；CP-SAT 只 n = 20 |
+| `g5_seeded_iga_seed{0,1,2}[_large]/` | RL 热启动 IGA |
+| `g5_summary/` | 汇总、H1–H5、曲线图和 [findings.md](g5_summary/findings.md) |
+
 ## 大创（生产—物流协同）
 
 各目录的提交见其 `findings.md` 与 `manifest.json`（均为 `git_dirty: false`）。第三方算例与布局只在本地 `instances/external/`，哈希记录在 manifest。
