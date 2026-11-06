@@ -14,11 +14,12 @@
   使全部工件最早完工，方法包括事件仿真 + 死锁规避、强化学习打分策略、模拟退火、精确求解器。
 
 两者共用一个经过充分测试的底座：标准柔性作业车间（FJSP）的数据结构、统一的调度结果和**独立的合法性检查器**。
+底座里另有一个动态重调度模块（`dynamic`，机器故障、新工件到达时重排），是早期的独立功能，**目前两个课题都没有使用**。
 
 ```mermaid
 flowchart LR
     DATA["算例<br/>基准 / 生成器"] --> BASE["fjsp 底座<br/>数据 · 检查器 · 规则 · CP-SAT"]
-    BASE --> DYN["dynamic<br/>动态重调度"]
+    BASE --> DYN["dynamic<br/>动态重调度<br/>（课题未使用）"]
     BASE --> MAIN["maintenance<br/>毕设：维护 + 总延期 + RL"]
     BASE --> LOG["logistics<br/>大创：AGV + 缓冲 + RL"]
     MAIN & LOG & DYN --> EXP["experiments<br/>实验脚本"]
@@ -46,7 +47,7 @@ flowchart LR
 ```text
 src/fjsp_lab/        库代码
   fjsp/              静态柔性作业车间底座（Phase 1）
-  dynamic/           动态事件与重调度（Phase 2A）
+  dynamic/           动态事件与重调度（Phase 2A；独立模块，毕设与大创均未使用）
   maintenance/       毕设：平行机 + 维护窗口 + 总延期；规则、GA/SA/IGA、CP-SAT、注意力强化学习
   logistics/         大创：FJSP + AGV + 缓冲 + 阻塞；仿真器、死锁规避、规则、SA/GA、CP-SAT、强化学习
 tests/               自动测试（按子包分目录）

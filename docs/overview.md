@@ -14,6 +14,8 @@
 | **大学生创新项目（大创）** | 车间里工件在机器之间要靠 **AGV 小车**搬运，机器前的**缓冲区**又有容量限制，可能堵死（**死锁**）。怎样同时安排加工和搬运，让全部工件最早完工？ | 事件仿真 + 前瞻式死锁规避、强化学习打分策略，与规则、模拟退火、精确求解器对比 | 实验与论文初稿完成 |
 
 两个课题都建立在同一个**底座**上：标准的柔性作业车间调度（FJSP）数据结构、调度结果格式和**合法性检查器**。
+底座里还有一个**动态重调度**模块（Phase 2A：机器故障、新工件到达时重排剩余工序），它是早期搭好的独立功能，
+**目前毕设和大创都没有用到**：两个课题研究的都是静态、确定性问题（见第 3 节说明）。
 平台的核心约定是：**任何算法给出的调度，都必须先通过独立的检查器，否则直接报错，不当作结果。**
 
 ## 2. 总体结构图
@@ -28,7 +30,7 @@ flowchart TB
 
     subgraph LIB["② 库代码 src/fjsp_lab"]
         F["fjsp：静态 FJSP 底座<br/>数据结构 · 检查器 · 规则 · CP-SAT · 甘特图"]
-        DY["dynamic：动态事件<br/>故障 · 新工件 · 重调度"]
+        DY["dynamic：动态事件<br/>故障 · 新工件 · 重调度<br/>（独立模块，两个课题未使用）"]
         M["maintenance：毕设<br/>平行机 + 维护 + 总延期"]
         L["logistics：大创<br/>FJSP + AGV + 缓冲 + 阻塞"]
         F --> DY
@@ -68,7 +70,7 @@ flowchart LR
     subgraph fjsp["fjsp（底座）"]
         a1["instance<br/>算例"] --> a2["rules / cpsat / decoding<br/>求解"] --> a3["schedule<br/>统一结果"] --> a4["feasibility<br/>检查器"]
     end
-    subgraph dynamic["dynamic"]
+    subgraph dynamic["dynamic（两个课题未使用）"]
         b1["events<br/>事件"] --> b2["state / snapshot<br/>状态与冻结"] --> b3["reschedule<br/>重调度"] --> b4["feasibility<br/>动态检查"]
     end
     subgraph maintenance["maintenance（毕设）"]
@@ -85,9 +87,18 @@ flowchart LR
 | 子包 | 一句话 | 主要文件 |
 |---|---|---|
 | `fjsp` | 标准柔性作业车间：读算例、7 条派工规则、CP-SAT 精确模型、检查器、甘特图 | `instance.py` `rules.py` `cpsat.py` `feasibility.py` |
-| `dynamic` | 加工途中发生机器故障、新工件到达、加工时间变化时，保留已做的部分，重排剩下的 | `events.py` `reschedule.py` `feasibility.py` |
+| `dynamic` | 加工途中发生机器故障、新工件到达、加工时间变化时，保留已做的部分，重排剩下的。**目前只由 `p2` 实验和测试使用，毕设、大创都未使用** | `events.py` `reschedule.py` `feasibility.py` |
 | `maintenance` | 毕设模型及其全部算法：规则、GA/SA/IGA、CP-SAT、枚举、构造环境、注意力策略 | `metaheuristics.py` `sequence_env.py` `attention_policy.py` |
 | `logistics` | 大创模型：AGV 搬运与缓冲的事件仿真器、死锁规避、规则、SA/GA、CP-SAT、强化学习策略 | `simulator.py` `rules.py` `policy.py` |
+
+**关于 `dynamic` 的现状**：
+
+- 毕设的任务是静态问题（工件 0 时刻全部到达、维护窗口事先已知），动态重调度只在论文展望里提到；
+- 大创 L1/L2 也是静态问题。大创申请书要求纳入"动态扰动"，这部分**尚未开展**，需要用户单独批准；
+- 将来做大创的动态阶段时，`dynamic` 不能直接套用：它只描述普通 FJSP，没有工件位置、车辆和缓冲。
+  更自然的做法是在大创的事件仿真器（`logistics.simulator`）里加入"新工件到达""机器故障"等事件，
+  L2 策略本身就在每个事件点做决策，可以直接在线应对；
+- Phase 2A 能复用的是思路：事件格式、冻结已执行部分、动态检查器要核对的内容（到达时刻、不可用时段）。
 
 每个子包都遵循同一条流水线：**算例 → 算法 → 统一的调度结果 → 检查器 → 通过才返回**。
 
@@ -196,7 +207,7 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-    P1["Phase 1<br/>静态 FJSP 底座<br/>2026-05～07"] --> P2["Phase 2A<br/>动态重调度"]
+    P1["Phase 1<br/>静态 FJSP 底座<br/>2026-05～07"] --> P2["Phase 2A<br/>动态重调度<br/>（之后未继续使用）"]
     P2 --> G12["毕设 G1–G2<br/>模型、检查器、CP-SAT"]
     G12 --> G3["毕设 G3A/G3B<br/>单窗口实验<br/>2026-10"]
     G3 --> RS["代码重构<br/>2026-10-31"]
