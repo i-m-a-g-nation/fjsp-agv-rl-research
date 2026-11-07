@@ -4,39 +4,6 @@
 
 当前阶段：Phase 1 与 Phase 2A 已完成工程交付并进入维护；毕设路线按下文“已放行的扩展”逐步推进。当前进度与下一步只在 `START_HERE.md` 维护。
 
-## Phase 1 基础
-
-Phase 1 已建立静态 FJSP 基础实验平台。
-
-目标不是创新，而是保证实验底座正确、可验证、可复现。
-
-必须支持：
-
-- 静态 FJSP 实例。
-- 基础调度规则。
-- 统一 ScheduleRecord / ScheduleResult。
-- makespan 计算。
-- feasibility checker 合法性检查。
-- 甘特图输出。
-- 小规模 OR-Tools CP-SAT 求解器基线。
-- 可复现实验脚本。
-
-## Phase 2A 目标
-
-当前阶段只做动态 FJSP 最小底座。
-
-必须支持：
-
-- 动态事件数据结构。
-- 机器故障与维修事件。
-- 新 job 到达事件。
-- 加工时间变更事件。
-- 动态状态对象。
-- 固定已完成或正在执行的调度记录。
-- 对剩余工序执行最小重调度 baseline。
-- 重调度结果继续返回统一 ScheduleResult。
-- 重调度结果继续通过 feasibility checker。
-
 ## 已放行的扩展（毕设路线）
 
 以下内容已在用户确认的毕设范围内实现，代码在 `src/fjsp_lab/maintenance/`，模型见 `docs/models/graduation_model.md`，各阶段的批准时间见 `START_HERE.md` 与 git 历史（整理前的历史文档在标签 `pre-cleanup-2026-11-06`）：
@@ -83,7 +50,6 @@ Phase 1 已建立静态 FJSP 基础实验平台。
 1. 依次读 `START_HERE.md`、本文件、相关的协议或计划文档；不要凭记忆假设进度。
 2. 先跑一遍检查确认环境与代码状态（`pytest`，项目专用环境）；PyTorch 相关测试在 PyTorch 环境里单独跑。
 3. 有一个 `git stash`（`stash@{0}`）保存着重构前另一会话的未提交修改，用户选择不提交；未经用户同意不要应用或删除。
-- 只为有意义的行为写测试：合法性检查器的每类违规、每个算法输出过检查器、确定性/可复现、关键数值回归。不写只为凑覆盖率的测试。
 
 ## 分支与证据规则
 
@@ -114,35 +80,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\setup_env.ps1
 
 ## 核心数据格式
 
-FJSP 实例统一使用：
-
-jobs[job_id][op_id] = [(machine_id, processing_time), ...]
-
-示例：
-
-jobs = [
-    [
-        [(0, 3), (1, 5)],
-        [(1, 4), (2, 6)],
-    ],
-    [
-        [(0, 2), (2, 4)],
-        [(1, 3)],
-    ],
-]
-
-## ScheduleRecord 要求
-
-每条调度记录至少包含：
-
-- job_id
-- op_id
-- machine_id
-- start
-- end
-- processing_time
-
-所有算法必须返回统一 ScheduleResult。
+FJSP 实例统一为 `jobs[job_id][op_id] = [(machine_id, processing_time), ...]`；所有算法必须返回统一 ScheduleResult（记录至少含 job_id、op_id、machine_id、start、end、processing_time）。
 
 ## 合法性检查要求
 
@@ -162,27 +100,9 @@ jobs = [
 
 禁止为了通过测试而削弱合法性检查。
 
-## Phase 1 必须实现的规则基线
+## 求解器结果的表述
 
-- FIFO
-- SPT
-- Earliest Available Machine
-- Random baseline with seed
-
-## 求解器基线要求
-
-使用 OR-Tools CP-SAT 做小规模参考解。
-
-建模要求：
-
-- operation-machine 组合使用 optional interval。
-- 每道工序 exactly one machine。
-- 同一工件相邻工序满足 precedence。
-- 同一机器上所有任务满足 NoOverlap。
-- 目标 minimize makespan。
-- 有 time limit。
-- 只有 solver status 为 OPTIMAL 时才能说最优。
-- 如果 status 为 FEASIBLE，只能说限时可行参考解。
+CP-SAT 求解必须设 time limit。只有 solver status 为 OPTIMAL 时才能说最优；FEASIBLE 只能说限时可行参考解。
 
 ## 测试要求
 
@@ -194,11 +114,4 @@ python experiments/p2_dynamic_protocol.py
 
 失败必须如实报告，不允许假装成功。
 
-## AI 编码规则
-
-- 优先小步修改。
-- 不要一次性重写整个项目。
-- 不要越界实现已放行范围之外的 AGV、RL、GNN、运输或多目标优化内容。
-- 所有新增功能必须配测试。
-- 所有实验结果必须可复现。
-- 所有算法结果必须过 feasibility checker。
+新增功能须配测试，但只为有意义的行为写测试：合法性检查器的每类违规、每个算法输出过检查器、确定性/可复现、关键数值回归。不写只为凑覆盖率的测试。
