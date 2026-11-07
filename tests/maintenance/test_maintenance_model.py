@@ -9,7 +9,7 @@ from fjsp_lab.maintenance import (
     ProductionTask, check_parallel_maintenance_feasibility, to_fjsp_instance,
 )
 from fjsp_lab.fjsp.schedule import ScheduleRecord
-from fjsp_lab.maintenance.feasibility import build_plan
+from fjsp_lab.maintenance.feasibility import build_plan, calculate_total_tardiness, validate_problem
 from fjsp_lab.maintenance.generator import (
     G4_SIZES, G4_SPLITS, GRIDS, build_instance, cycle_counts, g4_cases, grid_cases, periodic_case, sample_instances,
     split_instances,
@@ -125,6 +125,48 @@ def test_production_and_objective_violations_are_named():
     wrong_instance = replace(plan, instance=to_fjsp_instance(build_instance(3, 2, 10, 25, 75, 1)))
     assert 'INSTANCE_MISMATCH' in codes(wrong_instance, data, 'joint')
     assert codes(MaintenanceScheduleResult(), data, 'joint')
+
+
+@pytest.mark.parametrize('change, code', [
+    (lambda p: replace(p, makespan=-1), 'BASE_SCHEDULE_INVALID'),
+    (lambda p: replace(p, makespan=True), 'BASE_SCHEDULE_INVALID'),
+    (lambda p: replace(p, records='abc'), 'BASE_SCHEDULE_INVALID'),
+    (lambda p: replace(p, records=p.records[:-1] + ((1, 0, 1, 0, 2, 2),)), 'BASE_SCHEDULE_INVALID'),
+    (lambda p: replace(p, records=(replace(p.records[0], start=0.0),) + p.records[1:]), 'BASE_SCHEDULE_INVALID'),
+    (lambda p: replace(p, maintenance_records='abc'), 'INVALID_MAINTENANCE_TIME'),
+    (lambda p: replace(p, maintenance_records=((0, 3, 5, 2, 0), p.maintenance_records[1])), 'INVALID_MAINTENANCE_TIME'),
+    (lambda p: replace(p, maintenance_records=(MaintenanceRecord(2, 3, 5, 2), *p.maintenance_records)),
+     'INVALID_MAINTENANCE_MACHINE'),
+    (lambda p: replace(p, maintenance_records=(MaintenanceRecord(True, 3, 5, 2), p.maintenance_records[1])),
+     'INVALID_MAINTENANCE_MACHINE'),
+    (lambda p: replace(p, maintenance_records=(MaintenanceRecord(0, -1, 1, 2), p.maintenance_records[1])),
+     'INVALID_MAINTENANCE_TIME'),
+    (lambda p: replace(p, maintenance_records=(MaintenanceRecord(0, 3.0, 5, 2), p.maintenance_records[1])),
+     'INVALID_MAINTENANCE_TIME'),
+    (lambda p: replace(p, maintenance_records=(MaintenanceRecord(0, 3, 3, 0), p.maintenance_records[1])),
+     'INVALID_MAINTENANCE_TIME'),
+])
+def test_malformed_plans_are_rejected_not_repaired(change, code):
+    data = two_machine_instance()
+    assert code in codes(change(valid_plan(data)), data, 'joint')
+
+
+def test_checker_and_entry_points_reject_wrong_types():
+    data = two_machine_instance()
+    plan = valid_plan(data)
+    assert codes(object(), data, 'joint') == {'INVALID_RESULT'}
+    with pytest.raises(ValueError, match='ParallelMaintenanceInstance'):
+        check_parallel_maintenance_feasibility(plan, to_fjsp_instance(data), mode='joint')
+    with pytest.raises(ValueError, match='INSTANCE_DATA'):
+        calculate_total_tardiness(to_fjsp_instance(data), plan)
+    with pytest.raises(ValueError, match='BASE_SCHEDULE_INVALID'):
+        calculate_total_tardiness(data, replace(plan, makespan=-1))
+    with pytest.raises(ValueError):
+        validate_problem(data, 'both')
+    unfixed = replace(data, maintenance=tuple(replace(m, fixed_start=None) for m in data.maintenance))
+    with pytest.raises(ValueError, match='fixed mode'):
+        validate_problem(unfixed, 'fixed')
+    validate_problem(unfixed, 'joint')
 
 
 def test_checker_rejects_bad_mode_arguments():
