@@ -69,6 +69,40 @@ def test_makespan_must_match():
     assert 'MAKESPAN_MISMATCH' in codes(replace(result, makespan=result.makespan + 1))
 
 
+@pytest.mark.parametrize('changes, code', [
+    ({'job_id': 3}, 'INVALID_JOB_ID'),
+    ({'job_id': -1}, 'INVALID_JOB_ID'),     # must not silently index the last job
+    ({'op_id': 5}, 'INVALID_OP_ID'),
+    ({'op_id': -1}, 'INVALID_OP_ID'),
+])
+def test_out_of_range_identifiers_are_rejected(changes, code):
+    assert code in codes(mutate(0, **changes))
+
+
+@pytest.mark.parametrize('changes, message', [
+    ({'start': -1, 'end': 2}, 'is negative'),
+    ({'end': 0, 'processing_time': 0}, '<= 0'),
+    ({'start': 3, 'end': 0}, '< start'),
+])
+def test_invalid_times_are_rejected(changes, message):
+    # record 0 is job 0 op 0 on machine 0, start 0, p = 3
+    _, violations = check_feasibility(mutate(0, **changes))
+    assert any(v.code == 'INVALID_TIME' and message in v.message for v in violations), violations
+
+
+@pytest.mark.parametrize('build, kwargs, code', [
+    (lambda r: object(), {}, 'INVALID_RESULT'),
+    (lambda r: replace(r, instance='toy'), {}, 'INVALID_INSTANCE'),
+    (lambda r: r, {'expected_instance': 'toy'}, 'INVALID_EXPECTED_INSTANCE'),
+    (lambda r: replace(r, records='abc'), {}, 'INVALID_RECORDS'),
+    (lambda r: replace(r, makespan=-1), {}, 'INVALID_MAKESPAN'),
+    (lambda r: replace(r, makespan=True), {}, 'INVALID_MAKESPAN'),
+    (lambda r: replace(r, records=r.records[:-1] + ((2, 2, 1, 9, 10, 1),)), {}, 'INVALID_RECORD'),
+])
+def test_malformed_results_are_rejected(build, kwargs, code):
+    assert code in codes(build(valid_schedule()), **kwargs)
+
+
 @pytest.mark.parametrize('field, value', [('start', 1.0), ('end', True), ('job_id', '0')])
 def test_noninteger_fields_are_rejected_not_coerced(field, value):
     assert codes(mutate(0, **{field: value}))
