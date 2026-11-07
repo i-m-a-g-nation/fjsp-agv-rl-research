@@ -47,6 +47,39 @@ class MetaheuristicError(RuntimeError):
     """A metaheuristic could not return an accepted plan."""
 
 
+def _settings(algorithm: str, overrides: dict | None) -> dict:
+    """Defaults merged with ``overrides``; unknown keys and out-of-range values raise ValueError."""
+    defaults = DEFAULT_SETTINGS[algorithm]
+    unknown = set(overrides or {}) - set(defaults)
+    if unknown:
+        raise ValueError(f'Unknown {algorithm} settings: {sorted(unknown)}')
+    config = {**defaults, **(overrides or {})}
+
+    def integer(name: str, low: int, high: float = math.inf) -> None:
+        if type(config[name]) is not int or not low <= config[name] <= high:
+            raise ValueError(f'{name} must be an integer in [{low}, {high}]')
+
+    def fraction(name: str, *, open_ends: bool) -> None:
+        value = config[name]
+        inside = 0 < value < 1 if open_ends else 0 <= value <= 1
+        if type(value) not in (int, float) or not math.isfinite(value) or not inside:
+            raise ValueError(f'{name} must be a number in {"(0, 1)" if open_ends else "[0, 1]"}')
+
+    if algorithm == 'SA':
+        fraction('final_temperature_ratio', open_ends=True)
+        fraction('initial_acceptance', open_ends=True)
+        integer('calibration_moves', 0)
+    else:
+        integer('population', 2)
+        integer('tournament', 1, config['population'])
+        integer('elites', 0, config['population'] - 1)   # elites == population would never evaluate a child
+        fraction('crossover_rate', open_ends=False)
+        fraction('mutation_rate', open_ends=False)
+        if algorithm == 'IGA':
+            integer('local_search_moves', 0)
+    return config
+
+
 @dataclass(frozen=True)
 class SearchOutcome:
     """Best accepted plan with its search trace."""
@@ -313,9 +346,9 @@ def solve_metaheuristic(data: ParallelMaintenanceInstance, *, mode: str, algorit
         raise ValueError('initial_sequences apply to GA and IGA only')
     if time_limit is not None and (type(time_limit) not in (int, float) or not 0 < time_limit < math.inf):
         raise ValueError('time_limit must be None or a positive finite number')
+    config = _settings(algorithm, settings)
     tracker_start = time.perf_counter()
     problem = TokenDecoder(data, mode, list(initial_sequences))
-    config = {**DEFAULT_SETTINGS[algorithm], **(settings or {})}
     rng = random.Random(seed)
     tracker = _Tracker(problem, evaluations, time_limit)
     tracker.started = tracker_start

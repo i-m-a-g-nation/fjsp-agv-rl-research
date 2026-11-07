@@ -90,6 +90,11 @@ def test_dynamic_checker_rejects_violations():
     tampered = replace(result, records=[early if r is late else r for r in result.records])
     ok, issues = check_dynamic_feasibility(tampered, state, frozen)
     assert not ok and 'MACHINE_UNAVAILABLE' in {i.code for i in issues}
+    # An unfrozen operation moved before the rescheduling time (formerly accepted).
+    past = replace(late, start=state.current_time - 1, end=state.current_time - 1 + late.processing_time)
+    tampered = replace(result, records=[past if r is late else r for r in result.records])
+    ok, issues = check_dynamic_feasibility(tampered, state, frozen)
+    assert not ok and {i.code for i in issues} == {'START_BEFORE_CURRENT_TIME'}
 
 
 @pytest.mark.parametrize('name, jobs, time, frozen_end', [

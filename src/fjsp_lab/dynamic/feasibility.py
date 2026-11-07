@@ -1,4 +1,5 @@
-"""Dynamic checks on top of the static checker: frozen records, releases, downtime."""
+"""Dynamic checks on top of the static checker: frozen records, no new start before
+the rescheduling time, releases, downtime."""
 
 from __future__ import annotations
 
@@ -31,6 +32,7 @@ def check_dynamic_feasibility(
     }
 
     _check_frozen_records(result, frozen_by_key, violations)
+    _check_unfrozen_starts(result, state, frozen_by_key, violations)
     _check_job_release_times(result, state, violations)
     _check_machine_unavailability(result, state, frozen_by_key, violations)
     return not violations, violations
@@ -62,6 +64,24 @@ def _check_frozen_records(
             violations.append(DynamicViolation(
                 code="FROZEN_RECORD_CHANGED",
                 message=f"Frozen operation {key} was changed by rescheduling",
+            ))
+
+
+def _check_unfrozen_starts(
+    result: ScheduleResult,
+    state: DynamicFJSPState,
+    frozen_by_key: dict[tuple[int, int], ScheduleRecord],
+    violations: list[DynamicViolation],
+) -> None:
+    # Only frozen records may lie in the past; rescheduling cannot start work earlier than now.
+    for record in result.records:
+        if (record.job_id, record.op_id) not in frozen_by_key and record.start < state.current_time:
+            violations.append(DynamicViolation(
+                code="START_BEFORE_CURRENT_TIME",
+                message=(
+                    f"Unfrozen job {record.job_id} operation {record.op_id} starts at "
+                    f"{record.start}, before the rescheduling time {state.current_time}"
+                ),
             ))
 
 

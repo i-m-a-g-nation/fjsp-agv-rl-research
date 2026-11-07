@@ -91,6 +91,22 @@ def test_metaheuristics_respect_budget_and_return_accepted_plans(algorithm, mode
     assert again.sequence == outcome.sequence
 
 
+@pytest.mark.parametrize('algorithm, settings', [
+    ('SA', {'initial_acceptance': 1.0}),        # -log(1) = 0: division by zero
+    ('SA', {'initial_acceptance': 1.5}),        # negative start temperature
+    ('SA', {'final_temperature_ratio': 0}),
+    ('GA', {'population': 2, 'tournament': 3}), # tournament larger than the population
+    ('GA', {'elites': 40}),                     # no child ever evaluated: the search never ended
+    ('IGA', {'mutation_rate': 1.2}),
+    ('IGA', {'local_search_moves': -1}),
+    ('GA', {'local_search_moves': 5}),          # not a GA setting
+    ('IGA', {'populaton': 10}),                 # misspelt key used to be ignored silently
+])
+def test_metaheuristics_reject_invalid_settings(algorithm, settings, small):
+    with pytest.raises(ValueError):
+        solve_metaheuristic(small, mode='joint', algorithm=algorithm, evaluations=50, settings=settings)
+
+
 @pytest.mark.parametrize('mode', MODES)
 def test_iga_search_path_does_not_depend_on_where_it_stops(mode, periodic):
     """g13 re-timing compares runs at equal decode counts, which needs a stop-independent path."""

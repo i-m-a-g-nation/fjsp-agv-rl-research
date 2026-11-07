@@ -10,8 +10,12 @@ starts the waiting jobs in arrival order as soon as no job occupies it. With
 blocking, a finished job stays on its machine until it is picked up; without
 blocking it moves at once to an unlimited output buffer and leaves the
 station, except that a job that may stay for its next operation keeps its
-place until that decision, which is always taken at the same instant (a stay
-needs no vehicle, so it remains a candidate until the job is decided).
+place until it is decided. Usually that is the same instant (a stay needs no
+vehicle, so it remains a candidate until the job is decided), but a policy
+or the deadlock guard may wait. The place is still held then, because a
+later stay continues the same visit and the model counts the place over the
+whole visit; if the job leaves instead, the simulator has held the place
+longer than the model requires (conservative, never infeasible).
 
 Same-time events are handled in a fixed order: operation ends, pickups,
 deliveries; then idle machines start waiting jobs; then decisions are taken.
