@@ -236,7 +236,7 @@ flowchart LR
 | `src/fjsp_lab/` | 全部库代码 | 想看实现 |
 | `tests/` | 自动测试，按子包分目录 | 改代码后运行 |
 | `experiments/*.py` | 实验脚本（编号见 [experiments/README](../experiments/README.md)） | 想重跑实验 |
-| `experiments/results/` | 当前代码的归档结果，每个目录有 manifest，多数有 findings | 想看数据与结论 |
+| `experiments/results/` | 重构后代码的归档结果，每个目录绑定其 manifest 中的提交，多数有 findings | 想看数据与结论 |
 | `experiments/archive/` | 2026-10-31 重构前的归档结果（只读证据） | 核对早期结论 |
 | `experiments/inputs/` | Phase 2A 协议与事件文件 | 动态实验 |
 | `instances/` | 30 个 FJSPLib 基准算例与已知最好值；`external/` 只在本地 | 静态实验、大创 |

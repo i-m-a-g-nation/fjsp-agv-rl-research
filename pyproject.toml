@@ -17,7 +17,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest", "pytest-cov"]
 # The attention policy needs PyTorch; install it in a separate environment
-# (see START_HERE.md) rather than in the project environment.
+# (see AGENTS.md) rather than in the project environment.
 torch = ["torch"]
 
 [tool.setuptools.packages.find]

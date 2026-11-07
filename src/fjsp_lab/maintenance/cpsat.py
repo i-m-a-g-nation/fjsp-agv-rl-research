@@ -4,13 +4,14 @@ Each job has one start and end and an optional interval on every machine
 (exactly one present). Every maintenance window k of machine i has one
 mandatory interval with start in [L_ik, U_ik - q_ik] (fixed mode: start =
 f_ik); NoOverlap over each machine's jobs and maintenance intervals.
-t_j = max(0, C_j - d_j), minimize sum t_j.
+t_j = max(0, C_j - d_j) exactly (AddMaxEquality), minimize sum t_j.
 
 Acceptance: the extracted plan must pass the checker, and with T the plan's
 recomputed total tardiness, ``0 <= bound <= T <= objective`` with integral
-objective and bound (presolve may relax t_j = max(0, .) to t_j >= C_j - d_j,
-so a FEASIBLE objective is only an upper bound on T); OPTIMAL additionally
-requires bound == T == objective. T, not the objective, is the reported metric.
+objective and bound; OPTIMAL additionally requires bound == T == objective.
+The model is exact, so objective == T is expected; the bracket is a defensive
+cross-check of the solver's numbers, not a sign of a relaxed model. T, not the
+objective, is the reported metric.
 """
 
 from __future__ import annotations

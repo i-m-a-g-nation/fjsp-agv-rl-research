@@ -76,7 +76,11 @@ G5 复用 `g7`（`--grid g5/g5-large`、`--cpsat-max-tasks`）与 `g8`（`--grid
 | G4 测试（288 个案例 × 固定/联合） | 实例种子 1001、1002 |
 | G5 测试 / n = 200 推广集 | 实例种子 1003、1004 |
 
-测试集只在训练结束后使用一次，不用于调参。
+测试集不用于训练、选模型或调参；预先登记的假设只在训练结束后检验一次。之后对测试集的再次读取都是事后诊断，
+不作为独立证据：`g10` 按测试集结果挑甘特图案例，`g13` 按测试集记录抽样复测计时，`g14` 在 G5 结果上做速度敏感性分析。
+
+G4/G5 的测试网格中，加工时间和交期分位数只由 `(n, 实例种子)` 决定，同一 `(n, 种子)` 下的所有案例（及其固定/联合两种模式）
+共用一份基础数据，因此实例数不等于独立样本数（G4 与 G5-T 各 6 组基础数据，G5-L 2 组）。
 
 ## inputs/
 
@@ -85,7 +89,9 @@ G5 复用 `g7`（`--grid g5/g5-large`、`--cpsat-max-tasks`）与 `g8`（`--grid
 
 ## results/ 与 archive/
 
-- `results/`：当前代码产生的归档结果，索引与各目录结论见 [results/README.md](results/README.md)。
+- `results/`：重构后代码产生的归档结果，索引与各目录结论见 [results/README.md](results/README.md)。
+  每个目录绑定它自己 manifest（或 `summary.json`）里记录的提交，不一定是当前代码：G4 的结果行、教师数据和模型
+  早于 `957f3a8`（不可变调度重构），只能在其提交上逐项重跑；G5 的源码哈希与当前代码一致。
 - `archive/`：2026-10-31 重构前旧代码产生的结果，**逐字节未改动**。其 manifest 绑定旧路径（`src/graduation/…` 等），
   按哈希核验需切到分支 `archive/pre-restructure-2026-10-31`。重构后的代码在相同输入上给出完全相同的结果，
   核对记录见 [archive/restructure_equivalence/](archive/restructure_equivalence)。
