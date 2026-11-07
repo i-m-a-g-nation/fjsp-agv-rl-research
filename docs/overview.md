@@ -234,6 +234,7 @@ flowchart LR
 | `docs/plans/` | 毕设论文大纲；大创建模决策与 RL 设计 | 写论文、做决策 |
 | `docs/literature/` | 毕设文献地图、大创查新报告 | 写综述 |
 | `docs/manuscripts/` | 大创论文初稿（LaTeX/PDF） | 改论文 |
+| `docs/reviews/` | 只读审查记录及各问题的处理情况 | 想知道哪些问题已处理、哪些还没有 |
 | `src/fjsp_lab/` | 全部库代码 | 想看实现 |
 | `tests/` | 自动测试，按子包分目录 | 改代码后运行 |
 | `experiments/*.py` | 实验脚本（编号见 [experiments/README](../experiments/README.md)） | 想重跑实验 |

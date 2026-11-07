@@ -51,10 +51,10 @@ src/fjsp_lab/        库代码
   maintenance/       毕设：平行机 + 维护窗口 + 总延期；规则、GA/SA/IGA、CP-SAT、注意力强化学习
   logistics/         大创：FJSP + AGV + 缓冲 + 阻塞；仿真器、死锁规避、规则、SA/GA、CP-SAT、强化学习
 tests/               自动测试（按子包分目录）
-experiments/         实验脚本；results/ 当前归档结果；archive/ 重构前的归档结果；inputs/ 协议输入
+experiments/         实验脚本；results/ 重构后的归档结果；archive/ 重构前的归档结果；inputs/ 协议输入
 instances/           30 个 FJSPLib 基准算例与已知最好值；external/ 第三方数据（仅本地，不入库）
 docs/                overview / methods / glossary（导读）；models/ 数学模型；protocols/ 实验协议；
-                     plans/ 论文大纲与大创设计；literature/ 文献；manuscripts/ 论文稿
+                     plans/ 论文大纲与大创设计；literature/ 文献；manuscripts/ 论文稿；reviews/ 审查记录
 scripts/             setup_env.ps1 建环境；run_checks.ps1 一键检查
 ```
 

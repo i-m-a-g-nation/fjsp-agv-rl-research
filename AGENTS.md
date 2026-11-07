@@ -41,7 +41,7 @@
 - 库代码只在 `src/fjsp_lab/`：`fjsp`（Phase 1）、`dynamic`（Phase 2A，依赖 `fjsp`）、`maintenance`（毕设，生产部分复用 `fjsp` 检查器）、`logistics`（大创 L1，生产部分复用 `fjsp` 检查器）。子包之间不得反向依赖。
 - 实验脚本在 `experiments/`（`p1_*`、`p2_*`、`g*_*`、`l1_*`、`l2_*`），共用 `experiments/_common.py`；测试在 `tests/`，按子包分目录。
 - 文档：`README.md`（入口）、`START_HERE.md`（进度，唯一维护处）、`docs/overview.md`（全景与流程图）、`docs/methods.md`（原理）、
-  `docs/glossary.md`（术语）；`docs/models|protocols|plans|literature|manuscripts` 分别放模型、协议、计划、文献、论文稿。
+  `docs/glossary.md`（术语）；`docs/models|protocols|plans|literature|manuscripts|reviews` 分别放模型、协议、计划、文献、论文稿、审查记录。
   新增子包、实验批次或方法时，同步更新 overview 的图与表、methods 的对应小节和 glossary 的新术语。
 - 已删除的旧文档（`docs/history/`、早期文献笔记、CI 工作流等）在标签 `pre-cleanup-2026-11-06` 中可查。
 

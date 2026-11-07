@@ -53,6 +53,12 @@
 |---|---|
 | [innovation_paper_zh.tex](manuscripts/innovation_paper_zh.tex)（[PDF](manuscripts/innovation_paper_zh.pdf)） | 大创论文初稿（14 页）；标注"待核对/待补全"的参考文献需按原文补全 |
 
+## reviews/：审查记录
+
+| 文档 | 内容 |
+|---|---|
+| [2026-11-06/](reviews/2026-11-06/README.md) | 四份只读审查（毕设实验与统计、dynamic 与测试、论文稿、关键数字核对）及各问题的处理情况 |
+
 ## 关于旧路径
 
 2026-10-31 代码重构后，旧代码在分支 `archive/pre-restructure-2026-10-31`；`experiments/archive/` 里的结果与部分文档仍引用旧路径：
