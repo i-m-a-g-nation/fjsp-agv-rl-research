@@ -1,14 +1,17 @@
 ﻿name: fjsp-lab
+# Versions are pinned to the environment that produced experiments/results/ (each manifest
+# records python, numpy, scipy and ortools). CP-SAT results can change with the OR-Tools
+# version, so change these pins only together with a new archived run.
 channels:
   - conda-forge
 dependencies:
   - python=3.11
   - pip
-  - numpy
-  - scipy
-  - matplotlib>=3.8.4,<3.10
-  - pytest
-  - pytest-cov
   - pip:
-      - ortools
+      - numpy==2.4.5
+      - scipy==1.17.1
+      - matplotlib==3.8.4
+      - ortools==9.15.6755
+      - pytest==9.0.3
+      - pytest-cov==7.1.0
       - -e ".[dev]"
