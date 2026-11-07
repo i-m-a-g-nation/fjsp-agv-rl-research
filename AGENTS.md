@@ -100,6 +100,16 @@ FJSP 实例统一为 `jobs[job_id][op_id] = [(machine_id, processing_time), ...]
 
 禁止为了通过测试而削弱合法性检查。
 
+毕设（平行机 + 维护）的结果必须经过 `maintenance.feasibility` 检查器（固定 / 联合两种模式），它在上述 FJSP 检查之外还须检查：
+
+1. 每台机器的每个维护窗口恰好有一条维护记录（缺失、重复都算违规）。
+2. 维护时长等于要求时长，且等于 end - start。
+3. 整段维护落在该窗口内；固定模式下必须从 `fixed_start` 开始。
+4. 维护不与同机器上的任何任务重叠（区间半开）。
+5. 报告的总延期等于独立重算的 Σ max(0, C_j − d_j)。
+
+检查器只拒绝、不修补；算法出口用 `require_feasible`，被拒的方案不得计入结果。
+
 ## 求解器结果的表述
 
 CP-SAT 求解必须设 time limit。只有 solver status 为 OPTIMAL 时才能说最优；FEASIBLE 只能说限时可行参考解。
