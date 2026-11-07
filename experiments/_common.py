@@ -69,7 +69,12 @@ def provenance(script: str, packages=('numpy', 'scipy', 'ortools')) -> dict:
     def git(*args):
         return subprocess.run(['git', *args], cwd=ROOT, capture_output=True, text=True, check=False).stdout.strip()
 
-    sources = sorted((ROOT / 'src/fjsp_lab').rglob('*.py')) + [ROOT / 'experiments/_common.py', Path(script).resolve()]
+    script = Path(script).resolve()
+    # Experiment modules the script imported (e.g. g12 reuses g9) change its results too.
+    imported = {Path(module.__file__).resolve() for module in list(sys.modules.values())
+                if getattr(module, '__file__', None) and Path(module.__file__).resolve().parent == ROOT / 'experiments'}
+    sources = sorted((ROOT / 'src/fjsp_lab').rglob('*.py')) + [ROOT / 'experiments/_common.py', script]
+    sources += sorted(imported - set(sources))
     versions = {}
     for package in packages:
         try:
@@ -79,7 +84,8 @@ def provenance(script: str, packages=('numpy', 'scipy', 'ortools')) -> dict:
     return {
         'created_utc': datetime.now(timezone.utc).isoformat(timespec='seconds'),
         'git_commit': git('rev-parse', 'HEAD'),
-        'git_dirty': bool(git('status', '--porcelain', '--', 'src', 'experiments/_common.py', str(script))),
+        'git_dirty': bool(git('status', '--porcelain', '--', 'src', 'experiments/_common.py',
+                              *(str(p) for p in sources if p.parent == ROOT / 'experiments'))),
         'python': platform.python_version(), 'platform': platform.platform(), 'packages': versions,
         'source_sha256': {p.relative_to(ROOT).as_posix(): sha256(p) for p in sources},
     }
@@ -106,6 +112,43 @@ def paired(rows: list[dict], method: str, baseline: str) -> dict:
             'relative_difference': statistics.fmean(diffs) / base_mean if base_mean else None,
             'wins': sum(d < 0 for d in diffs), 'ties': sum(d == 0 for d in diffs), 'losses': sum(d > 0 for d in diffs),
             'wilcoxon_p_nonzero': float(wilcoxon(nonzero).pvalue) if len(nonzero) >= 10 else None}
+
+
+def holm_adjust(p_values: list[float]) -> list[float]:
+    """Holm step-down adjusted p-values, in the input order."""
+    order = sorted(range(len(p_values)), key=lambda i: p_values[i])
+    adjusted, running = [0.0] * len(p_values), 0.0
+    for rank, i in enumerate(order):
+        running = max(running, min(1.0, (len(p_values) - rank) * p_values[i]))
+        adjusted[i] = running
+    return adjusted
+
+
+def cluster_sign_flip(diffs_by_cluster: dict, alternative: str = 'less') -> dict:
+    """Exact sign-flip permutation test on cluster means of paired differences (method - other).
+
+    Each cluster counts once, whatever its size: the statistic is the mean of the
+    cluster means, and under the null every cluster mean is equally likely to have
+    either sign. With k clusters the smallest attainable p-value is 2**-k.
+    """
+    from itertools import product
+
+    if alternative not in ('less', 'greater'):
+        raise ValueError("alternative must be 'less' or 'greater'")
+    means = {key: statistics.fmean(d) for key, d in diffs_by_cluster.items() if d}
+    if not means:
+        raise ValueError('No cluster has a paired difference')
+    values = list(means.values())
+    observed = statistics.fmean(values)
+    tolerance = 1e-12 * max(1.0, max(abs(v) for v in values))
+    extreme = 0
+    for signs in product((1, -1), repeat=len(values)):
+        stat = statistics.fmean(s * v for s, v in zip(signs, values))
+        extreme += stat <= observed + tolerance if alternative == 'less' else stat >= observed - tolerance
+    favouring = sum((v < 0) if alternative == 'less' else (v > 0) for v in values)
+    against = sum((v > 0) if alternative == 'less' else (v < 0) for v in values)
+    return {'clusters': len(values), 'cluster_means': means, 'clusters_favouring': favouring,
+            'clusters_against': against, 'p_cluster': extreme / 2 ** len(values), 'p_cluster_min': 2.0 ** -len(values)}
 
 
 def by_size(rows: list[dict]) -> dict[str, list[dict]]:

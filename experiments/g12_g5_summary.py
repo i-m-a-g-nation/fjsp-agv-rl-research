@@ -78,22 +78,20 @@ def one_sided(ours: list[float], theirs: list[float]) -> dict:
             'mean_other': statistics.fmean(theirs) if theirs else None, 'p_one_sided': p}
 
 
-def main() -> int:
-    def extra(parser):
-        parser.add_argument('--search', type=Path, nargs=2, required=True, metavar=('G5', 'G5_LARGE'))
-        for name in ('rl', 'bc', 'seeded'):
-            parser.add_argument(f'--{name}', type=Path, nargs=6, required=True,
-                                metavar=('S0_G5', 'S0_LARGE', 'S1_G5', 'S1_LARGE', 'S2_G5', 'S2_LARGE'))
+GRIDS = ('g5', 'g5-large')
 
-    args = parse_args(__doc__.splitlines()[0], 'g12_g5_summary', extra)
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    prov = provenance(__file__)
-    grids = ('g5', 'g5-large')
-    runs = {name: {(s, g): getattr(args, name)[2 * i + j] for i, s in enumerate(SEEDS) for j, g in enumerate(grids)}
-            for name in ('rl', 'bc', 'seeded')}
+
+def run_dirs(rl: list[Path], bc: list[Path], seeded: list[Path]) -> dict:
+    """{'rl'|'bc'|'seeded': {(training seed, grid): run directory}} from the six-directory CLI lists."""
+    return {name: {(s, g): paths[2 * i + j] for i, s in enumerate(SEEDS) for j, g in enumerate(GRIDS)}
+            for name, paths in (('rl', rl), ('bc', bc), ('seeded', seeded))}
+
+
+def build_rows(search_dirs: list[Path], runs: dict) -> list[dict]:
+    """Per-instance values and gaps (both grids, every training seed) plus greedy and sample-16 totals."""
     rows = []
-    for j, grid in enumerate(grids):
-        search = read_jsonl(args.search[j] / 'rows.jsonl')
+    for j, grid in enumerate(GRIDS):
+        search = read_jsonl(search_dirs[j] / 'rows.jsonl')
         side = {name: {s: read_jsonl(runs[name][s, grid] / 'rows.jsonl') for s in SEEDS} for name in runs}
         for name, by_seed in side.items():
             if any(set(rows_) != set(search) for rows_ in by_seed.values()):
@@ -128,23 +126,46 @@ def main() -> int:
                                                 policy[seed]['device']['sample16']['value'])
                         for kind, policy in (('RL', rl), ('BC', bc)) for seed in SEEDS}
             rows.append({**{k: s[k] for k in ('case_id', 'mode', 'num_tasks', 'num_machines', 'profile',
-                                                'alpha_percent', 'beta_percent', 'tau_percent')},
+                                                'alpha_percent', 'beta_percent', 'tau_percent', 'instance_seed')},
                          'grid': grid, 'best_known': bk, 'values': values, 'gap': gap, 'greedy': greedy,
                          'sample16': sample16})
+    return rows
+
+
+def hypothesis_pairs(rows: list[dict], name: str, seed: int) -> tuple[list[dict], list[float], list[float]]:
+    """(instances compared, method values, comparison values) of one pre-registered test and training seed."""
+    method, other, grid, size, t = TESTS[name]
+    chosen = [r for r in rows if r['grid'] == grid and (size is None or r['num_tasks'] == size)]
+    if name == 'H2':
+        return chosen, [r['greedy'][f'RL_s{seed}'] for r in chosen], [r['greedy'][f'BC_s{seed}'] for r in chosen]
+    a = f'{method}_s{seed}'
+    both = [r for r in chosen if r['gap'][t][a] is not None and r['gap'][t][other] is not None]
+    return both, [r['gap'][t][a] for r in both], [r['gap'][t][other] for r in both]
+
+
+def main() -> int:
+    def extra(parser):
+        parser.add_argument('--search', type=Path, nargs=2, required=True, metavar=('G5', 'G5_LARGE'))
+        for name in ('rl', 'bc', 'seeded'):
+            parser.add_argument(f'--{name}', type=Path, nargs=6, required=True,
+                                metavar=('S0_G5', 'S0_LARGE', 'S1_G5', 'S1_LARGE', 'S2_G5', 'S2_LARGE'))
+
+    args = parse_args(__doc__.splitlines()[0], 'g12_g5_summary', extra)
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    prov = provenance(__file__)
+    grids = GRIDS
+    runs = run_dirs(args.rl, args.bc, args.seeded)
+    rows = build_rows(args.search, runs)
 
     hypotheses = []
     for seed in SEEDS:
         found = []
-        for name, (method, other, grid, size, t) in TESTS.items():
+        for name, (method, _, grid, size, t) in TESTS.items():
             chosen = [r for r in rows if r['grid'] == grid and (size is None or r['num_tasks'] == size)]
-            if name == 'H2':
-                ours = [r['greedy'][f'RL_s{seed}'] for r in chosen]
-                theirs = [r['greedy'][f'BC_s{seed}'] for r in chosen]
-                result = one_sided(ours, theirs)
-            else:
-                a, b = f'{method}_s{seed}', other
-                both = [r for r in chosen if r['gap'][t][a] is not None and r['gap'][t][b] is not None]
-                result = one_sided([r['gap'][t][a] for r in both], [r['gap'][t][b] for r in both])
+            _, ours, theirs = hypothesis_pairs(rows, name, seed)
+            result = one_sided(ours, theirs)
+            if name != 'H2':
+                a = f'{method}_s{seed}'
                 result['coverage_method'] = (sum(r['gap'][t][a] is not None for r in chosen) / len(chosen)
                                              if chosen else None)
             found.append({'hypothesis': name, 'training_seed': seed, 'instances': len(chosen), **result})

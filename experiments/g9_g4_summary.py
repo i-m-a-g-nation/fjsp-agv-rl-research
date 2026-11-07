@@ -85,16 +85,10 @@ def wilcoxon_test(rows: list[dict], method: str, other: str, t: float) -> dict:
             'wilcoxon_p': float(wilcoxon(nonzero).pvalue) if len(nonzero) >= 10 else None}
 
 
-def main() -> int:
-    def extra(parser):
-        parser.add_argument('--search', type=Path, nargs='+', required=True)
-        parser.add_argument('--policy', type=Path, required=True)
-
-    args = parse_args(__doc__.splitlines()[0], 'g9_g4_summary', extra)
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    prov = provenance(__file__)
-    search, policy = read_jsonl(args.search[0] / 'rows.jsonl'), read_jsonl(args.policy / 'rows.jsonl')
-    for override in args.search[1:]:
+def build_rows(search_dirs: list[Path], policy_dir: Path) -> list[dict]:
+    """Per-instance values and gaps at every budget; a later search run replaces the methods it contains."""
+    search, policy = read_jsonl(search_dirs[0] / 'rows.jsonl'), read_jsonl(policy_dir / 'rows.jsonl')
+    for override in search_dirs[1:]:
         for key, row in read_jsonl(override / 'rows.jsonl').items():
             search[key].update({m: row[m] for m in ('EDD', 'MDD', 'ATC', 'IGA', 'GA', 'SA', 'CP-SAT') if m in row})
     if set(search) != set(policy):
@@ -109,9 +103,21 @@ def main() -> int:
         values = {t: {m: value_at(s, p, m, t) for m in METHODS} for t in BUDGETS}
         gap = {t: {m: None if v is None else (v - bk) / max(1, bk) for m, v in values[t].items()} for t in BUDGETS}
         rows.append({**{k: s[k] for k in ('case_id', 'mode', 'num_tasks', 'num_machines', 'profile',
-                                            'alpha_percent', 'beta_percent', 'tau_percent')},
+                                            'alpha_percent', 'beta_percent', 'tau_percent', 'instance_seed')},
                      'best_known': bk, 'values': values, 'gap': gap})
-    groups = {'all': rows, **{f'n{n}': [r for r in rows if r['num_tasks'] == n] for n in (20, 50, 100)},
+    return rows
+
+
+def main() -> int:
+    def extra(parser):
+        parser.add_argument('--search', type=Path, nargs='+', required=True)
+        parser.add_argument('--policy', type=Path, required=True)
+
+    args = parse_args(__doc__.splitlines()[0], 'g9_g4_summary', extra)
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    prov = provenance(__file__)
+    rows = build_rows(args.search, args.policy)
+    groups ={'all': rows, **{f'n{n}': [r for r in rows if r['num_tasks'] == n] for n in (20, 50, 100)},
               'n>=50': [r for r in rows if r['num_tasks'] >= 50]}
     groups = {name: selected for name, selected in groups.items() if selected}
     curves = []
