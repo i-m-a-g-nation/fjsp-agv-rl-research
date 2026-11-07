@@ -46,6 +46,7 @@ G4 的提交都早于 `957f3a8`（不可变调度重构）。当前代码只验�
 | `g5_summary/` | 汇总、H1–H5、曲线图和 [findings.md](g5_summary/findings.md) |
 | `g5_iga_retime_check/` | 空闲机器上抽样复测 IGA 计时（提交 1b405f1）和 [findings.md](g5_iga_retime_check/findings.md) |
 | `g5_iga_speed_sensitivity/` | 假设 IGA 快 1.3/1.6/2 倍时重做 H1、H3–H5（提交 bf88014，探索性） |
+| `g15_cluster_robustness/` | 按基础数据聚类的稳健性检验（G4、G5、L2）与 G4 的 Holm 校正（提交 cc1fd08，事后、探索性）和 [findings.md](g15_cluster_robustness/findings.md) |
 
 ## 大创（生产—物流协同）
 
@@ -68,9 +69,11 @@ G4 的提交都早于 `957f3a8`（不可变调度重构）。当前代码只验�
 - **测试实例不是独立样本（G4、G5）**：加工时间和交期分位数只由 `(n, 实例种子)` 决定，同一 `(n, 种子)` 下 48 个案例
   （G5-L 为 32 个）× 固定/联合共用一份基础数据。G4 与 G5-T 各只有 6 组基础数据（n = 100 只有 2 组），G5-L 只有 2 组。
   各 findings 中的 Wilcoxon p 值把每个实例当作独立样本，偏乐观；胜/平/负与均值照常可读。
-  L2 同理：T1 10 个算例、T2 6 个算例，同一算例的 5 种配置不独立。
+  L2 同理：T1 10 个算例、T2 6 个算例，同一算例的 5 种配置不独立。按基础数据聚类后：G5 的 H1–H5 都不可能显著（组数太少），
+  方向基本一致，H5 只在一组上成立；L2 的 H1–H3 仍成立，H4 不成立。见 [g15_cluster_robustness](g15_cluster_robustness/findings.md)。
 - **G4 的检验**（`g4_summary/`）是双侧 Wilcoxon，没有做 Holm 校正，也没有实现协议为 H1 预先登记的 p < 0.01 阈值，只作描述；
-  例如 H2 中"2 s 时 RL 优于 IGA（p = 0.012）"是 15 个未校正检验之一，校正后不一定显著。做了单侧检验与 Holm 校正的是 G5。
+  例如 H2 中"2 s 时 RL 优于 IGA（p = 0.012）"与 H2 的登记方向相反，在 H2 族内按双侧 Holm 为 0.036，只能作事后观察。
+  按登记方向的单侧检验与 Holm 见 [g15_cluster_robustness](g15_cluster_robustness/findings.md)：H1 只在 0.2 s 对 SA、GA 成立，H2 只在 10 s 成立。
 - **`g5_summary/findings.md` 中"RL + IGA 在 n ≥ 50、1 s 以后所有方法中最好"过宽**：同一文件的表中，n = 50、10 s 时
   SA 为 0.008，RL + IGA 为 0.009–0.012。准确说法：n = 100 时 1 s 以后、n = 200 时 10 s 最好；n = 50 时 1 s 最好。
 - **测试集的再次使用**：测试集没有用于训练或选模型，但 `g4_gantt/`（按测试集结果挑案例）、`g5_iga_retime_check/`、

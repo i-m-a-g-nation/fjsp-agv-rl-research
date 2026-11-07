@@ -39,7 +39,7 @@ flowchart TB
     end
 
     subgraph RUN["③ 实验 experiments/"]
-        S["实验脚本<br/>p1/p2 · g1–g14 · l1/l2"]
+        S["实验脚本<br/>p1/p2 · g1–g15 · l1/l2"]
         R["结果目录 results/<br/>数据 + manifest + findings"]
         S --> R
     end
@@ -148,6 +148,7 @@ flowchart TB
 | G3B、R1/R2 | 早期的打分策略和规则、元启发式比怎样？ | `experiments/archive/exp_036`–`041` |
 | G4 | 周期性多窗口、n 到 100 时，RL 和搜索算法在不同时间预算下谁更好？ | `experiments/results/g4_summary/` |
 | G5 | 结论在新测试集上还成立吗？换训练种子呢？强化学习这一步有用吗？RL 热启动 IGA、n = 200 推广？ | `experiments/results/g5_summary/` |
+| G15 | 测试实例共用基础数据，G4/G5（及大创 L2）的检验按基础数据聚类后还成立吗？（事后复分析） | `experiments/results/g15_cluster_robustness/` |
 
 ## 5. 大创：从问题到结论
 

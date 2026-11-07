@@ -51,6 +51,7 @@ G5 复用 `g7`（`--grid g5/g5-large`、`--cpsat-max-tasks`）与 `g8`（`--grid
 | `g12_g5_summary.py` | 汇总 G5：曲线、预先登记的 H1–H5、种子差异、模仿消融、协同维护 | 项目 | <1 min |
 | `g13_iga_retime_check.py` | 计时是否可信：空闲时抽样重跑 36 个 IGA，与 G4/G5 的记录比速度 | 项目 | ~3 min |
 | `g14_g5_iga_speed_sensitivity.py` | 若 IGA 实际快 1.3/1.6/2 倍，G5 的结论还成立吗（探索性） | 项目 | <1 min |
+| `g15_cluster_robustness.py` | 测试实例共用基础数据时，G4/G5/L2 的预先登记检验按基础数据聚类后还成立吗；G4 补 Holm 校正（只读归档结果行，事后、探索性） | 项目 | ~1 min |
 
 ## 大创
 
