@@ -24,15 +24,15 @@ from fjsp_lab.maintenance.generator import grid_cases
 from g7_g4_search_curves import run_instance
 
 LOGGER = logging.getLogger(__name__)
-RESULTS = Path(__file__).resolve().parent / 'results'
+DEFAULT_RESULTS = Path(__file__).resolve().parent / 'results'
 SAMPLES = (('g5', 'g5_search_curves', 100, 12), ('g4', 'g4_search_curves_retimed', 100, 12),
            ('g5', 'g5_search_curves', 20, 6), ('g4', 'g4_search_curves_retimed', 20, 6))
 MIN_DECODES = 1000
 
 
-def sample(grid: str, record_dir: str, n: int, count: int) -> list[tuple]:
+def sample(results: Path, grid: str, record_dir: str, n: int, count: int) -> list[tuple]:
     """Every k-th instance (sorted by case and mode) of size n whose recorded IGA did not stop early at 0."""
-    with open(RESULTS / record_dir / 'rows.jsonl', encoding='utf-8') as handle:
+    with open(results / record_dir / 'rows.jsonl', encoding='utf-8') as handle:
         record = {(row['case_id'], row['mode']): row for row in map(json.loads, handle)}
     keys = sorted(key for key, row in record.items() if row['num_tasks'] == n and row['IGA']['value'] > 0)
     chosen = keys[::max(1, len(keys) // count)][:count]
@@ -49,10 +49,14 @@ def speed_ratio(old_trace: list, new_trace: list) -> tuple[float | None, int]:
 
 
 def main() -> int:
-    args = parse_args(__doc__.splitlines()[0], 'g13_iga_retime_check')
+    def extra(parser):
+        parser.add_argument('--results-dir', type=Path, default=DEFAULT_RESULTS,
+                            help='directory holding the archived g4/g5 search runs')
+
+    args = parse_args(__doc__.splitlines()[0], 'g13_iga_retime_check', extra)
     logging.basicConfig(level=logging.INFO, format='%(message)s')
     prov = provenance(__file__)
-    plan = [item for spec in SAMPLES for item in sample(*spec)]
+    plan = [item for spec in SAMPLES for item in sample(args.results_dir, *spec)]
     started = time.monotonic()
     with ProcessPoolExecutor(max_workers=2) as pool:
         new_rows = list(pool.map(run_instance, [job for job, *_ in plan]))
@@ -83,7 +87,7 @@ def main() -> int:
                     len(speeds))
     write_json(args.output_dir / 'summary.json', summary)
     write_json(args.output_dir / 'manifest.json', {
-        'experiment': 'g13_iga_retime_check', 'samples': SAMPLES, 'min_decodes': MIN_DECODES,
+        'experiment': 'g13_iga_retime_check', 'results_dir': str(args.results_dir), 'samples': SAMPLES, 'min_decodes': MIN_DECODES,
         'search_seconds': 10.0, 'seed': 0, 'parallel_processes': 2, 'instances': len(rows),
         'elapsed_minutes_this_session': round((time.monotonic() - started) / 60, 1), **prov})
     return 0

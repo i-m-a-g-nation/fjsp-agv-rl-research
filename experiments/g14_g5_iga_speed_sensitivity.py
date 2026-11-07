@@ -19,7 +19,7 @@ from g9_g4_summary import policy_points, read_jsonl, value_at
 from g12_g5_summary import SEEDS, all_values, holm, one_sided
 
 LOGGER = logging.getLogger(__name__)
-RESULTS = Path(__file__).resolve().parent / 'results'
+DEFAULT_RESULTS = Path(__file__).resolve().parent / 'results'
 FACTORS = (1.0, 1.3, 1.6, 2.0)
 TESTS = {'H1': ('RL', 'g5', 100, 1.0), 'H3': ('RL+IGA', 'g5', None, 10.0),
          'H4': ('RL+IGA', 'g5', None, 1.0), 'H5': ('RL', 'g5-large', None, 2.0)}
@@ -40,12 +40,12 @@ def seeded_at(row: dict, t: float, factor: float):
     return min(found) if found else None
 
 
-def load(grid: str) -> list[dict]:
+def load(results: Path, grid: str) -> list[dict]:
     search_dir, rl_dir, bc_dir, seeded_dir = DIRS[grid]
-    search = read_jsonl(RESULTS / search_dir / 'rows.jsonl')
-    rl = {s: read_jsonl(RESULTS / rl_dir.format(s) / 'rows.jsonl') for s in SEEDS}
-    bc = {s: read_jsonl(RESULTS / bc_dir.format(s) / 'rows.jsonl') for s in SEEDS}
-    seeded = {s: read_jsonl(RESULTS / seeded_dir.format(s) / 'rows.jsonl') for s in SEEDS}
+    search = read_jsonl(results / search_dir / 'rows.jsonl')
+    rl = {s: read_jsonl(results / rl_dir.format(s) / 'rows.jsonl') for s in SEEDS}
+    bc = {s: read_jsonl(results / bc_dir.format(s) / 'rows.jsonl') for s in SEEDS}
+    seeded = {s: read_jsonl(results / seeded_dir.format(s) / 'rows.jsonl') for s in SEEDS}
     rows = []
     for key, s in search.items():
         candidates = all_values(s)
@@ -59,10 +59,16 @@ def load(grid: str) -> list[dict]:
 
 
 def main() -> int:
-    args = parse_args(__doc__.splitlines()[0], 'g14_g5_iga_speed_sensitivity')
+    def extra(parser):
+        parser.add_argument('--results-dir', type=Path, default=DEFAULT_RESULTS,
+                            help='directory holding the archived g5_* runs and g5_summary')
+
+    args = parse_args(__doc__.splitlines()[0], 'g14_g5_iga_speed_sensitivity', extra)
     logging.basicConfig(level=logging.INFO, format='%(message)s')
     prov = provenance(__file__)
-    rows = load('g5') + load('g5-large')
+    results_dir = args.results_dir
+    h2_p = load_h2_p(results_dir)
+    rows = load(results_dir, 'g5') + load(results_dir, 'g5-large')
     gap = lambda value, bk: (value - bk) / max(1, bk)
     results = []
     for factor in FACTORS:
@@ -81,7 +87,7 @@ def main() -> int:
                         theirs.append(gap(b, r['bk']))
                 found.append({'factor': factor, 'hypothesis': name, 'training_seed': seed, **one_sided(ours, theirs)})
             # H2 has no time budget; its Holm-adjusted p is taken from the archived g12 run.
-            found.append({'factor': factor, 'hypothesis': 'H2', 'training_seed': seed, 'p_one_sided': H2_P[seed]})
+            found.append({'factor': factor, 'hypothesis': 'H2', 'training_seed': seed, 'p_one_sided': h2_p[seed]})
             holm(found)
             results += [item for item in found if item['hypothesis'] != 'H2']
     for factor in FACTORS:
@@ -91,22 +97,21 @@ def main() -> int:
     with open(args.output_dir / 'tests.jsonl', 'w', encoding='utf-8', newline='\n') as handle:
         for item in results:
             handle.write(json.dumps(item, separators=(',', ':')) + '\n')
-    inputs = sorted({RESULTS / d.format(s) / 'rows.jsonl' for dirs in DIRS.values() for d in dirs for s in SEEDS})
+    inputs = sorted({results_dir / d.format(s) / 'rows.jsonl' for dirs in DIRS.values() for d in dirs for s in SEEDS})
     write_json(args.output_dir / 'manifest.json', {
         'experiment': 'g14_g5_iga_speed_sensitivity', 'factors': FACTORS, 'tests': TESTS,
-        'h2_p_one_sided_from_g12': H2_P,
-        'inputs_sha256': {str(p.relative_to(RESULTS.parent)): sha256(p) for p in inputs}, **prov})
+        'h2_p_one_sided_from_g12': h2_p,
+        'inputs_sha256': {str(p.relative_to(results_dir.parent)): sha256(p) for p in inputs}, **prov})
     return 0
 
 
-def _h2_p() -> dict:
-    with open(RESULTS / 'g5_summary' / 'summary.json', encoding='utf-8') as handle:
+def load_h2_p(results: Path) -> dict:
+    """H2's one-sided p per training seed from the archived g12 run (H2 has no time budget)."""
+    with open(results / 'g5_summary' / 'summary.json', encoding='utf-8') as handle:
         tests = json.load(handle)['hypotheses']
     return {t['training_seed']: t['p_one_sided'] for t in tests if t['hypothesis'] == 'H2'
             and t['training_seed'] != 'all'}
 
-
-H2_P = _h2_p()
 
 if __name__ == '__main__':
     raise SystemExit(main())

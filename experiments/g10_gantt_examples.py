@@ -22,15 +22,19 @@ from fjsp_lab.maintenance.metaheuristics import solve_metaheuristic
 
 LOGGER = logging.getLogger(__name__)
 EXAMPLES = ((20, 2, 'mixed'), (20, 4, 'uniform2'), (50, 4, 'mixed'))
-SEARCH = ROOT / 'experiments/results/g4_search_curves_retimed/rows.jsonl'
+DEFAULT_SEARCH = ROOT / 'experiments/results/g4_search_curves_retimed/rows.jsonl'
 EVALUATIONS = 50000
 
 
 def main() -> int:
-    args = parse_args(__doc__.splitlines()[0], 'g10_gantt_examples')
+    def extra(parser):
+        parser.add_argument('--search-rows', type=Path, default=DEFAULT_SEARCH,
+                            help='rows.jsonl of the G4 search run used to pick the cases')
+
+    args = parse_args(__doc__.splitlines()[0], 'g10_gantt_examples', extra)
     logging.basicConfig(level=logging.INFO, format='%(message)s')
     prov = provenance(__file__)
-    with open(SEARCH, encoding='utf-8') as handle:
+    with open(args.search_rows, encoding='utf-8') as handle:
         iga = {(r['case_id'], r['mode']): r['IGA']['value'] for r in map(json.loads, handle)}
     cases = {case.case_id: case for case in g4_cases()}
     chosen = []
@@ -53,7 +57,7 @@ def main() -> int:
         LOGGER.info('%s: fixed %d, joint %d', case_id, values['fixed'], values['joint'])
     write_json(args.output_dir / 'manifest.json', {
         'experiment': 'g10_gantt_examples', 'examples': chosen, 'evaluations': EVALUATIONS,
-        'search_rows_sha256': sha256(SEARCH), **prov})
+        'search_rows': str(args.search_rows), 'search_rows_sha256': sha256(args.search_rows), **prov})
     return 0
 
 
